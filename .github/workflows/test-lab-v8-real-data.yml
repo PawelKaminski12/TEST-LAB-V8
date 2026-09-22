@@ -1,0 +1,199 @@
+name: TEST LAB V8 Real Data Bridge
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/test-lab-v8-real-data.yml"
+
+jobs:
+  build-real-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Prepare workspace
+        run: |
+          mkdir -p v8/raw
+          mkdir -p v8/canonical
+
+      - name: Download BTC
+        run: |
+          curl -L --fail \
+            "https://raw.githubusercontent.com/jptrustlearning/btc/main/btc_prices.csv" \
+            -o v8/raw/BTC_source.csv
+
+      - name: Download ETH A
+        run: |
+          curl -L --fail \
+            "https://raw.githubusercontent.com/MakarZakharov/CryptoTrade/main/data/binance/ETHUSDT/1d/2018_01_01-now.csv" \
+            -o v8/raw/ETH_A_source.csv
+
+      - name: Download ETH B
+        run: |
+          curl -L --fail \
+            "https://raw.githubusercontent.com/congde/web3-quant-sandbox/a6cc399d715f540110ed1aea4eb3bbe536a2f29b/data/investment_gate/ETHUSDT.csv" \
+            -o v8/raw/ETH_B_source.csv
+
+      - name: Download NVDA
+        run: |
+          curl -L --fail \
+            "https://raw.githubusercontent.com/yennanliu/finance_data/main/data/prices/nvda.csv" \
+            -o v8/raw/NVDA_source.csv
+
+      - name: Download QQQ
+        run: |
+          curl -L --fail \
+            "https://raw.githubusercontent.com/newyorkwoo/investETF/main/data/QQQ.csv" \
+            -o v8/raw/QQQ_source.csv
+
+      - name: Install builder
+        run: |
+          cat > v8/TEST_LAB_V8_CANONICAL_BUILDER_QA_v1_10.py <<'PYEOF'
+          #!/usr/bin/env python3
+          from __future__ import annotations
+          import argparse, csv, json
+          from dataclasses import dataclass, asdict
+          from datetime import datetime, date
+          from pathlib import Path
+          from typing import Dict, List, Tuple
+          COMMON_START = date(2018, 1, 1)
+          COMMON_END   = date(2026, 7, 2)
+          ETH_CUTOVER  = date(2025, 6, 5)
+          CANON = ["Date","Open","High","Low","Close","Volume"]
+          @dataclass
+          class Row:
+              d: date; o: float; h: float; l: float; c: float; v: float
+          @dataclass
+          class QA:
+              asset: str; rows: int; start: str | None; end: str | None
+              duplicates: int; invalid_ohlc: int; nonpositive_prices: int
+              negative_volume: int; date_order_errors: int; large_calendar_gaps: int
+              expected_calendar: str; status: str; notes: List[str]
+          def fnum(x: str) -> float:
+              return float((x or "").strip().replace(",", ""))
+          def parse_date(s: str) -> date:
+              s=s.strip()
+              if "T" in s: s=s.split("T",1)[0]
+              return datetime.strptime(s[:10], "%Y-%m-%d").date()
+          def norm_header(s: str)->str:
+              return s.strip().lower().replace("\ufeff","")
+          def read_csv_rows(path: Path, asset: str, kind: str) -> List[Row]:
+              with path.open("r", encoding="utf-8-sig", newline="") as fh:
+                  reader=csv.reader(fh); header=next(reader); h=[norm_header(x) for x in header]
+                  if kind=="BTC_THAI": idx=dict(date=0,open=1,high=2,low=3,close=4,volume=5)
+                  elif kind=="ETH_A":
+                      names={"timestamp","open","high","low","close","volume"}
+                      if not names.issubset(set(h)): raise ValueError(f"{asset}: unexpected ETH_A header {header}")
+                      idx={k:h.index(k) for k in names}; idx["date"]=idx.pop("timestamp")
+                  elif kind=="ETH_B":
+                      names={"date","open","high","low","close","volume"}
+                      if not names.issubset(set(h)): raise ValueError(f"{asset}: unexpected ETH_B header {header}")
+                      idx={k:h.index(k) for k in names}
+                  elif kind in ("NVDA_YF","QQQ_YF"):
+                      names={"date","open","high","low","close","volume"}
+                      if not names.issubset(set(h)): raise ValueError(f"{asset}: unexpected Yahoo-style header {header}")
+                      idx={k:h.index(k) for k in names}
+                  else: raise ValueError(f"Unknown kind: {kind}")
+                  out=[]
+                  for line_no,r in enumerate(reader,start=2):
+                      if not r or all(not x.strip() for x in r): continue
+                      joined=",".join(r)
+                      if joined.startswith(("<<<<<<<","=======",">>>>>>>")): continue
+                      try:
+                          d=parse_date(r[idx["date"]])
+                          out.append(Row(d,fnum(r[idx["open"]]),fnum(r[idx["high"]]),fnum(r[idx["low"]]),fnum(r[idx["close"]]),fnum(r[idx["volume"]])))
+                      except Exception as e:
+                          raise ValueError(f"{asset}: parse error line {line_no}: {e}") from e
+                  return out
+          def filter_window(rows): return [r for r in rows if COMMON_START <= r.d <= COMMON_END]
+          def by_date(rows):
+              d={}
+              for r in rows:
+                  if r.d not in d: d[r.d]=r
+              return d
+          def stitch_eth(a,b):
+              ma,mb=by_date(a),by_date(b)
+              overlap_dates=sorted(d for d in set(ma).intersection(mb) if d < ETH_CUTOVER)
+              mismatches=[]
+              for d in overlap_dates:
+                  ra,rb=ma[d],mb[d]
+                  va=(ra.o,ra.h,ra.l,ra.c,ra.v); vb=(rb.o,rb.h,rb.l,rb.c,rb.v)
+                  price_ok=all(abs(x-y)<=max(1e-8,1e-8*max(abs(x),abs(y),1)) for x,y in zip(va[:4],vb[:4]))
+                  vol_ok=abs(ra.v-rb.v)<=max(1e-6,1e-8*max(abs(ra.v),abs(rb.v),1))
+                  if not (price_ok and vol_ok): mismatches.append(d.isoformat())
+              out=[]
+              for d in sorted(set(ma)|set(mb)):
+                  if d < ETH_CUTOVER:
+                      if d in ma: out.append(ma[d])
+                  else:
+                      if d in mb: out.append(mb[d])
+              return out,{"cutover":ETH_CUTOVER.isoformat(),"overlap_days_checked":len(overlap_dates),"overlap_mismatches":mismatches[:50],"overlap_status":"PASS" if not mismatches else "BLOCK"}
+          def qa(asset,rows,calendar):
+              duplicates=invalid_ohlc=nonpositive=negvol=ordererr=gaps=0; seen=set(); prev=None
+              for r in rows:
+                  if r.d in seen: duplicates+=1
+                  seen.add(r.d)
+                  if r.h < max(r.o,r.c,r.l) or r.l > min(r.o,r.c,r.h): invalid_ohlc+=1
+                  if min(r.o,r.h,r.l,r.c)<=0: nonpositive+=1
+                  if r.v<0: negvol+=1
+                  if prev is not None:
+                      if r.d<=prev: ordererr+=1
+                      gap=(r.d-prev).days
+                      if calendar=="CRYPTO_7D":
+                          if gap>1: gaps+=1
+                      else:
+                          if gap>7: gaps+=1
+                  prev=r.d
+              hard=duplicates+invalid_ohlc+nonpositive+negvol+ordererr
+              notes=[]
+              if gaps: notes.append(f"{gaps} large calendar gaps require review")
+              if asset=="NVDA": notes.append("Source treated as already split-adjusted; do NOT re-apply 2021/2024 splits.")
+              return QA(asset,len(rows),rows[0].d.isoformat() if rows else None,rows[-1].d.isoformat() if rows else None,duplicates,invalid_ohlc,nonpositive,negvol,ordererr,gaps,calendar,"PASS" if hard==0 else "BLOCK",notes)
+          def write_canonical(path,rows):
+              with path.open("w",encoding="utf-8",newline="") as fh:
+                  w=csv.writer(fh); w.writerow(CANON)
+                  for r in rows: w.writerow([r.d.isoformat(),r.o,r.h,r.l,r.c,r.v])
+          def main():
+              ap=argparse.ArgumentParser(); ap.add_argument("--src-dir",required=True); ap.add_argument("--out-dir",required=True); args=ap.parse_args()
+              src,out=Path(args.src_dir),Path(args.out_dir); out.mkdir(parents=True,exist_ok=True)
+              paths={"BTC":src/"BTC_source.csv","ETH_A":src/"ETH_A_source.csv","ETH_B":src/"ETH_B_source.csv","NVDA":src/"NVDA_source.csv","QQQ":src/"QQQ_source.csv"}
+              missing=[str(p) for p in paths.values() if not p.exists()]
+              if missing: print(json.dumps({"status":"BLOCK","missing":missing},indent=2)); return 2
+              btc=filter_window(read_csv_rows(paths["BTC"],"BTC","BTC_THAI"))
+              eth_a=read_csv_rows(paths["ETH_A"],"ETH","ETH_A"); eth_b=read_csv_rows(paths["ETH_B"],"ETH","ETH_B"); eth,eth_meta=stitch_eth(eth_a,eth_b); eth=filter_window(eth)
+              nvda=filter_window(read_csv_rows(paths["NVDA"],"NVDA","NVDA_YF")); qqq=filter_window(read_csv_rows(paths["QQQ"],"QQQ","QQQ_YF"))
+              datasets={"BTC":btc,"ETH":eth,"NVDA":nvda,"QQQ":qqq}; calendars={"BTC":"CRYPTO_7D","ETH":"CRYPTO_7D","NVDA":"US_TRADING","QQQ":"US_TRADING"}
+              qas={a:qa(a,rows,calendars[a]) for a,rows in datasets.items()}; final_status="PASS"
+              if eth_meta["overlap_status"]!="PASS" or any(x.status!="PASS" for x in qas.values()) or any(not rows for rows in datasets.values()): final_status="BLOCK"
+              for a,rows in datasets.items(): write_canonical(out/f"{a}_1D.csv",rows)
+              report={"project":"TEST LAB V8","version":"v1.10","status":final_status,"common_window":[COMMON_START.isoformat(),COMMON_END.isoformat()],"eth_stitch":eth_meta,"qa":{a:asdict(v) for a,v in qas.items()},"no_synthetic_fallback":True}
+              (out/"TEST_LAB_V8_CANONICAL_QA.json").write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
+              print(json.dumps(report,ensure_ascii=False,indent=2)); return 0 if final_status=="PASS" else 3
+          if __name__=="__main__": raise SystemExit(main())
+          PYEOF
+
+      - name: Build canonical datasets and run QA
+        run: |
+          python v8/TEST_LAB_V8_CANONICAL_BUILDER_QA_v1_10.py \
+            --src-dir v8/raw \
+            --out-dir v8/canonical
+
+      - name: Upload canonical datasets
+        uses: actions/upload-artifact@v4
+        with:
+          name: TEST-LAB-V8-REAL-DATA
+          path: |
+            v8/canonical/BTC_1D.csv
+            v8/canonical/ETH_1D.csv
+            v8/canonical/NVDA_1D.csv
+            v8/canonical/QQQ_1D.csv
+            v8/canonical/TEST_LAB_V8_CANONICAL_QA.json
+          if-no-files-found: error
+          retention-days: 7
