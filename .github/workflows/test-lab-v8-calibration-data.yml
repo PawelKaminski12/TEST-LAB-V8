@@ -1,0 +1,68 @@
+name: TEST LAB V8 Calibration Data Refresh
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/test-lab-v8-calibration-data.yml"
+
+jobs:
+  refresh-calibration-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build fresh ETH 1D from Binance Spot
+        run: |
+          python - <<'PY'
+          import csv, json, time, urllib.parse, urllib.request
+          from datetime import datetime, timezone
+
+          url = "https://api.binance.com/api/v3/klines"
+          start_ms = int(datetime(2018,1,1,tzinfo=timezone.utc).timestamp()*1000)
+          rows=[]
+          while True:
+              qs=urllib.parse.urlencode({"symbol":"ETHUSDT","interval":"1d","startTime":start_ms,"limit":1000})
+              with urllib.request.urlopen(url+"?"+qs, timeout=30) as r:
+                  batch=json.load(r)
+              if not batch:
+                  break
+              rows.extend(batch)
+              last_open=batch[-1][0]
+              next_start=last_open+86400000
+              if next_start<=start_ms:
+                  break
+              start_ms=next_start
+              if len(batch)<1000:
+                  break
+              time.sleep(0.15)
+          with open("ETH_CALIBRATION_1D.csv","w",newline="",encoding="utf-8") as f:
+              w=csv.writer(f)
+              w.writerow(["Date","Open","High","Low","Close","Volume"])
+              for x in rows:
+                  d=datetime.fromtimestamp(x[0]/1000, tz=timezone.utc).date().isoformat()
+                  w.writerow([d,x[1],x[2],x[3],x[4],x[5]])
+          print("ETH rows", len(rows), "last", rows[-1][0] if rows else None)
+          PY
+
+      - name: Copy fresh BTC and NVDA source files
+        run: |
+          curl -L --fail "https://raw.githubusercontent.com/jptrustlearning/btc/main/btc_prices.csv" -o BTC_CALIBRATION_1D_RAW.csv
+          curl -L --fail "https://raw.githubusercontent.com/yennanliu/finance_data/main/data/prices/nvda.csv" -o NVDA_CALIBRATION_1D_RAW.csv
+
+      - name: Upload calibration data
+        uses: actions/upload-artifact@v4
+        with:
+          name: TEST-LAB-V8-CALIBRATION-DATA
+          path: |
+            ETH_CALIBRATION_1D.csv
+            BTC_CALIBRATION_1D_RAW.csv
+            NVDA_CALIBRATION_1D_RAW.csv
+          if-no-files-found: error
+          retention-days: 7
