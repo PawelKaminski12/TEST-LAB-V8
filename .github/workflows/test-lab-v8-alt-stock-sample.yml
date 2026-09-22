@@ -1,0 +1,60 @@
+name: TEST LAB V8 Alt Stock Sample Data
+
+on:
+  push:
+    paths:
+      - ".github/workflows/test-lab-v8-alt-stock-sample.yml"
+  workflow_dispatch:
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install yfinance pandas
+      - name: Fetch daily OHLCV sample
+        run: |
+          python - <<'PY'
+          import yfinance as yf, pandas as pd, json, os
+          symbols = {
+            "SOL":"SOL-USD",
+            "LINK":"LINK-USD",
+            "AAVE":"AAVE-USD",
+            "HBAR":"HBAR-USD",
+            "AVAX":"AVAX-USD",
+            "CRDO":"CRDO",
+            "ALAB":"ALAB",
+            "CLS":"CLS",
+            "COHR":"COHR",
+            "MOD":"MOD",
+          }
+          os.makedirs("sample", exist_ok=True)
+          meta={}
+          for name,sym in symbols.items():
+              df=yf.download(sym,start="2018-01-01",end="2026-07-03",auto_adjust=True,progress=False,threads=False)
+              if isinstance(df.columns,pd.MultiIndex):
+                  df.columns=[c[0] for c in df.columns]
+              df=df.reset_index()
+              cols={c.lower():c for c in df.columns}
+              out=pd.DataFrame({
+                  "Date":pd.to_datetime(df[cols["date"]]).dt.date.astype(str),
+                  "Open":df[cols["open"]],
+                  "High":df[cols["high"]],
+                  "Low":df[cols["low"]],
+                  "Close":df[cols["close"]],
+                  "Volume":df[cols["volume"]],
+              }).dropna()
+              if len(out)<250:
+                  raise SystemExit(f"{name}: only {len(out)} rows")
+              out.to_csv(f"sample/{name}_1D.csv",index=False)
+              meta[name]={"source_symbol":sym,"rows":len(out),"start":out.iloc[0]["Date"],"end":out.iloc[-1]["Date"]}
+              print(name,meta[name])
+          open("sample/META.json","w").write(json.dumps(meta,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TEST-LAB-V8-ALT-STOCK-SAMPLE
+          path: sample/
+          retention-days: 7
