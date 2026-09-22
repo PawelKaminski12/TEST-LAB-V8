@@ -27,7 +27,7 @@ jobs:
           CUTOVER = date(2025, 6, 5)
 
           def fetch_text(url):
-              req = urllib.request.Request(url, headers={"User-Agent":"TEST-LAB-V8/6E1"})
+              req = urllib.request.Request(url, headers={"User-Agent":"TEST-LAB-V8/6E2"})
               with urllib.request.urlopen(req, timeout=45) as r:
                   return r.read().decode("utf-8-sig")
 
@@ -54,6 +54,12 @@ jobs:
                   rows[d]=[d.isoformat(),r["open"],r["high"],r["low"],r["close"],r["volume"]]
               return rows
 
+          def ts_to_date(raw):
+              x=int(raw)
+              # Binance Vision uses microseconds in newer archives, milliseconds in older ones.
+              seconds = x / 1_000_000 if x > 10_000_000_000_000 else x / 1_000
+              return datetime.fromtimestamp(seconds, tz=timezone.utc).date()
+
           a_url="https://raw.githubusercontent.com/MakarZakharov/CryptoTrade/main/data/binance/ETHUSDT/1d/2018_01_01-now.csv"
           b_url="https://raw.githubusercontent.com/congde/web3-quant-sandbox/a6cc399d715f540110ed1aea4eb3bbe536a2f29b/data/investment_gate/ETHUSDT.csv"
           A=parse_a(fetch_text(a_url))
@@ -72,21 +78,24 @@ jobs:
           target=today-timedelta(days=1)
           d=last+timedelta(days=1)
           added=0
+          skipped=[]
           while d <= target:
               url=f"https://data.binance.vision/data/spot/daily/klines/ETHUSDT/1d/ETHUSDT-1d-{d.isoformat()}.zip"
               try:
-                  req=urllib.request.Request(url,headers={"User-Agent":"TEST-LAB-V8/6E1"})
+                  req=urllib.request.Request(url,headers={"User-Agent":"TEST-LAB-V8/6E2"})
                   with urllib.request.urlopen(req,timeout=45) as r:
                       blob=r.read()
                   with zipfile.ZipFile(io.BytesIO(blob)) as z:
                       name=z.namelist()[0]
                       text=z.read(name).decode("utf-8")
                   rr=next(csv.reader(io.StringIO(text)))
-                  open_ms=int(rr[0])
-                  dd=datetime.fromtimestamp(open_ms/1000,tz=timezone.utc).date()
+                  dd=ts_to_date(rr[0])
+                  if dd != d:
+                      raise ValueError(f"archive date mismatch expected={d} got={dd}")
                   merged[dd]=[dd.isoformat(),rr[1],rr[2],rr[3],rr[4],rr[5]]
                   added+=1
               except Exception as e:
+                  skipped.append([d.isoformat(),repr(e)])
                   print("SKIP",d.isoformat(),repr(e))
               d += timedelta(days=1)
 
@@ -99,12 +108,17 @@ jobs:
               "start":rows[0][0] if rows else None,
               "end":rows[-1][0] if rows else None,
               "binance_vision_daily_added":added,
+              "skipped_count":len(skipped),
+              "skipped":skipped,
               "source_a_until":"2025-06-04",
               "source_b_from":"2025-06-05",
-              "refresh_target":target.isoformat()
+              "refresh_target":target.isoformat(),
+              "target_reached": bool(rows and rows[-1][0] == target.isoformat())
           }
           open("ETH_CALIBRATION_META.json","w",encoding="utf-8").write(json.dumps(report,indent=2))
           print(json.dumps(report,indent=2))
+          if not report["target_reached"]:
+              raise SystemExit("ETH calibration refresh did not reach target date")
           PY
 
       - name: Copy fresh BTC and NVDA source files
