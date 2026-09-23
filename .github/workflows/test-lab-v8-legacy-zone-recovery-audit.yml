@@ -1,0 +1,57 @@
+name: TEST LAB V8 Legacy Zone Recovery Audit
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'config/alt_zone_migration.csv'
+      - 'config/alt_zones.csv'
+      - 'scripts/v8_legacy_zone_recovery_audit.py'
+      - '.github/workflows/test-lab-v8-legacy-zone-recovery-audit.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-legacy-zone-recovery-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Przygotuj Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Sprawdź stare strefy i luki
+        run: python scripts/v8_legacy_zone_recovery_audit.py
+
+      - name: Zapisz wynik do repozytorium
+        shell: bash
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add audit/LEGACY_ZONE_RECOVERY_STATUS.json audit/LEGACY_ZONE_RECOVERY_LATEST.md
+          if git diff --cached --quiet; then
+            echo "Brak zmian w raporcie."
+            exit 0
+          fi
+          git commit -m "Aktualizuj raport odzyskiwania starych stref"
+          for i in 1 2 3 4; do
+            git fetch origin main
+            git rebase origin/main || { git rebase --abort || true; sleep 2; continue; }
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "Nie udało się opublikować raportu po 4 próbach."
+          exit 1
