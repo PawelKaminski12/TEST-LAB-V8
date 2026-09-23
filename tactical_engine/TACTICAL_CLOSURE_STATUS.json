@@ -2,7 +2,7 @@
   "project": "DANE SILNIKA V8 / DUAL ENGINE",
   "component": "TACTICAL",
   "checkpoint_date": "2026-09-23",
-  "technical_closure": "COMPLETE_WITH_MFI_EXTREMES",
+  "technical_closure": "COMPLETE_WITH_RSI_MFI_MACD_EXTREMES",
   "execution_status": "RESEARCH_DECISION_SUPPORT_ONLY",
   "v7_untouched": true,
   "long_tactical_separate_capital": true,
@@ -11,6 +11,9 @@
     "freshness_checks_1h_4h_1d": true,
     "multi_timeframe_score": true,
     "macd_1h_4h_1d": true,
+    "macd_extremes_relative_to_own_history": true,
+    "macd_percentile_1h_4h_1d": true,
+    "macd_zscore_1h_4h_1d": true,
     "rsi_1h_4h_1d": true,
     "mfi14_1h_4h_1d": true,
     "mfi_warning_80_20": true,
@@ -40,6 +43,13 @@
     "mfi_extreme_overbought": 90,
     "mfi_warning_oversold": 20,
     "mfi_extreme_oversold": 10,
+    "macd_warning_percentile_high": 95,
+    "macd_warning_percentile_low": 5,
+    "macd_extreme_percentile_high": 97.5,
+    "macd_extreme_percentile_low": 2.5,
+    "macd_warning_abs_zscore": 1.75,
+    "macd_extreme_abs_zscore": 2.0,
+    "macd_lookback_bars": 250,
     "fomo_hard_block": 8
   },
   "indicator_roles": {
@@ -47,8 +57,15 @@
     "4H": "primary_tactical_decision_and_extreme_confirmation",
     "1D": "directional_regime_and_high_weight_extreme_context",
     "MFI": "volume_weighted_momentum_confirmation_and_extreme_detection_not_standalone_trade_signal",
-    "MACD": "momentum_direction_and_histogram_confirmation_not_standalone_trade_signal",
+    "MACD": "momentum_direction_plus_relative_histogram_extremes_against_each_assets_own_history_not_standalone_trade_signal",
     "RSI": "momentum_extreme_context_not_standalone_trade_signal"
+  },
+  "macd_extreme_method": {
+    "history_scope": "each asset and timeframe separately",
+    "lookback_bars": 250,
+    "warning_logic": "histogram percentile >=95 or <=5, or abs z-score >=1.75",
+    "extreme_logic": "histogram percentile >=97.5 with z>=2.0, or <=2.5 with z<=-2.0",
+    "interpretation": "context and alarm only; positive extreme is not automatically SELL and negative extreme is not automatically BUY"
   },
   "calibration": {
     "status": "NOT_FROZEN",
@@ -64,8 +81,10 @@
   "next_phase": "PAPER_OBSERVATION_AND_CALIBRATION",
   "source_files": [
     ".github/workflows/test-lab-v8-tactical-engine.yml",
+    ".github/workflows/test-lab-v8-tactical-macd-extremes.yml",
     ".github/workflows/test-lab-v8-tactical-readiness.yml",
     "tactical_engine/TACTICAL_ENGINE.json",
+    "tactical_engine/TACTICAL_MACD_EXTREMES.csv",
     "tactical_engine/TACTICAL_READINESS.json",
     "tactical_validation/TACTICAL_THRESHOLD_LAB.json",
     "audit/DUAL_ENGINE_AUDIT.json",
