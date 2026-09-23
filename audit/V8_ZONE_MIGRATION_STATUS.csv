@@ -1,0 +1,12 @@
+symbol,source_found_count,numeric_ready_count,source_found_timeframes,numeric_ready_timeframes,missing_numeric_timeframes,complete_7_of_7
+ETH,7,7,"1D, 2D, 3D, 4D, 5D, 1T, 2T","1D, 2D, 3D, 4D, 5D, 1T, 2T",BRAK,True
+SOL,7,7,"1D, 2D, 3D, 4D, 5D, 1T, 2T","1D, 2D, 3D, 4D, 5D, 1T, 2T",BRAK,True
+LINK,7,7,"1D, 2D, 3D, 4D, 5D, 1T, 2T","1D, 2D, 3D, 4D, 5D, 1T, 2T",BRAK,True
+ONDO,7,7,"1D, 2D, 3D, 4D, 5D, 1T, 2T","1D, 2D, 3D, 4D, 5D, 1T, 2T",BRAK,True
+RENDER,0,0,BRAK,BRAK,"1D, 2D, 3D, 4D, 5D, 1T, 2T",False
+FLOKI,7,2,"1D, 2D, 3D, 4D, 5D, 1T, 2T","1D, 1T","2D, 3D, 4D, 5D, 2T",False
+PEPE,7,2,"1D, 2D, 3D, 4D, 5D, 1T, 2T","1D, 1T","2D, 3D, 4D, 5D, 2T",False
+SPX6900,7,2,"1D, 2D, 3D, 4D, 5D, 1T, 2T","1D, 1T","2D, 3D, 4D, 5D, 2T",False
+XRP,7,0,"1D, 2D, 3D, 4D, 5D, 1T, 2T",BRAK,"1D, 2D, 3D, 4D, 5D, 1T, 2T",False
+XLM,2,0,"1D, 1T",BRAK,"1D, 2D, 3D, 4D, 5D, 1T, 2T",False
+HBAR,7,0,"1D, 2D, 3D, 4D, 5D, 1T, 2T",BRAK,"1D, 2D, 3D, 4D, 5D, 1T, 2T",False

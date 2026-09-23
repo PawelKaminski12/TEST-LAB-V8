@@ -1,0 +1,110 @@
+{
+  "generated_at_utc": "2026-09-23T17:31:34.594951+00:00",
+  "numeric_ready_points": 34,
+  "total_points": 77,
+  "numeric_ready_percent": 44.2,
+  "assets_complete_7_of_7": 4,
+  "asset_count": 11,
+  "no_guessing": true,
+  "rows": [
+    {
+      "symbol": "ETH",
+      "source_found_count": 7,
+      "numeric_ready_count": 7,
+      "source_found_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
+      "numeric_ready_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
+      "missing_numeric_timeframes": "BRAK",
+      "complete_7_of_7": true
+    },
+    {
+      "symbol": "SOL",
+      "source_found_count": 7,
+      "numeric_ready_count": 7,
+      "source_found_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
+      "numeric_ready_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
+      "missing_numeric_timeframes": "BRAK",
+      "complete_7_of_7": true
+    },
+    {
+      "symbol": "LINK",
+      "source_found_count": 7,
+      "numeric_ready_count": 7,
+      "source_found_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
+      "numeric_ready_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
+      "missing_numeric_timeframes": "BRAK",
+      "complete_7_of_7": true
+    },
+    {
+      "symbol": "ONDO",
+      "source_found_count": 7,
+      "numeric_ready_count": 7,
+      "source_found_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
+      "numeric_ready_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
+      "missing_numeric_timeframes": "BRAK",
+      "complete_7_of_7": true
+    },
+    {
+      "symbol": "RENDER",
+      "source_found_count": 0,
+      "numeric_ready_count": 0,
+      "source_found_timeframes": "BRAK",
+      "numeric_ready_timeframes": "BRAK",
+      "missing_numeric_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
+      "complete_7_of_7": false
+    },
+    {
+      "symbol": "FLOKI",
+      "source_found_count": 7,
+      "numeric_ready_count": 2,
+      "source_found_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
+      "numeric_ready_timeframes": "1D, 1T",
+      "missing_numeric_timeframes": "2D, 3D, 4D, 5D, 2T",
+      "complete_7_of_7": false
+    },
+    {
+      "symbol": "PEPE",
+      "source_found_count": 7,
+      "numeric_ready_count": 2,
+      "source_found_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
+      "numeric_ready_timeframes": "1D, 1T",
+      "missing_numeric_timeframes": "2D, 3D, 4D, 5D, 2T",
+      "complete_7_of_7": false
+    },
+    {
+      "symbol": "SPX6900",
+      "source_found_count": 7,
+      "numeric_ready_count": 2,
+      "source_found_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
+      "numeric_ready_timeframes": "1D, 1T",
+      "missing_numeric_timeframes": "2D, 3D, 4D, 5D, 2T",
+      "complete_7_of_7": false
+    },
+    {
+      "symbol": "XRP",
+      "source_found_count": 7,
+      "numeric_ready_count": 0,
+      "source_found_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
+      "numeric_ready_timeframes": "BRAK",
+      "missing_numeric_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
+      "complete_7_of_7": false
+    },
+    {
+      "symbol": "XLM",
+      "source_found_count": 2,
+      "numeric_ready_count": 0,
+      "source_found_timeframes": "1D, 1T",
+      "numeric_ready_timeframes": "BRAK",
+      "missing_numeric_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
+      "complete_7_of_7": false
+    },
+    {
+      "symbol": "HBAR",
+      "source_found_count": 7,
+      "numeric_ready_count": 0,
+      "source_found_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
+      "numeric_ready_timeframes": "BRAK",
+      "missing_numeric_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
+      "complete_7_of_7": false
+    }
+  ]
+}
