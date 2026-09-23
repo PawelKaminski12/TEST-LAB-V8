@@ -1,0 +1,311 @@
+name: TEST LAB V8 Crypto Data Hub
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '20 5 * * *'
+  push:
+    paths:
+      - '.github/workflows/test-lab-v8-crypto-data-hub.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-crypto-data-hub:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install --quiet pandas beautifulsoup4 lxml
+
+      - name: Build crypto data hub
+        run: |
+          python - <<'PY'
+          import csv, io, json, math, os, re, urllib.request, zipfile
+          from datetime import date, datetime, timedelta, timezone
+          from pathlib import Path
+          import pandas as pd
+
+          OUT=Path('crypto_data_hub')
+          OUT.mkdir(exist_ok=True)
+          ART=Path('crypto_data_hub_artifact')
+          ART.mkdir(exist_ok=True)
+          UA={'User-Agent':'TEST-LAB-V8-CRYPTO-DATA-HUB/7A'}
+          now=datetime.now(timezone.utc)
+          target=now.date()-timedelta(days=1)
+
+          def get_bytes(url,timeout=60):
+              req=urllib.request.Request(url,headers=UA)
+              with urllib.request.urlopen(req,timeout=timeout) as r:
+                  return r.read()
+
+          def get_json(url):
+              return json.loads(get_bytes(url).decode('utf-8'))
+
+          def ts_to_date(raw):
+              x=int(raw)
+              sec=x/1_000_000 if x>10_000_000_000_000 else x/1_000
+              return datetime.fromtimestamp(sec,tz=timezone.utc).date()
+
+          def next_month(d):
+              return date(d.year+1,1,1) if d.month==12 else date(d.year,d.month+1,1)
+
+          def parse_binance_zip(blob):
+              rows=[]
+              with zipfile.ZipFile(io.BytesIO(blob)) as z:
+                  text=z.read(z.namelist()[0]).decode('utf-8')
+              for rr in csv.reader(io.StringIO(text)):
+                  if not rr or not rr[0].isdigit(): continue
+                  d=ts_to_date(rr[0])
+                  rows.append([d.isoformat(),float(rr[1]),float(rr[2]),float(rr[3]),float(rr[4]),float(rr[5])])
+              return rows
+
+          def fetch_symbol(sym,months_back=15):
+              start=(target.replace(day=1)-timedelta(days=months_back*31)).replace(day=1)
+              cur=start
+              current_month=target.replace(day=1)
+              rows={}
+              monthly_ok=0; monthly_skip=0; daily_ok=0; daily_skip=0
+              while cur < current_month:
+                  ym=f'{cur.year:04d}-{cur.month:02d}'
+                  url=f'https://data.binance.vision/data/spot/monthly/klines/{sym}/1d/{sym}-1d-{ym}.zip'
+                  try:
+                      for r in parse_binance_zip(get_bytes(url)):
+                          rows[r[0]]=r
+                      monthly_ok+=1
+                  except Exception as e:
+                      monthly_skip+=1
+                      print('MONTH_SKIP',sym,ym,repr(e))
+                  cur=next_month(cur)
+              d=current_month
+              while d<=target:
+                  url=f'https://data.binance.vision/data/spot/daily/klines/{sym}/1d/{sym}-1d-{d.isoformat()}.zip'
+                  try:
+                      for r in parse_binance_zip(get_bytes(url)):
+                          rows[r[0]]=r
+                      daily_ok+=1
+                  except Exception as e:
+                      daily_skip+=1
+                      print('DAY_SKIP',sym,d.isoformat(),repr(e))
+                  d+=timedelta(days=1)
+              out=pd.DataFrame([rows[k] for k in sorted(rows)],columns=['Date','Open','High','Low','Close','Volume'])
+              return out, {'rows':len(out),'start':out.iloc[0]['Date'] if len(out) else None,'end':out.iloc[-1]['Date'] if len(out) else None,
+                           'monthly_ok':monthly_ok,'monthly_skip':monthly_skip,'daily_ok':daily_ok,'daily_skip':daily_skip}
+
+          symbols=['BTCUSDT','ETHUSDT','SOLUSDT','LINKUSDT','AAVEUSDT','HBARUSDT','ONDOUSDT']
+          dfs={}; binance_meta={}
+          for sym in symbols:
+              df,meta=fetch_symbol(sym)
+              if len(df)<200:
+                  raise SystemExit(f'{sym}: insufficient rows {len(df)}')
+              dfs[sym]=df
+              binance_meta[sym]=meta
+              df.to_csv(ART/f'{sym}_1D.csv',index=False)
+              print(sym,meta)
+
+          def sma(s,n): return s.rolling(n).mean()
+          def slope_up(s,n=20):
+              m=sma(s,50)
+              return bool(len(m)>n and pd.notna(m.iloc[-1]) and pd.notna(m.iloc[-1-n]) and m.iloc[-1]>m.iloc[-1-n])
+
+          # align by date and compute relative-strength ratios from USDT closes
+          base=dfs['BTCUSDT'][['Date','Close']].rename(columns={'Close':'BTC'})
+          for sym in ['ETHUSDT','SOLUSDT','LINKUSDT','AAVEUSDT','HBARUSDT','ONDOUSDT']:
+              base=base.merge(dfs[sym][['Date','Close']].rename(columns={'Close':sym.replace('USDT','')}),on='Date',how='inner')
+          for a in ['ETH','SOL','LINK','AAVE','HBAR','ONDO']:
+              base[f'{a}_BTC']=base[a]/base['BTC']
+              base[f'{a}_ETH']=base[a]/base['ETH']
+          base.to_csv(ART/'RATIOS.csv',index=False)
+
+          ratios={}
+          for a in ['ETH','SOL','LINK','AAVE','HBAR','ONDO']:
+              for quote in ['BTC','ETH']:
+                  if a==quote: continue
+                  col=f'{a}_{quote}'
+                  s=base[col]
+                  m50=sma(s,50)
+                  ratios[col]={
+                    'value':float(s.iloc[-1]),
+                    'above_sma50':bool(s.iloc[-1]>m50.iloc[-1]),
+                    'sma50_rising_20d':slope_up(s,20),
+                    'change_20d_pct':float((s.iloc[-1]/s.iloc[-21]-1)*100) if len(s)>21 else None
+                  }
+
+          # CoinGecko current market-cap layer: explicit V8_EQ labels until validated against TradingView synthetics.
+          cg_global=get_json('https://api.coingecko.com/api/v3/global')['data']
+          cg_markets=get_json('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false')
+          total=float(cg_global['total_market_cap']['usd'])
+          btc_dom=float(cg_global['market_cap_percentage']['btc'])
+          eth_dom=float(cg_global['market_cap_percentage']['eth'])
+          btc_mc=next(float(x['market_cap']) for x in cg_markets if x['id']=='bitcoin')
+          eth_mc=next(float(x['market_cap']) for x in cg_markets if x['id']=='ethereum')
+          top10_sum=sum(float(x['market_cap'] or 0) for x in cg_markets[:10])
+          total3_eq=max(0.0,total-btc_mc-eth_mc)
+          others_eq=max(0.0,total-top10_sum)
+          others_btc_eq=others_eq/btc_mc if btc_mc else None
+
+          # DefiLlama stablecoin liquidity history
+          stable_hist=get_json('https://stablecoins.llama.fi/stablecoincharts/all')
+          sh=[]
+          for x in stable_hist:
+              try:
+                  dt=datetime.fromtimestamp(int(x['date']),tz=timezone.utc).date()
+                  val=float(x['totalCirculatingUSD']['peggedUSD'])
+                  sh.append((dt,val))
+              except Exception:
+                  pass
+          sh=sorted(sh)
+          def ago(days):
+              cutoff=target-timedelta(days=days)
+              cand=[v for d,v in sh if d<=cutoff]
+              return cand[-1] if cand else None
+          stable_now=sh[-1][1] if sh else None
+          stable_liq={
+              'market_cap_usd':stable_now,
+              'change_1d_pct':((stable_now/ago(1)-1)*100) if stable_now and ago(1) else None,
+              'change_7d_pct':((stable_now/ago(7)-1)*100) if stable_now and ago(7) else None,
+              'change_30d_pct':((stable_now/ago(30)-1)*100) if stable_now and ago(30) else None,
+          }
+
+          # Farside ETF flows: parse automatic tables; choose table containing Date-like first column and Total-like last column.
+          def parse_num(v):
+              if pd.isna(v): return None
+              s=str(v).strip().replace(',','').replace('$','').replace('−','-')
+              if s in ('','-','nan','N/A'): return 0.0
+              neg=s.startswith('(') and s.endswith(')')
+              s=s.strip('()')
+              m=re.search(r'-?\d+(?:\.\d+)?',s)
+              if not m: return None
+              x=float(m.group())
+              return -abs(x) if neg else x
+
+          def parse_farside(url,label):
+              tables=pd.read_html(url)
+              best=None
+              for t in tables:
+                  if len(t)<20 or t.shape[1]<3: continue
+                  c0=t.iloc[:,0].astype(str)
+                  parsed=pd.to_datetime(c0,errors='coerce',dayfirst=True)
+                  if parsed.notna().sum()>=10:
+                      best=t.copy(); break
+              if best is None:
+                  raise RuntimeError(f'{label}: no ETF table found')
+              dates=pd.to_datetime(best.iloc[:,0],errors='coerce',dayfirst=True)
+              total_col=best.columns[-1]
+              vals=best.iloc[:,-1].map(parse_num)
+              out=pd.DataFrame({'Date':dates,'Total_USDm':vals}).dropna(subset=['Date','Total_USDm'])
+              out=out.sort_values('Date').drop_duplicates('Date',keep='last')
+              out.to_csv(ART/f'{label}_ETF_FLOWS.csv',index=False)
+              s=out['Total_USDm']
+              last=float(s.iloc[-1]) if len(s) else None
+              sum5=float(s.tail(5).sum()) if len(s) else None
+              sum20=float(s.tail(20).sum()) if len(s) else None
+              prev5=float(s.iloc[-10:-5].sum()) if len(s)>=10 else None
+              return {
+                'last_date':out.iloc[-1]['Date'].date().isoformat() if len(out) else None,
+                'flow_1d_usdm':last,'flow_5d_usdm':sum5,'flow_20d_usdm':sum20,
+                'acceleration_5d_vs_prev5_usdm':(sum5-prev5) if prev5 is not None else None,
+                'rows':int(len(out)), 'source':url
+              }
+
+          btc_etf=parse_farside('https://farside.co.uk/bitcoin-etf-flow-all-data/','BTC')
+          eth_etf=parse_farside('https://farside.co.uk/eth/','ETH')
+
+          # BTC regime snapshot from Binance
+          b=dfs['BTCUSDT'].copy(); e=dfs['ETHUSDT'].copy()
+          def regime(df):
+              c=df['Close']
+              s50=c.rolling(50).mean(); s200=c.rolling(200).mean()
+              hi365=c.rolling(365,min_periods=1).max()
+              return {
+                'close':float(c.iloc[-1]),
+                'above_sma50':bool(c.iloc[-1]>s50.iloc[-1]),
+                'above_sma200':bool(c.iloc[-1]>s200.iloc[-1]),
+                'sma50_rising_20d':bool(s50.iloc[-1]>s50.iloc[-21]),
+                'drawdown_365d_pct':float((c.iloc[-1]/hi365.iloc[-1]-1)*100),
+                'return_20d_pct':float((c.iloc[-1]/c.iloc[-21]-1)*100),
+              }
+          btc_reg=regime(b); eth_reg=regime(e)
+
+          qa={
+            'binance_all_end_target':all(m['end']==target.isoformat() for m in binance_meta.values()),
+            'binance_min_rows':min(m['rows'] for m in binance_meta.values()),
+            'btc_etf_rows':btc_etf['rows'],'eth_etf_rows':eth_etf['rows'],
+            'coingecko_total_positive':total>0,
+            'stablecoin_history_rows':len(sh),
+          }
+          qa['PASS']=bool(qa['binance_all_end_target'] and qa['binance_min_rows']>=200 and qa['btc_etf_rows']>100 and qa['eth_etf_rows']>100 and qa['coingecko_total_positive'] and qa['stablecoin_history_rows']>100)
+
+          snapshot={
+            'generated_at_utc':now.isoformat(),
+            'target_date':target.isoformat(),
+            'sources':{
+              'prices':'Binance Vision spot 1D archives',
+              'market_cap':'CoinGecko /global + /coins/markets',
+              'etf_flows':'Farside Investors',
+              'stablecoin_liquidity':'DefiLlama stablecoins API'
+            },
+            'btc_regime':btc_reg,
+            'eth_regime':eth_reg,
+            'relative_strength':ratios,
+            'market_rotation':{
+              'btc_dominance_pct':btc_dom,
+              'eth_dominance_pct':eth_dom,
+              'V8_TOTAL3_EQ_usd':total3_eq,
+              'V8_OTHERS_EQ_usd':others_eq,
+              'V8_OTHERS_BTC_EQ_ratio':others_btc_eq,
+              'note':'V8_EQ series are CoinGecko equivalents, not yet certified 1:1 with TradingView TOTAL3/OTHERS.'
+            },
+            'etf_flows':{'BTC':btc_etf,'ETH':eth_etf},
+            'stablecoin_liquidity':stable_liq,
+            'qa':qa
+          }
+          (OUT/'LATEST_SNAPSHOT.json').write_text(json.dumps(snapshot,indent=2),encoding='utf-8')
+          (ART/'LATEST_SNAPSHOT.json').write_text(json.dumps(snapshot,indent=2),encoding='utf-8')
+          (ART/'QA.json').write_text(json.dumps(qa,indent=2),encoding='utf-8')
+
+          # append compact persistent history in repo
+          hist_path=OUT/'HISTORY.csv'
+          row={
+            'date':target.isoformat(),
+            'btc_close':btc_reg['close'],'eth_close':eth_reg['close'],
+            'btc_dom_pct':btc_dom,'eth_dom_pct':eth_dom,
+            'v8_total3_eq_usd':total3_eq,'v8_others_btc_eq':others_btc_eq,
+            'btc_etf_1d_usdm':btc_etf['flow_1d_usdm'],'btc_etf_5d_usdm':btc_etf['flow_5d_usdm'],'btc_etf_20d_usdm':btc_etf['flow_20d_usdm'],
+            'eth_etf_1d_usdm':eth_etf['flow_1d_usdm'],'eth_etf_5d_usdm':eth_etf['flow_5d_usdm'],'eth_etf_20d_usdm':eth_etf['flow_20d_usdm'],
+            'stablecoin_mcap_usd':stable_now,'stablecoin_7d_pct':stable_liq['change_7d_pct'],
+            'qa_pass':qa['PASS']
+          }
+          new=pd.DataFrame([row])
+          if hist_path.exists():
+              old=pd.read_csv(hist_path)
+              new=pd.concat([old,new],ignore_index=True).drop_duplicates('date',keep='last').sort_values('date')
+          new.to_csv(hist_path,index=False)
+          print(json.dumps(snapshot,indent=2)[:12000])
+          if not qa['PASS']:
+              raise SystemExit('CRYPTO DATA HUB QA FAILED')
+          PY
+
+      - name: Commit latest snapshot and compact history
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add crypto_data_hub/LATEST_SNAPSHOT.json crypto_data_hub/HISTORY.csv
+          git diff --cached --quiet || git commit -m 'Update V8 crypto data hub snapshot'
+          git push
+
+      - name: Upload detailed crypto data hub artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TEST-LAB-V8-CRYPTO-DATA-HUB
+          path: crypto_data_hub_artifact/
+          if-no-files-found: error
+          retention-days: 14
