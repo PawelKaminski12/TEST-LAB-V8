@@ -71,7 +71,7 @@ jobs:
                   assets.append({'symbol':sym,'qa':'FAIL','reason':'brak zwalidowanych danych 1D'})
                   continue
               d1=(a.get('timeframes') or {}).get('1D') or {}
-              required=['close','trend_score_0_4','fomo_score_0_10','volume_ratio_vs_20','fresh_breakout_20d','retest_confirmed_10d','return_20bars_pct']
+              required=['close','trend_score_0_4','fomo_score_0_10','volume_ratio_vs_20','breakout_20','retest_10','return_20bars_pct']
               missing=[k for k in required if d1.get(k) is None]
               if missing:
                   assets.append({'symbol':sym,'qa':'FAIL','reason':'brak: '+','.join(missing)})
