@@ -1,0 +1,160 @@
+name: TEST LAB V8 Dual Cockpit
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json'
+      - 'tactical_engine/TACTICAL_ENGINE.json'
+      - 'market_reader/TACTICAL_CONFLUENCE.csv'
+      - '.github/workflows/test-lab-v8-dual-cockpit.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-dual-cockpit-writes
+  cancel-in-progress: false
+
+jobs:
+  build-dual-cockpit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install --quiet pandas
+
+      - name: Build compact dual-engine cockpit
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from datetime import datetime, timezone
+          import pandas as pd
+
+          long_path=Path('crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json')
+          tact_path=Path('tactical_engine/TACTICAL_ENGINE.json')
+          conf_path=Path('market_reader/TACTICAL_CONFLUENCE.csv')
+          out_dir=Path('google_sheets')
+          out_dir.mkdir(exist_ok=True)
+
+          if not long_path.exists(): raise SystemExit('Missing LONG engine checkpoint')
+          if not tact_path.exists(): raise SystemExit('Missing TACTICAL engine output')
+
+          lng=json.loads(long_path.read_text(encoding='utf-8'))
+          tac=json.loads(tact_path.read_text(encoding='utf-8'))
+          conf=pd.read_csv(conf_path) if conf_path.exists() else pd.DataFrame()
+
+          long_map={a['symbol']:a for a in lng.get('assets',[]) if a.get('readiness_status')=='PRODUCTION_DATA_READY'}
+          tac_map={a['symbol']:a for a in tac.get('assets',[]) if a.get('target_scope')=='PRODUCTION' and a.get('qa')=='PASS'}
+          conf_map={}
+          if len(conf) and 'symbol' in conf.columns:
+              conf_map={str(r['symbol']):r.to_dict() for _,r in conf.iterrows()}
+
+          symbols=sorted(set(long_map) | set(tac_map))
+          rows=[]
+
+          positive_long={'KUP DCA','KUP TRENDOWO','KUP PO RETEŚCIE'}
+          caution_long={'SPRAWDŹ'}
+          positive_tac={'LONG_SETUP_RETEST','LONG_SETUP_WATCH','WATCH_BREAKOUT','EXTERNAL_CONFIRMATION_POSITIVE'}
+          negative_tac={'NO_TRADE','NO_TRADE_FOMO','EXTERNAL_CONFLICT'}
+
+          for sym in symbols:
+              L=long_map.get(sym,{})
+              T=tac_map.get(sym,{})
+              C=conf_map.get(sym,{})
+
+              tfs=T.get('timeframes',{}) if isinstance(T,dict) else {}
+              price=(tfs.get('1H') or {}).get('close') or (tfs.get('4H') or {}).get('close') or (tfs.get('1D') or {}).get('close')
+              long_status=L.get('decision','DATA_PENDING')
+              tactical_internal=T.get('tactical_status','DATA_PENDING')
+              tactical_status=C.get('combined_status') if C and pd.notna(C.get('combined_status')) else tactical_internal
+              tactical_score=C.get('combined_score') if C and pd.notna(C.get('combined_score')) else T.get('tactical_score_0_10')
+              risk=T.get('exit_risk_0_10')
+
+              lpos=long_status in positive_long
+              lwatch=long_status in caution_long
+              tpos=tactical_status in positive_tac or tactical_internal in positive_tac
+              tneg=tactical_status in negative_tac or tactical_internal in negative_tac
+
+              if lpos and tpos:
+                  agreement='2/2 POSITIVE'
+              elif tpos and not lpos:
+                  agreement='TACTICAL ONLY'
+              elif lpos and not tpos:
+                  agreement='LONG ONLY'
+              elif (lwatch and tneg) or (long_status in {'NIE DOKŁADAJ','OCHRONA KAPITAŁU'} and tpos):
+                  agreement='CONFLICT'
+              else:
+                  agreement='NEUTRAL'
+
+              alerts=[]
+              if risk is not None and float(risk)>=7: alerts.append('RISK HIGH')
+              if tactical_internal=='NO_TRADE_FOMO': alerts.append('FOMO BLOCK')
+              z=T.get('zone_context') or {}
+              if z.get('in_supply') is True: alerts.append('IN SUPPLY')
+              if C and C.get('combined_status')=='EXTERNAL_CONFLICT': alerts.append('MR CONFLICT')
+
+              rows.append({
+                  'AKTYWO':sym,
+                  'CENA':price,
+                  'LONG':long_status,
+                  'TACTICAL':tactical_status,
+                  'TACTICAL_SCORE':tactical_score,
+                  'RYZYKO_0_10':risk,
+                  'ZGODNOSC':agreement,
+                  'ALERT':' | '.join(alerts),
+                  'LONG_DCA1':L.get('dca1'),
+                  'LONG_DCA2':L.get('dca2'),
+                  'LONG_DCA3':L.get('dca3'),
+                  'DATA_QUALITY':L.get('data_quality'),
+                  'MARKET_PHASE':L.get('market_phase'),
+                  'ROTATION':L.get('rotation_label'),
+                  'TACTICAL_INTERNAL':tactical_internal,
+                  'TACTICAL_REASON':T.get('reason'),
+                  'IN_SUPPLY':z.get('in_supply'),
+                  'IN_DEMAND':z.get('in_demand'),
+                  'RESEARCH_ONLY':True
+              })
+
+          df=pd.DataFrame(rows)
+          panel_cols=['AKTYWO','CENA','LONG','TACTICAL','RYZYKO_0_10','ZGODNOSC','ALERT']
+          machine_cols=[c for c in df.columns if c not in panel_cols]
+          df[panel_cols].to_csv(out_dir/'DUAL_PANEL.csv',index=False)
+          df[panel_cols+machine_cols].to_csv(out_dir/'DUAL_ENGINE_MACHINE_ROOM.csv',index=False)
+
+          payload={
+              'generated_at_utc':datetime.now(timezone.utc).isoformat(),
+              'engine':'V8_DUAL_COCKPIT_v0.1',
+              'purpose':'compact Google Sheets decision panel fed by separate LONG and TACTICAL engines',
+              'panel_columns':panel_cols,
+              'machine_room_hidden_from_panel':machine_cols,
+              'production_assets':len(rows),
+              'rows':rows,
+              'rules':{
+                  'single_sheet_workbook_two_independent_portfolios':True,
+                  'long_and_tactical_capital_separate':True,
+                  'panel_is_summary_not_engine_room':True,
+                  'no_automatic_execution':True,
+                  'research_only':True,
+                  'v7_untouched':True
+              }
+          }
+          (out_dir/'DUAL_COCKPIT.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False),encoding='utf-8')
+          print(df[panel_cols].to_string(index=False))
+          if len(rows)!=4:
+              raise SystemExit(f'Expected 4 production assets, got {len(rows)}')
+          PY
+
+      - name: Commit cockpit outputs
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add google_sheets/DUAL_PANEL.csv google_sheets/DUAL_ENGINE_MACHINE_ROOM.csv google_sheets/DUAL_COCKPIT.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update V8 compact dual-engine cockpit'
+            git pull --rebase origin main
+            git push
+          fi
