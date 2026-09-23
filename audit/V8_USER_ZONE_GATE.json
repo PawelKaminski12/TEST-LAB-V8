@@ -1,0 +1,47 @@
+{
+  "generated_at_utc": "2026-09-23T16:32:26.562174+00:00",
+  "engine": "V8_USER_ZONE_GATE_v1.0",
+  "assets": {
+    "AAVE": {
+      "confirmed_rows": 0,
+      "confirmed_timeframes": [],
+      "missing_timeframes": [
+        "1D",
+        "2D",
+        "3D",
+        "4D",
+        "5D",
+        "1T",
+        "2T"
+      ],
+      "errors": [],
+      "complete": false,
+      "status_pl": "CZEKA NA POTWIERDZONE STREFY UŻYTKOWNIKA"
+    },
+    "HBAR": {
+      "confirmed_rows": 0,
+      "confirmed_timeframes": [],
+      "missing_timeframes": [
+        "1D",
+        "2D",
+        "3D",
+        "4D",
+        "5D",
+        "1T",
+        "2T"
+      ],
+      "errors": [],
+      "complete": false,
+      "status_pl": "CZEKA NA POTWIERDZONE STREFY UŻYTKOWNIKA"
+    }
+  },
+  "merge_ready": false,
+  "merged": false,
+  "safety": {
+    "never_invent_zones": true,
+    "only_confirmed_rows_can_merge": true,
+    "requires_all_7_timeframes_per_asset": true,
+    "execution_connected": false
+  },
+  "status_pl": "BRAK SCALENIA — CZEKAJĄ NA POTWIERDZONE STREFY AAVE I HBAR"
+}
