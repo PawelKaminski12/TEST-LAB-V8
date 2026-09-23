@@ -43,7 +43,7 @@ jobs:
               "return 'MOCNY'",
               "return 'OSTRZEŻENIE'",
               "if (!signals.length) return;",
-              'execution',
+              'Nie zmienia logiki LONG ani TACTICAL',
           ]
           missing = [x for x in required if x not in s]
           forbidden = ['placeOrder(', 'createOrder(', 'broker.', 'AUTO_EXECUTION = ON']
