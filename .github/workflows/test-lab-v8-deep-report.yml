@@ -1,0 +1,75 @@
+name: TEST LAB V8 Deep Observation Report
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '25 */6 * * *'
+  push:
+    paths:
+      - 'lab/LAB_REPORT.json'
+      - 'lab/LAB_CHECKPOINTS.csv'
+      - 'scripts/v8_lab_deep_report.py'
+      - '.github/workflows/test-lab-v8-deep-report.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-lab-deep-report-writes
+  cancel-in-progress: false
+
+jobs:
+  build-deep-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz najnowszy projekt
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Przygotuj Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Zainstaluj biblioteki
+        run: pip install --quiet pandas
+
+      - name: Zbuduj polski raport głębokiej obserwacji
+        run: python scripts/v8_lab_deep_report.py
+
+      - name: Sprawdź poprawność i bezpieczeństwo raportu
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('lab/LAB_DEEP_REPORT.json')
+          assert p.exists()
+          x=json.loads(p.read_text(encoding='utf-8'))
+          assert x.get('engine')=='V8_LAB_DEEP_REPORT_v0.1'
+          rules=x.get('rules') or {}
+          assert rules.get('uses_immutable_canonical_checkpoints') is True
+          assert rules.get('baseline_prefers_D0') is True
+          assert rules.get('user_language_polish') is True
+          assert rules.get('portfolio_connection') is False
+          assert rules.get('execution_connection') is False
+          assert len(x.get('assets') or []) >= 1
+          md=Path('lab/LAB_DEEP_REPORT.md').read_text(encoding='utf-8')
+          for forbidden in ['PARTIAL','DATA_READY','STRONG_CONTEXT','MIXED_CONTEXT','TRACKING']:
+              assert forbidden not in md, forbidden
+          print('Raport głębokiej obserwacji: POPRAWNY')
+          PY
+
+      - name: Zapisz wyniki
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add lab/LAB_DEEP_REPORT.json lab/LAB_DEEP_REPORT.csv lab/LAB_DEEP_REPORT.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Update V8 LAB deep observation report'
+          for attempt in 1 2 3; do
+            if git pull --rebase origin main && git push; then exit 0; fi
+            sleep $((attempt * 3))
+          done
+          exit 1
