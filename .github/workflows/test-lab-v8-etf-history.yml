@@ -1,0 +1,88 @@
+name: TEST LAB V8 ETF BTC ETH History
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '35 * * * *'
+  push:
+    paths:
+      - 'scripts/v8_etf_history.py'
+      - '.github/workflows/test-lab-v8-etf-history.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-etf-btc-eth-history
+  cancel-in-progress: false
+
+jobs:
+  build-etf-history:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz najnowszy projekt
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Przygotuj Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Zainstaluj biblioteki
+        run: pip install --quiet pandas requests
+
+      - name: Zbuduj historię ETF BTC i ETH
+        run: python scripts/v8_etf_history.py
+
+      - name: Sprawdź historię i bezpieczeństwo
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import pandas as pd
+
+          c=Path('institutional_data_hub/ETF_BTC_ETH_HISTORY.csv')
+          j=Path('institutional_data_hub/ETF_BTC_ETH_HISTORY_STATUS.json')
+          m=Path('institutional_data_hub/ETF_BTC_ETH_HISTORY_LATEST.md')
+          assert c.exists() and j.exists() and m.exists()
+          df=pd.read_csv(c)
+          assert 20 <= len(df) <= 120
+          assert {'Date','BTC_MLN_USD','ETH_MLN_USD','WSPOLNY_PRZEPLYW_MLN_USD'}.issubset(df.columns)
+          x=json.loads(j.read_text(encoding='utf-8'))
+          assert x['engine']=='V8_ETF_HISTORY_v1.0'
+          assert x['rules']['closed_days_only'] is True
+          assert x['rules']['today_excluded_until_next_day'] is True
+          assert x['rules']['execution_connected'] is False
+          for a in ['BTC','ETH']:
+              z=x[a]
+              assert z['last_date']
+              assert z['streak']['days'] >= 1
+              assert z['positive_days_20'] + z['negative_days_20'] <= 20
+          txt=m.read_text(encoding='utf-8')
+          assert 'HISTORIA ETF BTC / ETH' in txt
+          assert 'wyłącznie zakończone dni ETF' in txt
+          print('Historia ETF BTC/ETH: sprawdzona poprawnie')
+          PY
+
+      - name: Zapisz historię bez konfliktu z innymi procesami
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          mkdir -p /tmp/etfhist
+          cp institutional_data_hub/ETF_BTC_ETH_HISTORY.csv institutional_data_hub/ETF_BTC_ETH_HISTORY_STATUS.json institutional_data_hub/ETF_BTC_ETH_HISTORY_LATEST.md /tmp/etfhist/
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            mkdir -p institutional_data_hub
+            cp /tmp/etfhist/ETF_BTC_ETH_HISTORY.csv /tmp/etfhist/ETF_BTC_ETH_HISTORY_STATUS.json /tmp/etfhist/ETF_BTC_ETH_HISTORY_LATEST.md institutional_data_hub/
+            git add institutional_data_hub/ETF_BTC_ETH_HISTORY.csv institutional_data_hub/ETF_BTC_ETH_HISTORY_STATUS.json institutional_data_hub/ETF_BTC_ETH_HISTORY_LATEST.md
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Update V8 BTC ETH ETF history'
+            if git push origin main; then exit 0; fi
+            echo "Konflikt zapisu — ponawiam próbę $attempt"
+            sleep $((attempt * 3))
+          done
+          exit 1
