@@ -1,0 +1,319 @@
+name: TEST LAB V8 Tactical Engine
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '15 */4 * * *'
+  push:
+    paths:
+      - 'config/tactical_universe.csv'
+      - '.github/workflows/test-lab-v8-tactical-engine.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-tactical-engine-writes
+  cancel-in-progress: false
+
+jobs:
+  build-tactical-engine:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install --quiet pandas requests numpy
+
+      - name: Build tactical engine
+        run: |
+          python - <<'PY'
+          import json, math, time
+          from pathlib import Path
+          from datetime import datetime, timezone
+          import numpy as np
+          import pandas as pd
+          import requests
+
+          ROOT=Path('tactical_engine')
+          ROOT.mkdir(exist_ok=True)
+          CFG=Path('config/tactical_universe.csv')
+          cfg=pd.read_csv(CFG)
+          cfg=cfg[cfg['enabled'].astype(str).str.lower().eq('true')].copy()
+
+          BASES=[
+              'https://data-api.binance.vision/api/v3/klines',
+              'https://api.binance.com/api/v3/klines'
+          ]
+          INTERVALS={'1H':'1h','4H':'4h','1D':'1d'}
+          LIMITS={'1H':1000,'4H':1000,'1D':500}
+
+          def fetch_klines(pair, interval, limit):
+              last_err=None
+              for base in BASES:
+                  try:
+                      r=requests.get(base,params={'symbol':pair,'interval':interval,'limit':limit},timeout=30)
+                      r.raise_for_status()
+                      data=r.json()
+                      if not isinstance(data,list) or len(data)<100:
+                          raise RuntimeError(f'bad response rows={len(data) if isinstance(data,list) else "na"}')
+                      cols=['open_time','open','high','low','close','volume','close_time','qav','trades','tb_base','tb_quote','ignore']
+                      df=pd.DataFrame(data,columns=cols)
+                      for c in ['open','high','low','close','volume']:
+                          df[c]=pd.to_numeric(df[c],errors='coerce')
+                      df['open_time']=pd.to_datetime(df['open_time'],unit='ms',utc=True)
+                      df['close_time']=pd.to_datetime(df['close_time'],unit='ms',utc=True)
+                      df=df[['open_time','close_time','open','high','low','close','volume']].dropna().drop_duplicates('open_time').sort_values('open_time').reset_index(drop=True)
+                      if len(df)<100: raise RuntimeError('too few clean rows')
+                      return df, base
+                  except Exception as e:
+                      last_err=e
+              raise RuntimeError(f'{pair} {interval}: {last_err}')
+
+          def ema(s,n): return s.ewm(span=n,adjust=False,min_periods=n).mean()
+
+          def rsi_wilder(close,n=14):
+              d=close.diff()
+              up=d.clip(lower=0)
+              dn=(-d.clip(upper=0))
+              au=up.ewm(alpha=1/n,adjust=False,min_periods=n).mean()
+              ad=dn.ewm(alpha=1/n,adjust=False,min_periods=n).mean()
+              rs=au/ad.replace(0,np.nan)
+              out=100-(100/(1+rs))
+              return out.fillna(100).where(~((au==0)&(ad==0)),50)
+
+          def atr(df,n=14):
+              pc=df['close'].shift(1)
+              tr=pd.concat([(df['high']-df['low']).abs(),(df['high']-pc).abs(),(df['low']-pc).abs()],axis=1).max(axis=1)
+              return tr.ewm(alpha=1/n,adjust=False,min_periods=n).mean()
+
+          def enrich(df):
+              x=df.copy()
+              x['ema20']=ema(x['close'],20)
+              x['ema50']=ema(x['close'],50)
+              x['ema200']=ema(x['close'],200)
+              x['macd']=ema(x['close'],12)-ema(x['close'],26)
+              x['macd_signal']=ema(x['macd'],9)
+              x['macd_hist']=x['macd']-x['macd_signal']
+              x['rsi14']=rsi_wilder(x['close'],14)
+              x['atr14']=atr(x,14)
+              x['vol_sma20']=x['volume'].rolling(20,min_periods=20).mean()
+              x['vol_ratio']=x['volume']/x['vol_sma20']
+              x['high20_prev']=x['high'].shift(1).rolling(20,min_periods=20).max()
+              x['low20_prev']=x['low'].shift(1).rolling(20,min_periods=20).min()
+              x['ret20']=x['close'].pct_change(20)*100
+              x['ret5']=x['close'].pct_change(5)*100
+              x['macd_hist_delta']=x['macd_hist'].diff()
+              return x
+
+          def bar_state(x,label):
+              r=x.iloc[-1]
+              p=x.iloc[-2]
+              close=float(r.close)
+              a=float(r.atr14) if pd.notna(r.atr14) and r.atr14>0 else None
+              e20=float(r.ema20) if pd.notna(r.ema20) else None
+              e50=float(r.ema50) if pd.notna(r.ema50) else None
+              e200=float(r.ema200) if pd.notna(r.ema200) else None
+              macd=float(r.macd) if pd.notna(r.macd) else None
+              sig=float(r.macd_signal) if pd.notna(r.macd_signal) else None
+              hist=float(r.macd_hist) if pd.notna(r.macd_hist) else None
+              hist_prev=float(p.macd_hist) if pd.notna(p.macd_hist) else None
+              rv=float(r.rsi14) if pd.notna(r.rsi14) else None
+              vr=float(r.vol_ratio) if pd.notna(r.vol_ratio) else None
+              h20=float(r.high20_prev) if pd.notna(r.high20_prev) else None
+              l20=float(r.low20_prev) if pd.notna(r.low20_prev) else None
+
+              trend=0
+              trend += int(e20 is not None and close>e20)
+              trend += int(e50 is not None and close>e50)
+              trend += int(e20 is not None and e50 is not None and e20>e50)
+              trend += int(e200 is not None and close>e200)
+
+              macd_score=0
+              if macd is not None and sig is not None:
+                  macd_score += int(macd>sig)
+                  macd_score += int(hist is not None and hist_prev is not None and hist>hist_prev)
+
+              rsi_score=0
+              if rv is not None:
+                  if 50<=rv<=70: rsi_score=2
+                  elif 40<=rv<50 or 70<rv<=75: rsi_score=1
+
+              volume_score=0
+              if vr is not None:
+                  volume_score=2 if vr>=1.5 else 1 if vr>=1.0 else 0
+
+              breakout=bool(h20 is not None and close>h20)
+              breakdown=bool(l20 is not None and close<l20)
+
+              # breakout occurred in previous 10 completed bars and price retests that former resistance within 0.5 ATR
+              retest=False
+              breakout_level=None
+              if a:
+                  start=max(20,len(x)-11)
+                  for i in range(start,len(x)-1):
+                      rr=x.iloc[i]
+                      if pd.notna(rr.high20_prev) and float(rr.close)>float(rr.high20_prev):
+                          level=float(rr.high20_prev)
+                          after=x.iloc[i+1:]
+                          if len(after):
+                              touched=((after['low'] <= level+0.5*a) & (after['close'] >= level)).any()
+                              if touched:
+                                  retest=True; breakout_level=level
+
+              fomo=0
+              if rv is not None:
+                  if rv>=80: fomo+=4
+                  elif rv>=75: fomo+=3
+                  elif rv>=70: fomo+=2
+              if pd.notna(r.ret5):
+                  rr5=float(r.ret5)
+                  if rr5>=15: fomo+=3
+                  elif rr5>=10: fomo+=2
+                  elif rr5>=6: fomo+=1
+              if a and e20:
+                  ext=(close-e20)/a
+                  if ext>=3: fomo+=3
+                  elif ext>=2: fomo+=2
+                  elif ext>=1.5: fomo+=1
+              fomo=min(10,fomo)
+
+              if fomo>=8: fomo_label='HARD_BLOCK'
+              elif fomo>=6: fomo_label='RISK'
+              elif fomo>=4: fomo_label='WATCH'
+              else: fomo_label='NORMAL'
+
+              return {
+                  'timeframe':label,'close':close,'trend_score_0_4':int(trend),
+                  'macd':macd,'macd_signal':sig,'macd_hist':hist,'macd_score_0_2':int(macd_score),
+                  'rsi14':rv,'rsi_score_0_2':int(rsi_score),'volume_ratio_vs_20':vr,'volume_score_0_2':int(volume_score),
+                  'atr14':a,'breakout_20':breakout,'breakdown_20':breakdown,'retest_10':retest,'retest_level':breakout_level,
+                  'fomo_score_0_10':int(fomo),'fomo_label':fomo_label,'return_5bars_pct':float(r.ret5) if pd.notna(r.ret5) else None,
+                  'return_20bars_pct':float(r.ret20) if pd.notna(r.ret20) else None,
+                  'technical_confirmation_0_10':int(min(10,trend+macd_score+rsi_score+volume_score))
+              }
+
+          all_assets=[]
+          qa=[]
+          generated=datetime.now(timezone.utc).isoformat()
+
+          for _,row in cfg.iterrows():
+              sym=str(row['symbol']).upper().strip(); pair=str(row['pair']).upper().strip()
+              tf_states={}; sources={}; asset_ok=True; errs=[]
+              for label,bint in INTERVALS.items():
+                  try:
+                      raw,src=fetch_klines(pair,bint,LIMITS[label])
+                      enriched=enrich(raw)
+                      st=bar_state(enriched,label)
+                      st['rows']=int(len(enriched)); st['last_close_time_utc']=enriched.iloc[-1]['close_time'].isoformat()
+                      tf_states[label]=st; sources[label]=src
+                      raw.to_csv(ROOT/f'{pair}_{label}.csv',index=False)
+                  except Exception as e:
+                      asset_ok=False; errs.append(f'{label}:{e}')
+
+              if not asset_ok:
+                  all_assets.append({'symbol':sym,'pair':pair,'target_scope':row['target_scope'],'qa':'FAIL','errors':errs})
+                  qa.append({'symbol':sym,'PASS':False,'errors':' | '.join(errs)})
+                  continue
+
+              h1=tf_states['1H']; h4=tf_states['4H']; d1=tf_states['1D']
+
+              # 1D = regime, 4H = decision, 1H = timing
+              score=0
+              score += 2 if d1['trend_score_0_4']>=3 else 1 if d1['trend_score_0_4']>=2 else 0
+              score += 3 if h4['trend_score_0_4']>=3 and h4['macd_score_0_2']>=1 else 1 if h4['trend_score_0_4']>=2 else 0
+              score += 2 if h4['rsi14'] is not None and 45<=h4['rsi14']<=70 else 0
+              score += 1 if (h4['volume_ratio_vs_20'] or 0)>=1 else 0
+              score += 1 if h1['macd_score_0_2']>=1 else 0
+              score += 1 if h1['retest_10'] or h4['retest_10'] else 0
+              score=min(10,int(score))
+
+              hard_fomo=max(h1['fomo_score_0_10'],h4['fomo_score_0_10'])>=8
+              daily_bear=d1['trend_score_0_4']<=1
+              breakdown=h4['breakdown_20']
+
+              if hard_fomo:
+                  decision='NO_TRADE_FOMO'; reason='1H/4H FOMO hard block'
+              elif daily_bear or breakdown:
+                  decision='NO_TRADE'; reason='1D regime weak or 4H breakdown'
+              elif score>=8 and (h4['retest_10'] or h1['retest_10']):
+                  decision='LONG_SETUP_RETEST'; reason='Strong 1D/4H context with retest confirmation'
+              elif score>=8 and h4['breakout_20']:
+                  decision='WATCH_BREAKOUT'; reason='Strong setup but breakout needs hold/retest'
+              elif score>=7:
+                  decision='LONG_SETUP_WATCH'; reason='Positive multi-timeframe alignment; timing not fully confirmed'
+              elif score>=5:
+                  decision='WAIT'; reason='Mixed setup'
+              else:
+                  decision='NO_TRADE'; reason='Insufficient confirmation'
+
+              # tactical exit-risk overlay for an already-held tactical trade
+              exit_risk=0
+              exit_risk += 2 if h1['rsi14'] is not None and h1['rsi14']>=75 else 0
+              exit_risk += 2 if h4['rsi14'] is not None and h4['rsi14']>=75 else 0
+              exit_risk += 2 if h1['macd_hist'] is not None and h1['macd_hist']<0 else 0
+              exit_risk += 2 if h4['macd_hist'] is not None and h4['macd_hist']<0 else 0
+              exit_risk += 2 if h4['breakdown_20'] else 0
+              exit_risk=min(10,exit_risk)
+              exit_label='EXIT_RISK_HIGH' if exit_risk>=7 else 'TAKE_PROFIT_WATCH' if exit_risk>=4 else 'HOLD_TACTICAL_OK'
+
+              all_assets.append({
+                  'symbol':sym,'pair':pair,'target_scope':row['target_scope'],'qa':'PASS','sources':sources,
+                  'timeframes':tf_states,'tactical_score_0_10':score,'tactical_status':decision,'reason':reason,
+                  'exit_risk_0_10':exit_risk,'exit_risk_label':exit_label,
+                  'market_reader_external':{'status':'NOT_CONNECTED','role':'optional second-eye confirmation only'}
+              })
+              qa.append({'symbol':sym,'PASS':True,'errors':''})
+              time.sleep(0.15)
+
+          payload={
+              'generated_at_utc':generated,
+              'engine':'V8_TACTICAL_ENGINE_v0.1',
+              'purpose':'short swing research engine using 1H timing, 4H decision, 1D regime',
+              'research_only':True,'not_execution_connected':True,'separate_from_core_v8':True,
+              'rules':{
+                  '1H_role':'timing','4H_role':'primary_decision','1D_role':'directional_regime',
+                  'macd_rsi_volume_are_confirmation_not_standalone_trade_signals':True,
+                  'fomo_hard_block':8,'market_reader_optional_external_second_eye':True
+              },
+              'assets':all_assets,
+              'qa':qa,
+              'qa_pass':all(x['PASS'] for x in qa)
+          }
+          (ROOT/'TACTICAL_ENGINE.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False),encoding='utf-8')
+
+          rows=[]
+          for a in all_assets:
+              if a.get('qa')!='PASS':
+                  rows.append({'symbol':a['symbol'],'qa':'FAIL'})
+                  continue
+              rows.append({
+                  'symbol':a['symbol'],'scope':a['target_scope'],'qa':'PASS',
+                  'tactical_score':a['tactical_score_0_10'],'status':a['tactical_status'],'exit_risk':a['exit_risk_0_10'],'exit_label':a['exit_risk_label'],
+                  '1H_rsi':a['timeframes']['1H']['rsi14'],'1H_macd_score':a['timeframes']['1H']['macd_score_0_2'],'1H_fomo':a['timeframes']['1H']['fomo_score_0_10'],
+                  '4H_rsi':a['timeframes']['4H']['rsi14'],'4H_macd_score':a['timeframes']['4H']['macd_score_0_2'],'4H_trend':a['timeframes']['4H']['trend_score_0_4'],'4H_fomo':a['timeframes']['4H']['fomo_score_0_10'],
+                  '1D_trend':a['timeframes']['1D']['trend_score_0_4'],'1D_rsi':a['timeframes']['1D']['rsi14']
+              })
+          pd.DataFrame(rows).to_csv(ROOT/'TACTICAL_COCKPIT.csv',index=False)
+          pd.DataFrame(qa).to_csv(ROOT/'TACTICAL_QA.csv',index=False)
+          print(json.dumps(payload,indent=2,ensure_ascii=False))
+          if not payload['qa_pass']:
+              raise SystemExit('TACTICAL QA FAIL')
+          PY
+
+      - name: Commit tactical outputs
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tactical_engine/TACTICAL_ENGINE.json tactical_engine/TACTICAL_COCKPIT.csv tactical_engine/TACTICAL_QA.csv
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update V8 tactical engine outputs'
+            git pull --rebase origin main
+            git push
+          fi
