@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'scripts/v8_tactical_challenger_v3.py'
-      - 'tactical_validation/TACTICAL_VALIDATION_DATA.csv'
+      - 'tactical_validation/TACTICAL_WALKFORWARD_OBSERVATIONS.csv'
       - 'tactical_validation/TACTICAL_THRESHOLD_LAB.json'
       - '.github/workflows/test-lab-v8-tactical-challenger-v3.yml'
   workflow_dispatch:
