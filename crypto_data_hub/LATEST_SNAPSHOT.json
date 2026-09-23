@@ -1,0 +1,151 @@
+{
+  "generated_at_utc": "2026-09-23T08:56:59.217397+00:00",
+  "target_date": "2026-09-22",
+  "sources": {
+    "prices": "Binance Vision spot 1D archives",
+    "market_cap": "CoinGecko /global + /coins/markets",
+    "etf_flows": "Farside Investors via haturatu/crypto-etf-flow mirror",
+    "stablecoin_liquidity": "DefiLlama stablecoins API"
+  },
+  "btc_regime": {
+    "close": 86208.56,
+    "above_sma50": true,
+    "above_sma200": true,
+    "sma50_rising_20d": true,
+    "drawdown_365d_pct": -30.844240595148953,
+    "return_20d_pct": 11.466962572153804
+  },
+  "eth_regime": {
+    "close": 2753.63,
+    "above_sma50": true,
+    "above_sma200": true,
+    "sma50_rising_20d": true,
+    "drawdown_365d_pct": -41.212123799906486,
+    "return_20d_pct": 15.122161276296865
+  },
+  "relative_strength": {
+    "ETH_BTC": {
+      "value": 0.03194149165697699,
+      "above_sma50": true,
+      "sma50_rising_20d": true,
+      "change_20d_pct": 3.279176735238498
+    },
+    "SOL_BTC": {
+      "value": 0.0013753854605621529,
+      "above_sma50": true,
+      "sma50_rising_20d": true,
+      "change_20d_pct": 5.916882678215174
+    },
+    "SOL_ETH": {
+      "value": 0.043059525063280105,
+      "above_sma50": true,
+      "sma50_rising_20d": true,
+      "change_20d_pct": 2.5539571735148314
+    },
+    "LINK_BTC": {
+      "value": 0.0001513306799232002,
+      "above_sma50": true,
+      "sma50_rising_20d": true,
+      "change_20d_pct": 5.260511723780037
+    },
+    "LINK_ETH": {
+      "value": 0.004737746175048935,
+      "above_sma50": true,
+      "sma50_rising_20d": true,
+      "change_20d_pct": 1.9184263964659332
+    },
+    "AAVE_BTC": {
+      "value": 0.0017174628598366566,
+      "above_sma50": true,
+      "sma50_rising_20d": true,
+      "change_20d_pct": 4.416787009193945
+    },
+    "AAVE_ETH": {
+      "value": 0.053769024887148964,
+      "above_sma50": true,
+      "sma50_rising_20d": true,
+      "change_20d_pct": 1.1014904552074212
+    },
+    "HBAR_BTC": {
+      "value": 1.1495378185182539e-06,
+      "above_sma50": true,
+      "sma50_rising_20d": false,
+      "change_20d_pct": 19.207919522096994
+    },
+    "HBAR_ETH": {
+      "value": 3.598885834335041e-05,
+      "above_sma50": true,
+      "sma50_rising_20d": false,
+      "change_20d_pct": 15.422995506337811
+    },
+    "ONDO_BTC": {
+      "value": 5.118981224138299e-06,
+      "above_sma50": true,
+      "sma50_rising_20d": false,
+      "change_20d_pct": 13.634345311328433
+    },
+    "ONDO_ETH": {
+      "value": 0.00016026118251181168,
+      "above_sma50": true,
+      "sma50_rising_20d": false,
+      "change_20d_pct": 10.026385669819948
+    }
+  },
+  "market_rotation": {
+    "btc_dominance_pct": 58.66452395904368,
+    "eth_dominance_pct": 11.354705847552708,
+    "V8_TOTAL3_EQ_usd": 873651093487.5308,
+    "V8_OTHERS_EQ_usd": 258167633788.53076,
+    "V8_OTHERS_BTC_EQ_ratio": 0.14988134570991407,
+    "note": "V8_EQ series are CoinGecko equivalents, not yet certified 1:1 with TradingView TOTAL3/OTHERS."
+  },
+  "etf_flows": {
+    "BTC": {
+      "last_date": "2026-09-22",
+      "flow_1d_usdm": 714.7,
+      "flow_5d_usdm": 2010.3,
+      "flow_20d_usdm": 2830.7,
+      "acceleration_5d_vs_prev5_usdm": 2716.8999999999996,
+      "rows": 692,
+      "primary_source": "Farside Investors",
+      "transport": "haturatu/crypto-etf-flow mirror (30m refresh from Farside via headless Chrome)"
+    },
+    "ETH": {
+      "last_date": "2026-09-22",
+      "flow_1d_usdm": 162.2,
+      "flow_5d_usdm": 312.5,
+      "flow_20d_usdm": 1415.3000000000002,
+      "acceleration_5d_vs_prev5_usdm": 112.19999999999999,
+      "rows": 554,
+      "primary_source": "Farside Investors",
+      "transport": "haturatu/crypto-etf-flow mirror (30m refresh from Farside via headless Chrome)"
+    },
+    "SOL": {
+      "last_date": "2026-09-22",
+      "flow_1d_usdm": 28.9,
+      "flow_5d_usdm": 103.30000000000001,
+      "flow_20d_usdm": 120.69999999999999,
+      "acceleration_5d_vs_prev5_usdm": 80.00000000000001,
+      "rows": 12,
+      "primary_source": "Farside Investors",
+      "transport": "haturatu/crypto-etf-flow mirror (30m refresh from Farside via headless Chrome)"
+    }
+  },
+  "stablecoin_liquidity": {
+    "market_cap_usd": 311695394416.34,
+    "change_1d_pct": 0.48974662802674374,
+    "change_7d_pct": 0.4542013197231354,
+    "change_30d_pct": 1.099864519367677
+  },
+  "qa": {
+    "binance_all_end_target": true,
+    "binance_min_rows": 510,
+    "btc_etf_rows": 692,
+    "eth_etf_rows": 554,
+    "sol_etf_rows": 12,
+    "coingecko_total_positive": true,
+    "stablecoin_history_rows": 3221,
+    "etf_transport": "Farside mirror because direct Farside returned HTTP 403 on GitHub runner",
+    "PASS": true
+  }
+}

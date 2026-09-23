@@ -1,0 +1,2 @@
+date,btc_close,eth_close,btc_dom_pct,eth_dom_pct,v8_total3_eq_usd,v8_others_btc_eq,btc_etf_1d_usdm,btc_etf_5d_usdm,btc_etf_20d_usdm,eth_etf_1d_usdm,eth_etf_5d_usdm,eth_etf_20d_usdm,sol_etf_1d_usdm,sol_etf_5d_usdm,sol_etf_20d_usdm,stablecoin_mcap_usd,stablecoin_7d_pct,qa_pass
+2026-09-22,86208.56,2753.63,58.66452395904368,11.354705847552708,873651093487.5308,0.14988134570991407,714.7,2010.3,2830.7,162.2,312.5,1415.3000000000002,28.9,103.30000000000001,120.69999999999999,311695394416.34,0.4542013197231354,True
