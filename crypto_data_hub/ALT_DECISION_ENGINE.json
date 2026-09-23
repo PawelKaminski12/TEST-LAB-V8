@@ -88,8 +88,8 @@
     },
     {
       "symbol": "LINK",
-      "decision": "DATA_PENDING",
-      "reason": "Brakuje krytycznej warstwy: STREFY_MISSING",
+      "decision": "SPRAWD\u0179",
+      "reason": "Cena w potwierdzonej poda\u017cy bez potwierdzonego retestu",
       "price": 13.046,
       "rotation_score_0_10": 7,
       "rotation_status": "CONFIRMED",
@@ -101,12 +101,27 @@
       "retest_confirmed_10d": false,
       "volume_ratio_vs_20d": 1.212697689451405,
       "zones": {
-        "zone_ready": false,
-        "zone_count": 0
+        "zone_ready": true,
+        "zone_count": 27,
+        "in_demand": false,
+        "in_supply": true,
+        "dca1": 8.5,
+        "dca2": 7.35,
+        "dca3": 6.2,
+        "nearest_demand": {
+          "timeframe": "2T",
+          "from": 8.8,
+          "to": 11.2,
+          "distance_pct": 14.149931013337422
+        },
+        "nearest_supply": {
+          "timeframe": "1D",
+          "from": 13.0,
+          "to": 13.5,
+          "distance_pct": 0.0
+        }
       },
-      "blockers": [
-        "STREFY_MISSING"
-      ]
+      "blockers": []
     },
     {
       "symbol": "AAVE",
@@ -154,8 +169,8 @@
     },
     {
       "symbol": "ONDO",
-      "decision": "DATA_PENDING",
-      "reason": "Brakuje krytycznej warstwy: STREFY_MISSING",
+      "decision": "CZEKAJ",
+      "reason": "Brak pe\u0142nego zestawu warunk\u00f3w wej\u015bcia",
       "price": 0.4413,
       "rotation_score_0_10": 7,
       "rotation_status": "CONFIRMED",
@@ -167,12 +182,27 @@
       "retest_confirmed_10d": true,
       "volume_ratio_vs_20d": 1.6100255898987441,
       "zones": {
-        "zone_ready": false,
-        "zone_count": 0
+        "zone_ready": true,
+        "zone_count": 28,
+        "in_demand": false,
+        "in_supply": true,
+        "dca1": 0.348,
+        "dca2": 0.274,
+        "dca3": 0.2,
+        "nearest_demand": {
+          "timeframe": "4D",
+          "from": 0.34,
+          "to": 0.38,
+          "distance_pct": 13.89077724903694
+        },
+        "nearest_supply": {
+          "timeframe": "2D",
+          "from": 0.42,
+          "to": 0.45,
+          "distance_pct": 0.0
+        }
       },
-      "blockers": [
-        "STREFY_MISSING"
-      ]
+      "blockers": []
     }
   ]
 }
