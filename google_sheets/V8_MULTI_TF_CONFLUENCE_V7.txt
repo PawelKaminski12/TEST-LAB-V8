@@ -1,0 +1,158 @@
+// V8 DUAL ENGINE — MULTI-TF CONFLUENCE V7
+// Dodaje zgodność międzyinterwałową 1H / 4H / 1D dla świeżych alarmów.
+// Nie zmienia logiki LONG ani TACTICAL. Nie wykonuje transakcji.
+
+function alarmDirection_(a) {
+  const signals = a.signals || [];
+  let hot = 0, cold = 0;
+  signals.forEach(s => {
+    const x = String(s || '');
+    if (x.indexOf('WYKUPIENIE') >= 0 || x.indexOf('DODATNIE') >= 0 || x.indexOf('FOMO') >= 0) hot++;
+    if (x.indexOf('WYPRZEDANIE') >= 0 || x.indexOf('UJEMNE') >= 0) cold++;
+  });
+  if (hot > 0 && cold === 0) return 'PRZEGRZANIE';
+  if (cold > 0 && hot === 0) return 'WYPRZEDANIE';
+  return 'MIESZANE';
+}
+
+function buildMultiTfConfluence_(alarms) {
+  const bySymbol = {};
+  (alarms || []).filter(a => a.aktywny).forEach(a => {
+    const dir = alarmDirection_(a);
+    if (dir === 'MIESZANE') return;
+    const key = a.symbol + '|' + dir;
+    (bySymbol[key] = bySymbol[key] || []).push(a);
+  });
+
+  const out = [];
+  Object.keys(bySymbol).forEach(key => {
+    const group = bySymbol[key].slice().sort((a,b) => ({'1D':3,'4H':2,'1H':1}[b.tf]||0)-({'1D':3,'4H':2,'1H':1}[a.tf]||0));
+    const tfSet = {};
+    group.forEach(a => tfSet[a.tf] = a);
+    const tfs = ['1H','4H','1D'].filter(tf => tfSet[tf]);
+    if (tfs.length < 2) return;
+
+    const [symbol, direction] = key.split('|');
+    const has4h1d = !!tfSet['4H'] && !!tfSet['1D'];
+    const all3 = tfs.length === 3;
+    const priority = all3 || has4h1d ? 'KRYTYCZNY' : 'MOCNY';
+    const totalSignals = group.reduce((s,a) => s + Number(a.signalCount || 0), 0);
+    const type = 'ZGODNOŚĆ WIELU INTERWAŁÓW — ' + direction + ' — ' + tfs.join('+');
+    const reason = symbol + ': ' + direction + ' potwierdzone na ' + tfs.join(' + ') + '. Łącznie ' + totalSignals + ' sygnałów. ' + (has4h1d ? 'Potwierdzenie obejmuje 4H + 1D.' : 'Potwierdzenie obejmuje dwa interwały.');
+    const newestTs = group.map(a => Date.parse(String(a.ts||''))).filter(Number.isFinite).sort((a,b)=>b-a)[0];
+
+    out.push({
+      aktywny:true,
+      symbol:symbol,
+      tf:'WIELE TF',
+      multiTf:true,
+      multiTfList:tfs,
+      direction:direction,
+      type:type,
+      signalCount:totalSignals,
+      priority:priority,
+      severity:priority,
+      tfWeight:'WIELOINTERWAŁOWA',
+      signals:group.map(a => a.tf+': '+a.type),
+      rsi:'',mfi:'',macdPct:'',macdZ:'',fomo:'',
+      reason:reason,
+      ts:Number.isFinite(newestTs) ? new Date(newestTs).toISOString() : '',
+      freshness:'AKTUALNY',ageHours:'',limitHours:'',
+      key:[symbol,'WIELE_TF',direction,tfs.join('+')].join('|')
+    });
+  });
+  return out;
+}
+
+function buildExtremeAlarms_(ss, tacticalJson) {
+  const cfg = getExtremeSettings_(ss);
+  if (!cfg.enabled) return [];
+  const base = [];
+  (tacticalJson.assets || []).forEach(a => {
+    const t = a.timeframes || {};
+    ['1H','4H','1D'].forEach(tf => {
+      const x = t[tf] || {};
+      const rsi = Number(x.rsi14), mfi = Number(x.mfi14), fomo = Number(x.fomo_score_0_10);
+      const macdPct = Number(x.macd_hist_percentile), macdZ = Number(x.macd_hist_zscore);
+      const ts = x.last_close_time_utc || '';
+      const signals = [];
+      if (Number.isFinite(rsi) && rsi >= cfg.rsiHigh) signals.push(rsi >= 80 ? 'RSI SKRAJNE WYKUPIENIE' : 'RSI WYKUPIENIE');
+      if (Number.isFinite(rsi) && rsi <= cfg.rsiLow) signals.push(rsi <= 20 ? 'RSI SKRAJNE WYPRZEDANIE' : 'RSI WYPRZEDANIE');
+      if (Number.isFinite(mfi)) {
+        if (mfi >= cfg.mfiExtremeHigh) signals.push('MFI SKRAJNE WYKUPIENIE');
+        else if (mfi >= cfg.mfiWarnHigh) signals.push('MFI WYKUPIENIE');
+        if (mfi <= cfg.mfiExtremeLow) signals.push('MFI SKRAJNE WYPRZEDANIE');
+        else if (mfi <= cfg.mfiWarnLow) signals.push('MFI WYPRZEDANIE');
+      }
+      const ml = String(x.macd_extreme_label || 'NORMAL');
+      if (ml === 'EXTREME_POSITIVE') signals.push('MACD SKRAJNIE DODATNIE');
+      else if (ml === 'EXTREME_NEGATIVE') signals.push('MACD SKRAJNIE UJEMNE');
+      else if (ml === 'WARNING_POSITIVE') signals.push('MACD MOCNO DODATNIE');
+      else if (ml === 'WARNING_NEGATIVE') signals.push('MACD MOCNO UJEMNE');
+      if (Number.isFinite(fomo) && fomo >= cfg.fomoHard) signals.push(fomo >= 9 ? 'FOMO SKRAJNE' : 'FOMO HARD');
+      if (!signals.length) return;
+      const count = signals.length;
+      const priority = confluencePriorityForTf_(count, tf);
+      const tfWeight = timeframeWeight_(tf);
+      const freshness = alarmFreshness_(tf, ts, cfg);
+      const n = count === 1 ? '1 sygnał' : count < 5 ? count+' sygnały' : count+' sygnałów';
+      const reason = a.symbol+' '+tf+': '+n+' zgodne. Priorytet '+priority+', waga '+tfWeight+', świeżość '+freshness.status+(freshness.ageHours === '' ? '' : ' ('+freshness.ageHours+'h / limit '+freshness.limitHours+'h)')+'. '+signals.join(' + ')+'.';
+      base.push({aktywny:freshness.fresh,symbol:a.symbol,tf:tf,type:signals.join(' + '),signalCount:count,priority:priority,severity:priority,tfWeight:tfWeight,signals:signals,rsi:Number.isFinite(rsi)?rsi:'',mfi:Number.isFinite(mfi)?mfi:'',macdPct:Number.isFinite(macdPct)?macdPct:'',macdZ:Number.isFinite(macdZ)?macdZ:'',fomo:Number.isFinite(fomo)?fomo:'',reason:reason,ts:ts,freshness:freshness.status,ageHours:freshness.ageHours,limitHours:freshness.limitHours,key:[a.symbol,tf,signals.join(' + ')].join('|')});
+    });
+  });
+  return base.concat(buildMultiTfConfluence_(base)).sort(compareExtremeFreshnessPriorityV7_);
+}
+
+function compareExtremeFreshnessPriorityV7_(a,b) {
+  if (a.aktywny !== b.aktywny) return a.aktywny ? -1 : 1;
+  const p = {KRYTYCZNY:3,MOCNY:2,OSTRZEŻENIE:1};
+  const t = {'WIELE TF':4,'1D':3,'4H':2,'1H':1};
+  return (p[b.priority]-p[a.priority]) || ((t[b.tf]||0)-(t[a.tf]||0)) || (Number(b.signalCount||0)-Number(a.signalCount||0)) || String(a.symbol).localeCompare(String(b.symbol));
+}
+
+function panelEligibleExtreme_(a) {
+  if (!a || !a.aktywny) return false;
+  if (a.multiTf) return true;
+  return !(a.tf === '1H' && a.priority === 'OSTRZEŻENIE' && Number(a.signalCount) === 1);
+}
+
+function selectMainPanelExtreme_(alarms) {
+  const eligible = (alarms || []).filter(panelEligibleExtreme_).slice().sort(compareExtremeFreshnessPriorityV7_);
+  return eligible.length ? eligible[0] : null;
+}
+
+function updateMainPanelExtremeSummary_(sheet, alarms) {
+  if (!sheet || sheet.getLastRow() < 2) return;
+  const bySymbol = {};
+  (alarms || []).forEach(a => { if (panelEligibleExtreme_(a)) (bySymbol[a.symbol] = bySymbol[a.symbol] || []).push(a); });
+  const values = sheet.getDataRange().getValues();
+  const head = values[0].map(String), symIdx = head.indexOf('AKTYWO'), alertIdx = head.indexOf('ALERT');
+  if (symIdx < 0 || alertIdx < 0) return;
+  for (let i=1; i<values.length; i++) {
+    const sym = String(values[i][symIdx] || '').trim();
+    if (!sym) continue;
+    const best = selectMainPanelExtreme_(bySymbol[sym] || []);
+    let base = String(values[i][alertIdx] || '').trim();
+    base = base.replace(/\s*\|\s*[🟡🟠🔴]\s*(OSTRZEŻENIE|MOCNY|KRYTYCZNY)\s+(1H|4H|1D|WIELE TF)\s+—\s+[^|]+/g,'').trim();
+    if (best) {
+      const icon = best.priority === 'KRYTYCZNY' ? '🔴' : best.priority === 'MOCNY' ? '🟠' : '🟡';
+      const extra = best.multiTf ? icon+' '+best.priority+' WIELE TF — '+best.direction+' '+best.multiTfList.join('+') : icon+' '+best.priority+' '+best.tf+' — '+best.signalCount+' sygnał(y)';
+      values[i][alertIdx] = (!base || base === 'BRAK') ? extra : base+' | '+extra;
+    } else values[i][alertIdx] = base || 'BRAK';
+  }
+  sheet.getRange(1,1,values.length,values[0].length).setValues(values);
+  formatPanel_(sheet);
+  formatMainPanelAlerts_(sheet);
+}
+
+function notifyNewExtremeAlarms_(ss, oldKeys, alarms) {
+  const fresh = (alarms || []).filter(a => a.aktywny && !oldKeys[a.key] && panelEligibleExtreme_(a));
+  if (!fresh.length) return;
+  const multi = fresh.filter(a => a.multiTf);
+  const chosen = multi.length ? multi : fresh.filter(a => a.priority === 'KRYTYCZNY').length ? fresh.filter(a => a.priority === 'KRYTYCZNY') : fresh;
+  const text = chosen.map(a => a.multiTf ? a.symbol+' — '+a.priority+' — '+a.type : a.symbol+' '+a.tf+' — '+a.priority+' — '+a.signalCount+' sygnał(y): '+a.type).join('\n');
+  const title = multi.length ? 'ZGODNOŚĆ WIELU INTERWAŁÓW V8' : 'NOWE EKSTREMA V8';
+  ss.toast(text.slice(0,250), title, 8);
+  const cfg = getExtremeSettings_(ss);
+  if (cfg.emailOn && cfg.emailTo) MailApp.sendEmail(cfg.emailTo, 'V8 DUAL ENGINE — '+title, text);
+}
