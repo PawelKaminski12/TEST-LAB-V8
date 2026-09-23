@@ -1,5 +1,5 @@
-date,symbol,coverage_pct,active_addresses,active_addresses_7d_pct,active_addresses_30d_pct,tx_count,tx_count_7d_pct,tx_count_30d_pct,transfer_value_adj_usd,transfer_value_7d_pct,transfer_value_30d_pct,tvl_usd,tvl_7d_pct,tvl_30d_pct,dex_daily_usd,dex_7d_vs_prev7_pct,dex_30d_vs_prev30_pct,long_onchain_score_0_10,long_onchain_label,tactical_onchain_score_0_10,tactical_onchain_label,chain_tvl_usd,chain_tvl_7d_pct,chain_tvl_30d_pct,protocol_tvl_usd,protocol_tvl_7d_pct,protocol_tvl_30d_pct
-2026-09-23,ETH,40,,,,,,,,,,,,,1434146336.86,24.590279944798965,42.834221098303374,10.0,STRONG_POSITIVE,10.0,STRONG_POSITIVE,54087094373.0,10.994677230677263,10.107679043876372,,,
-2026-09-23,LINK,0,,,,,,,,,,,,,,,,,NO_DATA,,NO_DATA,,,,,,
-2026-09-23,ONDO,0,,,,,,,,,,,,,,,,,NO_DATA,,NO_DATA,,,,,,
-2026-09-23,SOL,40,,,,,,,,,,,,,3036527535.3999996,20.239312078382056,39.154382564310964,10.0,STRONG_POSITIVE,10.0,STRONG_POSITIVE,6488668295.0,13.345630935256803,16.41037556762528,,,
+date,symbol,coverage_pct,active_addresses,active_addresses_7d_pct,active_addresses_30d_pct,tx_count,tx_count_7d_pct,tx_count_30d_pct,transfer_value_adj_usd,transfer_value_7d_pct,transfer_value_30d_pct,tvl_usd,tvl_7d_pct,tvl_30d_pct,dex_daily_usd,dex_7d_vs_prev7_pct,dex_30d_vs_prev30_pct,long_onchain_score_0_10,long_onchain_label,tactical_onchain_score_0_10,tactical_onchain_label,chain_tvl_usd,chain_tvl_7d_pct,chain_tvl_30d_pct,protocol_tvl_usd,protocol_tvl_7d_pct,protocol_tvl_30d_pct,oracle_tvs_usd,oracle_tvs_7d_pct,oracle_tvs_30d_pct
+2026-09-23,ETH,20,,,,,,,,,,,,,,,,10.0,STRONG_POSITIVE,10.0,STRONG_POSITIVE,54086283628.0,10.993013462626223,10.106028571591242,,,,,,
+2026-09-23,LINK,0,,,,,,,,,,,,,,,,,NO_DATA,,NO_DATA,,,,,,,,,
+2026-09-23,ONDO,25,,,,,,,,,,,,,,,,10.0,STRONG_POSITIVE,10.0,STRONG_POSITIVE,,,,438369.1789149267,10.493002567251143,10.493002567251143,,,
+2026-09-23,SOL,40,,,,,,,,,,,,,3036527535.3999996,20.239312078382056,39.154382564310964,10.0,STRONG_POSITIVE,10.0,STRONG_POSITIVE,6488668295.0,13.345630935256803,16.41037556762528,,,,,,

@@ -1,19 +1,17 @@
 {
-  "generated_at_utc": "2026-09-23T13:58:49.585490+00:00",
-  "engine": "ONCHAIN_ACTIVITY_v0.2",
+  "generated_at_utc": "2026-09-23T14:15:35.492109+00:00",
+  "engine": "ONCHAIN_ACTIVITY_v0.3",
   "assets": [
     {
       "symbol": "ETH",
-      "coinmetrics_asset": "eth",
-      "defillama_chain": "Ethereum",
-      "defillama_protocol": null,
+      "coverage_pct": 20,
       "source_status": {
         "coinmetrics": "HTTP_403",
         "defillama_chain_tvl": "OK",
-        "defillama_dex": "OK",
-        "defillama_protocol_tvl": "NOT_APPLICABLE"
+        "defillama_dex": "HTTP_502",
+        "defillama_protocol_tvl": "NOT_APPLICABLE",
+        "defillama_oracle": "NOT_APPLICABLE"
       },
-      "coverage_pct": 40,
       "network_metrics": {
         "AdrActCnt": {
           "latest": null,
@@ -35,9 +33,9 @@
         }
       },
       "chain_tvl": {
-        "latest_usd": 54087094373.0,
-        "change_7d_pct": 10.994677230677263,
-        "change_30d_pct": 10.107679043876372,
+        "latest_usd": 54086283628.0,
+        "change_7d_pct": 10.993013462626223,
+        "change_30d_pct": 10.106028571591242,
         "trend": "STRONG_RISING"
       },
       "protocol_tvl": {
@@ -47,10 +45,16 @@
         "trend": "NO_DATA"
       },
       "dex_volume": {
-        "latest_daily_usd": 1434146336.86,
-        "change_7d_vs_prev7_pct": 24.590279944798965,
-        "change_30d_vs_prev30_pct": 42.834221098303374,
-        "trend": "STRONG_RISING"
+        "latest_daily_usd": null,
+        "change_7d_vs_prev7_pct": null,
+        "change_30d_vs_prev30_pct": null,
+        "trend": "NO_DATA"
+      },
+      "oracle_tvs": {
+        "latest_usd": null,
+        "change_7d_pct": null,
+        "change_30d_pct": null,
+        "trend": "NO_DATA"
       },
       "long_onchain_score_0_10": 10,
       "long_onchain_label": "STRONG_POSITIVE",
@@ -60,16 +64,14 @@
     },
     {
       "symbol": "SOL",
-      "coinmetrics_asset": "sol",
-      "defillama_chain": "Solana",
-      "defillama_protocol": null,
+      "coverage_pct": 40,
       "source_status": {
         "coinmetrics": "HTTP_403",
         "defillama_chain_tvl": "OK",
         "defillama_dex": "OK",
-        "defillama_protocol_tvl": "NOT_APPLICABLE"
+        "defillama_protocol_tvl": "NOT_APPLICABLE",
+        "defillama_oracle": "NOT_APPLICABLE"
       },
-      "coverage_pct": 40,
       "network_metrics": {
         "AdrActCnt": {
           "latest": null,
@@ -108,6 +110,12 @@
         "change_30d_vs_prev30_pct": 39.154382564310964,
         "trend": "STRONG_RISING"
       },
+      "oracle_tvs": {
+        "latest_usd": null,
+        "change_7d_pct": null,
+        "change_30d_pct": null,
+        "trend": "NO_DATA"
+      },
       "long_onchain_score_0_10": 10,
       "long_onchain_label": "STRONG_POSITIVE",
       "tactical_onchain_score_0_10": 10,
@@ -116,16 +124,14 @@
     },
     {
       "symbol": "LINK",
-      "coinmetrics_asset": "link",
-      "defillama_chain": null,
-      "defillama_protocol": null,
+      "coverage_pct": 0,
       "source_status": {
         "coinmetrics": "HTTP_403",
         "defillama_chain_tvl": "NOT_APPLICABLE",
         "defillama_dex": "NOT_APPLICABLE",
-        "defillama_protocol_tvl": "NOT_APPLICABLE"
+        "defillama_protocol_tvl": "NOT_APPLICABLE",
+        "defillama_oracle": "HTTP_402"
       },
-      "coverage_pct": 0,
       "network_metrics": {
         "AdrActCnt": {
           "latest": null,
@@ -162,6 +168,12 @@
         "latest_daily_usd": null,
         "change_7d_vs_prev7_pct": null,
         "change_30d_vs_prev30_pct": null,
+        "trend": "NO_DATA"
+      },
+      "oracle_tvs": {
+        "latest_usd": null,
+        "change_7d_pct": null,
+        "change_30d_pct": null,
         "trend": "NO_DATA"
       },
       "long_onchain_score_0_10": null,
@@ -172,16 +184,14 @@
     },
     {
       "symbol": "ONDO",
-      "coinmetrics_asset": "ondo",
-      "defillama_chain": null,
-      "defillama_protocol": "ondo-finance",
+      "coverage_pct": 25,
       "source_status": {
         "coinmetrics": "HTTP_400",
         "defillama_chain_tvl": "NOT_APPLICABLE",
         "defillama_dex": "NOT_APPLICABLE",
-        "defillama_protocol_tvl": "NO_DATA"
+        "defillama_protocol_tvl": "OK_PROTOCOLS_FALLBACK",
+        "defillama_oracle": "NOT_APPLICABLE"
       },
-      "coverage_pct": 0,
       "network_metrics": {
         "AdrActCnt": {
           "latest": null,
@@ -209,10 +219,10 @@
         "trend": "NO_DATA"
       },
       "protocol_tvl": {
-        "latest_usd": null,
-        "change_7d_pct": null,
-        "change_30d_pct": null,
-        "trend": "NO_DATA"
+        "latest_usd": 438369.1789149267,
+        "change_7d_pct": 10.493002567251143,
+        "change_30d_pct": 10.493002567251143,
+        "trend": "STRONG_RISING"
       },
       "dex_volume": {
         "latest_daily_usd": null,
@@ -220,20 +230,27 @@
         "change_30d_vs_prev30_pct": null,
         "trend": "NO_DATA"
       },
-      "long_onchain_score_0_10": null,
-      "long_onchain_label": "NO_DATA",
-      "tactical_onchain_score_0_10": null,
-      "tactical_onchain_label": "NO_DATA",
+      "oracle_tvs": {
+        "latest_usd": null,
+        "change_7d_pct": null,
+        "change_30d_pct": null,
+        "trend": "NO_DATA"
+      },
+      "long_onchain_score_0_10": 10,
+      "long_onchain_label": "STRONG_POSITIVE",
+      "tactical_onchain_score_0_10": 10,
+      "tactical_onchain_label": "STRONG_POSITIVE",
       "role": "context only; never standalone trade signal"
     }
   ],
   "summary": {
     "assets_requested": 4,
-    "assets_with_any_data": 2,
+    "assets_with_any_data": 3,
     "source_health": {
       "defillama_chain_assets_ok": 2,
-      "defillama_dex_assets_ok": 2,
-      "defillama_protocol_assets_ok": 0,
+      "defillama_dex_assets_ok": 1,
+      "defillama_protocol_assets_ok": 1,
+      "defillama_oracle_assets_ok": 0,
       "coinmetrics_assets_ok": 0
     },
     "coinmetrics_metrics": [
@@ -244,22 +261,24 @@
     "defillama_layers": [
       "CHAIN_TVL",
       "DEX_VOLUME",
-      "PROTOCOL_TVL"
+      "PROTOCOL_TVL",
+      "ORACLE_TVS"
     ]
   },
   "hard_rules": {
     "onchain_is_context_not_signal": true,
     "missing_data_is_never_imputed": true,
     "network_metrics_not_equal_token_fundamentals": true,
+    "current_oracle_tvs_magnitude_not_scored_without_history": true,
     "exchange_netflow_not_claimed_without_verified_source": true,
     "whale_flow_not_claimed_without_verified_source": true,
     "V7_UNTOUCHED": true
   },
   "limitations": [
-    "Coin Metrics community time-series access is currently unavailable from this runner for some assets; HTTP errors are surfaced, never hidden.",
-    "ETH/SOL chain TVL and DEX activity describe their networks, not solely the token investment case.",
-    "ONDO protocol TVL is tracked separately from chain TVL.",
-    "Verified exchange netflow and whale-wallet flow remain pending until a reliable source is connected.",
-    "Missing LINK/ONDO network-address metrics are not guessed or replaced with unrelated proxies."
+    "Coin Metrics community time-series may be unavailable from GitHub runners; source errors remain visible.",
+    "ETH/SOL chain TVL and DEX activity describe network activity, not solely token fundamentals.",
+    "ONDO protocol TVL and LINK oracle TVS are project-specific context and are not treated as direct buy signals.",
+    "Oracle TVS trend is scored only after persisted history exists; current magnitude alone receives no directional vote.",
+    "Verified exchange netflow and whale-wallet flow remain pending until a reliable source is connected."
   ]
 }
