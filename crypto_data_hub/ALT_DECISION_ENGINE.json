@@ -1,6 +1,6 @@
 {
   "date": "2026-09-22",
-  "engine": "ALT_DECISION_ENGINE_v0.2",
+  "engine": "ALT_DECISION_ENGINE_v0.3",
   "universe_source": "config/alt_universe.csv",
   "zones_source": "config/alt_zones.csv",
   "important_rules": {
@@ -10,13 +10,15 @@
     "rotation_score_not_standalone_buy_signal": true,
     "fomo_hard_block_at_8": true,
     "dca3_prefers_explicit_canon_and_excludes_archival_reserve_rows": true,
+    "in_supply_never_emits_buy_status_without_true_zone_breakout_retest": true,
+    "price_action_retest_is_not_zone_retest": true,
     "current_output_is_research_engine_status_not_execution": true
   },
   "assets": [
     {
       "symbol": "ETH",
       "decision": "CZEKAJ",
-      "reason": "Brak pe\u0142nego zestawu warunk\u00f3w wej\u015bcia",
+      "reason": "Cena w potwierdzonej podaży; price-action retest nie jest potwierdzeniem wybicia strefy podaży",
       "price": 2753.63,
       "rotation_score_0_10": 7,
       "rotation_status": "CONFIRMED",
@@ -49,12 +51,15 @@
           "distance_pct": 0.0
         }
       },
-      "blockers": []
+      "blockers": [],
+      "entry_blockers": [
+        "IN_SUPPLY"
+      ]
     },
     {
       "symbol": "SOL",
       "decision": "CZEKAJ",
-      "reason": "Brak pe\u0142nego zestawu warunk\u00f3w wej\u015bcia",
+      "reason": "Cena w potwierdzonej podaży; price-action retest nie jest potwierdzeniem wybicia strefy podaży",
       "price": 118.57,
       "rotation_score_0_10": 7,
       "rotation_status": "CONFIRMED",
@@ -87,12 +92,15 @@
           "distance_pct": 0.0
         }
       },
-      "blockers": []
+      "blockers": [],
+      "entry_blockers": [
+        "IN_SUPPLY"
+      ]
     },
     {
       "symbol": "LINK",
-      "decision": "SPRAWD\u0179",
-      "reason": "Cena w potwierdzonej poda\u017cy bez potwierdzonego retestu",
+      "decision": "SPRAWDŹ",
+      "reason": "Cena w potwierdzonej podaży bez potwierdzonego retestu",
       "price": 13.046,
       "rotation_score_0_10": 7,
       "rotation_status": "CONFIRMED",
@@ -125,12 +133,15 @@
           "distance_pct": 0.0
         }
       },
-      "blockers": []
+      "blockers": [],
+      "entry_blockers": [
+        "IN_SUPPLY"
+      ]
     },
     {
       "symbol": "ONDO",
       "decision": "CZEKAJ",
-      "reason": "Brak pe\u0142nego zestawu warunk\u00f3w wej\u015bcia",
+      "reason": "Cena w potwierdzonej podaży; price-action retest nie jest potwierdzeniem wybicia strefy podaży",
       "price": 0.4413,
       "rotation_score_0_10": 7,
       "rotation_status": "CONFIRMED",
@@ -163,7 +174,10 @@
           "distance_pct": 0.0
         }
       },
-      "blockers": []
+      "blockers": [],
+      "entry_blockers": [
+        "IN_SUPPLY"
+      ]
     },
     {
       "symbol": "AAVE",
@@ -185,7 +199,8 @@
       },
       "blockers": [
         "STREFY_MISSING"
-      ]
+      ],
+      "entry_blockers": []
     },
     {
       "symbol": "HBAR",
@@ -207,7 +222,8 @@
       },
       "blockers": [
         "STREFY_MISSING"
-      ]
+      ],
+      "entry_blockers": []
     }
   ]
 }
