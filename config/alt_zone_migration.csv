@@ -27,48 +27,48 @@ ONDO,4D,true,true,GOTOWE,MASTER FINAL 17/17
 ONDO,5D,true,true,GOTOWE,MASTER FINAL 17/17
 ONDO,1T,true,true,GOTOWE,MASTER FINAL 17/17
 ONDO,2T,true,true,GOTOWE,MASTER FINAL 17/17
-RENDER,1D,false,false,SZUKAM_STAREGO_ZRODLA,Brak odnalezionego liczbowego rekordu
-RENDER,2D,false,false,SZUKAM_STAREGO_ZRODLA,Brak odnalezionego liczbowego rekordu
-RENDER,3D,false,false,SZUKAM_STAREGO_ZRODLA,Brak odnalezionego liczbowego rekordu
-RENDER,4D,false,false,SZUKAM_STAREGO_ZRODLA,Brak odnalezionego liczbowego rekordu
-RENDER,5D,false,false,SZUKAM_STAREGO_ZRODLA,Brak odnalezionego liczbowego rekordu
-RENDER,1T,false,false,SZUKAM_STAREGO_ZRODLA,Brak odnalezionego liczbowego rekordu
-RENDER,2T,false,false,SZUKAM_STAREGO_ZRODLA,Brak odnalezionego liczbowego rekordu
+RENDER,1D,false,false,NOWY_PAKIET_POTRZEBNY,Import RENDER został zatrzymany; brak zachowanego liczbowego źródła stref
+RENDER,2D,false,false,NOWY_PAKIET_POTRZEBNY,Import RENDER został zatrzymany; brak zachowanego liczbowego źródła stref
+RENDER,3D,false,false,NOWY_PAKIET_POTRZEBNY,Import RENDER został zatrzymany; brak zachowanego liczbowego źródła stref
+RENDER,4D,false,false,NOWY_PAKIET_POTRZEBNY,Import RENDER został zatrzymany; brak zachowanego liczbowego źródła stref
+RENDER,5D,false,false,NOWY_PAKIET_POTRZEBNY,Import RENDER został zatrzymany; brak zachowanego liczbowego źródła stref
+RENDER,1T,false,false,NOWY_PAKIET_POTRZEBNY,Import RENDER został zatrzymany; brak zachowanego liczbowego źródła stref
+RENDER,2T,false,false,NOWY_PAKIET_POTRZEBNY,Import RENDER został zatrzymany; brak zachowanego liczbowego źródła stref
 FLOKI,1D,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
-FLOKI,2D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,V7 import miał 7 interwałów; brak liczbowego zapisu w odzyskanym tekście
-FLOKI,3D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,V7 import miał 7 interwałów; brak liczbowego zapisu w odzyskanym tekście
-FLOKI,4D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,V7 import miał 7 interwałów; brak liczbowego zapisu w odzyskanym tekście
-FLOKI,5D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,V7 import miał 7 interwałów; brak liczbowego zapisu w odzyskanym tekście
+FLOKI,2D,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla FLOKI zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 2D
+FLOKI,3D,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla FLOKI zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 3D
+FLOKI,4D,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla FLOKI zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 4D
+FLOKI,5D,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla FLOKI zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 5D
 FLOKI,1T,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
-FLOKI,2T,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,V7 import miał 7 interwałów; brak liczbowego zapisu w odzyskanym tekście
+FLOKI,2T,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla FLOKI zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 2T
 PEPE,1D,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
-PEPE,2D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,Stary V7 pracował na aktywie; pełna liczba nie odnaleziona
-PEPE,3D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,Stary V7 pracował na aktywie; pełna liczba nie odnaleziona
-PEPE,4D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,Stary V7 pracował na aktywie; pełna liczba nie odnaleziona
-PEPE,5D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,Stary V7 pracował na aktywie; pełna liczba nie odnaleziona
+PEPE,2D,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla PEPE zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 2D
+PEPE,3D,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla PEPE zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 3D
+PEPE,4D,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla PEPE zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 4D
+PEPE,5D,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla PEPE zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 5D
 PEPE,1T,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
-PEPE,2T,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,Stary V7 pracował na aktywie; pełna liczba nie odnaleziona
+PEPE,2T,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla PEPE zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 2T
 SPX6900,1D,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
-SPX6900,2D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,Stary V7 pracował na aktywie; pełna liczba nie odnaleziona
-SPX6900,3D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,Stary V7 pracował na aktywie; pełna liczba nie odnaleziona
-SPX6900,4D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,Stary V7 pracował na aktywie; pełna liczba nie odnaleziona
-SPX6900,5D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,Stary V7 pracował na aktywie; pełna liczba nie odnaleziona
+SPX6900,2D,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla SPX6900 zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 2D
+SPX6900,3D,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla SPX6900 zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 3D
+SPX6900,4D,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla SPX6900 zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 4D
+SPX6900,5D,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla SPX6900 zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 5D
 SPX6900,1T,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
-SPX6900,2T,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,Stary V7 pracował na aktywie; pełna liczba nie odnaleziona
-XRP,1D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_DO_WERYFIKACJI,V7 miał XRP w aktywnym silniku; liczby nie przepisane bez twardego źródła
-XRP,2D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_DO_WERYFIKACJI,V7 miał XRP w aktywnym silniku; liczby nie przepisane bez twardego źródła
-XRP,3D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_DO_WERYFIKACJI,V7 miał XRP w aktywnym silniku; liczby nie przepisane bez twardego źródła
-XRP,4D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_DO_WERYFIKACJI,V7 miał XRP w aktywnym silniku; liczby nie przepisane bez twardego źródła
-XRP,5D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_DO_WERYFIKACJI,V7 miał XRP w aktywnym silniku; liczby nie przepisane bez twardego źródła
-XRP,1T,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_DO_WERYFIKACJI,V7 miał XRP w aktywnym silniku; liczby nie przepisane bez twardego źródła
-XRP,2T,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_DO_WERYFIKACJI,V7 miał XRP w aktywnym silniku; liczby nie przepisane bez twardego źródła
-XLM,1D,true,false,ZRODLO_POTWIERDZONE_W_MASTERZE_WARTOSCI_NIEODZYSKANE,V275.38 potwierdza aktywną DEMAND 1D w MASTER_STREFY
-XLM,2D,false,false,SZUKAM_STAREGO_ZRODLA,Brak twardego rekordu w odzyskanych plikach
-XLM,3D,false,false,SZUKAM_STAREGO_ZRODLA,Brak twardego rekordu w odzyskanych plikach
-XLM,4D,false,false,SZUKAM_STAREGO_ZRODLA,Brak twardego rekordu w odzyskanych plikach
-XLM,5D,false,false,SZUKAM_STAREGO_ZRODLA,Brak twardego rekordu w odzyskanych plikach
-XLM,1T,true,false,ZRODLO_POTWIERDZONE_W_MASTERZE_WARTOSCI_NIEODZYSKANE,V275.38 potwierdza aktywną DEMAND 1T/1W w MASTER_STREFY
-XLM,2T,false,false,SZUKAM_STAREGO_ZRODLA,Brak twardego rekordu w odzyskanych plikach
+SPX6900,2T,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla SPX6900 zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 2T
+XRP,1D,true,false,STARE_ZRODLO_BYLO_ALE_LICZBY_NIEODZYSKANE,V7 miał XRP w aktywnym silniku; nie wpisuję liczb bez źródła
+XRP,2D,false,false,NOWY_SCREEN_POTRZEBNY,Brak potwierdzonego liczbowego źródła 2D
+XRP,3D,false,false,NOWY_SCREEN_POTRZEBNY,Brak potwierdzonego liczbowego źródła 3D
+XRP,4D,false,false,NOWY_SCREEN_POTRZEBNY,Brak potwierdzonego liczbowego źródła 4D
+XRP,5D,false,false,NOWY_SCREEN_POTRZEBNY,Brak potwierdzonego liczbowego źródła 5D
+XRP,1T,true,false,STARE_ZRODLO_BYLO_ALE_LICZBY_NIEODZYSKANE,V7 miał XRP w aktywnym silniku; nie wpisuję liczb bez źródła
+XRP,2T,false,false,NOWY_SCREEN_POTRZEBNY,Brak potwierdzonego liczbowego źródła 2T
+XLM,1D,true,false,STARE_ZRODLO_BYLO_ALE_LICZBY_NIEODZYSKANE,V275.38 potwierdza aktywną DEMAND 1D w MASTER_STREFY
+XLM,2D,false,false,NOWY_SCREEN_POTRZEBNY,Brak twardego rekordu 2D w odzyskanych danych
+XLM,3D,false,false,NOWY_SCREEN_POTRZEBNY,Brak twardego rekordu 3D w odzyskanych danych
+XLM,4D,false,false,NOWY_SCREEN_POTRZEBNY,Brak twardego rekordu 4D w odzyskanych danych
+XLM,5D,false,false,NOWY_SCREEN_POTRZEBNY,Brak twardego rekordu 5D w odzyskanych danych
+XLM,1T,true,false,STARE_ZRODLO_BYLO_ALE_LICZBY_NIEODZYSKANE,V275.38 potwierdza aktywną DEMAND 1T/1W w MASTER_STREFY
+XLM,2T,false,false,NOWY_SCREEN_POTRZEBNY,Brak twardego rekordu 2T w odzyskanych danych
 HBAR,1D,true,false,SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT,Screen użytkownika 2026-09-23
 HBAR,2D,true,false,SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT,Screen użytkownika 2026-09-23
 HBAR,3D,true,false,SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT,Screen użytkownika 2026-09-23
