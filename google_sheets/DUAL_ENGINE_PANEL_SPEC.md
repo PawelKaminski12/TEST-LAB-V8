@@ -14,10 +14,11 @@ Zasada nadrzędna: SILNIK = MASZYNOWNIA, PANEL = KRÓTKA DECYZJA.
 3. PORTFEL_TACTICAL
 4. SILNIK_LONG
 5. SILNIK_TACTICAL
-6. MARKET_READER
-7. ALARMY_EKSTREMOW
-8. HISTORIA
-9. USTAWIENIA
+6. PRZEPLYWY
+7. MARKET_READER
+8. ALARMY_EKSTREMOW
+9. HISTORIA
+10. USTAWIENIA
 
 ## PANEL — minimalny widok po polsku
 Kolumny:
@@ -42,7 +43,7 @@ Przykładowe tłumaczenia TACTICAL:
 - TAKE_PROFIT_WATCH → OBSERWUJ REALIZACJĘ ZYSKU
 - EXIT_RISK_HIGH → WYSOKIE RYZYKO WYJŚCIA
 
-Nie pokazujemy w PANELU MACD, RSI, MFI, ATR, FOMO, stref, punktacji, przepływów, rotacji i szczegółów Market Reader. Te dane zostają w maszynowni oraz w alarmach.
+Główny PANEL pozostaje kompaktowy. MACD, RSI, MFI, ATR, FOMO, strefy, punktacja, przepływy, rotacja i szczegóły Market Reader są dostępne w maszynowni, PRZEPLYWY oraz alarmach.
 
 ## PORTFEL_LONG
 Tylko pozycje długoterminowe. Minimalne dane użytkowe:
@@ -79,12 +80,17 @@ Rdzeń:
 - FOMO
 - rotacja
 - faza rynku
+- FLOW LONG 0–10
+- ocena przepływu
+- bezpośredni ETF 5D / 20D / 30D, jeśli istnieje dla danego aktywa
 - DCA1/2/3
 - decyzja końcowa
 - blokady
 
+FLOW LONG ma horyzont 20D / 30D i mierzy trwałość kapitału. Jest warstwą potwierdzającą, nie samodzielnym sygnałem KUP.
+
 ## SILNIK_TACTICAL — maszynownia
-Źródło: `tactical_engine/TACTICAL_ENGINE.json` + `TACTICAL_READINESS.json` + `TACTICAL_CONFLUENCE.csv`.
+Źródło: `tactical_engine/TACTICAL_ENGINE.json` + `TACTICAL_READINESS.json` + `CRYPTO_MARKET_PHASE.json` + `TACTICAL_CONFLUENCE.csv`.
 
 Warstwy:
 - 1H timing
@@ -103,8 +109,34 @@ Warstwy:
 - tactical score
 - tactical status
 - ekstrema 1H / 4H / 1D
+- FLOW TACTICAL 0–5
+
+FLOW TACTICAL ma horyzont 1D / 5D / 7D i ma pokazywać przyspieszenie przepływu. Jest potwierdzeniem, nie triggerem wejścia.
 
 MFI nie jest samodzielnym sygnałem kupna/sprzedaży. Działa jako warstwa potwierdzenia i wykrywania skrajności razem z RSI, MACD, FOMO, trendem i strefami.
+
+## PRZEPLYWY
+Widoczna zakładka użytkowa dla przepływów i rotacji kapitału.
+
+Pokazuje:
+- ETH/BTC — zmiana 5D i 20D,
+- BTC.D — poziom oraz zmianę, gdy historia jest dojrzała,
+- ETH.D,
+- OTHERS/BTC EQ — trend 5D / 20D po zbudowaniu odpowiedniej historii,
+- stablecoin liquidity — 7D / 14D / 30D,
+- BTC ETF — 5D / 20D / 30D,
+- ETH ETF — 5D / 20D / 30D,
+- SOL ETF — 5D / 20D / 30D,
+- LONG FLOW score,
+- TACTICAL FLOW score.
+
+Źródła danych:
+- Binance Vision — ceny i relacje ETH/BTC oraz ALT/BTC/ETH,
+- CoinGecko — dominacje i odpowiedniki TOTAL3 / OTHERS,
+- DefiLlama — płynność stablecoinów,
+- Farside Investors przez operacyjny mirror — ETF flows.
+
+Ważne ograniczenie: `V8_TOTAL3_EQ` i `V8_OTHERS_BTC_EQ` są odpowiednikami liczonymi z CoinGecko i nie są jeszcze certyfikowane jako 1:1 z TradingView TOTAL3/OTHERS.
 
 ## MFI — zatwierdzona logika ekstremów
 MFI liczymy automatycznie na zamkniętych świecach dla 1H / 4H / 1D.
@@ -126,8 +158,8 @@ Osobna zakładka użytkowa. Alarm jest informacyjny i nie wykonuje transakcji.
 Źródła alarmów:
 - RSI,
 - MFI,
-- FOMO,
-- MACD pozostaje kontekstem kierunku/momentum w SILNIK_TACTICAL.
+- MACD względny do własnej historii aktywa,
+- FOMO.
 
 Domyślne progi RSI/FOMO:
 - RSI wykupienie: RSI >= 75
@@ -139,6 +171,8 @@ Domyślne progi MFI:
 - skrajne górne: 90
 - ostrzeżenie dolne: 20
 - skrajne dolne: 10
+
+MACD jest oceniany względnie do własnej historii aktywa, a nie przez jeden surowy próg wspólny dla ETH/SOL/LINK/ONDO.
 
 Interwały:
 - 1H
@@ -152,6 +186,8 @@ Kolumny:
 - TYP
 - RSI
 - MFI
+- MACD %
+- MACD Z
 - FOMO
 - WAGA
 - CZAS DANYCH
@@ -187,13 +223,15 @@ ZGODNOŚĆ nie jest sygnałem wykonawczym. To skrót informacyjny.
 Jeden przycisk `ODŚWIEŻ_WSZYSTKO` kolejno:
 1. pobiera CORE/LONG,
 2. pobiera TACTICAL,
-3. pobiera MARKET_READER jeśli dostępny,
-4. odświeża maszynownię LONG i TACTICAL,
-5. przelicza polski PANEL,
-6. skanuje RSI / MFI / FOMO na 1H / 4H / 1D,
-7. zapisuje nowe alarmy do HISTORIA,
-8. opcjonalnie wysyła e-mail,
-9. aktualizuje znacznik czasu.
+3. pobiera MARKET PHASE + ETF / stablecoin / rotację,
+4. pobiera MARKET_READER jeśli dostępny,
+5. odświeża maszynownię LONG i TACTICAL,
+6. odświeża PRZEPLYWY,
+7. przelicza polski PANEL,
+8. skanuje RSI / MFI / MACD / FOMO na 1H / 4H / 1D,
+9. zapisuje nowe alarmy do HISTORIA,
+10. opcjonalnie wysyła e-mail,
+11. aktualizuje znacznik czasu.
 
 Dodatkowa komenda `SPRAWDŹ EKSTREMA` wykonuje sam skan ekstremów bez pełnego odświeżania panelu.
 
@@ -204,10 +242,11 @@ Dodatkowa komenda `SPRAWDŹ EKSTREMA` wykonuje sam skan ekstremów bez pełnego 
 - Brak synchronizacji ilości między portfelami.
 - V7 produkcyjny pozostaje nietknięty.
 - Market Reader nie może nadpisywać twardych blokad.
-- RSI/MFI/FOMO ekstremum nie jest automatycznie sygnałem sprzedaży ani zakupu.
+- ETF / stablecoin / ETH-BTC / OTHERS-BTC są warstwą potwierdzającą, nie automatycznym sygnałem KUP.
+- RSI/MFI/MACD/FOMO ekstremum nie jest automatycznie sygnałem sprzedaży ani zakupu.
 - Dane maszynowni nie rozrastają głównego PANELU.
 
 ## Status projektu
-Warstwa panelu i integracji Google Sheets jest domknięta funkcjonalnie: LONG + TACTICAL, polski widok użytkownika, oddzielne portfele, historia oraz alarmy ekstremów RSI/MFI/FOMO 1H/4H/1D są zdefiniowane i zaimplementowane w `DUAL_ENGINE_APPS_SCRIPT_FULL.txt`.
+Warstwa panelu i integracji Google Sheets jest domknięta funkcjonalnie dla: LONG + TACTICAL, polskiego widoku użytkownika, oddzielnych portfeli, historii, alarmów ekstremów RSI/MFI/MACD/FOMO oraz osobnej zakładki PRZEPLYWY z ETF / stablecoin / ETH-BTC / OTHERS-BTC.
 
 Kalibracja progów strategii TACTICAL pozostaje osobnym etapem badawczym. Nie wolno oznaczać jej jako zamrożonej strategii wykonawczej wyłącznie na podstawie pojedynczego holdoutu.
