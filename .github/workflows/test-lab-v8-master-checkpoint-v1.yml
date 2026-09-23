@@ -1,0 +1,50 @@
+name: TEST LAB V8 Master Checkpoint v1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/v8_master_checkpoint_v1.py'
+      - '.github/workflows/test-lab-v8-master-checkpoint-v1.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-master-checkpoint-v1
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz najnowszy projekt
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Biblioteki
+        run: pip install --quiet pandas
+      - name: Zbuduj końcowy checkpoint 11 altów
+        run: python scripts/v8_master_checkpoint_v1.py
+      - name: Zapisz bez konfliktu
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          mkdir -p /tmp/v8master
+          cp crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json crypto_data_hub/ALT_ENGINE_MASTER_COCKPIT.csv /tmp/v8master/
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/v8master/* crypto_data_hub/
+            git add crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json crypto_data_hub/ALT_ENGINE_MASTER_COCKPIT.csv
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Update V8 final master checkpoint 11 alts'
+            git push origin main && exit 0
+            sleep $((attempt*3))
+          done
+          exit 1
