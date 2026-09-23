@@ -29,7 +29,7 @@ jobs:
           python-version: '3.12'
       - name: Biblioteki
         run: pip install --quiet pandas
-      - name: Zbuduj końcowy checkpoint 11 altów
+      - name: Zbuduj końcowy checkpoint 13 altów
         run: python scripts/v8_master_checkpoint_v1.py
       - name: Zapisz bez konfliktu
         run: |
@@ -43,7 +43,7 @@ jobs:
             cp /tmp/v8master/* crypto_data_hub/
             git add crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json crypto_data_hub/ALT_ENGINE_MASTER_COCKPIT.csv
             if git diff --cached --quiet; then exit 0; fi
-            git commit -m 'Update V8 final master checkpoint 11 alts'
+            git commit -m 'Update V8 final master checkpoint 13 alts'
             git push origin main && exit 0
             sleep $((attempt*3))
           done
