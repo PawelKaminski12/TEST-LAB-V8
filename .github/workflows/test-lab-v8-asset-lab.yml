@@ -2,6 +2,39 @@ name: TEST LAB V8 Asset LAB
 
 on:
   workflow_dispatch:
+    inputs:
+      symbol:
+        description: 'Ticker, np. ETH, ANET, PEPE'
+        required: false
+        type: string
+      source_symbol:
+        description: 'Symbol źródłowy; puste = auto (CRYPTO -> TICKER-USD, STOCK -> TICKER)'
+        required: false
+        type: string
+      asset_type:
+        description: 'Typ aktywa'
+        required: false
+        default: 'AUTO'
+        type: choice
+        options:
+          - AUTO
+          - CRYPTO
+          - STOCK
+          - MEME
+      mode:
+        description: 'Tryb analizy'
+        required: false
+        default: 'BOTH'
+        type: choice
+        options:
+          - FAST
+          - DEEP
+          - BOTH
+      save_to_watchlist:
+        description: 'Zapisać ticker do stałej obserwacji LAB?'
+        required: false
+        default: true
+        type: boolean
   schedule:
     - cron: '10 */6 * * *'
   push:
@@ -38,8 +71,112 @@ jobs:
       - name: Install dependencies
         run: pip install --quiet pandas numpy yfinance requests
 
+      - name: Apply manual LAB request
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.symbol != '' }}
+        env:
+          LAB_SYMBOL: ${{ inputs.symbol }}
+          LAB_SOURCE_SYMBOL: ${{ inputs.source_symbol }}
+          LAB_ASSET_TYPE: ${{ inputs.asset_type }}
+          LAB_MODE: ${{ inputs.mode }}
+          LAB_SAVE: ${{ inputs.save_to_watchlist }}
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from datetime import datetime, timezone
+          import pandas as pd
+
+          path=Path('config/lab_assets.csv')
+          cols=['symbol','source_symbol','asset_type','mode','enabled','added_at_utc','notes']
+          try:
+              df=pd.read_csv(path)
+          except Exception:
+              df=pd.DataFrame(columns=cols)
+          for c in cols:
+              if c not in df.columns: df[c]=''
+
+          symbol=os.environ.get('LAB_SYMBOL','').strip().upper()
+          typ=os.environ.get('LAB_ASSET_TYPE','AUTO').strip().upper() or 'AUTO'
+          mode=os.environ.get('LAB_MODE','BOTH').strip().upper() or 'BOTH'
+          src=os.environ.get('LAB_SOURCE_SYMBOL','').strip()
+          save=os.environ.get('LAB_SAVE','true').strip().lower()=='true'
+          if not symbol:
+              raise SystemExit('Empty LAB symbol')
+          if typ not in {'AUTO','CRYPTO','STOCK','MEME'}:
+              raise SystemExit(f'Invalid asset type: {typ}')
+          if mode not in {'FAST','DEEP','BOTH'}:
+              raise SystemExit(f'Invalid LAB mode: {mode}')
+          if not src:
+              src=f'{symbol}-USD' if typ in {'CRYPTO','MEME'} else symbol
+          if typ=='AUTO':
+              typ='CRYPTO' if src.upper().endswith('-USD') else 'STOCK'
+
+          now=datetime.now(timezone.utc).isoformat()
+          mask=df['symbol'].astype(str).str.upper().eq(symbol)
+          row={
+              'symbol':symbol,
+              'source_symbol':src,
+              'asset_type':typ,
+              'mode':mode,
+              'enabled':'true',
+              'added_at_utc':now,
+              'notes':'MANUAL_LAB_REQUEST' if save else 'ONE_SHOT_LAB_REQUEST'
+          }
+          if mask.any():
+              idx=df.index[mask][0]
+              existing_added=str(df.loc[idx,'added_at_utc']).strip()
+              if existing_added and existing_added.lower()!='nan': row['added_at_utc']=existing_added
+              for k,v in row.items(): df.loc[idx,k]=v
+          else:
+              df=pd.concat([df,pd.DataFrame([row])],ignore_index=True)
+          df[cols].to_csv(path,index=False)
+          print({'symbol':symbol,'source_symbol':src,'asset_type':typ,'mode':mode,'save_to_watchlist':save})
+          PY
+
       - name: Run Asset LAB
         run: python scripts/v8_asset_lab.py
+
+      - name: Build readable LAB summary
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          p=Path('lab/LAB_REPORT.json')
+          x=json.loads(p.read_text())
+          lines=['# V8 ASSET LAB — latest', '', f"Generated: {x.get('generated_at_utc','')}", f"Engine: {x.get('engine','')}", '']
+          for a in x.get('reports',[]):
+              t=a.get('technical_1D') or {}
+              deep=a.get('deep_observation') or {}
+              lines += [
+                  f"## {a.get('symbol')} — {a.get('asset_type')} — {a.get('mode')}",
+                  f"- Data: **{a.get('data_status')}** ({a.get('data_quality_0_100')}/100)",
+                  f"- Checkpoint: **{a.get('checkpoint')}**",
+                  f"- Price: {t.get('price')}",
+                  f"- Trend: {t.get('trend_0_4')}/4 | RSI14: {t.get('rsi14')} | MFI14: {t.get('mfi14')} | MACD hist: {t.get('macd_hist')} | FOMO: {t.get('fomo_0_10')}/10",
+              ]
+              if a.get('asset_type') in ('CRYPTO','MEME'):
+                  m=a.get('crypto_market_context') or {}; o=a.get('onchain_context') or {}; e=a.get('existing_engine_context') or {}
+                  lines += [
+                      f"- Market phase: {m.get('phase')} | rotation: {m.get('rotation_score_0_10')}/10 {m.get('rotation_status')}",
+                      f"- BTC.D: {m.get('btc_dominance_pct')} | ETH.D: {m.get('eth_dominance_pct')} | ETH/BTC 20D: {m.get('eth_btc_20d_pct')}%",
+                      f"- On-chain LONG: {o.get('long_score')}/10 | Tactical: {o.get('tactical_score')}/10 | quality: {o.get('quality_gate')}",
+                      f"- Existing engine decision: {e.get('decision')}",
+                  ]
+              else:
+                  f=a.get('stock_fundamentals') or {}
+                  lines += [
+                      f"- Market cap: {f.get('market_cap')} | P/E: {f.get('trailing_pe')} | Forward P/E: {f.get('forward_pe')} | P/S: {f.get('price_to_sales')}",
+                      f"- Revenue growth: {f.get('revenue_growth')} | Earnings growth: {f.get('earnings_growth')} | FCF: {f.get('free_cashflow')}",
+                  ]
+              if deep:
+                  lines += [
+                      f"- DEEP: {deep.get('status')} | elapsed days: {deep.get('elapsed_days')} | price Δ: {deep.get('price_change_pct')}% | RSI Δ: {deep.get('rsi_change')} | MFI Δ: {deep.get('mfi_change')}",
+                  ]
+              lines += ['', '---', '']
+          lines += ['Research only. LAB never executes trades and never auto-adds an asset to the production portfolio.']
+          Path('lab/LAB_LATEST.md').write_text('\n'.join(lines),encoding='utf-8')
+          PY
 
       - name: Validate LAB outputs
         run: |
@@ -51,27 +188,37 @@ jobs:
           x=json.loads(p.read_text())
           assert x['fast_mode_ready'] is True
           assert x['deep_mode_ready'] is True
+          assert x.get('deep_comparison_enabled') is True
           assert x['portfolio_connection'] is False
           assert x['execution_connection'] is False
+          assert Path('lab/LAB_LATEST.md').exists()
           print(x)
           PY
 
-      - name: Commit LAB outputs
+      - name: Commit LAB outputs and optional watchlist update
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add lab/LAB_REPORT.json lab/LAB_COCKPIT.csv lab/LAB_HISTORY.csv lab/LAB_STATUS.json
+          git add lab/LAB_REPORT.json lab/LAB_COCKPIT.csv lab/LAB_HISTORY.csv lab/LAB_STATUS.json lab/LAB_LATEST.md
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.symbol }}" != "" ] && [ "${{ inputs.save_to_watchlist }}" = "true" ]; then
+            git add config/lab_assets.csv
+          fi
           if git diff --cached --quiet; then exit 0; fi
           git commit -m 'Update V8 Asset LAB outputs'
           for attempt in 1 2 3; do
             if git push; then exit 0; fi
             echo "Push attempt $attempt failed; refreshing latest main"
             mkdir -p /tmp/labout
-            cp lab/LAB_REPORT.json lab/LAB_COCKPIT.csv lab/LAB_HISTORY.csv lab/LAB_STATUS.json /tmp/labout/
+            cp lab/LAB_REPORT.json lab/LAB_COCKPIT.csv lab/LAB_HISTORY.csv lab/LAB_STATUS.json lab/LAB_LATEST.md /tmp/labout/
+            if [ -f config/lab_assets.csv ]; then cp config/lab_assets.csv /tmp/labout/lab_assets.csv; fi
             git fetch origin main
             git reset --hard origin/main
-            cp /tmp/labout/* lab/
-            git add lab/LAB_REPORT.json lab/LAB_COCKPIT.csv lab/LAB_HISTORY.csv lab/LAB_STATUS.json
+            cp /tmp/labout/LAB_REPORT.json /tmp/labout/LAB_COCKPIT.csv /tmp/labout/LAB_HISTORY.csv /tmp/labout/LAB_STATUS.json /tmp/labout/LAB_LATEST.md lab/
+            git add lab/LAB_REPORT.json lab/LAB_COCKPIT.csv lab/LAB_HISTORY.csv lab/LAB_STATUS.json lab/LAB_LATEST.md
+            if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.symbol }}" != "" ] && [ "${{ inputs.save_to_watchlist }}" = "true" ] && [ -f /tmp/labout/lab_assets.csv ]; then
+              cp /tmp/labout/lab_assets.csv config/lab_assets.csv
+              git add config/lab_assets.csv
+            fi
             if git diff --cached --quiet; then exit 0; fi
             git commit -m 'Update V8 Asset LAB outputs'
             sleep $((attempt * 3))
