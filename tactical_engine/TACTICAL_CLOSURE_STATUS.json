@@ -2,7 +2,7 @@
   "project": "DANE SILNIKA V8 / DUAL ENGINE",
   "component": "TACTICAL",
   "checkpoint_date": "2026-09-23",
-  "technical_closure": "COMPLETE",
+  "technical_closure": "COMPLETE_WITH_MFI_EXTREMES",
   "execution_status": "RESEARCH_DECISION_SUPPORT_ONLY",
   "v7_untouched": true,
   "long_tactical_separate_capital": true,
@@ -10,6 +10,11 @@
     "closed_candles_only_1h_4h_1d": true,
     "freshness_checks_1h_4h_1d": true,
     "multi_timeframe_score": true,
+    "macd_1h_4h_1d": true,
+    "rsi_1h_4h_1d": true,
+    "mfi14_1h_4h_1d": true,
+    "mfi_warning_80_20": true,
+    "mfi_extreme_90_10": true,
     "fomo_hard_block": true,
     "daily_regime_block": true,
     "4h_breakdown_block": true,
@@ -31,7 +36,19 @@
   "default_extreme_thresholds": {
     "rsi_overbought": 75,
     "rsi_oversold": 25,
+    "mfi_warning_overbought": 80,
+    "mfi_extreme_overbought": 90,
+    "mfi_warning_oversold": 20,
+    "mfi_extreme_oversold": 10,
     "fomo_hard_block": 8
+  },
+  "indicator_roles": {
+    "1H": "timing_and_fast_extreme_warning",
+    "4H": "primary_tactical_decision_and_extreme_confirmation",
+    "1D": "directional_regime_and_high_weight_extreme_context",
+    "MFI": "volume_weighted_momentum_confirmation_and_extreme_detection_not_standalone_trade_signal",
+    "MACD": "momentum_direction_and_histogram_confirmation_not_standalone_trade_signal",
+    "RSI": "momentum_extreme_context_not_standalone_trade_signal"
   },
   "calibration": {
     "status": "NOT_FROZEN",
@@ -46,6 +63,8 @@
   },
   "next_phase": "PAPER_OBSERVATION_AND_CALIBRATION",
   "source_files": [
+    ".github/workflows/test-lab-v8-tactical-engine.yml",
+    ".github/workflows/test-lab-v8-tactical-readiness.yml",
     "tactical_engine/TACTICAL_ENGINE.json",
     "tactical_engine/TACTICAL_READINESS.json",
     "tactical_validation/TACTICAL_THRESHOLD_LAB.json",
