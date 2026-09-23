@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-23T12:41:48.907439+00:00",
+  "generated_at_utc": "2026-09-23T13:03:02.715744+00:00",
   "engine": "V8_TACTICAL_TECHNICAL_VALIDATION_v0.1",
   "method": "walk-forward closed-candle observational validation anchored on 4H closes",
   "no_lookahead": true,
