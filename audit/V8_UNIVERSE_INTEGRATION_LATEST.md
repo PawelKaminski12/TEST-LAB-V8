@@ -27,7 +27,7 @@
 - SPX6900: BRAKUJE 2D, 3D, 4D, 5D, 2T
 - XRP: BRAKUJE 1D, 2D, 3D, 4D, 5D, 1T, 2T
 - XLM: BRAKUJE 1D, 2D, 3D, 4D, 5D, 1T, 2T
-- HBAR: BRAKUJE 1D, 2D, 3D, 4D, 5D, 1T, 2T
+- HBAR: 7/7 GOTOWE
 
 AAVE: ARCHIWUM — NIEAKTYWNY.
 Brak połączenia z wykonywaniem transakcji.

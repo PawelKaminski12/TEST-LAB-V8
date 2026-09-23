@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-23T17:24:34.246153+00:00",
+  "generated_at_utc": "2026-09-23T18:09:23.044224+00:00",
   "engine": "V8_UNIVERSE_INTEGRATION_AUDIT_v1.0",
   "integration_status_pl": "OBA SILNIKI PODŁĄCZONE I SPRAWDZONE",
   "core_checks_pass": true,
@@ -205,17 +205,17 @@
       ]
     },
     "HBAR": {
-      "complete_7_of_7": false,
-      "confirmed_timeframes": [],
-      "missing_timeframes": [
+      "complete_7_of_7": true,
+      "confirmed_timeframes": [
         "1D",
+        "1T",
         "2D",
+        "2T",
         "3D",
         "4D",
-        "5D",
-        "1T",
-        "2T"
-      ]
+        "5D"
+      ],
+      "missing_timeframes": []
     }
   },
   "assets_missing_full_user_zones": [
@@ -224,8 +224,7 @@
     "PEPE",
     "SPX6900",
     "XRP",
-    "XLM",
-    "HBAR"
+    "XLM"
   ],
   "important_note_pl": "Brak stref nie wyłącza monitoringu wskaźników TACTICAL. W LONG blokuje pełną decyzję do czasu potwierdzenia mapy 7/7.",
   "aave": "ARCHIWUM — NIEAKTYWNY"
