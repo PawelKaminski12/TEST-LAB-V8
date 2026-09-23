@@ -56,15 +56,12 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
-
       - name: Przygotuj Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
       - name: Zainstaluj potrzebne biblioteki
         run: pip install --quiet pandas numpy yfinance requests
-
       - name: Dodaj ręcznie wskazane aktywo do analizy
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.symbol != '' }}
         env:
@@ -85,11 +82,7 @@ jobs:
           except Exception: df=pd.DataFrame(columns=cols)
           for c in cols:
               if c not in df.columns: df[c]=''
-          symbol=os.environ.get('LAB_SYMBOL','').strip().upper()
-          typ=os.environ.get('LAB_ASSET_TYPE','AUTO').strip().upper() or 'AUTO'
-          mode=os.environ.get('LAB_MODE','BOTH').strip().upper() or 'BOTH'
-          src=os.environ.get('LAB_SOURCE_SYMBOL','').strip()
-          save=os.environ.get('LAB_SAVE','true').strip().lower()=='true'
+          symbol=os.environ.get('LAB_SYMBOL','').strip().upper(); typ=os.environ.get('LAB_ASSET_TYPE','AUTO').strip().upper() or 'AUTO'; mode=os.environ.get('LAB_MODE','BOTH').strip().upper() or 'BOTH'; src=os.environ.get('LAB_SOURCE_SYMBOL','').strip(); save=os.environ.get('LAB_SAVE','true').strip().lower()=='true'
           if not symbol: raise SystemExit('Brak tickera do analizy')
           if typ not in {'AUTO','CRYPTO','STOCK','MEME'}: raise SystemExit('Nieprawidłowy typ aktywa')
           if mode not in {'FAST','DEEP','BOTH'}: raise SystemExit('Nieprawidłowy tryb analizy')
@@ -105,13 +98,10 @@ jobs:
           df[cols].to_csv(path,index=False)
           print({'ticker':symbol,'typ':typ,'tryb':mode,'zapis_do_obserwacji':save})
           PY
-
       - name: Uruchom analizę aktywów
         run: python scripts/v8_asset_lab.py
-
       - name: Zbuduj czytelny raport po polsku
         run: python scripts/v8_asset_lab_summary.py
-
       - name: Sprawdź analizę i raport użytkownika
         run: |
           python - <<'PY'
@@ -123,21 +113,23 @@ jobs:
           assert status['deep_mode_ready'] is True
           assert status.get('deep_comparison_enabled') is True
           assert status.get('polish_user_language') is True
-          assert status.get('btc_dedicated_etf_filter') is True
+          assert status.get('btc_eth_dedicated_etf_filter') is True
           assert status['portfolio_connection'] is False
           assert status['execution_connection'] is False
           report=json.loads(Path('lab/LAB_REPORT.json').read_text())
-          assert report.get('engine')=='V8_ASSET_LAB_v0.4'
+          assert report.get('engine')=='V8_ASSET_LAB_v0.5'
+          seen={a.get('symbol') for a in report.get('reports',[])}
           for a in report.get('reports',[]):
               assert 'opis_po_polsku' in a
               assert 'technical' in a and set(['1H','4H','1D']).issubset(a['technical'])
-              if a.get('symbol')=='BTC': assert a.get('btc_etf_context') is not None
+              if a.get('symbol') in {'BTC','ETH'}: assert a.get('etf_context') is not None
+          if {'BTC','ETH'}.issubset(seen):
+              assert all(next(a for a in report['reports'] if a.get('symbol')==s).get('etf_context') is not None for s in ('BTC','ETH'))
           summary=Path('lab/LAB_LATEST.md').read_text(encoding='utf-8')
           for forbidden in ['PARTIAL','DATA_READY','STRONG_CONTEXT','MIXED_CONTEXT','DEEP:','TRACKING']:
               assert forbidden not in summary
-          print('V8 LAB v0.4: sprawdzenie zakończone poprawnie')
+          print('V8 LAB v0.5: filtry ETF BTC i ETH sprawdzone poprawnie')
           PY
-
       - name: Zapisz wyniki i historię
         run: |
           git config user.name 'github-actions[bot]'
