@@ -1,0 +1,134 @@
+{
+  "date": "2026-09-22",
+  "engine": "ALT_ENGINE_DYNAMIC_v0.1",
+  "universe_source": "config/alt_universe.csv",
+  "universe_count": 6,
+  "design_rules": {
+    "not_hardcoded_to_five_test_alts": true,
+    "every_enabled_registry_row_is_processed": true,
+    "relative_strength_is_context_not_hard_gate": true,
+    "rotation_score_is_context_not_buy_signal": true,
+    "final_trade_decision_requires_all_layers": true
+  },
+  "assets": [
+    {
+      "symbol": "ETH",
+      "role": "CORE_ALT",
+      "global_alt_rotation_score": 7,
+      "global_alt_rotation_status": "CONFIRMED",
+      "global_confidence": "MEDIUM",
+      "relative_strength_0_4": 4,
+      "context_label": "WATCH_STRONG",
+      "vs_btc_20d_pct": 3.279176735238498,
+      "vs_eth_20d_pct": null,
+      "own_trend_0_3": 3,
+      "missing_layers": [
+        "STREFY",
+        "BREAKOUT_RETEST",
+        "FOMO"
+      ],
+      "trade_decision": "DATA_PENDING",
+      "reason": "Final decision blocked until zones, own trend, breakout/retest and FOMO layers are present."
+    },
+    {
+      "symbol": "SOL",
+      "role": "ALT",
+      "global_alt_rotation_score": 7,
+      "global_alt_rotation_status": "CONFIRMED",
+      "global_confidence": "MEDIUM",
+      "relative_strength_0_4": 4,
+      "context_label": "WATCH_STRONG",
+      "vs_btc_20d_pct": 5.916882678215174,
+      "vs_eth_20d_pct": 2.5539571735148314,
+      "own_trend_0_3": null,
+      "missing_layers": [
+        "GENERIC_PRICE_REGIME",
+        "STREFY",
+        "BREAKOUT_RETEST",
+        "FOMO"
+      ],
+      "trade_decision": "DATA_PENDING",
+      "reason": "Final decision blocked until zones, own trend, breakout/retest and FOMO layers are present."
+    },
+    {
+      "symbol": "LINK",
+      "role": "ALT",
+      "global_alt_rotation_score": 7,
+      "global_alt_rotation_status": "CONFIRMED",
+      "global_confidence": "MEDIUM",
+      "relative_strength_0_4": 4,
+      "context_label": "WATCH_STRONG",
+      "vs_btc_20d_pct": 5.260511723780037,
+      "vs_eth_20d_pct": 1.9184263964659332,
+      "own_trend_0_3": null,
+      "missing_layers": [
+        "GENERIC_PRICE_REGIME",
+        "STREFY",
+        "BREAKOUT_RETEST",
+        "FOMO"
+      ],
+      "trade_decision": "DATA_PENDING",
+      "reason": "Final decision blocked until zones, own trend, breakout/retest and FOMO layers are present."
+    },
+    {
+      "symbol": "AAVE",
+      "role": "ALT",
+      "global_alt_rotation_score": 7,
+      "global_alt_rotation_status": "CONFIRMED",
+      "global_confidence": "MEDIUM",
+      "relative_strength_0_4": 4,
+      "context_label": "WATCH_STRONG",
+      "vs_btc_20d_pct": 4.416787009193945,
+      "vs_eth_20d_pct": 1.1014904552074212,
+      "own_trend_0_3": null,
+      "missing_layers": [
+        "GENERIC_PRICE_REGIME",
+        "STREFY",
+        "BREAKOUT_RETEST",
+        "FOMO"
+      ],
+      "trade_decision": "DATA_PENDING",
+      "reason": "Final decision blocked until zones, own trend, breakout/retest and FOMO layers are present."
+    },
+    {
+      "symbol": "HBAR",
+      "role": "ALT",
+      "global_alt_rotation_score": 7,
+      "global_alt_rotation_status": "CONFIRMED",
+      "global_confidence": "MEDIUM",
+      "relative_strength_0_4": 2,
+      "context_label": "WATCH",
+      "vs_btc_20d_pct": 19.207919522096994,
+      "vs_eth_20d_pct": 15.422995506337811,
+      "own_trend_0_3": null,
+      "missing_layers": [
+        "GENERIC_PRICE_REGIME",
+        "STREFY",
+        "BREAKOUT_RETEST",
+        "FOMO"
+      ],
+      "trade_decision": "DATA_PENDING",
+      "reason": "Final decision blocked until zones, own trend, breakout/retest and FOMO layers are present."
+    },
+    {
+      "symbol": "ONDO",
+      "role": "ALT",
+      "global_alt_rotation_score": 7,
+      "global_alt_rotation_status": "CONFIRMED",
+      "global_confidence": "MEDIUM",
+      "relative_strength_0_4": 2,
+      "context_label": "WATCH",
+      "vs_btc_20d_pct": 13.634345311328433,
+      "vs_eth_20d_pct": 10.026385669819948,
+      "own_trend_0_3": null,
+      "missing_layers": [
+        "GENERIC_PRICE_REGIME",
+        "STREFY",
+        "BREAKOUT_RETEST",
+        "FOMO"
+      ],
+      "trade_decision": "DATA_PENDING",
+      "reason": "Final decision blocked until zones, own trend, breakout/retest and FOMO layers are present."
+    }
+  ]
+}
