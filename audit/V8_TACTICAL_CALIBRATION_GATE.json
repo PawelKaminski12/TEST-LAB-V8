@@ -1,0 +1,52 @@
+{
+  "generated_at_utc": "2026-09-23T21:15:03.545351+00:00",
+  "engine": "V8_TACTICAL_CALIBRATION_GATE_v1.0",
+  "research_only": true,
+  "production_thresholds_changed": false,
+  "auto_execution_changed": false,
+  "deployment_gate": false,
+  "status": "PASS_DO_BADAN_DALSZYCH__DEPLOY_HOLD",
+  "qa_ok": true,
+  "production_observations_ok": true,
+  "train_positive_gate": false,
+  "holdout_positive_gate": true,
+  "production_cross_asset_consistency_gate": false,
+  "regime_instability_flag": true,
+  "candidate": {
+    "score_min": 6,
+    "fomo_max": 7,
+    "trend4_min": 3,
+    "rsi_lo": 50,
+    "rsi_hi": 70,
+    "train_n": 230,
+    "train_mean12": -0.18794482195490264,
+    "train_median12": -0.25750142184644,
+    "train_win12": 44.34782608695652,
+    "train_mean24": -0.34793719407197105,
+    "train_min_asset_n": 55,
+    "train_worst_asset_mean12": -0.4226007053532435,
+    "train_asset_dispersion12": 0.20106630978918527,
+    "holdout_n": 91,
+    "holdout_mean12": 1.2534255041133564,
+    "holdout_median12": 0.9690768654150084,
+    "holdout_win12": 61.53846153846154,
+    "holdout_mean24": 2.17442212479698,
+    "holdout_min_asset_n": 17,
+    "holdout_worst_asset_mean12": 0.7072656827202283,
+    "holdout_asset_dispersion12": 0.4673231872879358,
+    "robustness_gate": true,
+    "robustness_score": 1.126756258161313
+  },
+  "production_assets": [
+    "ETH",
+    "SOL",
+    "LINK",
+    "ONDO"
+  ],
+  "reasons": [
+    "Próbka TRAIN nie spełnia minimalnego dodatniego profilu",
+    "Wynik HOLDOUT jest dodatni przy ujemnym TRAIN — ryzyko niestabilności reżimu / selekcji próbki",
+    "Spójność między aktywami produkcyjnymi jest niewystarczająca"
+  ],
+  "decision": "NIE ZMIENIAĆ PRODUKCYJNYCH PROGÓW"
+}
