@@ -1,0 +1,168 @@
+// V8 DUAL ENGINE — EXTREME CONFLUENCE V2
+// Warstwa użytkowa do scalenia z DUAL_ENGINE_APPS_SCRIPT_FULL.txt.
+// Nie zmienia logiki LONG ani TACTICAL. Nie wykonuje transakcji.
+// Cel: jeden czytelny alarm na AKTYWO + INTERWAŁ zamiast wielu osobnych rekordów.
+
+function setupExtremes_(sheet) {
+  const headers = ['AKTYWNY','AKTYWO','INTERWAŁ','ZBIEŻNOŚĆ','PRIORYTET','WAGA INTERWAŁU','SYGNAŁY','RSI','MFI','MACD %','MACD Z','FOMO','OPIS','CZAS DANYCH'];
+  sheet.getRange(1,1,1,headers.length).setValues([headers]);
+  sheet.setFrozenRows(1);
+}
+
+function buildExtremeAlarms_(ss, tacticalJson) {
+  const cfg = getExtremeSettings_(ss);
+  if (!cfg.enabled) return [];
+
+  const alarms = [];
+  (tacticalJson.assets || []).forEach(a => {
+    const t = a.timeframes || {};
+    ['1H','4H','1D'].forEach(tf => {
+      const x = t[tf] || {};
+      const rsi = Number(x.rsi14);
+      const mfi = Number(x.mfi14);
+      const fomo = Number(x.fomo_score_0_10);
+      const macdPct = Number(x.macd_hist_percentile);
+      const macdZ = Number(x.macd_hist_zscore);
+      const ts = x.last_close_time_utc || '';
+      const signals = [];
+
+      if (Number.isFinite(rsi) && rsi >= cfg.rsiHigh) signals.push(rsi >= 80 ? 'RSI SKRAJNE WYKUPIENIE' : 'RSI WYKUPIENIE');
+      if (Number.isFinite(rsi) && rsi <= cfg.rsiLow) signals.push(rsi <= 20 ? 'RSI SKRAJNE WYPRZEDANIE' : 'RSI WYPRZEDANIE');
+
+      if (Number.isFinite(mfi)) {
+        if (mfi >= cfg.mfiExtremeHigh) signals.push('MFI SKRAJNE WYKUPIENIE');
+        else if (mfi >= cfg.mfiWarnHigh) signals.push('MFI WYKUPIENIE');
+        if (mfi <= cfg.mfiExtremeLow) signals.push('MFI SKRAJNE WYPRZEDANIE');
+        else if (mfi <= cfg.mfiWarnLow) signals.push('MFI WYPRZEDANIE');
+      }
+
+      const ml = String(x.macd_extreme_label || 'NORMAL');
+      if (ml === 'EXTREME_POSITIVE') signals.push('MACD SKRAJNIE DODATNIE');
+      else if (ml === 'EXTREME_NEGATIVE') signals.push('MACD SKRAJNIE UJEMNE');
+      else if (ml === 'WARNING_POSITIVE') signals.push('MACD MOCNO DODATNIE');
+      else if (ml === 'WARNING_NEGATIVE') signals.push('MACD MOCNO UJEMNE');
+
+      if (Number.isFinite(fomo) && fomo >= cfg.fomoHard) signals.push(fomo >= 9 ? 'FOMO SKRAJNE' : 'FOMO HARD');
+
+      if (!signals.length) return;
+
+      const count = signals.length;
+      const priority = confluencePriority_(count);
+      const tfWeight = timeframeWeight_(tf);
+      const reason = confluenceReason_(a.symbol, tf, count, priority, tfWeight, signals);
+      alarms.push(makeConfluenceAlarm_(a.symbol, tf, signals, rsi, mfi, macdPct, macdZ, fomo, priority, tfWeight, reason, ts));
+    });
+  });
+
+  return alarms.sort((a,b) => {
+    const p = {KRYTYCZNY:3,MOCNY:2,OSTRZEŻENIE:1};
+    const w = {'NAJWYŻSZA':3,'WYSOKA':2,'NISKA':1};
+    return (p[b.priority]-p[a.priority]) || (w[b.tfWeight]-w[a.tfWeight]) || String(a.symbol).localeCompare(String(b.symbol));
+  });
+}
+
+function confluencePriority_(count) {
+  if (count >= 3) return 'KRYTYCZNY';
+  if (count === 2) return 'MOCNY';
+  return 'OSTRZEŻENIE';
+}
+
+function timeframeWeight_(tf) {
+  if (tf === '1D') return 'NAJWYŻSZA';
+  if (tf === '4H') return 'WYSOKA';
+  return 'NISKA';
+}
+
+function confluenceReason_(symbol, tf, count, priority, tfWeight, signals) {
+  const n = count === 1 ? '1 sygnał' : count < 5 ? count + ' sygnały' : count + ' sygnałów';
+  return symbol + ' ' + tf + ': ' + n + ' zgodne. Priorytet ' + priority + ', waga interwału ' + tfWeight + '. ' + signals.join(' + ') + '.';
+}
+
+function makeConfluenceAlarm_(symbol, tf, signals, rsi, mfi, macdPct, macdZ, fomo, priority, tfWeight, reason, ts) {
+  const type = signals.join(' + ');
+  return {
+    aktywny:true,
+    symbol:symbol,
+    tf:tf,
+    type:type,
+    signalCount:signals.length,
+    priority:priority,
+    severity:priority,
+    tfWeight:tfWeight,
+    signals:signals,
+    rsi:Number.isFinite(rsi)?rsi:'',
+    mfi:Number.isFinite(mfi)?mfi:'',
+    macdPct:Number.isFinite(macdPct)?macdPct:'',
+    macdZ:Number.isFinite(macdZ)?macdZ:'',
+    fomo:Number.isFinite(fomo)?fomo:'',
+    reason:reason,
+    ts:ts,
+    key:[symbol,tf,type].join('|')
+  };
+}
+
+function writeExtremeAlarms_(sheet, alarms) {
+  const headers = ['AKTYWNY','AKTYWO','INTERWAŁ','ZBIEŻNOŚĆ','PRIORYTET','WAGA INTERWAŁU','SYGNAŁY','RSI','MFI','MACD %','MACD Z','FOMO','OPIS','CZAS DANYCH'];
+  sheet.clearContents();
+  sheet.getRange(1,1,1,headers.length).setValues([headers]);
+
+  const rows = alarms.map(a => [
+    'TAK',a.symbol,a.tf,a.signalCount,a.priority,a.tfWeight,a.type,
+    a.rsi,a.mfi,a.macdPct,a.macdZ,a.fomo,a.reason,a.ts
+  ]);
+
+  if (rows.length) {
+    sheet.getRange(2,1,rows.length,headers.length).setValues(rows);
+  } else {
+    sheet.getRange(2,1,1,headers.length).setValues([['NIE','','','0','BRAK','BRAK','BRAK AKTYWNYCH EKSTREMÓW','','','','','','','']]);
+  }
+
+  sheet.setFrozenRows(1);
+  sheet.getRange(1,1,1,headers.length).setFontWeight('bold');
+  sheet.getRange(1,1,Math.max(2,rows.length+1),headers.length).setWrap(true).setVerticalAlignment('middle');
+  [75,80,80,85,105,115,320,75,75,85,85,75,420,180].forEach((w,i)=>sheet.setColumnWidth(i+1,w));
+}
+
+function readActiveExtremeKeys_(sheet) {
+  const out = {};
+  if (!sheet || sheet.getLastRow() < 2) return out;
+  const rows = sheet.getRange(2,1,sheet.getLastRow()-1,Math.min(14,sheet.getLastColumn())).getValues();
+  rows.forEach(r => {
+    if (String(r[0]).toUpperCase() !== 'TAK') return;
+    out[[r[1],r[2],r[6]].join('|')] = true;
+  });
+  return out;
+}
+
+function appendExtremeHistory_(ss, oldKeys, alarms) {
+  const sh = ss.getSheetByName(V8_SHEETS.history);
+  if (sh.getLastRow() === 0) {
+    sh.appendRow(['CZAS','AKTYWO','LONG','TACTICAL','RYZYKO','ZGODNOŚĆ','ALERT','POWÓD']);
+    sh.setFrozenRows(1);
+  }
+  const now = new Date();
+  alarms.forEach(a => {
+    if (oldKeys[a.key]) return;
+    sh.appendRow([
+      now,a.symbol,'','',a.priority,'','EKSTREMUM '+a.tf,
+      'ZBIEŻNOŚĆ '+a.signalCount+' | '+a.reason+' | RSI='+a.rsi+' | MFI='+a.mfi+' | MACD%='+a.macdPct+' | MACDz='+a.macdZ+' | FOMO='+a.fomo
+    ]);
+  });
+}
+
+function notifyNewExtremeAlarms_(ss, oldKeys, alarms) {
+  const fresh = alarms.filter(a => !oldKeys[a.key]);
+  if (!fresh.length) return;
+
+  const critical = fresh.filter(a => a.priority === 'KRYTYCZNY');
+  const strong = fresh.filter(a => a.priority === 'MOCNY');
+  const chosen = critical.length ? critical : strong.length ? strong : fresh;
+  const text = chosen.map(a => a.symbol+' '+a.tf+' — '+a.priority+' — '+a.signalCount+' sygnał(y): '+a.type).join('\n');
+  const title = critical.length ? 'KRYTYCZNE EKSTREMA V8' : strong.length ? 'MOCNE EKSTREMA V8' : 'NOWE EKSTREMA V8';
+
+  ss.toast(text.slice(0,250), title, 8);
+  const cfg = getExtremeSettings_(ss);
+  if (cfg.emailOn && cfg.emailTo) {
+    MailApp.sendEmail(cfg.emailTo, 'V8 DUAL ENGINE — '+title, text);
+  }
+}
