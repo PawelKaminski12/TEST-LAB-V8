@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-09-23T17:01:45.896415+00:00",
-  "engine": "V8_TACTICAL_UNIVERSE_CHECK_v1.0",
+  "generated_at_utc": "2026-09-23T17:03:38.154267+00:00",
+  "engine": "V8_TACTICAL_UNIVERSE_CHECK_v1.1",
   "expected_assets": [
     "BTC",
     "ETH",
@@ -22,6 +22,7 @@
     "1D"
   ],
   "all_pairs_and_timeframes_ready": false,
+  "spx6900_policy": "SPOT first; Binance USD-M perpetual futures only if spot is unavailable",
   "results": [
     {
       "AKTYWO": "BTC",
@@ -29,6 +30,7 @@
       "INTERWAŁ": "1H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -38,6 +40,7 @@
       "INTERWAŁ": "4H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -47,6 +50,7 @@
       "INTERWAŁ": "1D",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -56,6 +60,7 @@
       "INTERWAŁ": "1H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -65,6 +70,7 @@
       "INTERWAŁ": "4H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -74,6 +80,7 @@
       "INTERWAŁ": "1D",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -83,6 +90,7 @@
       "INTERWAŁ": "1H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -92,6 +100,7 @@
       "INTERWAŁ": "4H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -101,6 +110,7 @@
       "INTERWAŁ": "1D",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -110,6 +120,7 @@
       "INTERWAŁ": "1H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -119,6 +130,7 @@
       "INTERWAŁ": "4H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -128,6 +140,7 @@
       "INTERWAŁ": "1D",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -137,6 +150,7 @@
       "INTERWAŁ": "1H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -146,6 +160,7 @@
       "INTERWAŁ": "4H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -155,6 +170,7 @@
       "INTERWAŁ": "1D",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -164,6 +180,7 @@
       "INTERWAŁ": "1H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -173,6 +190,7 @@
       "INTERWAŁ": "4H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -182,6 +200,7 @@
       "INTERWAŁ": "1D",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -191,6 +210,7 @@
       "INTERWAŁ": "1H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -200,6 +220,7 @@
       "INTERWAŁ": "4H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -209,6 +230,7 @@
       "INTERWAŁ": "1D",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -218,6 +240,7 @@
       "INTERWAŁ": "1H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -227,6 +250,7 @@
       "INTERWAŁ": "4H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -236,6 +260,7 @@
       "INTERWAŁ": "1D",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -245,8 +270,9 @@
       "INTERWAŁ": "1H",
       "STATUS": "BŁĄD",
       "LICZBA_ŚWIEC": 0,
+      "RODZAJ_ŹRÓDŁA": "BRAK",
       "ŹRÓDŁO": "",
-      "BŁĄD": "451 Client Error:  for url: https://api.binance.com/api/v3/klines?symbol=SPXUSDT&interval=1h&limit=500"
+      "BŁĄD": "451 Client Error:  for url: https://fapi.binance.com/fapi/v1/klines?symbol=SPXUSDT&interval=1h&limit=500"
     },
     {
       "AKTYWO": "SPX6900",
@@ -254,8 +280,9 @@
       "INTERWAŁ": "4H",
       "STATUS": "BŁĄD",
       "LICZBA_ŚWIEC": 0,
+      "RODZAJ_ŹRÓDŁA": "BRAK",
       "ŹRÓDŁO": "",
-      "BŁĄD": "451 Client Error:  for url: https://api.binance.com/api/v3/klines?symbol=SPXUSDT&interval=4h&limit=500"
+      "BŁĄD": "451 Client Error:  for url: https://fapi.binance.com/fapi/v1/klines?symbol=SPXUSDT&interval=4h&limit=500"
     },
     {
       "AKTYWO": "SPX6900",
@@ -263,8 +290,9 @@
       "INTERWAŁ": "1D",
       "STATUS": "BŁĄD",
       "LICZBA_ŚWIEC": 0,
+      "RODZAJ_ŹRÓDŁA": "BRAK",
       "ŹRÓDŁO": "",
-      "BŁĄD": "451 Client Error:  for url: https://api.binance.com/api/v3/klines?symbol=SPXUSDT&interval=1d&limit=500"
+      "BŁĄD": "451 Client Error:  for url: https://fapi.binance.com/fapi/v1/klines?symbol=SPXUSDT&interval=1d&limit=500"
     },
     {
       "AKTYWO": "XRP",
@@ -272,6 +300,7 @@
       "INTERWAŁ": "1H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -281,6 +310,7 @@
       "INTERWAŁ": "4H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -290,6 +320,7 @@
       "INTERWAŁ": "1D",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -299,6 +330,7 @@
       "INTERWAŁ": "1H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -308,6 +340,7 @@
       "INTERWAŁ": "4H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -317,6 +350,7 @@
       "INTERWAŁ": "1D",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -326,6 +360,7 @@
       "INTERWAŁ": "1H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -335,6 +370,7 @@
       "INTERWAŁ": "4H",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     },
@@ -344,6 +380,7 @@
       "INTERWAŁ": "1D",
       "STATUS": "OK",
       "LICZBA_ŚWIEC": 500,
+      "RODZAJ_ŹRÓDŁA": "SPOT",
       "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
       "BŁĄD": ""
     }
