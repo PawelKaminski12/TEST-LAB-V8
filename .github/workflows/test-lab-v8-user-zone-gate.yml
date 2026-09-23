@@ -1,0 +1,78 @@
+name: TEST LAB V8 User Zone Gate
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'config/alt_zones_user_pending.csv'
+      - 'scripts/v8_user_zone_gate.py'
+      - '.github/workflows/test-lab-v8-user-zone-gate.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-user-zone-gate
+  cancel-in-progress: false
+
+jobs:
+  validate-and-merge-user-zones:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz najnowszy projekt
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Przygotuj Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Sprawdź i ewentualnie scal strefy użytkownika
+        run: python scripts/v8_user_zone_gate.py
+
+      - name: Sprawdź zasady bezpieczeństwa
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('audit/V8_USER_ZONE_GATE.json')
+          m=Path('audit/V8_USER_ZONE_GATE_LATEST.md')
+          assert p.exists() and m.exists()
+          x=json.loads(p.read_text(encoding='utf-8'))
+          assert x['engine']=='V8_USER_ZONE_GATE_v1.0'
+          assert x['safety']['never_invent_zones'] is True
+          assert x['safety']['only_confirmed_rows_can_merge'] is True
+          assert x['safety']['requires_all_7_timeframes_per_asset'] is True
+          assert x['safety']['execution_connected'] is False
+          assert set(x['assets'])=={'AAVE','HBAR'}
+          if x['merged']:
+              assert x['merge_ready'] is True
+              assert all(x['assets'][s]['complete'] for s in ['AAVE','HBAR'])
+          print('Bramka stref AAVE/HBAR: zabezpieczenia działają poprawnie')
+          PY
+
+      - name: Zapisz wynik bez konfliktu
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          mkdir -p /tmp/zonegate
+          cp audit/V8_USER_ZONE_GATE.json audit/V8_USER_ZONE_GATE_LATEST.md /tmp/zonegate/
+          if git diff -- config/alt_zones.csv | grep -q .; then cp config/alt_zones.csv /tmp/zonegate/alt_zones.csv; fi
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            mkdir -p audit config
+            cp /tmp/zonegate/V8_USER_ZONE_GATE.json /tmp/zonegate/V8_USER_ZONE_GATE_LATEST.md audit/
+            if [ -f /tmp/zonegate/alt_zones.csv ]; then cp /tmp/zonegate/alt_zones.csv config/alt_zones.csv; fi
+            git add audit/V8_USER_ZONE_GATE.json audit/V8_USER_ZONE_GATE_LATEST.md
+            if [ -f /tmp/zonegate/alt_zones.csv ]; then git add config/alt_zones.csv; fi
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Update V8 user zone gate'
+            if git push origin main; then exit 0; fi
+            echo "Konflikt zapisu — próba $attempt"
+            sleep $((attempt * 3))
+          done
+          exit 1
