@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-23T17:16:59.367044+00:00",
+  "generated_at_utc": "2026-09-23T17:24:34.246153+00:00",
   "engine": "V8_UNIVERSE_INTEGRATION_AUDIT_v1.0",
   "integration_status_pl": "OBA SILNIKI PODŁĄCZONE I SPRAWDZONE",
   "core_checks_pass": true,
@@ -138,40 +138,43 @@
     },
     "FLOKI": {
       "complete_7_of_7": false,
-      "confirmed_timeframes": [],
-      "missing_timeframes": [
+      "confirmed_timeframes": [
         "1D",
+        "1T"
+      ],
+      "missing_timeframes": [
         "2D",
         "3D",
         "4D",
         "5D",
-        "1T",
         "2T"
       ]
     },
     "PEPE": {
       "complete_7_of_7": false,
-      "confirmed_timeframes": [],
-      "missing_timeframes": [
+      "confirmed_timeframes": [
         "1D",
+        "1T"
+      ],
+      "missing_timeframes": [
         "2D",
         "3D",
         "4D",
         "5D",
-        "1T",
         "2T"
       ]
     },
     "SPX6900": {
       "complete_7_of_7": false,
-      "confirmed_timeframes": [],
-      "missing_timeframes": [
+      "confirmed_timeframes": [
         "1D",
+        "1T"
+      ],
+      "missing_timeframes": [
         "2D",
         "3D",
         "4D",
         "5D",
-        "1T",
         "2T"
       ]
     },
