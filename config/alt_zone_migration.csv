@@ -1,0 +1,78 @@
+symbol,timeframe,source_found,numeric_ready,status_pl,source_note
+ETH,1D,true,true,GOTOWE,V7 MASTER / V8 MASTER
+ETH,2D,true,true,GOTOWE,V7 MASTER / V8 MASTER
+ETH,3D,true,true,GOTOWE,V7 MASTER / V8 MASTER
+ETH,4D,true,true,GOTOWE,V7 MASTER / V8 MASTER
+ETH,5D,true,true,GOTOWE,V7 MASTER / V8 MASTER
+ETH,1T,true,true,GOTOWE,V7 MASTER / V8 MASTER
+ETH,2T,true,true,GOTOWE,V7 MASTER / V8 MASTER
+SOL,1D,true,true,GOTOWE,MASTER FINAL 17/17
+SOL,2D,true,true,GOTOWE,MASTER FINAL 17/17
+SOL,3D,true,true,GOTOWE,MASTER FINAL 17/17
+SOL,4D,true,true,GOTOWE,MASTER FINAL 17/17
+SOL,5D,true,true,GOTOWE,MASTER FINAL 17/17
+SOL,1T,true,true,GOTOWE,MASTER FINAL 17/17
+SOL,2T,true,true,GOTOWE,MASTER FINAL 17/17
+LINK,1D,true,true,GOTOWE,MASTER FINAL 17/17
+LINK,2D,true,true,GOTOWE,MASTER FINAL 17/17
+LINK,3D,true,true,GOTOWE,MASTER FINAL 17/17
+LINK,4D,true,true,GOTOWE,MASTER FINAL 17/17
+LINK,5D,true,true,GOTOWE,MASTER FINAL 17/17
+LINK,1T,true,true,GOTOWE,MASTER FINAL 17/17
+LINK,2T,true,true,GOTOWE,MASTER FINAL 17/17
+ONDO,1D,true,true,GOTOWE,MASTER FINAL 17/17
+ONDO,2D,true,true,GOTOWE,MASTER FINAL 17/17
+ONDO,3D,true,true,GOTOWE,MASTER FINAL 17/17
+ONDO,4D,true,true,GOTOWE,MASTER FINAL 17/17
+ONDO,5D,true,true,GOTOWE,MASTER FINAL 17/17
+ONDO,1T,true,true,GOTOWE,MASTER FINAL 17/17
+ONDO,2T,true,true,GOTOWE,MASTER FINAL 17/17
+RENDER,1D,false,false,SZUKAM_STAREGO_ZRODLA,Brak odnalezionego liczbowego rekordu
+RENDER,2D,false,false,SZUKAM_STAREGO_ZRODLA,Brak odnalezionego liczbowego rekordu
+RENDER,3D,false,false,SZUKAM_STAREGO_ZRODLA,Brak odnalezionego liczbowego rekordu
+RENDER,4D,false,false,SZUKAM_STAREGO_ZRODLA,Brak odnalezionego liczbowego rekordu
+RENDER,5D,false,false,SZUKAM_STAREGO_ZRODLA,Brak odnalezionego liczbowego rekordu
+RENDER,1T,false,false,SZUKAM_STAREGO_ZRODLA,Brak odnalezionego liczbowego rekordu
+RENDER,2T,false,false,SZUKAM_STAREGO_ZRODLA,Brak odnalezionego liczbowego rekordu
+FLOKI,1D,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
+FLOKI,2D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,V7 import miał 7 interwałów; brak liczbowego zapisu w odzyskanym tekście
+FLOKI,3D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,V7 import miał 7 interwałów; brak liczbowego zapisu w odzyskanym tekście
+FLOKI,4D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,V7 import miał 7 interwałów; brak liczbowego zapisu w odzyskanym tekście
+FLOKI,5D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,V7 import miał 7 interwałów; brak liczbowego zapisu w odzyskanym tekście
+FLOKI,1T,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
+FLOKI,2T,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,V7 import miał 7 interwałów; brak liczbowego zapisu w odzyskanym tekście
+PEPE,1D,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
+PEPE,2D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,Stary V7 pracował na aktywie; pełna liczba nie odnaleziona
+PEPE,3D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,Stary V7 pracował na aktywie; pełna liczba nie odnaleziona
+PEPE,4D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,Stary V7 pracował na aktywie; pełna liczba nie odnaleziona
+PEPE,5D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,Stary V7 pracował na aktywie; pełna liczba nie odnaleziona
+PEPE,1T,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
+PEPE,2T,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,Stary V7 pracował na aktywie; pełna liczba nie odnaleziona
+SPX6900,1D,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
+SPX6900,2D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,Stary V7 pracował na aktywie; pełna liczba nie odnaleziona
+SPX6900,3D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,Stary V7 pracował na aktywie; pełna liczba nie odnaleziona
+SPX6900,4D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,Stary V7 pracował na aktywie; pełna liczba nie odnaleziona
+SPX6900,5D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,Stary V7 pracował na aktywie; pełna liczba nie odnaleziona
+SPX6900,1T,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
+SPX6900,2T,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_NIEODZYSKANE,Stary V7 pracował na aktywie; pełna liczba nie odnaleziona
+XRP,1D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_DO_WERYFIKACJI,V7 miał XRP w aktywnym silniku; liczby nie przepisane bez twardego źródła
+XRP,2D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_DO_WERYFIKACJI,V7 miał XRP w aktywnym silniku; liczby nie przepisane bez twardego źródła
+XRP,3D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_DO_WERYFIKACJI,V7 miał XRP w aktywnym silniku; liczby nie przepisane bez twardego źródła
+XRP,4D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_DO_WERYFIKACJI,V7 miał XRP w aktywnym silniku; liczby nie przepisane bez twardego źródła
+XRP,5D,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_DO_WERYFIKACJI,V7 miał XRP w aktywnym silniku; liczby nie przepisane bez twardego źródła
+XRP,1T,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_DO_WERYFIKACJI,V7 miał XRP w aktywnym silniku; liczby nie przepisane bez twardego źródła
+XRP,2T,true,false,ZRODLO_BYLO_W_V7_WARTOSCI_DO_WERYFIKACJI,V7 miał XRP w aktywnym silniku; liczby nie przepisane bez twardego źródła
+XLM,1D,true,false,ZRODLO_POTWIERDZONE_W_MASTERZE_WARTOSCI_NIEODZYSKANE,V275.38 potwierdza aktywną DEMAND 1D w MASTER_STREFY
+XLM,2D,false,false,SZUKAM_STAREGO_ZRODLA,Brak twardego rekordu w odzyskanych plikach
+XLM,3D,false,false,SZUKAM_STAREGO_ZRODLA,Brak twardego rekordu w odzyskanych plikach
+XLM,4D,false,false,SZUKAM_STAREGO_ZRODLA,Brak twardego rekordu w odzyskanych plikach
+XLM,5D,false,false,SZUKAM_STAREGO_ZRODLA,Brak twardego rekordu w odzyskanych plikach
+XLM,1T,true,false,ZRODLO_POTWIERDZONE_W_MASTERZE_WARTOSCI_NIEODZYSKANE,V275.38 potwierdza aktywną DEMAND 1T/1W w MASTER_STREFY
+XLM,2T,false,false,SZUKAM_STAREGO_ZRODLA,Brak twardego rekordu w odzyskanych plikach
+HBAR,1D,true,false,SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT,Screen użytkownika 2026-09-23
+HBAR,2D,true,false,SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT,Screen użytkownika 2026-09-23
+HBAR,3D,true,false,SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT,Screen użytkownika 2026-09-23
+HBAR,4D,true,false,SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT,Screen użytkownika 2026-09-23
+HBAR,5D,true,false,SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT,Screen użytkownika 2026-09-23
+HBAR,1T,true,false,SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT,Screen użytkownika 2026-09-23
+HBAR,2T,true,false,SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT,Screen użytkownika 2026-09-23
