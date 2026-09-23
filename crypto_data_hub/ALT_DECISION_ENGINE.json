@@ -1,6 +1,6 @@
 {
   "date": "2026-09-22",
-  "engine": "ALT_DECISION_ENGINE_v0.1",
+  "engine": "ALT_DECISION_ENGINE_v0.2",
   "universe_source": "config/alt_universe.csv",
   "zones_source": "config/alt_zones.csv",
   "important_rules": {
@@ -9,6 +9,7 @@
     "relative_strength_not_hard_gate": true,
     "rotation_score_not_standalone_buy_signal": true,
     "fomo_hard_block_at_8": true,
+    "dca3_prefers_explicit_canon_and_excludes_archival_reserve_rows": true,
     "current_output_is_research_engine_status_not_execution": true
   },
   "assets": [
@@ -32,8 +33,9 @@
         "in_demand": false,
         "in_supply": true,
         "dca1": 2450.0,
-        "dca2": 1870.0,
-        "dca3": 1290.0,
+        "dca2": 1975.0,
+        "dca3": 1500.0,
+        "dca3_source": "EXPLICIT_CANON",
         "nearest_demand": {
           "timeframe": "1D",
           "from": 2350.0,
@@ -69,8 +71,9 @@
         "in_demand": false,
         "in_supply": true,
         "dca1": 97.0,
-        "dca2": 66.0,
-        "dca3": 35.0,
+        "dca2": 78.5,
+        "dca3": 60.0,
+        "dca3_source": "LOWEST_ACTIVE_1T_DEMAND",
         "nearest_demand": {
           "timeframe": "3D",
           "from": 88.0,
@@ -108,6 +111,7 @@
         "dca1": 8.5,
         "dca2": 7.35,
         "dca3": 6.2,
+        "dca3_source": "LOWEST_ACTIVE_1T_DEMAND",
         "nearest_demand": {
           "timeframe": "2T",
           "from": 8.8,
@@ -145,6 +149,7 @@
         "dca1": 0.348,
         "dca2": 0.274,
         "dca3": 0.2,
+        "dca3_source": "LOWEST_ACTIVE_1T_DEMAND",
         "nearest_demand": {
           "timeframe": "4D",
           "from": 0.34,
