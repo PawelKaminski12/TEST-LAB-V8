@@ -1,0 +1,227 @@
+// V8 DUAL ENGINE — ALERT FRESHNESS CENTER V6
+// Warstwa do scalenia z DUAL_ENGINE_APPS_SCRIPT_FULL_V5.txt.
+// Cel: świeżość danych, wygaszanie starych alarmów, blokada powiadomień ze starych danych
+// oraz ochrona głównego PANELU przed nieaktualnymi ekstremami.
+// Nie zmienia logiki LONG ani TACTICAL. Nie wykonuje transakcji.
+
+function setupSettings_(sheet) {
+  const defaults = [
+    ['TRYB','RESEARCH'],['AUTO_EXECUTION','OFF'],['V7_TOUCH','OFF'],['LONG_TACTICAL_CAPITAL_SHARED','NO'],
+    ['ALARMY_EKSTREMOW','ON'],
+    ['RSI_GORNY','75'],['RSI_DOLNY','25'],['FOMO_TWARDY','8'],
+    ['MFI_GORNY_OSTRZEZENIE','80'],['MFI_GORNY_SKRAJNY','90'],
+    ['MFI_DOLNY_OSTRZEZENIE','20'],['MFI_DOLNY_SKRAJNY','10'],
+    ['ALARM_MAX_WIEK_1H_H','3'],['ALARM_MAX_WIEK_4H_H','10'],['ALARM_MAX_WIEK_1D_H','36'],
+    ['EMAIL_ALERTY','OFF'],['EMAIL_DO',''],['LAST_REFRESH','']
+  ];
+  if (sheet.getLastRow() === 0) {
+    sheet.getRange(1,1,1,2).setValues([['PARAMETR','WARTOŚĆ']]);
+    sheet.getRange(2,1,defaults.length,2).setValues(defaults);
+  } else {
+    const existing = {};
+    sheet.getRange(1,1,sheet.getLastRow(),2).getValues().forEach(r => existing[String(r[0])] = true);
+    defaults.forEach(r => { if (!existing[r[0]]) sheet.appendRow(r); });
+  }
+  sheet.setFrozenRows(1);
+}
+
+function getExtremeSettings_(ss) {
+  const s = getSettingMap_(ss);
+  return {
+    enabled: String(s.ALARMY_EKSTREMOW || 'ON').toUpperCase() === 'ON',
+    rsiHigh: Number(s.RSI_GORNY || 75),
+    rsiLow: Number(s.RSI_DOLNY || 25),
+    fomoHard: Number(s.FOMO_TWARDY || 8),
+    mfiWarnHigh: Number(s.MFI_GORNY_OSTRZEZENIE || 80),
+    mfiExtremeHigh: Number(s.MFI_GORNY_SKRAJNY || 90),
+    mfiWarnLow: Number(s.MFI_DOLNY_OSTRZEZENIE || 20),
+    mfiExtremeLow: Number(s.MFI_DOLNY_SKRAJNY || 10),
+    stale1h: Number(s.ALARM_MAX_WIEK_1H_H || 3),
+    stale4h: Number(s.ALARM_MAX_WIEK_4H_H || 10),
+    stale1d: Number(s.ALARM_MAX_WIEK_1D_H || 36),
+    emailOn: String(s.EMAIL_ALERTY || 'OFF').toUpperCase() === 'ON',
+    emailTo: String(s.EMAIL_DO || '').trim()
+  };
+}
+
+function alarmFreshness_(tf, ts, cfg) {
+  const limit = tf === '1D' ? cfg.stale1d : tf === '4H' ? cfg.stale4h : cfg.stale1h;
+  const parsed = Date.parse(String(ts || ''));
+  if (!Number.isFinite(parsed)) return {fresh:false,status:'BRAK CZASU',ageHours:'',limitHours:limit};
+  const rawAge = (Date.now() - parsed) / 3600000;
+  const age = Math.max(0, rawAge);
+  const fresh = age <= limit;
+  return {fresh:fresh,status:fresh ? 'AKTUALNY' : 'STARY',ageHours:Math.round(age*10)/10,limitHours:limit};
+}
+
+function setupExtremes_(sheet) {
+  const headers = ['AKTYWNY','AKTYWO','INTERWAŁ','ŚWIEŻOŚĆ','WIEK H','LIMIT H','ZBIEŻNOŚĆ','PRIORYTET','WAGA INTERWAŁU','SYGNAŁY','RSI','MFI','MACD %','MACD Z','FOMO','OPIS','CZAS DANYCH'];
+  sheet.getRange(1,1,1,headers.length).setValues([headers]);
+  sheet.setFrozenRows(1);
+  sheet.setFrozenColumns(4);
+}
+
+function buildExtremeAlarms_(ss, tacticalJson) {
+  const cfg = getExtremeSettings_(ss);
+  if (!cfg.enabled) return [];
+  const alarms = [];
+  (tacticalJson.assets || []).forEach(a => {
+    const t = a.timeframes || {};
+    ['1H','4H','1D'].forEach(tf => {
+      const x = t[tf] || {};
+      const rsi = Number(x.rsi14), mfi = Number(x.mfi14), fomo = Number(x.fomo_score_0_10);
+      const macdPct = Number(x.macd_hist_percentile), macdZ = Number(x.macd_hist_zscore);
+      const ts = x.last_close_time_utc || '';
+      const signals = [];
+      if (Number.isFinite(rsi) && rsi >= cfg.rsiHigh) signals.push(rsi >= 80 ? 'RSI SKRAJNE WYKUPIENIE' : 'RSI WYKUPIENIE');
+      if (Number.isFinite(rsi) && rsi <= cfg.rsiLow) signals.push(rsi <= 20 ? 'RSI SKRAJNE WYPRZEDANIE' : 'RSI WYPRZEDANIE');
+      if (Number.isFinite(mfi)) {
+        if (mfi >= cfg.mfiExtremeHigh) signals.push('MFI SKRAJNE WYKUPIENIE');
+        else if (mfi >= cfg.mfiWarnHigh) signals.push('MFI WYKUPIENIE');
+        if (mfi <= cfg.mfiExtremeLow) signals.push('MFI SKRAJNE WYPRZEDANIE');
+        else if (mfi <= cfg.mfiWarnLow) signals.push('MFI WYPRZEDANIE');
+      }
+      const ml = String(x.macd_extreme_label || 'NORMAL');
+      if (ml === 'EXTREME_POSITIVE') signals.push('MACD SKRAJNIE DODATNIE');
+      else if (ml === 'EXTREME_NEGATIVE') signals.push('MACD SKRAJNIE UJEMNE');
+      else if (ml === 'WARNING_POSITIVE') signals.push('MACD MOCNO DODATNIE');
+      else if (ml === 'WARNING_NEGATIVE') signals.push('MACD MOCNO UJEMNE');
+      if (Number.isFinite(fomo) && fomo >= cfg.fomoHard) signals.push(fomo >= 9 ? 'FOMO SKRAJNE' : 'FOMO HARD');
+      if (!signals.length) return;
+
+      const count = signals.length;
+      const priority = confluencePriorityForTf_(count, tf);
+      const tfWeight = timeframeWeight_(tf);
+      const freshness = alarmFreshness_(tf, ts, cfg);
+      const n = count === 1 ? '1 sygnał' : count < 5 ? count+' sygnały' : count+' sygnałów';
+      const reason = a.symbol+' '+tf+': '+n+' zgodne. Priorytet '+priority+', waga '+tfWeight+', świeżość '+freshness.status+(freshness.ageHours === '' ? '' : ' ('+freshness.ageHours+'h / limit '+freshness.limitHours+'h)')+'. '+signals.join(' + ')+'.';
+      alarms.push({
+        aktywny:freshness.fresh,
+        symbol:a.symbol, tf:tf, type:signals.join(' + '), signalCount:count,
+        priority:priority, severity:priority, tfWeight:tfWeight, signals:signals,
+        rsi:Number.isFinite(rsi)?rsi:'', mfi:Number.isFinite(mfi)?mfi:'',
+        macdPct:Number.isFinite(macdPct)?macdPct:'', macdZ:Number.isFinite(macdZ)?macdZ:'',
+        fomo:Number.isFinite(fomo)?fomo:'', reason:reason, ts:ts,
+        freshness:freshness.status, ageHours:freshness.ageHours, limitHours:freshness.limitHours,
+        key:[a.symbol,tf,signals.join(' + ')].join('|')
+      });
+    });
+  });
+  return alarms.sort(compareExtremeFreshnessPriority_);
+}
+
+function compareExtremeFreshnessPriority_(a,b) {
+  if (a.aktywny !== b.aktywny) return a.aktywny ? -1 : 1;
+  return compareExtremePriority_(a,b);
+}
+
+function writeExtremeAlarms_(sheet, alarms) {
+  const headers = ['AKTYWNY','AKTYWO','INTERWAŁ','ŚWIEŻOŚĆ','WIEK H','LIMIT H','ZBIEŻNOŚĆ','PRIORYTET','WAGA INTERWAŁU','SYGNAŁY','RSI','MFI','MACD %','MACD Z','FOMO','OPIS','CZAS DANYCH'];
+  sheet.clearContents();
+  sheet.getRange(1,1,1,headers.length).setValues([headers]);
+  const rows = (alarms || []).map(a => [
+    a.aktywny ? 'TAK' : 'NIE',a.symbol,a.tf,a.freshness,a.ageHours,a.limitHours,a.signalCount,a.priority,a.tfWeight,a.type,
+    a.rsi,a.mfi,a.macdPct,a.macdZ,a.fomo,a.reason,a.ts
+  ]);
+  if (rows.length) sheet.getRange(2,1,rows.length,headers.length).setValues(rows);
+  else sheet.getRange(2,1,1,headers.length).setValues([['NIE','','','BRAK','', '',0,'BRAK','BRAK','BRAK AKTYWNYCH EKSTREMÓW','','','','','','','']]);
+  sheet.setFrozenRows(1);
+  sheet.setFrozenColumns(4);
+  sheet.getRange(1,1,1,headers.length).setFontWeight('bold');
+  sheet.getRange(1,1,Math.max(2,rows.length+1),headers.length).setWrap(true).setVerticalAlignment('middle');
+  [72,78,75,95,70,70,80,100,105,300,70,70,80,80,70,420,175].forEach((w,i)=>sheet.setColumnWidth(i+1,w));
+  formatFreshnessAlarmSheet_(sheet, rows.length);
+}
+
+function formatFreshnessAlarmSheet_(sheet, rowCount) {
+  const n = Math.max(1,rowCount);
+  const freshRange = sheet.getRange(2,4,n,1);
+  const activeRange = sheet.getRange(2,1,n,1);
+  const priorityRange = sheet.getRange(2,8,n,1);
+  const rules = (sheet.getConditionalFormatRules() || []).filter(r => {
+    return !r.getRanges().some(x => x.getSheet().getName() === sheet.getName());
+  });
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('STARY').setBackground('#eeeeee').setFontColor('#777777').setRanges([freshRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('BRAK CZASU').setBackground('#d9d2e9').setFontColor('#674ea7').setRanges([freshRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('AKTUALNY').setBackground('#d9ead3').setFontColor('#274e13').setRanges([freshRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('NIE').setBackground('#eeeeee').setFontColor('#777777').setRanges([activeRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('KRYTYCZNY').setBackground('#f4cccc').setFontColor('#990000').setBold(true).setRanges([priorityRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('MOCNY').setBackground('#fce5cd').setFontColor('#b45f06').setBold(true).setRanges([priorityRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('OSTRZEŻENIE').setBackground('#fff2cc').setFontColor('#7f6000').setRanges([priorityRange]).build());
+  sheet.setConditionalFormatRules(rules);
+}
+
+function readActiveExtremeKeys_(sheet) {
+  const out = {};
+  if (!sheet || sheet.getLastRow() < 2) return out;
+  const rows = sheet.getRange(2,1,sheet.getLastRow()-1,Math.min(17,sheet.getLastColumn())).getValues();
+  rows.forEach(r => {
+    if (String(r[0]).toUpperCase() !== 'TAK') return;
+    out[[r[1],r[2],r[9]].join('|')] = true;
+  });
+  return out;
+}
+
+function panelEligibleExtreme_(a) {
+  if (!a || !a.aktywny || a.freshness !== 'AKTUALNY') return false;
+  return !(a.tf === '1H' && a.priority === 'OSTRZEŻENIE' && Number(a.signalCount) === 1);
+}
+
+function appendExtremeHistory_(ss, oldKeys, alarms) {
+  const sh = ss.getSheetByName(V8_SHEETS.history);
+  if (sh.getLastRow() === 0) {
+    sh.appendRow(['CZAS','AKTYWO','LONG','TACTICAL','RYZYKO','ZGODNOŚĆ','ALERT','POWÓD']);
+    sh.setFrozenRows(1);
+  }
+  const now = new Date();
+  (alarms || []).forEach(a => {
+    if (a.aktywny && !oldKeys[a.key]) {
+      sh.appendRow([now,a.symbol,'','',a.priority,'','NOWE EKSTREMUM '+a.tf,a.reason]);
+    } else if (!a.aktywny && oldKeys[a.key]) {
+      sh.appendRow([now,a.symbol,'','','','','ALARM WYGASŁ '+a.tf,'Dane przestały być świeże: '+a.reason]);
+    }
+  });
+}
+
+function notifyNewExtremeAlarms_(ss, oldKeys, alarms) {
+  const fresh = (alarms || []).filter(a => a.aktywny && a.freshness === 'AKTUALNY' && !oldKeys[a.key]);
+  const actionable = fresh.filter(panelEligibleExtreme_);
+  if (!actionable.length) return;
+  const text = actionable.map(a => a.symbol+' '+a.tf+' — '+a.priority+' — '+a.signalCount+' sygnał(y), dane '+a.ageHours+'h: '+a.type).join('\n');
+  ss.toast(text.slice(0,250), 'NOWE AKTUALNE EKSTREMA V8', 8);
+  const cfg = getExtremeSettings_(ss);
+  if (cfg.emailOn && cfg.emailTo) MailApp.sendEmail(cfg.emailTo, 'V8 DUAL ENGINE — aktualny alarm ekstremum', text);
+}
+
+function updateMainPanelExtremeSummary_(sheet, alarms) {
+  if (!sheet || sheet.getLastRow() < 2) return;
+  const bySymbol = {};
+  (alarms || []).forEach(a => {
+    if (!panelEligibleExtreme_(a)) return;
+    (bySymbol[a.symbol] = bySymbol[a.symbol] || []).push(a);
+  });
+  const values = sheet.getDataRange().getValues();
+  const head = values[0].map(String);
+  const symIdx = head.indexOf('AKTYWO');
+  const alertIdx = head.indexOf('ALERT');
+  if (symIdx < 0 || alertIdx < 0) return;
+  for (let i=1; i<values.length; i++) {
+    const sym = String(values[i][symIdx] || '').trim();
+    if (!sym) continue;
+    const best = selectMainPanelExtreme_(bySymbol[sym] || []);
+    let base = String(values[i][alertIdx] || '').trim();
+    base = base.replace(/\s*\|\s*[🟡🟠🔴]\s*(OSTRZEŻENIE|MOCNY|KRYTYCZNY)\s+(1H|4H|1D)\s+—\s+\d+\s+sygnał(?:y|ów)?(?:\s+\[[^\]]+\])?/g,'').trim();
+    if (best) {
+      const icon = best.priority === 'KRYTYCZNY' ? '🔴' : best.priority === 'MOCNY' ? '🟠' : '🟡';
+      const n = best.signalCount === 1 ? '1 sygnał' : best.signalCount < 5 ? best.signalCount+' sygnały' : best.signalCount+' sygnałów';
+      const age = best.ageHours === '' ? '' : ' ['+best.ageHours+'h]';
+      const extra = icon+' '+best.priority+' '+best.tf+' — '+n+age;
+      values[i][alertIdx] = (!base || base === 'BRAK') ? extra : base+' | '+extra;
+    } else {
+      values[i][alertIdx] = base || 'BRAK';
+    }
+  }
+  sheet.getRange(1,1,values.length,values[0].length).setValues(values);
+  formatPanel_(sheet);
+  formatMainPanelAlerts_(sheet);
+}
