@@ -16,6 +16,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: v8-alt-engine-writes
+  cancel-in-progress: false
+
 jobs:
   build-alt-readiness:
     runs-on: ubuntu-latest
@@ -134,7 +138,6 @@ jobs:
           (ROOT/'ALT_ENGINE_READINESS.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False),encoding='utf-8')
           df.to_csv(ROOT/'ALT_ENGINE_READINESS.csv',index=False)
 
-          # compact production cockpit; no execution command, only research status
           prod_cols=['symbol','decision','data_quality_score_0_100','readiness_status','core_zone_missing','full_zone_missing']
           production[prod_cols].to_csv(ROOT/'ALT_PRODUCTION_COCKPIT.csv',index=False)
           print(json.dumps(payload,indent=2,ensure_ascii=False))
