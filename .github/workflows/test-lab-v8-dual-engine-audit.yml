@@ -1,0 +1,144 @@
+name: TEST LAB V8 Dual Engine Audit
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'crypto_data_hub/ALT_DECISION_ENGINE.json'
+      - 'tactical_engine/TACTICAL_ENGINE.json'
+      - 'tactical_engine/TACTICAL_READINESS.json'
+      - 'tactical_validation/TACTICAL_VALIDATION_SUMMARY.csv'
+      - 'tactical_validation/TACTICAL_THRESHOLD_LAB.json'
+      - '.github/workflows/test-lab-v8-dual-engine-audit.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-dual-engine-audit-writes
+  cancel-in-progress: false
+
+jobs:
+  audit-dual-engine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install --quiet pandas
+
+      - name: Audit LONG and TACTICAL engines
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from datetime import datetime, timezone
+          import pandas as pd
+
+          long_p=Path('crypto_data_hub/ALT_DECISION_ENGINE.json')
+          tact_p=Path('tactical_engine/TACTICAL_ENGINE.json')
+          ready_p=Path('tactical_engine/TACTICAL_READINESS.json')
+          val_p=Path('tactical_validation/TACTICAL_VALIDATION_SUMMARY.csv')
+          th_p=Path('tactical_validation/TACTICAL_THRESHOLD_LAB.json')
+          required=[long_p,tact_p,ready_p,val_p,th_p]
+          missing=[str(p) for p in required if not p.exists()]
+          if missing: raise SystemExit('Missing audit inputs: '+', '.join(missing))
+
+          long=json.loads(long_p.read_text(encoding='utf-8'))
+          tact=json.loads(tact_p.read_text(encoding='utf-8'))
+          ready=json.loads(ready_p.read_text(encoding='utf-8'))
+          val=pd.read_csv(val_p)
+          th=json.loads(th_p.read_text(encoding='utf-8'))
+
+          prod={'ETH','SOL','LINK','ONDO'}
+          checks=[]
+          def check(name, ok, detail=''):
+              checks.append({'check':name,'pass':bool(ok),'detail':str(detail)})
+
+          long_map={a.get('symbol'):a for a in long.get('assets',[]) if a.get('symbol') in prod}
+          check('LONG_ENGINE_VERSION', long.get('engine')=='ALT_DECISION_ENGINE_v0.3', long.get('engine'))
+          check('LONG_PRODUCTION_4', set(long_map)==prod, sorted(long_map))
+          buy_labels={'KUP DCA','KUP PO RETEŚCIE','KUP TRENDOWO'}
+          for sym in sorted(prod):
+              a=long_map.get(sym,{})
+              z=a.get('zones',{}) or {}
+              check(f'LONG_{sym}_ZONE_READY', z.get('zone_ready') is True, z.get('zone_ready'))
+              d1,d2,d3=z.get('dca1'),z.get('dca2'),z.get('dca3')
+              check(f'LONG_{sym}_DCA_COMPLETE', all(x is not None for x in [d1,d2,d3]), (d1,d2,d3))
+              check(f'LONG_{sym}_DCA_ORDER', all(x is not None for x in [d1,d2,d3]) and d1>=d2>=d3, (d1,d2,d3))
+              if z.get('in_supply'):
+                  check(f'LONG_{sym}_SUPPLY_BLOCKER', 'IN_SUPPLY' in a.get('entry_blockers',[]), a.get('entry_blockers'))
+                  check(f'LONG_{sym}_NO_BUY_IN_SUPPLY', a.get('decision') not in buy_labels, a.get('decision'))
+              if a.get('fomo_score_0_10',0)>=8:
+                  check(f'LONG_{sym}_NO_BUY_FOMO8', a.get('decision') not in buy_labels, a.get('decision'))
+
+          tact_map={a.get('symbol'):a for a in tact.get('assets',[]) if a.get('target_scope')=='PRODUCTION'}
+          check('TACT_ENGINE_VERSION', tact.get('engine')=='V8_TACTICAL_ENGINE_v0.3', tact.get('engine'))
+          check('TACT_PRODUCTION_4', set(tact_map)==prod, sorted(tact_map))
+          check('TACT_GLOBAL_QA', tact.get('qa_pass') is True, tact.get('qa_pass'))
+          long_tact_labels={'LONG_SETUP_RETEST','LONG_SETUP_WATCH'}
+          for sym in sorted(prod):
+              a=tact_map.get(sym,{})
+              check(f'TACT_{sym}_QA', a.get('qa')=='PASS', a.get('qa'))
+              tfs=a.get('timeframes',{})
+              check(f'TACT_{sym}_TF_COMPLETE', all(tf in tfs for tf in ['1H','4H','1D']), list(tfs))
+              for tf in ['1H','4H','1D']:
+                  x=tfs.get(tf,{})
+                  check(f'TACT_{sym}_{tf}_CLOSED', x.get('closed_bar_only') is True, x.get('closed_bar_only'))
+                  check(f'TACT_{sym}_{tf}_NOT_STALE', x.get('stale') is False, x.get('stale'))
+              if (a.get('zone_context') or {}).get('in_supply'):
+                  check(f'TACT_{sym}_SUPPLY_BLOCKER', 'IN_SUPPLY' in a.get('entry_blockers',[]), a.get('entry_blockers'))
+                  check(f'TACT_{sym}_NO_LONG_IN_SUPPLY', a.get('tactical_status') not in long_tact_labels, a.get('tactical_status'))
+              if 'FOMO_HARD_BLOCK' in a.get('entry_blockers',[]):
+                  check(f'TACT_{sym}_NO_LONG_FOMO8', a.get('tactical_status') not in long_tact_labels, a.get('tactical_status'))
+
+          check('TACT_READINESS_STATUS', ready.get('status')=='TACTICAL_CORE_READY_FOR_VALIDATION', ready.get('status'))
+          check('TACT_READINESS_4_OF_4', ready.get('production_assets')==4 and ready.get('production_ready')==4, (ready.get('production_assets'),ready.get('production_ready')))
+          check('TACT_VALIDATION_ASSETS', set(val[val['scope'].eq('PRODUCTION')]['symbol'])==prod, sorted(val[val['scope'].eq('PRODUCTION')]['symbol']))
+          check('TACT_THRESHOLD_NOT_FROZEN', th.get('not_strategy_frozen') is True, th.get('not_strategy_frozen'))
+          check('TACT_THRESHOLD_RESEARCH_ONLY', th.get('research_only') is True, th.get('research_only'))
+
+          # Informational validation quality flags: do not fail architecture because calibration is intentionally unfinished.
+          prod_val=val[val['scope'].eq('PRODUCTION')].copy()
+          validation_flags=[]
+          for _,r in prod_val.iterrows():
+              sym=r['symbol']
+              if float(r['setup_mean_24h_pct']) <= 0:
+                  validation_flags.append(f'{sym}_MEAN24_NONPOSITIVE')
+              if float(r['setup_winrate_12h_pct']) < 50:
+                  validation_flags.append(f'{sym}_WIN12_BELOW_50')
+
+          failed=[x for x in checks if not x['pass']]
+          payload={
+              'generated_at_utc':datetime.now(timezone.utc).isoformat(),
+              'engine':'V8_DUAL_ENGINE_AUDIT_v0.1',
+              'checks_total':len(checks),
+              'checks_passed':len(checks)-len(failed),
+              'checks_failed':len(failed),
+              'technical_status':'PASS' if not failed else 'FAIL',
+              'long_engine_status':'READY_FOR_PAPER_OBSERVATION' if not any(not x['pass'] and x['check'].startswith('LONG_') for x in checks) else 'FIX_REQUIRED',
+              'tactical_engine_status':'TECHNICALLY_READY_CALIBRATION_NOT_FROZEN' if not any(not x['pass'] and x['check'].startswith('TACT_') for x in checks) else 'FIX_REQUIRED',
+              'tactical_validation_flags':validation_flags,
+              'tactical_validation_note':'Historical technical validation is observational; current thresholds are not frozen and should not be treated as validated execution rules.',
+              'market_reader_note':'External Market Reader remains optional second eye and is not required for core QA.',
+              'execution_connected':False,
+              'checks':checks
+          }
+          out=Path('audit'); out.mkdir(exist_ok=True)
+          (out/'DUAL_ENGINE_AUDIT.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False),encoding='utf-8')
+          pd.DataFrame(checks).to_csv(out/'DUAL_ENGINE_AUDIT_CHECKS.csv',index=False)
+          print(json.dumps(payload,indent=2,ensure_ascii=False))
+          if failed: raise SystemExit('DUAL ENGINE AUDIT FAIL: '+','.join(x['check'] for x in failed))
+          PY
+
+      - name: Commit audit outputs
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add audit/DUAL_ENGINE_AUDIT.json audit/DUAL_ENGINE_AUDIT_CHECKS.csv
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update V8 dual engine audit'
+            git pull --rebase origin main
+            git push
+          fi
