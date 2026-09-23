@@ -1,0 +1,87 @@
+name: TEST LAB V8 Alt Completion Audit
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/v8_alt_completion_audit.py'
+      - 'config/alt_universe.csv'
+      - 'config/alt_zones.csv'
+      - '.github/workflows/test-lab-v8-alt-completion-audit.yml'
+  schedule:
+    - cron: '40 6 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-alt-completion-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz najnowszy projekt
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Przygotuj Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Zainstaluj biblioteki
+        run: pip install --quiet pandas requests
+
+      - name: Sprawdź wszystkie aktywa i ETF
+        run: python scripts/v8_alt_completion_audit.py
+
+      - name: Sprawdź zasady bezpieczeństwa i kompletność
+        run: |
+          python - <<'PY'
+          import json
+          import pandas as pd
+          from pathlib import Path
+
+          j=Path('crypto_data_hub/ALT_COMPLETION_AUDIT.json')
+          c=Path('crypto_data_hub/ALT_COMPLETION_PANEL.csv')
+          m=Path('crypto_data_hub/ALT_COMPLETION_LATEST.md')
+          assert j.exists() and c.exists() and m.exists()
+          x=json.loads(j.read_text(encoding='utf-8'))
+          assert x['engine']=='V8_ALT_COMPLETION_AUDIT_v1.0'
+          assert x['rules']['no_fabricated_zones'] is True
+          assert x['rules']['zones_must_come_from_confirmed_user_master'] is True
+          assert x['rules']['technical_uses_closed_candles_only'] is True
+          assert x['rules']['no_execution'] is True
+          syms={a['symbol'] for a in x['assets']}
+          assert {'ETH','SOL','LINK','ONDO','AAVE','HBAR'}.issubset(syms)
+          assert x['etf']['ready'] is True
+          for a in x['assets']:
+              assert a['technical_complete'] is True, (a['symbol'],a['errors'])
+              assert a['freshness_ok'] is True, (a['symbol'],a['technical'])
+          df=pd.read_csv(c)
+          assert {'ETH','SOL','LINK','ONDO','AAVE','HBAR'}.issubset(set(df.AKTYWO))
+          print('Wszystkie aktywa mają komplet techniki 1H/4H/1D; ETF BTC/ETH potwierdzone.')
+          PY
+
+      - name: Zapisz wynik bez konfliktu
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          mkdir -p /tmp/altcomplete
+          cp crypto_data_hub/ALT_COMPLETION_AUDIT.json crypto_data_hub/ALT_COMPLETION_PANEL.csv crypto_data_hub/ALT_COMPLETION_LATEST.md /tmp/altcomplete/
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/altcomplete/ALT_COMPLETION_AUDIT.json /tmp/altcomplete/ALT_COMPLETION_PANEL.csv /tmp/altcomplete/ALT_COMPLETION_LATEST.md crypto_data_hub/
+            git add crypto_data_hub/ALT_COMPLETION_AUDIT.json crypto_data_hub/ALT_COMPLETION_PANEL.csv crypto_data_hub/ALT_COMPLETION_LATEST.md
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Update V8 alt completion audit'
+            if git push origin main; then exit 0; fi
+            echo "Konflikt zapisu — próba $attempt"
+            sleep $((attempt*3))
+          done
+          exit 1
