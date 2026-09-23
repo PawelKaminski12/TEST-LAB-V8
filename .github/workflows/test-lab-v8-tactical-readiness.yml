@@ -92,7 +92,13 @@ jobs:
                   tfs[tf].get('atr14') is not None
                   for tf in ['1H','4H','1D']
               )
-              history_evidence_ok=indicators_ok
+              macd_extreme_ok=closed_ok and all(
+                  tfs[tf].get('macd_hist_percentile') is not None and
+                  tfs[tf].get('macd_hist_zscore') is not None and
+                  tfs[tf].get('macd_extreme_label') is not None
+                  for tf in ['1H','4H','1D']
+              )
+              history_evidence_ok=indicators_ok and macd_extreme_ok
               status=a.get('tactical_status')
               score=a.get('tactical_score_0_10')
               exit_risk=a.get('exit_risk_0_10')
@@ -119,18 +125,20 @@ jobs:
                   mr_state='CONTRACT_READY_NO_DATA'
 
               readiness=0
-              readiness += 25 if qa else 0
-              readiness += 25 if closed_ok else 0
-              readiness += 25 if indicators_ok else 0
-              readiness += 25 if status is not None else 0
+              readiness += 20 if qa else 0
+              readiness += 20 if closed_ok else 0
+              readiness += 20 if indicators_ok else 0
+              readiness += 20 if macd_extreme_ok else 0
+              readiness += 20 if status is not None else 0
               ready=readiness==100
 
               assets.append({
                   'symbol':sym,'scope':scope,'qa':qa,'closed_timeframes_ready':closed_ok,
                   'history_evidence_ready':history_evidence_ok,
-                  'history_evidence':'RSI_MACD_MFI_ATR_COMPUTED_FROM_INTERNAL_FETCH' if history_evidence_ok else 'INSUFFICIENT',
+                  'history_evidence':'RSI_MACD_MFI_ATR_PLUS_RELATIVE_MACD_EXTREMES' if history_evidence_ok else 'INSUFFICIENT',
                   'indicators_ready':indicators_ok,
                   'mfi_ready':indicators_ok,
+                  'macd_extremes_ready':macd_extreme_ok,
                   'tactical_score_0_10':score,'tactical_status':status,'exit_risk_0_10':exit_risk,
                   'in_supply':z.get('in_supply'),'in_demand':z.get('in_demand'),
                   'market_reader_state':mr_state,'market_reader_4h':mr_4h,
@@ -141,10 +149,9 @@ jobs:
               hist_rows.append({
                   'generated_at_utc':eng.get('generated_at_utc'),'symbol':sym,'scope':scope,
                   'status':status,'score':score,'exit_risk':exit_risk,
-                  '1H_rsi':tfs.get('1H',{}).get('rsi14'),'1H_mfi':tfs.get('1H',{}).get('mfi14'),'1H_mfi_zone':tfs.get('1H',{}).get('mfi_zone'),'1H_macd_hist':tfs.get('1H',{}).get('macd_hist'),
-                  '4H_rsi':tfs.get('4H',{}).get('rsi14'),'4H_mfi':tfs.get('4H',{}).get('mfi14'),'4H_mfi_zone':tfs.get('4H',{}).get('mfi_zone'),'4H_macd_hist':tfs.get('4H',{}).get('macd_hist'),
-                  '4H_trend':tfs.get('4H',{}).get('trend_score_0_4'),
-                  '1D_rsi':tfs.get('1D',{}).get('rsi14'),'1D_mfi':tfs.get('1D',{}).get('mfi14'),'1D_mfi_zone':tfs.get('1D',{}).get('mfi_zone'),'1D_macd_hist':tfs.get('1D',{}).get('macd_hist'),'1D_trend':tfs.get('1D',{}).get('trend_score_0_4'),
+                  '1H_rsi':tfs.get('1H',{}).get('rsi14'),'1H_mfi':tfs.get('1H',{}).get('mfi14'),'1H_mfi_zone':tfs.get('1H',{}).get('mfi_zone'),'1H_macd_hist':tfs.get('1H',{}).get('macd_hist'),'1H_macd_pct':tfs.get('1H',{}).get('macd_hist_percentile'),'1H_macd_z':tfs.get('1H',{}).get('macd_hist_zscore'),'1H_macd_extreme':tfs.get('1H',{}).get('macd_extreme_label'),
+                  '4H_rsi':tfs.get('4H',{}).get('rsi14'),'4H_mfi':tfs.get('4H',{}).get('mfi14'),'4H_mfi_zone':tfs.get('4H',{}).get('mfi_zone'),'4H_macd_hist':tfs.get('4H',{}).get('macd_hist'),'4H_macd_pct':tfs.get('4H',{}).get('macd_hist_percentile'),'4H_macd_z':tfs.get('4H',{}).get('macd_hist_zscore'),'4H_macd_extreme':tfs.get('4H',{}).get('macd_extreme_label'),'4H_trend':tfs.get('4H',{}).get('trend_score_0_4'),
+                  '1D_rsi':tfs.get('1D',{}).get('rsi14'),'1D_mfi':tfs.get('1D',{}).get('mfi14'),'1D_mfi_zone':tfs.get('1D',{}).get('mfi_zone'),'1D_macd_hist':tfs.get('1D',{}).get('macd_hist'),'1D_macd_pct':tfs.get('1D',{}).get('macd_hist_percentile'),'1D_macd_z':tfs.get('1D',{}).get('macd_hist_zscore'),'1D_macd_extreme':tfs.get('1D',{}).get('macd_extreme_label'),'1D_trend':tfs.get('1D',{}).get('trend_score_0_4'),
                   'extremes':' | '.join(a.get('extreme_summary',[])),
                   'in_supply':z.get('in_supply'),'in_demand':z.get('in_demand'),
                   'market_phase':(a.get('market_phase_context') or {}).get('phase'),
@@ -172,7 +179,7 @@ jobs:
 
           payload={
               'generated_at_utc':datetime.now(timezone.utc).isoformat(),
-              'engine':'V8_TACTICAL_READINESS_v0.3',
+              'engine':'V8_TACTICAL_READINESS_v0.4',
               'source_engine':eng.get('engine'),
               'source_engine_age_hours':engine_age_h,
               'status':'TACTICAL_CORE_READY_FOR_VALIDATION' if all_prod_ready else 'TACTICAL_CORE_NOT_READY',
@@ -184,10 +191,10 @@ jobs:
               'rules':{
                   'closed_candles_only_required':True,
                   'rsi_macd_mfi_atr_required_on_1h_4h_1d':True,
+                  'relative_macd_extremes_required_on_1h_4h_1d':True,
                   'market_reader_never_overrides_hard_risk_blocks':True,
                   'market_reader_is_second_eye_only':True,
                   'history_is_observational_not_strategy_validation':True,
-                  'internal_history_depth_inferred_from_indicator_availability':True,
                   'not_execution_connected':True
               }
           }
@@ -213,7 +220,7 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add tactical_engine/TACTICAL_READINESS.json tactical_engine/TACTICAL_READINESS.csv tactical_engine/TACTICAL_SIGNAL_HISTORY.csv tactical_engine/MARKET_READER_BRIDGE_STATUS.json
           if ! git diff --cached --quiet; then
-            git commit -m 'Update V8 tactical readiness and signal history with MFI'
+            git commit -m 'Update V8 tactical readiness with MACD extremes'
             git pull --rebase origin main
             git push
           fi
