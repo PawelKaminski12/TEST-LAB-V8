@@ -1,6 +1,6 @@
 {
   "generated_at_utc": "2026-09-23T12:33:29.704735+00:00",
-  "engine": "V8_TACTICAL_ENGINE_v0.3",
+  "engine": "V8_TACTICAL_ENGINE_v0.6",
   "purpose": "short swing research engine using CLOSED 1H timing, CLOSED 4H decision, CLOSED 1D regime",
   "research_only": true,
   "not_execution_connected": true,
@@ -15,7 +15,14 @@
     "higher_timeframe_zones_are_context_not_standalone_signal": true,
     "in_supply_blocks_tactical_long_labels": true,
     "market_phase_context_not_hard_gate": true,
-    "market_reader_optional_external_second_eye": true
+    "market_reader_optional_external_second_eye": true,
+    "extreme_confluence_enabled": true,
+    "extreme_confluence_timeframe_weights": {
+      "1H": 1,
+      "4H": 2,
+      "1D": 3
+    },
+    "extreme_confluence_not_standalone_trade_signal": true
   },
   "assets": [
     {
@@ -54,7 +61,13 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T11:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "extreme_heat_score": 0,
+          "extreme_cold_score": 0,
+          "extreme_confluence_label": "NORMAL",
+          "extreme_confluence_direction": "NONE",
+          "extreme_heat_reasons": [],
+          "extreme_cold_reasons": []
         },
         "4H": {
           "timeframe": "4H",
@@ -81,7 +94,13 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T11:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "extreme_heat_score": 0,
+          "extreme_cold_score": 0,
+          "extreme_confluence_label": "NORMAL",
+          "extreme_confluence_direction": "NONE",
+          "extreme_heat_reasons": [],
+          "extreme_cold_reasons": []
         },
         "1D": {
           "timeframe": "1D",
@@ -108,7 +127,13 @@
           "rows_closed": 499,
           "last_close_time_utc": "2026-09-22T23:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "extreme_heat_score": 0,
+          "extreme_cold_score": 0,
+          "extreme_confluence_label": "NORMAL",
+          "extreme_confluence_direction": "NONE",
+          "extreme_heat_reasons": [],
+          "extreme_cold_reasons": []
         }
       },
       "tactical_score_0_10": 5,
@@ -144,6 +169,17 @@
       "market_reader_external": {
         "status": "NOT_CONNECTED",
         "role": "optional second-eye confirmation only"
+      },
+      "extreme_confluence": {
+        "weighted_heat_score": 0,
+        "weighted_cold_score": 0,
+        "overall_label": "NORMAL",
+        "timeframe_weights": {
+          "1H": 1,
+          "4H": 2,
+          "1D": 3
+        },
+        "role": "ALARM_CONTEXT_NOT_STANDALONE_TRADE_SIGNAL"
       }
     },
     {
@@ -182,7 +218,13 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T11:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "extreme_heat_score": 0,
+          "extreme_cold_score": 0,
+          "extreme_confluence_label": "NORMAL",
+          "extreme_confluence_direction": "NONE",
+          "extreme_heat_reasons": [],
+          "extreme_cold_reasons": []
         },
         "4H": {
           "timeframe": "4H",
@@ -209,7 +251,13 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T11:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "extreme_heat_score": 0,
+          "extreme_cold_score": 0,
+          "extreme_confluence_label": "NORMAL",
+          "extreme_confluence_direction": "NONE",
+          "extreme_heat_reasons": [],
+          "extreme_cold_reasons": []
         },
         "1D": {
           "timeframe": "1D",
@@ -236,7 +284,13 @@
           "rows_closed": 499,
           "last_close_time_utc": "2026-09-22T23:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "extreme_heat_score": 0,
+          "extreme_cold_score": 0,
+          "extreme_confluence_label": "NORMAL",
+          "extreme_confluence_direction": "NONE",
+          "extreme_heat_reasons": [],
+          "extreme_cold_reasons": []
         }
       },
       "tactical_score_0_10": 6,
@@ -272,6 +326,17 @@
       "market_reader_external": {
         "status": "NOT_CONNECTED",
         "role": "optional second-eye confirmation only"
+      },
+      "extreme_confluence": {
+        "weighted_heat_score": 0,
+        "weighted_cold_score": 0,
+        "overall_label": "NORMAL",
+        "timeframe_weights": {
+          "1H": 1,
+          "4H": 2,
+          "1D": 3
+        },
+        "role": "ALARM_CONTEXT_NOT_STANDALONE_TRADE_SIGNAL"
       }
     },
     {
@@ -310,7 +375,13 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T11:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "extreme_heat_score": 0,
+          "extreme_cold_score": 0,
+          "extreme_confluence_label": "NORMAL",
+          "extreme_confluence_direction": "NONE",
+          "extreme_heat_reasons": [],
+          "extreme_cold_reasons": []
         },
         "4H": {
           "timeframe": "4H",
@@ -337,7 +408,13 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T11:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "extreme_heat_score": 0,
+          "extreme_cold_score": 0,
+          "extreme_confluence_label": "NORMAL",
+          "extreme_confluence_direction": "NONE",
+          "extreme_heat_reasons": [],
+          "extreme_cold_reasons": []
         },
         "1D": {
           "timeframe": "1D",
@@ -364,7 +441,13 @@
           "rows_closed": 499,
           "last_close_time_utc": "2026-09-22T23:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "extreme_heat_score": 0,
+          "extreme_cold_score": 0,
+          "extreme_confluence_label": "NORMAL",
+          "extreme_confluence_direction": "NONE",
+          "extreme_heat_reasons": [],
+          "extreme_cold_reasons": []
         }
       },
       "tactical_score_0_10": 6,
@@ -400,6 +483,17 @@
       "market_reader_external": {
         "status": "NOT_CONNECTED",
         "role": "optional second-eye confirmation only"
+      },
+      "extreme_confluence": {
+        "weighted_heat_score": 0,
+        "weighted_cold_score": 0,
+        "overall_label": "NORMAL",
+        "timeframe_weights": {
+          "1H": 1,
+          "4H": 2,
+          "1D": 3
+        },
+        "role": "ALARM_CONTEXT_NOT_STANDALONE_TRADE_SIGNAL"
       }
     },
     {
@@ -438,7 +532,13 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T11:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "extreme_heat_score": 0,
+          "extreme_cold_score": 0,
+          "extreme_confluence_label": "NORMAL",
+          "extreme_confluence_direction": "NONE",
+          "extreme_heat_reasons": [],
+          "extreme_cold_reasons": []
         },
         "4H": {
           "timeframe": "4H",
@@ -465,7 +565,13 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T11:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "extreme_heat_score": 0,
+          "extreme_cold_score": 0,
+          "extreme_confluence_label": "NORMAL",
+          "extreme_confluence_direction": "NONE",
+          "extreme_heat_reasons": [],
+          "extreme_cold_reasons": []
         },
         "1D": {
           "timeframe": "1D",
@@ -492,7 +598,13 @@
           "rows_closed": 499,
           "last_close_time_utc": "2026-09-22T23:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "extreme_heat_score": 0,
+          "extreme_cold_score": 0,
+          "extreme_confluence_label": "NORMAL",
+          "extreme_confluence_direction": "NONE",
+          "extreme_heat_reasons": [],
+          "extreme_cold_reasons": []
         }
       },
       "tactical_score_0_10": 5,
@@ -528,6 +640,17 @@
       "market_reader_external": {
         "status": "NOT_CONNECTED",
         "role": "optional second-eye confirmation only"
+      },
+      "extreme_confluence": {
+        "weighted_heat_score": 0,
+        "weighted_cold_score": 0,
+        "overall_label": "NORMAL",
+        "timeframe_weights": {
+          "1H": 1,
+          "4H": 2,
+          "1D": 3
+        },
+        "role": "ALARM_CONTEXT_NOT_STANDALONE_TRADE_SIGNAL"
       }
     },
     {
@@ -566,7 +689,13 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T11:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "extreme_heat_score": 0,
+          "extreme_cold_score": 0,
+          "extreme_confluence_label": "NORMAL",
+          "extreme_confluence_direction": "NONE",
+          "extreme_heat_reasons": [],
+          "extreme_cold_reasons": []
         },
         "4H": {
           "timeframe": "4H",
@@ -593,7 +722,13 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T11:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "extreme_heat_score": 0,
+          "extreme_cold_score": 0,
+          "extreme_confluence_label": "NORMAL",
+          "extreme_confluence_direction": "NONE",
+          "extreme_heat_reasons": [],
+          "extreme_cold_reasons": []
         },
         "1D": {
           "timeframe": "1D",
@@ -620,7 +755,13 @@
           "rows_closed": 499,
           "last_close_time_utc": "2026-09-22T23:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "extreme_heat_score": 0,
+          "extreme_cold_score": 0,
+          "extreme_confluence_label": "NORMAL",
+          "extreme_confluence_direction": "NONE",
+          "extreme_heat_reasons": [],
+          "extreme_cold_reasons": []
         }
       },
       "tactical_score_0_10": 9,
@@ -640,6 +781,17 @@
       "market_reader_external": {
         "status": "NOT_CONNECTED",
         "role": "optional second-eye confirmation only"
+      },
+      "extreme_confluence": {
+        "weighted_heat_score": 0,
+        "weighted_cold_score": 0,
+        "overall_label": "NORMAL",
+        "timeframe_weights": {
+          "1H": 1,
+          "4H": 2,
+          "1D": 3
+        },
+        "role": "ALARM_CONTEXT_NOT_STANDALONE_TRADE_SIGNAL"
       }
     },
     {
@@ -678,7 +830,13 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T11:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "extreme_heat_score": 0,
+          "extreme_cold_score": 0,
+          "extreme_confluence_label": "NORMAL",
+          "extreme_confluence_direction": "NONE",
+          "extreme_heat_reasons": [],
+          "extreme_cold_reasons": []
         },
         "4H": {
           "timeframe": "4H",
@@ -705,7 +863,13 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T11:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "extreme_heat_score": 0,
+          "extreme_cold_score": 0,
+          "extreme_confluence_label": "NORMAL",
+          "extreme_confluence_direction": "NONE",
+          "extreme_heat_reasons": [],
+          "extreme_cold_reasons": []
         },
         "1D": {
           "timeframe": "1D",
@@ -732,7 +896,16 @@
           "rows_closed": 499,
           "last_close_time_utc": "2026-09-22T23:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "extreme_heat_score": 2,
+          "extreme_cold_score": 0,
+          "extreme_confluence_label": "WARNING_OVERHEAT",
+          "extreme_confluence_direction": "HEAT",
+          "extreme_heat_reasons": [
+            "RSI>=75",
+            "FOMO>=8"
+          ],
+          "extreme_cold_reasons": []
         }
       },
       "tactical_score_0_10": 8,
@@ -752,6 +925,17 @@
       "market_reader_external": {
         "status": "NOT_CONNECTED",
         "role": "optional second-eye confirmation only"
+      },
+      "extreme_confluence": {
+        "weighted_heat_score": 6,
+        "weighted_cold_score": 0,
+        "overall_label": "WATCH_EXTREMES",
+        "timeframe_weights": {
+          "1H": 1,
+          "4H": 2,
+          "1D": 3
+        },
+        "role": "ALARM_CONTEXT_NOT_STANDALONE_TRADE_SIGNAL"
       }
     }
   ],
