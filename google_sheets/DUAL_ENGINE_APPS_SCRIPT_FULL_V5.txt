@@ -1,0 +1,1050 @@
+// V8 DUAL ENGINE — GOOGLE SHEETS BRIDGE
+// Wersja użytkowa PL + alarmy ekstremów RSI / MACD / MFI / FOMO na 1H/4H/1D.
+// Dodano panel ETF BTC/ETH oraz panel LAB — ANALIZA AKTYWA.
+// Research / decision support only. No broker execution.
+// V7 is not modified by this script.
+
+const V8_REPO_RAW = 'https://raw.githubusercontent.com/PawelKaminski12/TEST-LAB-V8/main/';
+
+const V8_FILES = {
+  panel: V8_REPO_RAW + 'google_sheets/DUAL_PANEL.csv',
+  machine: V8_REPO_RAW + 'google_sheets/DUAL_ENGINE_MACHINE_ROOM.csv',
+  long: V8_REPO_RAW + 'crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json',
+  tactical: V8_REPO_RAW + 'tactical_engine/TACTICAL_ENGINE.json',
+  tacticalReadiness: V8_REPO_RAW + 'tactical_engine/TACTICAL_READINESS.json',
+  marketPhase: V8_REPO_RAW + 'crypto_data_hub/CRYPTO_MARKET_PHASE.json',
+  snapshot: V8_REPO_RAW + 'crypto_data_hub/LATEST_SNAPSHOT.json',
+  marketReader: V8_REPO_RAW + 'market_reader/TACTICAL_CONFLUENCE.csv',
+  labReport: V8_REPO_RAW + 'lab/LAB_REPORT.json',
+  etfStatus: V8_REPO_RAW + 'institutional_data_hub/ETF_BTC_ETH_STATUS.json',
+  etfHistoryCsv: V8_REPO_RAW + 'institutional_data_hub/ETF_BTC_ETH_HISTORY.csv',
+  etfConfirmation: V8_REPO_RAW + 'institutional_data_hub/ETF_BTC_ETH_CONFIRMATION.json'
+};
+
+const V8_SHEETS = {
+  panel: 'PANEL',
+  portfolioLong: 'PORTFEL_LONG',
+  portfolioTactical: 'PORTFEL_TACTICAL',
+  long: 'SILNIK_LONG',
+  tactical: 'SILNIK_TACTICAL',
+  flow: 'PRZEPLYWY',
+  etf: 'ETF_BTC_ETH',
+  etfHistory: 'ETF_HISTORIA',
+  lab: 'LAB_ANALIZA_AKTYWA',
+  marketReader: 'MARKET_READER',
+  extremes: 'ALARMY_EKSTREMOW',
+  history: 'HISTORIA',
+  settings: 'USTAWIENIA'
+};
+
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu('V8 DUAL ENGINE')
+    .addItem('ODŚWIEŻ_WSZYSTKO', 'ODSWIEZ_WSZYSTKO')
+    .addItem('ODŚWIEŻ ETF BTC / ETH', 'ODSWIEZ_ETF_BTC_ETH')
+    .addItem('ODŚWIEŻ LAB — ANALIZA AKTYWA', 'ODSWIEZ_LAB')
+    .addItem('SPRAWDŹ EKSTREMA', 'SPRAWDZ_EKSTREMA')
+    .addSeparator()
+    .addItem('UTWÓRZ / NAPRAW UKŁAD', 'V8_SETUP')
+    .addToUi();
+}
+
+function V8_SETUP() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  Object.values(V8_SHEETS).forEach(name => getOrCreateSheet_(ss, name));
+  setupPortfolioLong_(ss.getSheetByName(V8_SHEETS.portfolioLong));
+  setupPortfolioTactical_(ss.getSheetByName(V8_SHEETS.portfolioTactical));
+  setupSettings_(ss.getSheetByName(V8_SHEETS.settings));
+  setupExtremes_(ss.getSheetByName(V8_SHEETS.extremes));
+  formatPanel_(ss.getSheetByName(V8_SHEETS.panel));
+  ss.toast('Układ V8 DUAL ENGINE gotowy', 'V8', 4);
+}
+
+function ODSWIEZ_WSZYSTKO() {
+  const lock = LockService.getDocumentLock();
+  if (!lock.tryLock(1000)) throw new Error('Odświeżanie już trwa.');
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    V8_SETUP();
+
+    const oldPanel = readPanelState_(ss.getSheetByName(V8_SHEETS.panel));
+    const oldAlarms = readActiveExtremeKeys_(ss.getSheetByName(V8_SHEETS.extremes));
+
+    const panelCsv = fetchText_(V8_FILES.panel);
+    const machineCsv = fetchText_(V8_FILES.machine);
+    const longJson = JSON.parse(fetchText_(V8_FILES.long));
+    const tacticalJson = JSON.parse(fetchText_(V8_FILES.tactical));
+    const readinessJson = JSON.parse(fetchText_(V8_FILES.tacticalReadiness));
+    const phaseJson = JSON.parse(fetchText_(V8_FILES.marketPhase));
+    const snapshotJson = JSON.parse(fetchText_(V8_FILES.snapshot));
+    const labJson = JSON.parse(fetchText_(V8_FILES.labReport));
+    const etfStatusJson = JSON.parse(fetchText_(V8_FILES.etfStatus));
+    const etfHistoryCsv = fetchText_(V8_FILES.etfHistoryCsv);
+    const etfConfirmationJson = JSON.parse(fetchText_(V8_FILES.etfConfirmation));
+    const mrCsv = fetchText_(V8_FILES.marketReader);
+
+    writePolishPanel_(ss.getSheetByName(V8_SHEETS.panel), panelCsv);
+    writeLongEngine_(ss.getSheetByName(V8_SHEETS.long), longJson);
+    writeTacticalEngine_(ss.getSheetByName(V8_SHEETS.tactical), tacticalJson, readinessJson, phaseJson);
+    writeFlowEngine_(ss.getSheetByName(V8_SHEETS.flow), phaseJson, snapshotJson);
+    writeEtfPanel_(ss.getSheetByName(V8_SHEETS.etf), etfStatusJson, etfConfirmationJson);
+    writeEtfHistory_(ss.getSheetByName(V8_SHEETS.etfHistory), etfHistoryCsv);
+    writeLabPanel_(ss.getSheetByName(V8_SHEETS.lab), labJson);
+    writeCsvSheet_(ss.getSheetByName(V8_SHEETS.marketReader), mrCsv, false);
+
+    const machineSheet = getOrCreateSheet_(ss, 'DANE_MASZYNOWNIA');
+    writeCsvSheet_(machineSheet, machineCsv, false);
+    machineSheet.hideSheet();
+
+    const alarms = buildExtremeAlarms_(ss, tacticalJson);
+    writeExtremeAlarms_(ss.getSheetByName(V8_SHEETS.extremes), alarms);
+    updateMainPanelExtremeSummary_(ss.getSheetByName(V8_SHEETS.panel), alarms);
+    appendExtremeHistory_(ss, oldAlarms, alarms);
+    notifyNewExtremeAlarms_(ss, oldAlarms, alarms);
+
+    formatPanel_(ss.getSheetByName(V8_SHEETS.panel));
+    appendHistoryOnChanges_(ss, oldPanel, readPanelState_(ss.getSheetByName(V8_SHEETS.panel)));
+    stampRefresh_(ss);
+
+    const active = alarms.filter(a => a.aktywny).length;
+    ss.toast('LONG + TACTICAL + ETF + LAB odświeżone. Aktywne ekstrema: ' + active, 'V8 DUAL ENGINE', 5);
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function ODSWIEZ_ETF_BTC_ETH() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  V8_SETUP();
+  const etfStatusJson = JSON.parse(fetchText_(V8_FILES.etfStatus));
+  const etfHistoryCsv = fetchText_(V8_FILES.etfHistoryCsv);
+  const etfConfirmationJson = JSON.parse(fetchText_(V8_FILES.etfConfirmation));
+  writeEtfPanel_(ss.getSheetByName(V8_SHEETS.etf), etfStatusJson, etfConfirmationJson);
+  writeEtfHistory_(ss.getSheetByName(V8_SHEETS.etfHistory), etfHistoryCsv);
+  ss.toast('ETF BTC / ETH oraz historia odświeżone', 'V8', 4);
+}
+
+function ODSWIEZ_LAB() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  V8_SETUP();
+  const labJson = JSON.parse(fetchText_(V8_FILES.labReport));
+  writeLabPanel_(ss.getSheetByName(V8_SHEETS.lab), labJson);
+  ss.toast('LAB — ANALIZA AKTYWA odświeżony', 'V8', 4);
+}
+
+function SPRAWDZ_EKSTREMA() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  V8_SETUP();
+  const oldAlarms = readActiveExtremeKeys_(ss.getSheetByName(V8_SHEETS.extremes));
+  const tacticalJson = JSON.parse(fetchText_(V8_FILES.tactical));
+  const alarms = buildExtremeAlarms_(ss, tacticalJson);
+  writeExtremeAlarms_(ss.getSheetByName(V8_SHEETS.extremes), alarms);
+  updateMainPanelExtremeSummary_(ss.getSheetByName(V8_SHEETS.panel), alarms);
+  appendExtremeHistory_(ss, oldAlarms, alarms);
+  notifyNewExtremeAlarms_(ss, oldAlarms, alarms);
+  ss.toast('Sprawdzono ekstrema 1H / 4H / 1D', 'V8', 4);
+}
+
+function fetchText_(url) {
+  const response = UrlFetchApp.fetch(url, {
+    muteHttpExceptions: true,
+    followRedirects: true,
+    headers: {'Cache-Control': 'no-cache'}
+  });
+  const code = response.getResponseCode();
+  if (code < 200 || code >= 300) throw new Error('HTTP ' + code + ' dla ' + url);
+  return response.getContentText('UTF-8');
+}
+
+function getOrCreateSheet_(ss, name) {
+  return ss.getSheetByName(name) || ss.insertSheet(name);
+}
+
+function writeCsvSheet_(sheet, csvText, preserveCompactPanel) {
+  const rows = Utilities.parseCsv(csvText);
+  sheet.clearContents();
+  if (!rows.length) return;
+  sheet.getRange(1, 1, rows.length, rows[0].length).setValues(rows);
+  sheet.setFrozenRows(1);
+  if (preserveCompactPanel) {
+    const maxCols = 7;
+    if (sheet.getMaxColumns() > maxCols) sheet.hideColumns(maxCols + 1, sheet.getMaxColumns() - maxCols);
+  }
+}
+
+function writePolishPanel_(sheet, csvText) {
+  const rows = Utilities.parseCsv(csvText);
+  sheet.clearContents();
+  if (!rows.length) return;
+  const head = rows[0].map(String);
+  const idx = {}; head.forEach((h,i) => idx[h] = i);
+  const out = [['AKTYWO','CENA','LONG','TACTICAL','RYZYKO 0–10','ZGODNOŚĆ','ALERT']];
+  rows.slice(1).forEach(r => {
+    if (!String(r[idx['AKTYWO']] || '').trim()) return;
+    out.push([
+      r[idx['AKTYWO']], r[idx['CENA']], translateLong_(r[idx['LONG']]),
+      translateTactical_(r[idx['TACTICAL']]), r[idx['RYZYKO_0_10']],
+      translateAgreement_(r[idx['ZGODNOSC']]), translateAlert_(r[idx['ALERT']])
+    ]);
+  });
+  sheet.getRange(1,1,out.length,out[0].length).setValues(out);
+  sheet.setFrozenRows(1);
+}
+
+function writeLongEngine_(sheet, data) {
+  const headers = ['AKTYWO','JAKOŚĆ','STATUS DANYCH','STREFY','TREND','FOMO','ROTACJA','FAZA RYNKU','FLOW LONG 0–10','FLOW OCENA','ETF 5D','ETF 20D','ETF 30D','DECYZJA','DCA1','DCA2','DCA3','BLOKADY'];
+  const assets = (data.assets || []).map(a => [
+    a.symbol, a.data_quality, translateReady_(a.readiness_status), a.zone_timeframes,
+    a.trend_score_0_4, a.fomo_score_0_10, translateGeneric_(a.rotation_label), translateMarketPhase_(a.market_phase),
+    a.long_flow_score_0_10, translateFlow_(a.long_flow_label), a.direct_etf_5d_usdm, a.direct_etf_20d_usdm, a.direct_etf_30d_usdm,
+    translateLong_(a.decision), a.dca1, a.dca2, a.dca3, translateBlockers_(a.blockers)
+  ]);
+  sheet.clearContents();
+  sheet.getRange(1,1,1,headers.length).setValues([headers]);
+  if (assets.length) sheet.getRange(2,1,assets.length,headers.length).setValues(assets);
+  sheet.setFrozenRows(1);
+}
+
+function writeTacticalEngine_(sheet, data, readiness, phaseData) {
+  const readyMap = {};
+  (readiness.assets || []).forEach(a => readyMap[a.symbol] = a);
+  const tacticalFlow = (((phaseData || {}).dual_horizon_flow_context || {}).TACTICAL || {});
+  const headers = [
+    'AKTYWO','QA','GOTOWOŚĆ','WYNIK','STATUS','RYZYKO WYJŚCIA',
+    '1H RSI','1H MFI','1H MACD HIST','1H MACD %','1H MACD Z','1H FOMO','1H EKSTREMUM',
+    '4H RSI','4H MFI','4H MACD HIST','4H MACD %','4H MACD Z','4H TREND','4H FOMO','4H EKSTREMUM',
+    '1D RSI','1D MFI','1D MACD HIST','1D MACD %','1D MACD Z','1D TREND','1D FOMO','1D EKSTREMUM',
+    'W PODAŻY','W POPYCIE','FAZA RYNKU','FLOW TACTICAL 0–5','FLOW OCENA','BLOKADY'
+  ];
+  const settings = getExtremeSettings_(SpreadsheetApp.getActiveSpreadsheet());
+  const assets = (data.assets || []).map(a => {
+    const t = a.timeframes || {}, h1 = t['1H'] || {}, h4 = t['4H'] || {}, d1 = t['1D'] || {};
+    const z = a.zone_context || {}, r = readyMap[a.symbol] || {};
+    return [
+      a.symbol, a.qa, translateReady_(r.readiness_status || ''), a.tactical_score_0_10, translateTactical_(a.tactical_status), a.exit_risk_0_10,
+      h1.rsi14, h1.mfi14, h1.macd_hist, h1.macd_hist_percentile, h1.macd_hist_zscore, h1.fomo_score_0_10, extremeLabel_(h1, settings),
+      h4.rsi14, h4.mfi14, h4.macd_hist, h4.macd_hist_percentile, h4.macd_hist_zscore, h4.trend_score_0_4, h4.fomo_score_0_10, extremeLabel_(h4, settings),
+      d1.rsi14, d1.mfi14, d1.macd_hist, d1.macd_hist_percentile, d1.macd_hist_zscore, d1.trend_score_0_4, d1.fomo_score_0_10, extremeLabel_(d1, settings),
+      boolPl_(z.in_supply), boolPl_(z.in_demand), translateMarketPhase_((a.market_phase_context || {}).phase || ''),
+      tacticalFlow.score_0_5, translateFlow_(tacticalFlow.label), translateBlockers_(a.entry_blockers || a.blockers || [])
+    ];
+  });
+  sheet.clearContents();
+  sheet.getRange(1,1,1,headers.length).setValues([headers]);
+  if (assets.length) sheet.getRange(2,1,assets.length,headers.length).setValues(assets);
+  sheet.setFrozenRows(1);
+}
+
+function writeFlowEngine_(sheet, phase, snap) {
+  const i = (phase || {}).inputs || {};
+  const f = (phase || {}).dual_horizon_flow_context || {};
+  const etf = (snap || {}).etf_flows || {};
+  const rows = [
+    ['SEKCJA','WSKAŹNIK','1D / 5D','14D / 20D','30D','STATUS'],
+    ['ROTACJA','ETH/BTC',i.eth_btc_5d_pct,'',i.eth_btc_20d_pct, i.eth_btc_strength ? 'SIŁA ETH/BTC' : 'SŁABOŚĆ ETH/BTC'],
+    ['ROTACJA','BTC.D',i.btc_dominance_pct,i.btc_dom_20d_change_pp,'', 'zmiana pp: ujemna wspiera alty'],
+    ['ROTACJA','ETH.D',i.eth_dominance_pct,'','', 'dominacja ETH'],
+    ['ROTACJA','OTHERS/BTC EQ',i.others_btc_eq_5d_change_pct,i.others_btc_eq_20d_change_pct,'', 'trend altów vs BTC'],
+    ['PŁYNNOŚĆ','STABLECOINY',i.stablecoin_7d_pct,i.stablecoin_14d_pct,i.stablecoin_30d_pct, i.stablecoin_30d_pct > 0 ? 'NAPŁYW PŁYNNOŚCI' : 'BRAK NAPŁYWU'],
+    ['ETF','BTC ETF',i.btc_etf_5d_usdm,i.btc_etf_20d_usdm,i.btc_etf_30d_usdm, translateEtfTrend_(((etf.BTC || {}).trend_label || ''))],
+    ['ETF','ETH ETF',i.eth_etf_5d_usdm,i.eth_etf_20d_usdm,i.eth_etf_30d_usdm, translateEtfTrend_(((etf.ETH || {}).trend_label || ''))],
+    ['ETF','SOL ETF',i.sol_etf_5d_usdm,i.sol_etf_20d_usdm,i.sol_etf_30d_usdm, translateEtfTrend_(((etf.SOL || {}).trend_label || ''))],
+    ['SCORE','LONG FLOW',((f.LONG || {}).score_0_10 || ''),'','',translateFlow_((f.LONG || {}).label)],
+    ['SCORE','TACTICAL FLOW',((f.TACTICAL || {}).score_0_5 || ''),'','',translateFlow_((f.TACTICAL || {}).label)]
+  ];
+  sheet.clearContents();
+  sheet.getRange(1,1,rows.length,rows[0].length).setValues(rows);
+  sheet.setFrozenRows(1);
+  sheet.autoResizeColumns(1,rows[0].length);
+}
+
+function writeEtfPanel_(sheet, status, confirmation) {
+  const assets = (status || {}).assets || {};
+  const confAssets = (confirmation || {}).assets || {};
+  const global = (confirmation || {}).global_institutional_interest || (status || {}).global_institutional_interest || {};
+  const rows = [
+    ['ETF BTC / ETH — KAPITAŁ INSTYTUCJONALNY + POTWIERDZENIE CENY','','','','','','','','','',''],
+    ['AKTYWO','OSTATNI ZAKOŃCZONY DZIEŃ','PRZEPŁYW mln USD','5 DNI mln USD','20 DNI mln USD','30 DNI mln USD','DZISIAJ','JAKOŚĆ DANYCH','CENA vs ETF 5D','CENA vs ETF 20D','WNIOSKI'],
+  ];
+  ['BTC','ETH'].forEach(sym => {
+    const x=assets[sym] || {};
+    const c=confAssets[sym] || {};
+    const q=c.quality || {};
+    const p5=c.price_vs_etf_5d || {};
+    const p20=c.price_vs_etf_20d || {};
+    const preview = x.today_flow_preview_usdm;
+    const complete = Number(x.today_fund_completeness_pct || 0);
+    let todayText = x.today_status_pl || c.today_status_pl || 'BRAK DANYCH';
+    if (preview !== null && preview !== undefined && complete > 0) {
+      todayText += ' | podgląd '+fmtCell_(preview)+' mln USD | kompletność '+fmtCell_(complete)+'%';
+    } else {
+      todayText += ' | brak finalnych danych za dziś';
+    }
+    rows.push([
+      sym,
+      x.last_closed_date || c.last_closed_date || 'brak danych',
+      valueOrBlank_(x.last_closed_flow_usdm),
+      valueOrBlank_(x.closed_5d_usdm),
+      valueOrBlank_(x.closed_20d_usdm),
+      valueOrBlank_(x.closed_30d_usdm),
+      todayText,
+      (q.label_pl || 'BRAK OCENY') + (q.score_0_100 !== undefined ? ' — '+fmtCell_(q.score_0_100)+'/100' : ''),
+      p5.label_pl || 'BRAK OCENY',
+      p20.label_pl || 'BRAK OCENY',
+      c.overall_confirmation_pl || ((x.closed_trend || {}).label_pl || 'BRAK OCENY')
+    ]);
+  });
+  rows.push(['','','','','','','','','','','']);
+  rows.push(['WSPÓLNY OBRAZ','','','','','','','','','', (global.label_pl || 'BRAK OCENY')+' | '+fmtCell_(global.score_0_10)+'/10']);
+  rows.push(['ZASADA','','','','','','','','','','Dzisiejsze dane są wstępne. Filtr ceny vs ETF używa tylko zakończonych dni i nie nadpisuje twardych blokad LONG ani TACTICAL.']);
+
+  sheet.clearContents();
+  sheet.getRange(1,1,rows.length,11).setValues(rows);
+  sheet.getRange(1,1,1,11).merge().setFontWeight('bold').setHorizontalAlignment('center');
+  sheet.getRange(2,1,1,11).setFontWeight('bold');
+  sheet.setFrozenRows(2);
+  sheet.getRange(3,3,2,4).setNumberFormat('0.00');
+  sheet.getRange(1,1,rows.length,11).setWrap(true).setVerticalAlignment('middle');
+  [80,135,110,105,105,105,300,260,300,300,320].forEach((w,idx)=>sheet.setColumnWidth(idx+1,w));
+}
+
+function writeEtfHistory_(sheet, csvText) {
+  const rows = Utilities.parseCsv(csvText);
+  sheet.clearContents();
+  if (!rows.length) return;
+  const keep = rows.length > 121 ? [rows[0]].concat(rows.slice(-120)) : rows;
+  sheet.getRange(1,1,keep.length,keep[0].length).setValues(keep);
+  sheet.setFrozenRows(1);
+  sheet.getRange(1,1,1,keep[0].length).setFontWeight('bold');
+  if (keep.length > 1) sheet.getRange(2,2,keep.length-1,3).setNumberFormat('0.00');
+  sheet.getRange(1,1,keep.length,keep[0].length).setWrap(true);
+  sheet.autoResizeColumns(1,keep[0].length);
+}
+
+function writeLabPanel_(sheet, lab) {
+  const rows = [['LAB — ANALIZA AKTYWA','','','','','','','','']];
+  rows.push(['AKTYWO','TYP','TRYB','STAN DANYCH','WYNIK /10','OCENA','1H','4H','1D / GŁÓWNE INFORMACJE']);
+  (lab.reports || []).forEach(a => {
+    const pl = a.opis_po_polsku || {};
+    const fast = a.fast_analysis || {};
+    const t = a.technical || {};
+    const h1=t['1H']||{}, h4=t['4H']||{}, d1=t['1D']||{};
+    let details='Cena '+fmtCell_(d1.price)+' | RSI '+fmtCell_(d1.rsi14)+' | MFI '+fmtCell_(d1.mfi14)+' | FOMO '+fmtCell_(d1.fomo_0_10);
+    if (a.symbol === 'BTC' || a.symbol === 'ETH') {
+      const x = a.symbol === 'BTC' ? (a.btc_etf_context||{}) : (a.eth_etf_context||{});
+      details += ' | ETF: '+(x.label_pl || 'BRAK DANYCH')+' | 5D '+fmtCell_(x.flow_5d_usdm)+' mln USD | 20D '+fmtCell_(x.flow_20d_usdm)+' mln USD';
+    }
+    rows.push([
+      a.symbol || '', pl.typ_aktywa || a.asset_type || '', pl.tryb || a.mode || '', pl.stan_danych || '',
+      fast.score_0_10 == null ? '' : fast.score_0_10, pl.wniosek_szybki || '',
+      labTfText_(h1), labTfText_(h4), details
+    ]);
+  });
+  sheet.clearContents();
+  sheet.getRange(1,1,rows.length,9).setValues(rows);
+  sheet.getRange(1,1,1,9).merge().setFontWeight('bold').setHorizontalAlignment('center');
+  sheet.getRange(2,1,1,9).setFontWeight('bold');
+  sheet.setFrozenRows(2);
+  sheet.getRange(1,1,rows.length,9).setWrap(true).setVerticalAlignment('middle');
+  [90,130,190,240,90,220,220,220,430].forEach((w,idx)=>sheet.setColumnWidth(idx+1,w));
+}
+
+function labTfText_(x) {
+  if (!x || x.status !== 'OK') return 'BRAK PEŁNYCH DANYCH';
+  return 'TREND '+fmtCell_(x.trend_0_4)+'/4 | RSI '+fmtCell_(x.rsi14)+' | MFI '+fmtCell_(x.mfi14)+' | FOMO '+fmtCell_(x.fomo_0_10)+'/10';
+}
+
+function fmtCell_(v) {
+  if (v === null || v === undefined || v === '') return 'brak danych';
+  const n = Number(v); return Number.isFinite(n) ? Math.round(n*100)/100 : String(v);
+}
+function valueOrBlank_(v) { const n=Number(v); return Number.isFinite(n) ? n : ''; }
+
+function etfMeaning_(five, twenty, accel, fallback) {
+  five=Number(five); twenty=Number(twenty); accel=Number(accel);
+  if (Number.isFinite(five) && Number.isFinite(twenty)) {
+    if (five>0 && twenty>0) return Number.isFinite(accel) && accel>0 ? 'NAPŁYW PRZYSPIESZA — zainteresowanie rośnie' : 'NAPŁYW KAPITAŁU — zainteresowanie dodatnie';
+    if (five<0 && twenty<0) return Number.isFinite(accel) && accel<0 ? 'ODPŁYW PRZYSPIESZA — zainteresowanie słabnie' : 'ODPŁYW KAPITAŁU — zainteresowanie słabnie';
+    return 'PRZEPŁYWY MIESZANE — brak jednolitego kierunku';
+  }
+  return fallback ? translateEtfTrend_(fallback) : 'ZA MAŁO DANYCH';
+}
+
+function globalEtfMeaning_(i) {
+  const b5=Number(i.btc_etf_5d_usdm), b20=Number(i.btc_etf_20d_usdm), e5=Number(i.eth_etf_5d_usdm), e20=Number(i.eth_etf_20d_usdm);
+  if ([b5,b20,e5,e20].every(Number.isFinite)) {
+    if (b5>0 && b20>0 && e5>0 && e20>0) return 'KAPITAŁ NAPŁYWA RÓWNOCZEŚNIE DO BTC I ETH — szerokie zainteresowanie instytucjonalne krypto rośnie.';
+    if (b5>0 && b20>0 && (e5<=0 || e20<=0)) return 'KAPITAŁ KONCENTRUJE SIĘ GŁÓWNIE NA BTC — zainteresowanie ETH nie potwierdza jeszcze szerokiego napływu.';
+    if (e5>0 && e20>0 && (b5<=0 || b20<=0)) return 'ETH przyciąga kapitał mimo słabszego obrazu BTC — obserwuj możliwe przesunięcie zainteresowania.';
+    if (b5<0 && b20<0 && e5<0 && e20<0) return 'KAPITAŁ ODPŁYWA RÓWNOCZEŚNIE Z BTC I ETH — zainteresowanie instytucjonalne słabnie.';
+    return 'BTC i ETH pokazują różne kierunki przepływów — obraz jest mieszany.';
+  }
+  return 'Za mało kompletnych danych, aby ocenić wspólny obraz BTC i ETH.';
+}
+
+function translateEtfTrend_(v) {
+  const m={'INFLOW_ACCELERATING':'NAPŁYW PRZYSPIESZA','INFLOW_POSITIVE':'NAPŁYW KAPITAŁU','OUTFLOW_ACCELERATING':'ODPŁYW PRZYSPIESZA','OUTFLOW_NEGATIVE':'ODPŁYW KAPITAŁU','MIXED':'PRZEPŁYWY MIESZANE','NEUTRAL':'NEUTRALNIE'};
+  return m[String(v||'').toUpperCase()] || translateGeneric_(v);
+}
+
+function setupPortfolioLong_(sheet) {
+  const headers = ['AKTYWO','ILOŚĆ','ŚR. CENA','WARTOŚĆ','ZYSK/STRATA','DCA1','DCA2','DCA3','STATUS LONG','WYKONANE'];
+  if (sheet.getLastRow() === 0) { sheet.getRange(1,1,1,headers.length).setValues([headers]); sheet.setFrozenRows(1); }
+}
+
+function setupPortfolioTactical_(sheet) {
+  const headers = ['AKTYWO','ILOŚĆ','CENA WEJŚCIA','WARTOŚĆ','P&L','STATUS TACTICAL','RYZYKO 0–10','PLAN WYJŚCIA','WYKONANE'];
+  if (sheet.getLastRow() === 0) { sheet.getRange(1,1,1,headers.length).setValues([headers]); sheet.setFrozenRows(1); }
+}
+
+function setupSettings_(sheet) {
+  const defaults = [
+    ['TRYB','RESEARCH'],['AUTO_EXECUTION','OFF'],['V7_TOUCH','OFF'],['LONG_TACTICAL_CAPITAL_SHARED','NO'],
+    ['ALARMY_EKSTREMOW','ON'],
+    ['RSI_GORNY','75'],['RSI_DOLNY','25'],['FOMO_TWARDY','8'],
+    ['MFI_GORNY_OSTRZEZENIE','80'],['MFI_GORNY_SKRAJNY','90'],
+    ['MFI_DOLNY_OSTRZEZENIE','20'],['MFI_DOLNY_SKRAJNY','10'],
+    ['EMAIL_ALERTY','OFF'],['EMAIL_DO',''],['LAST_REFRESH','']
+  ];
+  if (sheet.getLastRow() === 0) {
+    sheet.getRange(1,1,1,2).setValues([['PARAMETR','WARTOŚĆ']]);
+    sheet.getRange(2,1,defaults.length,2).setValues(defaults);
+  } else {
+    const existing = {};
+    sheet.getRange(1,1,sheet.getLastRow(),2).getValues().forEach(r => existing[String(r[0])] = true);
+    defaults.forEach(r => { if (!existing[r[0]]) sheet.appendRow(r); });
+  }
+  sheet.setFrozenRows(1);
+}
+
+function setupExtremes_(sheet) {
+  if (sheet.getLastRow() === 0) {
+    sheet.getRange(1,1,1,11).setValues([['AKTYWNY','AKTYWO','INTERWAŁ','TYP','RSI','MFI','MACD %','MACD Z','FOMO','WAGA','CZAS DANYCH']]);
+    sheet.setFrozenRows(1);
+  }
+}
+
+function getSettingMap_(ss) {
+  const sh = ss.getSheetByName(V8_SHEETS.settings); const out = {};
+  if (!sh || sh.getLastRow() < 2) return out;
+  sh.getRange(2,1,sh.getLastRow()-1,2).getValues().forEach(r => out[String(r[0]).trim()] = r[1]);
+  return out;
+}
+
+function getExtremeSettings_(ss) {
+  const s = getSettingMap_(ss);
+  return {
+    enabled: String(s.ALARMY_EKSTREMOW || 'ON').toUpperCase() === 'ON',
+    rsiHigh: Number(s.RSI_GORNY || 75),
+    rsiLow: Number(s.RSI_DOLNY || 25),
+    fomoHard: Number(s.FOMO_TWARDY || 8),
+    mfiWarnHigh: Number(s.MFI_GORNY_OSTRZEZENIE || 80),
+    mfiExtremeHigh: Number(s.MFI_GORNY_SKRAJNY || 90),
+    mfiWarnLow: Number(s.MFI_DOLNY_OSTRZEZENIE || 20),
+    mfiExtremeLow: Number(s.MFI_DOLNY_SKRAJNY || 10),
+    emailOn: String(s.EMAIL_ALERTY || 'OFF').toUpperCase() === 'ON',
+    emailTo: String(s.EMAIL_DO || '').trim()
+  };
+}
+
+function buildExtremeAlarms_(ss, tacticalJson) {
+  const cfg = getExtremeSettings_(ss); if (!cfg.enabled) return [];
+  const alarms = [];
+  (tacticalJson.assets || []).forEach(a => {
+    const t = a.timeframes || {};
+    ['1H','4H','1D'].forEach(tf => {
+      const x = t[tf] || {};
+      const rsi = Number(x.rsi14), mfi = Number(x.mfi14), fomo = Number(x.fomo_score_0_10);
+      const macdPct = Number(x.macd_hist_percentile), macdZ = Number(x.macd_hist_zscore);
+      const ts = x.last_close_time_utc || '';
+      if (Number.isFinite(rsi) && rsi >= cfg.rsiHigh) alarms.push(makeAlarm_(a.symbol,tf,'RSI WYKUPIENIE',rsi,mfi,macdPct,macdZ,fomo,rsi >= 80 ? 'EKSTREMALNY' : 'WYSOKI',ts));
+      if (Number.isFinite(rsi) && rsi <= cfg.rsiLow) alarms.push(makeAlarm_(a.symbol,tf,'RSI WYPRZEDANIE',rsi,mfi,macdPct,macdZ,fomo,rsi <= 20 ? 'EKSTREMALNY' : 'WYSOKI',ts));
+      if (Number.isFinite(mfi)) {
+        if (mfi >= cfg.mfiExtremeHigh) alarms.push(makeAlarm_(a.symbol,tf,'MFI SKRAJNE WYKUPIENIE',rsi,mfi,macdPct,macdZ,fomo,'EKSTREMALNY',ts));
+        else if (mfi >= cfg.mfiWarnHigh) alarms.push(makeAlarm_(a.symbol,tf,'MFI WYKUPIENIE — OSTRZEŻENIE',rsi,mfi,macdPct,macdZ,fomo,'WYSOKI',ts));
+        if (mfi <= cfg.mfiExtremeLow) alarms.push(makeAlarm_(a.symbol,tf,'MFI SKRAJNE WYPRZEDANIE',rsi,mfi,macdPct,macdZ,fomo,'EKSTREMALNY',ts));
+        else if (mfi <= cfg.mfiWarnLow) alarms.push(makeAlarm_(a.symbol,tf,'MFI WYPRZEDANIE — OSTRZEŻENIE',rsi,mfi,macdPct,macdZ,fomo,'WYSOKI',ts));
+      }
+      const ml = String(x.macd_extreme_label || 'NORMAL');
+      if (ml === 'EXTREME_POSITIVE') alarms.push(makeAlarm_(a.symbol,tf,'MACD SKRAJNIE DODATNIE',rsi,mfi,macdPct,macdZ,fomo,'EKSTREMALNY',ts));
+      else if (ml === 'EXTREME_NEGATIVE') alarms.push(makeAlarm_(a.symbol,tf,'MACD SKRAJNIE UJEMNE',rsi,mfi,macdPct,macdZ,fomo,'EKSTREMALNY',ts));
+      else if (ml === 'WARNING_POSITIVE') alarms.push(makeAlarm_(a.symbol,tf,'MACD MOCNO DODATNIE — OSTRZEŻENIE',rsi,mfi,macdPct,macdZ,fomo,'WYSOKI',ts));
+      else if (ml === 'WARNING_NEGATIVE') alarms.push(makeAlarm_(a.symbol,tf,'MACD MOCNO UJEMNE — OSTRZEŻENIE',rsi,mfi,macdPct,macdZ,fomo,'WYSOKI',ts));
+      if (Number.isFinite(fomo) && fomo >= cfg.fomoHard) alarms.push(makeAlarm_(a.symbol,tf,'FOMO HARD BLOCK',rsi,mfi,macdPct,macdZ,fomo,fomo >= 9 ? 'EKSTREMALNY' : 'WYSOKI',ts));
+    });
+  });
+  return alarms;
+}
+
+function makeAlarm_(symbol, tf, type, rsi, mfi, macdPct, macdZ, fomo, severity, ts) {
+  return {aktywny:true,symbol:symbol,tf:tf,type:type,rsi:Number.isFinite(rsi)?rsi:'',mfi:Number.isFinite(mfi)?mfi:'',macdPct:Number.isFinite(macdPct)?macdPct:'',macdZ:Number.isFinite(macdZ)?macdZ:'',fomo:Number.isFinite(fomo)?fomo:'',severity:severity,ts:ts,key:[symbol,tf,type].join('|')};
+}
+
+function extremeLabel_(x, cfg) {
+  const rsi = Number(x.rsi14), mfi = Number(x.mfi14), fomo = Number(x.fomo_score_0_10), labels = [];
+  if (Number.isFinite(rsi) && rsi >= cfg.rsiHigh) labels.push('RSI WYKUPIENIE');
+  if (Number.isFinite(rsi) && rsi <= cfg.rsiLow) labels.push('RSI WYPRZEDANIE');
+  if (Number.isFinite(mfi)) {
+    if (mfi >= cfg.mfiExtremeHigh) labels.push('MFI SKRAJNE WYKUPIENIE');
+    else if (mfi >= cfg.mfiWarnHigh) labels.push('MFI WYKUPIENIE');
+    if (mfi <= cfg.mfiExtremeLow) labels.push('MFI SKRAJNE WYPRZEDANIE');
+    else if (mfi <= cfg.mfiWarnLow) labels.push('MFI WYPRZEDANIE');
+  }
+  const ml = String(x.macd_extreme_label || 'NORMAL');
+  if (ml === 'EXTREME_POSITIVE') labels.push('MACD SKRAJNIE +');
+  else if (ml === 'EXTREME_NEGATIVE') labels.push('MACD SKRAJNIE -');
+  else if (ml === 'WARNING_POSITIVE') labels.push('MACD MOCNO +');
+  else if (ml === 'WARNING_NEGATIVE') labels.push('MACD MOCNO -');
+  if (Number.isFinite(fomo) && fomo >= cfg.fomoHard) labels.push('FOMO HARD');
+  return labels.length ? labels.join(' + ') : 'BRAK';
+}
+
+function writeExtremeAlarms_(sheet, alarms) {
+  sheet.clearContents();
+  sheet.getRange(1,1,1,11).setValues([['AKTYWNY','AKTYWO','INTERWAŁ','TYP','RSI','MFI','MACD %','MACD Z','FOMO','WAGA','CZAS DANYCH']]);
+  const rows = alarms.map(a => ['TAK',a.symbol,a.tf,a.type,a.rsi,a.mfi,a.macdPct,a.macdZ,a.fomo,a.severity,a.ts]);
+  if (rows.length) sheet.getRange(2,1,rows.length,11).setValues(rows);
+  else sheet.getRange(2,1,1,11).setValues([['NIE','','','BRAK AKTYWNYCH EKSTREMÓW','','','','','','','']]);
+  sheet.setFrozenRows(1); sheet.autoResizeColumns(1,11);
+}
+
+function readActiveExtremeKeys_(sheet) {
+  const out = {}; if (!sheet || sheet.getLastRow() < 2) return out;
+  const rows = sheet.getRange(2,1,sheet.getLastRow()-1,Math.min(11,sheet.getLastColumn())).getValues();
+  rows.forEach(r => { if (String(r[0]).toUpperCase() === 'TAK') out[[r[1],r[2],r[3]].join('|')] = true; });
+  return out;
+}
+
+function appendExtremeHistory_(ss, oldKeys, alarms) {
+  const sh = ss.getSheetByName(V8_SHEETS.history);
+  if (sh.getLastRow() === 0) { sh.appendRow(['CZAS','AKTYWO','LONG','TACTICAL','RYZYKO','ZGODNOŚĆ','ALERT','POWÓD']); sh.setFrozenRows(1); }
+  const now = new Date();
+  alarms.forEach(a => { if (!oldKeys[a.key]) sh.appendRow([now,a.symbol,'','',a.severity,'','EKSTREMUM '+a.tf,a.type+' | RSI='+a.rsi+' | MFI='+a.mfi+' | MACD%='+a.macdPct+' | MACDz='+a.macdZ+' | FOMO='+a.fomo]); });
+}
+
+function notifyNewExtremeAlarms_(ss, oldKeys, alarms) {
+  const fresh = alarms.filter(a => !oldKeys[a.key]); if (!fresh.length) return;
+  const text = fresh.map(a => a.symbol+' '+a.tf+' — '+a.type+' (RSI '+a.rsi+', MFI '+a.mfi+', MACD% '+a.macdPct+', MACDz '+a.macdZ+', FOMO '+a.fomo+')').join('\n');
+  ss.toast(text.slice(0,250), 'NOWE EKSTREMA V8', 8);
+  const cfg = getExtremeSettings_(ss);
+  if (cfg.emailOn && cfg.emailTo) MailApp.sendEmail(cfg.emailTo, 'V8 DUAL ENGINE — alarm ekstremum', text);
+}
+
+function stampRefresh_(ss) {
+  const sh = ss.getSheetByName(V8_SHEETS.settings);
+  const vals = sh.getRange(1,1,Math.max(1,sh.getLastRow()),2).getValues();
+  for (let i=0; i<vals.length; i++) if (vals[i][0] === 'LAST_REFRESH') { sh.getRange(i+1,2).setValue(new Date()); return; }
+}
+
+function readPanelState_(sheet) {
+  const out = {}; if (!sheet || sheet.getLastRow() < 2) return out;
+  const values = sheet.getDataRange().getValues(); const head = values[0].map(String); const idx = {}; head.forEach((h,i)=>idx[h]=i);
+  values.slice(1).forEach(r => {
+    const sym = String(r[idx['AKTYWO']] || '').trim(); if (!sym) return;
+    out[sym] = {LONG:r[idx['LONG']], TACTICAL:r[idx['TACTICAL']], RYZYKO:r[idx['RYZYKO 0–10']], ZGODNOSC:r[idx['ZGODNOŚĆ']], ALERT:r[idx['ALERT']]};
+  });
+  return out;
+}
+
+function appendHistoryOnChanges_(ss, oldState, newState) {
+  const sh = ss.getSheetByName(V8_SHEETS.history);
+  if (sh.getLastRow() === 0) { sh.appendRow(['CZAS','AKTYWO','LONG','TACTICAL','RYZYKO','ZGODNOŚĆ','ALERT','POWÓD']); sh.setFrozenRows(1); }
+  const now = new Date();
+  Object.keys(newState).forEach(sym => {
+    const n = newState[sym], o = oldState[sym];
+    const changed = !o || ['LONG','TACTICAL','RYZYKO','ZGODNOSC','ALERT'].some(k => String(o[k]) !== String(n[k]));
+    if (changed) sh.appendRow([now,sym,n.LONG,n.TACTICAL,n.RYZYKO,n.ZGODNOSC,n.ALERT,o ? 'ZMIANA STATUSU' : 'PIERWSZY ZAPIS']);
+  });
+}
+
+function translateLong_(v) {
+  const m = {'WAIT':'CZEKAJ','CHECK':'SPRAWDŹ','BUY_DCA':'KUP DCA','BUY_TREND':'KUP TRENDOWO','BUY_RETEST':'KUP PO RETEŚCIE','HOLD':'TRZYMAJ','PROTECT_PROFIT':'OCHRONA ZYSKU','EXIT':'WYJDŹ'};
+  return m[String(v||'').toUpperCase()] || v || '';
+}
+function translateTactical_(v) {
+  const m = {'WAIT':'CZEKAJ','NO_TRADE':'NIE GRAJ','NO_TRADE_FOMO':'NIE GRAJ — FOMO','WATCH_SUPPLY':'OBSERWUJ PODAŻ','WATCH_BREAKOUT':'OBSERWUJ WYBICIE','LONG_SETUP_WATCH':'LONG — OBSERWUJ SETUP','LONG_SETUP_RETEST':'LONG — RETEST','HOLD_TACTICAL_OK':'TRZYMAJ TACTICAL','TAKE_PROFIT_WATCH':'OBSERWUJ REALIZACJĘ ZYSKU','EXIT_RISK_HIGH':'WYSOKIE RYZYKO WYJŚCIA'};
+  return m[String(v||'').toUpperCase()] || v || '';
+}
+function translateAgreement_(v) {
+  const m = {'2/2 POSITIVE':'2/2 POZYTYWNE','TACTICAL ONLY':'TYLKO TACTICAL','LONG ONLY':'TYLKO LONG','NEUTRAL':'NEUTRALNIE','CONFLICT':'KONFLIKT'};
+  return m[String(v||'').toUpperCase()] || v || '';
+}
+function translateAlert_(v) {
+  const m = {'IN SUPPLY':'W STREFIE PODAŻY','IN DEMAND':'W STREFIE POPYTU','FOMO':'FOMO','NONE':'BRAK','NO ALERT':'BRAK'};
+  return m[String(v||'').toUpperCase()] || v || '';
+}
+function translateReady_(v) {
+  const m = {'TACTICAL_CORE_READY':'RDZEŃ TACTICAL GOTOWY','READY_FOR_PAPER_OBSERVATION':'GOTOWY DO OBSERWACJI','READY':'GOTOWY','PASS':'OK','PRODUCTION_DATA_READY':'DANE PRODUKCYJNE GOTOWE'};
+  return m[String(v||'').toUpperCase()] || v || '';
+}
+function translateMarketPhase_(v) {
+  const m = {'ALT_ROTATION_CANDIDATE':'RYNEK ZACZYNA SPRZYJAĆ ALTOM','ALT_ROTATION_CONFIRMED':'ROTACJA W ALTY POTWIERDZONA','BTC_LEAD':'PROWADZI BTC','BROAD_RECOVERY':'SZEROKIE ODBICIE','ALT_WATCH':'OBSERWUJ ALTY','RISK_OFF_OR_REPAIR':'RYNEK OSTROŻNY / NAPRAWA','BTC_DOMINANT':'DOMINACJA BTC','RISK_OFF':'RYNEK OSTROŻNY','RISK_ON':'RYNEK SPRZYJA RYZYKU','NEUTRAL':'NEUTRALNIE'};
+  return m[String(v||'').toUpperCase()] || v || '';
+}
+function translateFlow_(v) {
+  const m = {'STRONG_POSITIVE':'MOCNO DODATNIO','POSITIVE':'DODATNIO','NEUTRAL':'NEUTRALNIE','WEAK':'SŁABO','INFLOW_ACCELERATING':'NAPŁYW PRZYSPIESZA','INFLOW_POSITIVE':'NAPŁYW DODATNI','OUTFLOW_ACCELERATING':'ODPŁYW PRZYSPIESZA','OUTFLOW_NEGATIVE':'ODPŁYW','INSUFFICIENT':'ZA MAŁO DANYCH'};
+  return m[String(v||'').toUpperCase()] || v || '';
+}
+function translateGeneric_(v) { return String(v || '').replaceAll('_',' '); }
+function translateBlockers_(v) { return Array.isArray(v) ? v.map(translateGeneric_).join(' | ') : translateGeneric_(v); }
+function boolPl_(v) { return v === true ? 'TAK' : v === false ? 'NIE' : ''; }
+
+function formatPanel_(sheet) {
+  if (!sheet) return;
+  sheet.setFrozenRows(1); sheet.setFrozenColumns(1); sheet.getRange('A:G').setVerticalAlignment('middle');
+  [90,100,150,190,100,140,190].forEach((w,i)=>sheet.setColumnWidth(i+1,w));
+  if (sheet.getLastRow() >= 2) sheet.getRange(2,1,sheet.getLastRow()-1,7).setWrap(true);
+}
+
+
+// ===== V8 EXTREME CONFLUENCE V2 — TESTED OVERRIDES =====
+
+// V8 DUAL ENGINE — EXTREME CONFLUENCE V2
+// Warstwa użytkowa do scalenia z DUAL_ENGINE_APPS_SCRIPT_FULL.txt.
+// Nie zmienia logiki LONG ani TACTICAL. Nie wykonuje transakcji.
+// Cel: jeden czytelny alarm na AKTYWO + INTERWAŁ zamiast wielu osobnych rekordów.
+
+function setupExtremes_(sheet) {
+  const headers = ['AKTYWNY','AKTYWO','INTERWAŁ','ZBIEŻNOŚĆ','PRIORYTET','WAGA INTERWAŁU','SYGNAŁY','RSI','MFI','MACD %','MACD Z','FOMO','OPIS','CZAS DANYCH'];
+  sheet.getRange(1,1,1,headers.length).setValues([headers]);
+  sheet.setFrozenRows(1);
+}
+
+function buildExtremeAlarms_(ss, tacticalJson) {
+  const cfg = getExtremeSettings_(ss);
+  if (!cfg.enabled) return [];
+
+  const alarms = [];
+  (tacticalJson.assets || []).forEach(a => {
+    const t = a.timeframes || {};
+    ['1H','4H','1D'].forEach(tf => {
+      const x = t[tf] || {};
+      const rsi = Number(x.rsi14);
+      const mfi = Number(x.mfi14);
+      const fomo = Number(x.fomo_score_0_10);
+      const macdPct = Number(x.macd_hist_percentile);
+      const macdZ = Number(x.macd_hist_zscore);
+      const ts = x.last_close_time_utc || '';
+      const signals = [];
+
+      if (Number.isFinite(rsi) && rsi >= cfg.rsiHigh) signals.push(rsi >= 80 ? 'RSI SKRAJNE WYKUPIENIE' : 'RSI WYKUPIENIE');
+      if (Number.isFinite(rsi) && rsi <= cfg.rsiLow) signals.push(rsi <= 20 ? 'RSI SKRAJNE WYPRZEDANIE' : 'RSI WYPRZEDANIE');
+
+      if (Number.isFinite(mfi)) {
+        if (mfi >= cfg.mfiExtremeHigh) signals.push('MFI SKRAJNE WYKUPIENIE');
+        else if (mfi >= cfg.mfiWarnHigh) signals.push('MFI WYKUPIENIE');
+        if (mfi <= cfg.mfiExtremeLow) signals.push('MFI SKRAJNE WYPRZEDANIE');
+        else if (mfi <= cfg.mfiWarnLow) signals.push('MFI WYPRZEDANIE');
+      }
+
+      const ml = String(x.macd_extreme_label || 'NORMAL');
+      if (ml === 'EXTREME_POSITIVE') signals.push('MACD SKRAJNIE DODATNIE');
+      else if (ml === 'EXTREME_NEGATIVE') signals.push('MACD SKRAJNIE UJEMNE');
+      else if (ml === 'WARNING_POSITIVE') signals.push('MACD MOCNO DODATNIE');
+      else if (ml === 'WARNING_NEGATIVE') signals.push('MACD MOCNO UJEMNE');
+
+      if (Number.isFinite(fomo) && fomo >= cfg.fomoHard) signals.push(fomo >= 9 ? 'FOMO SKRAJNE' : 'FOMO HARD');
+
+      if (!signals.length) return;
+
+      const count = signals.length;
+      const priority = confluencePriority_(count);
+      const tfWeight = timeframeWeight_(tf);
+      const reason = confluenceReason_(a.symbol, tf, count, priority, tfWeight, signals);
+      alarms.push(makeConfluenceAlarm_(a.symbol, tf, signals, rsi, mfi, macdPct, macdZ, fomo, priority, tfWeight, reason, ts));
+    });
+  });
+
+  return alarms.sort((a,b) => {
+    const p = {KRYTYCZNY:3,MOCNY:2,OSTRZEŻENIE:1};
+    const w = {'NAJWYŻSZA':3,'WYSOKA':2,'NISKA':1};
+    return (p[b.priority]-p[a.priority]) || (w[b.tfWeight]-w[a.tfWeight]) || String(a.symbol).localeCompare(String(b.symbol));
+  });
+}
+
+function confluencePriority_(count) {
+  if (count >= 3) return 'KRYTYCZNY';
+  if (count === 2) return 'MOCNY';
+  return 'OSTRZEŻENIE';
+}
+
+function timeframeWeight_(tf) {
+  if (tf === '1D') return 'NAJWYŻSZA';
+  if (tf === '4H') return 'WYSOKA';
+  return 'NISKA';
+}
+
+function confluenceReason_(symbol, tf, count, priority, tfWeight, signals) {
+  const n = count === 1 ? '1 sygnał' : count < 5 ? count + ' sygnały' : count + ' sygnałów';
+  return symbol + ' ' + tf + ': ' + n + ' zgodne. Priorytet ' + priority + ', waga interwału ' + tfWeight + '. ' + signals.join(' + ') + '.';
+}
+
+function makeConfluenceAlarm_(symbol, tf, signals, rsi, mfi, macdPct, macdZ, fomo, priority, tfWeight, reason, ts) {
+  const type = signals.join(' + ');
+  return {
+    aktywny:true,
+    symbol:symbol,
+    tf:tf,
+    type:type,
+    signalCount:signals.length,
+    priority:priority,
+    severity:priority,
+    tfWeight:tfWeight,
+    signals:signals,
+    rsi:Number.isFinite(rsi)?rsi:'',
+    mfi:Number.isFinite(mfi)?mfi:'',
+    macdPct:Number.isFinite(macdPct)?macdPct:'',
+    macdZ:Number.isFinite(macdZ)?macdZ:'',
+    fomo:Number.isFinite(fomo)?fomo:'',
+    reason:reason,
+    ts:ts,
+    key:[symbol,tf,type].join('|')
+  };
+}
+
+function writeExtremeAlarms_(sheet, alarms) {
+  const headers = ['AKTYWNY','AKTYWO','INTERWAŁ','ZBIEŻNOŚĆ','PRIORYTET','WAGA INTERWAŁU','SYGNAŁY','RSI','MFI','MACD %','MACD Z','FOMO','OPIS','CZAS DANYCH'];
+  sheet.clearContents();
+  sheet.getRange(1,1,1,headers.length).setValues([headers]);
+
+  const rows = alarms.map(a => [
+    'TAK',a.symbol,a.tf,a.signalCount,a.priority,a.tfWeight,a.type,
+    a.rsi,a.mfi,a.macdPct,a.macdZ,a.fomo,a.reason,a.ts
+  ]);
+
+  if (rows.length) {
+    sheet.getRange(2,1,rows.length,headers.length).setValues(rows);
+  } else {
+    sheet.getRange(2,1,1,headers.length).setValues([['NIE','','','0','BRAK','BRAK','BRAK AKTYWNYCH EKSTREMÓW','','','','','','','']]);
+  }
+
+  sheet.setFrozenRows(1);
+  sheet.getRange(1,1,1,headers.length).setFontWeight('bold');
+  sheet.getRange(1,1,Math.max(2,rows.length+1),headers.length).setWrap(true).setVerticalAlignment('middle');
+  [75,80,80,85,105,115,320,75,75,85,85,75,420,180].forEach((w,i)=>sheet.setColumnWidth(i+1,w));
+}
+
+function readActiveExtremeKeys_(sheet) {
+  const out = {};
+  if (!sheet || sheet.getLastRow() < 2) return out;
+  const rows = sheet.getRange(2,1,sheet.getLastRow()-1,Math.min(14,sheet.getLastColumn())).getValues();
+  rows.forEach(r => {
+    if (String(r[0]).toUpperCase() !== 'TAK') return;
+    out[[r[1],r[2],r[6]].join('|')] = true;
+  });
+  return out;
+}
+
+function appendExtremeHistory_(ss, oldKeys, alarms) {
+  const sh = ss.getSheetByName(V8_SHEETS.history);
+  if (sh.getLastRow() === 0) {
+    sh.appendRow(['CZAS','AKTYWO','LONG','TACTICAL','RYZYKO','ZGODNOŚĆ','ALERT','POWÓD']);
+    sh.setFrozenRows(1);
+  }
+  const now = new Date();
+  alarms.forEach(a => {
+    if (oldKeys[a.key]) return;
+    sh.appendRow([
+      now,a.symbol,'','',a.priority,'','EKSTREMUM '+a.tf,
+      'ZBIEŻNOŚĆ '+a.signalCount+' | '+a.reason+' | RSI='+a.rsi+' | MFI='+a.mfi+' | MACD%='+a.macdPct+' | MACDz='+a.macdZ+' | FOMO='+a.fomo
+    ]);
+  });
+}
+
+function notifyNewExtremeAlarms_(ss, oldKeys, alarms) {
+  const fresh = alarms.filter(a => !oldKeys[a.key]);
+  if (!fresh.length) return;
+
+  const critical = fresh.filter(a => a.priority === 'KRYTYCZNY');
+  const strong = fresh.filter(a => a.priority === 'MOCNY');
+  const chosen = critical.length ? critical : strong.length ? strong : fresh;
+  const text = chosen.map(a => a.symbol+' '+a.tf+' — '+a.priority+' — '+a.signalCount+' sygnał(y): '+a.type).join('\n');
+  const title = critical.length ? 'KRYTYCZNE EKSTREMA V8' : strong.length ? 'MOCNE EKSTREMA V8' : 'NOWE EKSTREMA V8';
+
+  ss.toast(text.slice(0,250), title, 8);
+  const cfg = getExtremeSettings_(ss);
+  if (cfg.emailOn && cfg.emailTo) {
+    MailApp.sendEmail(cfg.emailTo, 'V8 DUAL ENGINE — '+title, text);
+  }
+}
+
+
+// ===== V8 EXTREME UI V3 — TESTED OVERRIDES =====
+
+// V8 DUAL ENGINE — ALARMY EKSTREMÓW UI V3
+// Wyłącznie warstwa wizualna zakładki ALARMY_EKSTREMOW.
+// Nie zmienia logiki LONG ani TACTICAL i nie wykonuje transakcji.
+
+function setupExtremes_(sheet) {
+  const headers = ['AKTYWNY','AKTYWO','INTERWAŁ','ZBIEŻNOŚĆ','PRIORYTET','WAGA INTERWAŁU','SYGNAŁY','RSI','MFI','MACD %','MACD Z','FOMO','OPIS','CZAS DANYCH'];
+  sheet.getRange(1,1,1,headers.length).setValues([headers]);
+  formatExtremeSheet_(sheet, 0);
+}
+
+function writeExtremeAlarms_(sheet, alarms) {
+  const headers = ['AKTYWNY','AKTYWO','INTERWAŁ','ZBIEŻNOŚĆ','PRIORYTET','WAGA INTERWAŁU','SYGNAŁY','RSI','MFI','MACD %','MACD Z','FOMO','OPIS','CZAS DANYCH'];
+  sheet.clearContents();
+  sheet.getRange(1,1,1,headers.length).setValues([headers]);
+
+  const rows = alarms.map(a => [
+    'TAK',a.symbol,a.tf,a.signalCount,a.priority,a.tfWeight,a.type,
+    a.rsi,a.mfi,a.macdPct,a.macdZ,a.fomo,a.reason,a.ts
+  ]);
+
+  if (rows.length) {
+    sheet.getRange(2,1,rows.length,headers.length).setValues(rows);
+  } else {
+    sheet.getRange(2,1,1,headers.length).setValues([['NIE','','','0','BRAK','BRAK','BRAK AKTYWNYCH EKSTREMÓW','','','','','','','']]);
+  }
+
+  formatExtremeSheet_(sheet, rows.length);
+}
+
+function formatExtremeSheet_(sheet, alarmCount) {
+  if (!sheet) return;
+  const cols = 14;
+  const rows = Math.max(2, Number(alarmCount || 0) + 1);
+
+  sheet.setFrozenRows(1);
+  sheet.setFrozenColumns(3);
+  sheet.getRange(1,1,1,cols)
+    .setFontWeight('bold')
+    .setHorizontalAlignment('center')
+    .setVerticalAlignment('middle');
+
+  sheet.getRange(1,1,rows,cols)
+    .setWrap(true)
+    .setVerticalAlignment('middle');
+
+  [72,82,82,88,112,120,310,76,76,88,88,76,430,175]
+    .forEach((w,i)=>sheet.setColumnWidth(i+1,w));
+
+  if (rows > 1) {
+    sheet.getRange(2,2,rows-1,5).setHorizontalAlignment('center');
+    sheet.getRange(2,8,rows-1,5).setHorizontalAlignment('center');
+  }
+
+  const rules = [];
+  const priorityRange = sheet.getRange(2,5,Math.max(1,rows-1),1);
+  rules.push(
+    SpreadsheetApp.newConditionalFormatRule()
+      .whenTextEqualTo('KRYTYCZNY')
+      .setBackground('#f4cccc')
+      .setFontWeight('bold')
+      .setRanges([priorityRange])
+      .build(),
+    SpreadsheetApp.newConditionalFormatRule()
+      .whenTextEqualTo('MOCNY')
+      .setBackground('#fce5cd')
+      .setFontWeight('bold')
+      .setRanges([priorityRange])
+      .build(),
+    SpreadsheetApp.newConditionalFormatRule()
+      .whenTextEqualTo('OSTRZEŻENIE')
+      .setBackground('#fff2cc')
+      .setRanges([priorityRange])
+      .build()
+  );
+
+  const tfRange = sheet.getRange(2,3,Math.max(1,rows-1),1);
+  rules.push(
+    SpreadsheetApp.newConditionalFormatRule()
+      .whenTextEqualTo('1D')
+      .setFontWeight('bold')
+      .setRanges([tfRange])
+      .build()
+  );
+
+  sheet.setConditionalFormatRules(rules);
+}
+
+// ===== V8 MAIN PANEL ALERT SUMMARY V4 =====
+
+// V8 MAIN PANEL ALERT SUMMARY V4
+// Nie zmienia liczby kolumn PANELU. Używa istniejącej kolumny ALERT.
+// Pokazuje najwyższy aktywny alarm ekstremum dla danego aktywa.
+
+function updateMainPanelExtremeSummary_(sheet, alarms) {
+  if (!sheet || sheet.getLastRow() < 2) return;
+  const values = sheet.getDataRange().getValues();
+  const head = values[0].map(String);
+  const symCol = head.indexOf('AKTYWO');
+  const alertCol = head.indexOf('ALERT');
+  if (symCol < 0 || alertCol < 0) return;
+
+  const best = {};
+  const priorityRank = {KRYTYCZNY:3, MOCNY:2, OSTRZEŻENIE:1};
+  const tfRank = {'1D':3, '4H':2, '1H':1};
+
+  (alarms || []).forEach(a => {
+    const sym = String(a.symbol || '').trim();
+    if (!sym) return;
+    const candidate = {
+      priority: a.priority || a.severity || 'OSTRZEŻENIE',
+      tf: a.tf || '',
+      count: Number(a.signalCount || 1),
+      type: a.type || ''
+    };
+    const old = best[sym];
+    if (!old ||
+        (priorityRank[candidate.priority] || 0) > (priorityRank[old.priority] || 0) ||
+        ((priorityRank[candidate.priority] || 0) === (priorityRank[old.priority] || 0) && (tfRank[candidate.tf] || 0) > (tfRank[old.tf] || 0))) {
+      best[sym] = candidate;
+    }
+  });
+
+  const out = [];
+  for (let i = 1; i < values.length; i++) {
+    const sym = String(values[i][symCol] || '').trim();
+    const current = String(values[i][alertCol] || '').trim();
+    const a = best[sym];
+    if (!a) {
+      out.push([current || 'BRAK']);
+      continue;
+    }
+    const prefix = a.priority === 'KRYTYCZNY' ? '🔴' : a.priority === 'MOCNY' ? '🟠' : '🟡';
+    const extreme = prefix + ' ' + a.priority + ' ' + a.tf + ' — ' + a.count + (a.count === 1 ? ' sygnał' : a.count < 5 ? ' sygnały' : ' sygnałów');
+    out.push([current && current !== 'BRAK' ? current + ' | ' + extreme : extreme]);
+  }
+
+  sheet.getRange(2, alertCol + 1, out.length, 1).setValues(out);
+  formatMainPanelAlertColumn_(sheet, alertCol + 1);
+}
+
+function formatMainPanelAlertColumn_(sheet, alertCol1Based) {
+  if (!sheet || sheet.getLastRow() < 2) return;
+  const range = sheet.getRange(2, alertCol1Based, sheet.getLastRow() - 1, 1);
+  const vals = range.getDisplayValues();
+  range.setFontWeight('normal');
+  for (let i = 0; i < vals.length; i++) {
+    const v = String(vals[i][0] || '');
+    const cell = sheet.getRange(i + 2, alertCol1Based);
+    if (v.indexOf('🔴 KRYTYCZNY') >= 0) cell.setFontWeight('bold').setBackground('#f4cccc');
+    else if (v.indexOf('🟠 MOCNY') >= 0) cell.setFontWeight('bold').setBackground('#fce5cd');
+    else if (v.indexOf('🟡 OSTRZEŻENIE') >= 0) cell.setBackground('#fff2cc');
+    else cell.setBackground(null);
+  }
+}
+// V8 DUAL ENGINE — PANEL PRIORITY PACK V5
+// Nadpisania do pełnego skryptu V4.
+// Cel: hierarchia 1H/4H/1D, tłumienie szumu 1H i wybór najważniejszego alarmu do PANELU.
+// Nie zmienia logiki LONG/Tactical. Brak wykonywania transakcji.
+
+function confluencePriorityForTf_(count, tf) {
+  if (tf === '1D') {
+    if (count >= 2) return 'KRYTYCZNY';
+    return 'MOCNY';
+  }
+  if (count >= 3) return 'KRYTYCZNY';
+  if (count === 2) return 'MOCNY';
+  return 'OSTRZEŻENIE';
+}
+
+function buildExtremeAlarms_(ss, tacticalJson) {
+  const cfg = getExtremeSettings_(ss);
+  if (!cfg.enabled) return [];
+  const alarms = [];
+  (tacticalJson.assets || []).forEach(a => {
+    const t = a.timeframes || {};
+    ['1H','4H','1D'].forEach(tf => {
+      const x = t[tf] || {};
+      const rsi = Number(x.rsi14), mfi = Number(x.mfi14), fomo = Number(x.fomo_score_0_10);
+      const macdPct = Number(x.macd_hist_percentile), macdZ = Number(x.macd_hist_zscore);
+      const ts = x.last_close_time_utc || '';
+      const signals = [];
+      if (Number.isFinite(rsi) && rsi >= cfg.rsiHigh) signals.push(rsi >= 80 ? 'RSI SKRAJNE WYKUPIENIE' : 'RSI WYKUPIENIE');
+      if (Number.isFinite(rsi) && rsi <= cfg.rsiLow) signals.push(rsi <= 20 ? 'RSI SKRAJNE WYPRZEDANIE' : 'RSI WYPRZEDANIE');
+      if (Number.isFinite(mfi)) {
+        if (mfi >= cfg.mfiExtremeHigh) signals.push('MFI SKRAJNE WYKUPIENIE');
+        else if (mfi >= cfg.mfiWarnHigh) signals.push('MFI WYKUPIENIE');
+        if (mfi <= cfg.mfiExtremeLow) signals.push('MFI SKRAJNE WYPRZEDANIE');
+        else if (mfi <= cfg.mfiWarnLow) signals.push('MFI WYPRZEDANIE');
+      }
+      const ml = String(x.macd_extreme_label || 'NORMAL');
+      if (ml === 'EXTREME_POSITIVE') signals.push('MACD SKRAJNIE DODATNIE');
+      else if (ml === 'EXTREME_NEGATIVE') signals.push('MACD SKRAJNIE UJEMNE');
+      else if (ml === 'WARNING_POSITIVE') signals.push('MACD MOCNO DODATNIE');
+      else if (ml === 'WARNING_NEGATIVE') signals.push('MACD MOCNO UJEMNE');
+      if (Number.isFinite(fomo) && fomo >= cfg.fomoHard) signals.push(fomo >= 9 ? 'FOMO SKRAJNE' : 'FOMO HARD');
+      if (!signals.length) return;
+      const count = signals.length;
+      const priority = confluencePriorityForTf_(count, tf);
+      const tfWeight = timeframeWeight_(tf);
+      const reason = confluenceReason_(a.symbol, tf, count, priority, tfWeight, signals);
+      alarms.push(makeConfluenceAlarm_(a.symbol, tf, signals, rsi, mfi, macdPct, macdZ, fomo, priority, tfWeight, reason, ts));
+    });
+  });
+  return alarms.sort(compareExtremePriority_);
+}
+
+function compareExtremePriority_(a,b) {
+  const p = {KRYTYCZNY:3,MOCNY:2,OSTRZEŻENIE:1};
+  const t = {'1D':3,'4H':2,'1H':1};
+  return (p[b.priority]-p[a.priority]) || (t[b.tf]-t[a.tf]) || (b.signalCount-a.signalCount) || String(a.symbol).localeCompare(String(b.symbol));
+}
+
+function panelEligibleExtreme_(a) {
+  // Pojedyncze ostrzeżenie 1H pozostaje w ALARMY_EKSTREMOW i HISTORII,
+  // ale nie zaśmieca głównego PANELU.
+  return !(a.tf === '1H' && a.priority === 'OSTRZEŻENIE' && Number(a.signalCount) === 1);
+}
+
+function selectMainPanelExtreme_(alarms) {
+  const eligible = (alarms || []).filter(panelEligibleExtreme_).slice().sort(compareExtremePriority_);
+  return eligible.length ? eligible[0] : null;
+}
+
+function updateMainPanelExtremeSummary_(sheet, alarms) {
+  if (!sheet || sheet.getLastRow() < 2) return;
+  const bySymbol = {};
+  (alarms || []).forEach(a => {
+    if (!panelEligibleExtreme_(a)) return;
+    (bySymbol[a.symbol] = bySymbol[a.symbol] || []).push(a);
+  });
+  const values = sheet.getDataRange().getValues();
+  const head = values[0].map(String);
+  const symIdx = head.indexOf('AKTYWO');
+  const alertIdx = head.indexOf('ALERT');
+  if (symIdx < 0 || alertIdx < 0) return;
+  for (let i=1; i<values.length; i++) {
+    const sym = String(values[i][symIdx] || '').trim();
+    if (!sym) continue;
+    const best = selectMainPanelExtreme_(bySymbol[sym] || []);
+    let base = String(values[i][alertIdx] || '').trim();
+    base = base.replace(/\s*\|\s*[🟡🟠🔴]\s*(OSTRZEŻENIE|MOCNY|KRYTYCZNY)\s+(1H|4H|1D)\s+—\s+\d+\s+sygnał(?:y|ów)?/g,'').trim();
+    if (best) {
+      const icon = best.priority === 'KRYTYCZNY' ? '🔴' : best.priority === 'MOCNY' ? '🟠' : '🟡';
+      const n = best.signalCount === 1 ? '1 sygnał' : best.signalCount < 5 ? best.signalCount + ' sygnały' : best.signalCount + ' sygnałów';
+      const extra = icon+' '+best.priority+' '+best.tf+' — '+n;
+      values[i][alertIdx] = (!base || base === 'BRAK') ? extra : base+' | '+extra;
+    } else {
+      values[i][alertIdx] = base || 'BRAK';
+    }
+  }
+  sheet.getRange(1,1,values.length,values[0].length).setValues(values);
+  formatPanel_(sheet);
+  formatMainPanelAlerts_(sheet);
+}
+
+function notifyNewExtremeAlarms_(ss, oldKeys, alarms) {
+  const fresh = (alarms || []).filter(a => !oldKeys[a.key]);
+  const actionable = fresh.filter(a => !(a.tf === '1H' && a.priority === 'OSTRZEŻENIE' && Number(a.signalCount) === 1));
+  if (!actionable.length) return;
+  const text = actionable.map(a => a.symbol+' '+a.tf+' — '+a.priority+' — '+a.signalCount+' sygnał(y): '+a.type).join('\n');
+  ss.toast(text.slice(0,250), 'NOWE EKSTREMA V8', 8);
+  const cfg = getExtremeSettings_(ss);
+  if (cfg.emailOn && cfg.emailTo) MailApp.sendEmail(cfg.emailTo, 'V8 DUAL ENGINE — alarm ekstremum', text);
+}
+
+function formatMainPanelAlerts_(sheet) {
+  if (!sheet || sheet.getLastRow() < 2) return;
+  const range = sheet.getRange(2,7,sheet.getLastRow()-1,1);
+  const rules = (sheet.getConditionalFormatRules() || []).filter(r => {
+    const rs = r.getRanges();
+    return !rs.some(x => x.getColumn() === 7 && x.getNumColumns() === 1);
+  });
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextContains('🔴 KRYTYCZNY').setBackground('#f4cccc').setFontColor('#990000').setBold(true).setRanges([range]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextContains('🟠 MOCNY').setBackground('#fce5cd').setFontColor('#b45f06').setBold(true).setRanges([range]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextContains('🟡 OSTRZEŻENIE').setBackground('#fff2cc').setFontColor('#7f6000').setRanges([range]).build());
+  sheet.setConditionalFormatRules(rules);
+}
