@@ -1,0 +1,353 @@
+{
+  "generated_at_utc": "2026-09-23T17:01:45.896415+00:00",
+  "engine": "V8_TACTICAL_UNIVERSE_CHECK_v1.0",
+  "expected_assets": [
+    "BTC",
+    "ETH",
+    "SOL",
+    "LINK",
+    "ONDO",
+    "RENDER",
+    "FLOKI",
+    "PEPE",
+    "SPX6900",
+    "XRP",
+    "XLM",
+    "HBAR"
+  ],
+  "asset_count": 12,
+  "timeframes": [
+    "1H",
+    "4H",
+    "1D"
+  ],
+  "all_pairs_and_timeframes_ready": false,
+  "results": [
+    {
+      "AKTYWO": "BTC",
+      "PARA": "BTCUSDT",
+      "INTERWAŁ": "1H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "BTC",
+      "PARA": "BTCUSDT",
+      "INTERWAŁ": "4H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "BTC",
+      "PARA": "BTCUSDT",
+      "INTERWAŁ": "1D",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "ETH",
+      "PARA": "ETHUSDT",
+      "INTERWAŁ": "1H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "ETH",
+      "PARA": "ETHUSDT",
+      "INTERWAŁ": "4H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "ETH",
+      "PARA": "ETHUSDT",
+      "INTERWAŁ": "1D",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "SOL",
+      "PARA": "SOLUSDT",
+      "INTERWAŁ": "1H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "SOL",
+      "PARA": "SOLUSDT",
+      "INTERWAŁ": "4H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "SOL",
+      "PARA": "SOLUSDT",
+      "INTERWAŁ": "1D",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "LINK",
+      "PARA": "LINKUSDT",
+      "INTERWAŁ": "1H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "LINK",
+      "PARA": "LINKUSDT",
+      "INTERWAŁ": "4H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "LINK",
+      "PARA": "LINKUSDT",
+      "INTERWAŁ": "1D",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "ONDO",
+      "PARA": "ONDOUSDT",
+      "INTERWAŁ": "1H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "ONDO",
+      "PARA": "ONDOUSDT",
+      "INTERWAŁ": "4H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "ONDO",
+      "PARA": "ONDOUSDT",
+      "INTERWAŁ": "1D",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "RENDER",
+      "PARA": "RENDERUSDT",
+      "INTERWAŁ": "1H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "RENDER",
+      "PARA": "RENDERUSDT",
+      "INTERWAŁ": "4H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "RENDER",
+      "PARA": "RENDERUSDT",
+      "INTERWAŁ": "1D",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "FLOKI",
+      "PARA": "FLOKIUSDT",
+      "INTERWAŁ": "1H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "FLOKI",
+      "PARA": "FLOKIUSDT",
+      "INTERWAŁ": "4H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "FLOKI",
+      "PARA": "FLOKIUSDT",
+      "INTERWAŁ": "1D",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "PEPE",
+      "PARA": "PEPEUSDT",
+      "INTERWAŁ": "1H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "PEPE",
+      "PARA": "PEPEUSDT",
+      "INTERWAŁ": "4H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "PEPE",
+      "PARA": "PEPEUSDT",
+      "INTERWAŁ": "1D",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "SPX6900",
+      "PARA": "SPXUSDT",
+      "INTERWAŁ": "1H",
+      "STATUS": "BŁĄD",
+      "LICZBA_ŚWIEC": 0,
+      "ŹRÓDŁO": "",
+      "BŁĄD": "451 Client Error:  for url: https://api.binance.com/api/v3/klines?symbol=SPXUSDT&interval=1h&limit=500"
+    },
+    {
+      "AKTYWO": "SPX6900",
+      "PARA": "SPXUSDT",
+      "INTERWAŁ": "4H",
+      "STATUS": "BŁĄD",
+      "LICZBA_ŚWIEC": 0,
+      "ŹRÓDŁO": "",
+      "BŁĄD": "451 Client Error:  for url: https://api.binance.com/api/v3/klines?symbol=SPXUSDT&interval=4h&limit=500"
+    },
+    {
+      "AKTYWO": "SPX6900",
+      "PARA": "SPXUSDT",
+      "INTERWAŁ": "1D",
+      "STATUS": "BŁĄD",
+      "LICZBA_ŚWIEC": 0,
+      "ŹRÓDŁO": "",
+      "BŁĄD": "451 Client Error:  for url: https://api.binance.com/api/v3/klines?symbol=SPXUSDT&interval=1d&limit=500"
+    },
+    {
+      "AKTYWO": "XRP",
+      "PARA": "XRPUSDT",
+      "INTERWAŁ": "1H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "XRP",
+      "PARA": "XRPUSDT",
+      "INTERWAŁ": "4H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "XRP",
+      "PARA": "XRPUSDT",
+      "INTERWAŁ": "1D",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "XLM",
+      "PARA": "XLMUSDT",
+      "INTERWAŁ": "1H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "XLM",
+      "PARA": "XLMUSDT",
+      "INTERWAŁ": "4H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "XLM",
+      "PARA": "XLMUSDT",
+      "INTERWAŁ": "1D",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "HBAR",
+      "PARA": "HBARUSDT",
+      "INTERWAŁ": "1H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "HBAR",
+      "PARA": "HBARUSDT",
+      "INTERWAŁ": "4H",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    },
+    {
+      "AKTYWO": "HBAR",
+      "PARA": "HBARUSDT",
+      "INTERWAŁ": "1D",
+      "STATUS": "OK",
+      "LICZBA_ŚWIEC": 500,
+      "ŹRÓDŁO": "https://data-api.binance.vision/api/v3/klines",
+      "BŁĄD": ""
+    }
+  ],
+  "tradingview_connected": false,
+  "execution_connected": false
+}
