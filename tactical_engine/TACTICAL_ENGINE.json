@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-23T17:08:38.285717+00:00",
+  "generated_at_utc": "2026-09-23T17:24:34.874106+00:00",
   "engine": "V8_TACTICAL_ENGINE_v1.0",
   "purpose_pl": "Silnik krótkoterminowy: 1H timing, 4H główna decyzja, 1D kierunek.",
   "research_only": true,
@@ -1300,8 +1300,26 @@
       "reason_pl": "Sygnały mieszane.",
       "entry_blockers": [],
       "zone_context": {
-        "ready": false,
-        "status_pl": "BRAK POTWIERDZONYCH STREF"
+        "ready": true,
+        "status_pl": "STREFY POTWIERDZONE",
+        "in_demand": false,
+        "in_supply": false,
+        "nearest_demand": {
+          "timeframe": "1D",
+          "from": 2.2e-06,
+          "to": 2.7e-06,
+          "distance_pct": 90.08446566287182
+        },
+        "nearest_supply": {
+          "timeframe": "1T",
+          "from": 7.8e-06,
+          "to": 8.9e-06,
+          "distance_pct": 67.31546088872568
+        },
+        "confirmed_timeframes": [
+          "1D",
+          "1T"
+        ]
       },
       "market_phase_context": {
         "phase": "ALT_ROTATION_CANDIDATE",
@@ -1473,8 +1491,26 @@
       "reason_pl": "Sygnały mieszane.",
       "entry_blockers": [],
       "zone_context": {
-        "ready": false,
-        "status_pl": "BRAK POTWIERDZONYCH STREF"
+        "ready": true,
+        "status_pl": "STREFY POTWIERDZONE",
+        "in_demand": false,
+        "in_supply": false,
+        "nearest_demand": {
+          "timeframe": "1T",
+          "from": 2e-07,
+          "to": 3.7e-07,
+          "distance_pct": 91.57175398633258
+        },
+        "nearest_supply": {
+          "timeframe": "1T",
+          "from": 6.2e-07,
+          "to": 1.05e-06,
+          "distance_pct": 76.08200455580865
+        },
+        "confirmed_timeframes": [
+          "1D",
+          "1T"
+        ]
       },
       "market_phase_context": {
         "phase": "ALT_ROTATION_CANDIDATE",
@@ -1644,8 +1680,26 @@
       "reason_pl": "Za mało potwierdzeń.",
       "entry_blockers": [],
       "zone_context": {
-        "ready": false,
-        "status_pl": "BRAK POTWIERDZONYCH STREF"
+        "ready": true,
+        "status_pl": "STREFY POTWIERDZONE",
+        "in_demand": false,
+        "in_supply": false,
+        "nearest_demand": {
+          "timeframe": "1D",
+          "from": 0.39,
+          "to": 0.43,
+          "distance_pct": 5.887502735828405
+        },
+        "nearest_supply": {
+          "timeframe": "1D",
+          "from": 0.64,
+          "to": 0.68,
+          "distance_pct": 40.07441453272052
+        },
+        "confirmed_timeframes": [
+          "1D",
+          "1T"
+        ]
       },
       "market_phase_context": {
         "phase": "ALT_ROTATION_CANDIDATE",
