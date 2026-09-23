@@ -1,8 +1,8 @@
 {
-  "generated_at_utc": "2026-09-23T18:09:29.641311+00:00",
+  "generated_at_utc": "2026-09-23T19:51:09.296279+00:00",
   "engine": "V8_TACTICAL_READINESS_v1.0",
   "status_pl": "WSZYSTKIE 12 AKTYWÓW GOTOWE",
-  "asset_count": 12,
+  "asset_count": 14,
   "all_assets_ready": true,
   "timeframes": [
     "1H",
@@ -74,7 +74,7 @@
       "1H": true,
       "4H": true,
       "1D": true,
-      "zones_ready": false,
+      "zones_ready": true,
       "source_1H": "SPOT",
       "source_4H": "SPOT",
       "source_1D": "SPOT"
@@ -118,7 +118,7 @@
       "1H": true,
       "4H": true,
       "1D": true,
-      "zones_ready": false,
+      "zones_ready": true,
       "source_1H": "SPOT",
       "source_4H": "SPOT",
       "source_1D": "SPOT"
@@ -129,13 +129,35 @@
       "1H": true,
       "4H": true,
       "1D": true,
-      "zones_ready": false,
+      "zones_ready": true,
       "source_1H": "SPOT",
       "source_4H": "SPOT",
       "source_1D": "SPOT"
     },
     {
       "symbol": "HBAR",
+      "status_pl": "GOTOWY",
+      "1H": true,
+      "4H": true,
+      "1D": true,
+      "zones_ready": true,
+      "source_1H": "SPOT",
+      "source_4H": "SPOT",
+      "source_1D": "SPOT"
+    },
+    {
+      "symbol": "AVAX",
+      "status_pl": "GOTOWY",
+      "1H": true,
+      "4H": true,
+      "1D": true,
+      "zones_ready": true,
+      "source_1H": "SPOT",
+      "source_4H": "SPOT",
+      "source_1D": "SPOT"
+    },
+    {
+      "symbol": "AWE",
       "status_pl": "GOTOWY",
       "1H": true,
       "4H": true,
