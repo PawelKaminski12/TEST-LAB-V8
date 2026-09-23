@@ -41,14 +41,14 @@ jobs:
       - name: Zbuduj TACTICAL 1H 4H 1D
         run: python scripts/v8_tactical_engine_v1_1.py
 
-      - name: Sprawdź komplet 12 aktywów i alarmów
+      - name: Sprawdź komplet 14 aktywów i alarmów
         run: |
           python - <<'PY'
           import json, math
           from pathlib import Path
           import pandas as pd
 
-          expected=['BTC','ETH','SOL','LINK','ONDO','RENDER','FLOKI','PEPE','SPX6900','XRP','XLM','HBAR']
+          expected=['BTC','ETH','SOL','LINK','ONDO','RENDER','FLOKI','PEPE','SPX6900','XRP','XLM','HBAR','AVAX','AWE']
           p=Path('tactical_engine/TACTICAL_ENGINE.json')
           r=Path('tactical_engine/TACTICAL_READINESS.json')
           q=Path('tactical_engine/TACTICAL_QA.csv')
@@ -59,7 +59,7 @@ jobs:
           ready=json.loads(r.read_text(encoding='utf-8'))
           assert data['engine']=='V8_TACTICAL_ENGINE_v1.0'
           assert data['universe']==expected
-          assert data['asset_count']==12
+          assert data['asset_count']==14
           assert data['stocks_included'] is False
           assert data['not_execution_connected'] is True
           assert data['rules']['tradingview_connected'] is False
@@ -79,11 +79,11 @@ jobs:
                   assert 0 <= int(x['fomo_score_0_10']) <= 10
           spx=next(a for a in data['assets'] if a['symbol']=='SPX6900')
           assert all(spx['source_types'][tf]=='SPOT_KRAKEN' for tf in ['1H','4H','1D'])
-          assert ready['all_assets_ready'] is True and ready['asset_count']==12
+          assert ready['all_assets_ready'] is True and ready['asset_count']==14
           assert ready['stocks_included'] is False and ready['execution_connected'] is False
           qa=pd.read_csv(q)
-          assert len(qa)==12 and qa['PASS'].astype(str).str.lower().eq('true').all()
-          print('TACTICAL: 12/12 aktywów, 1H/4H/1D, RSI/MFI/MACD/FOMO i alarmy — sprawdzone poprawnie.')
+          assert len(qa)==14 and qa['PASS'].astype(str).str.lower().eq('true').all()
+          print('TACTICAL: 14/14 aktywów (BTC + 13 altów), 1H/4H/1D, RSI/MFI/MACD/FOMO i alarmy — sprawdzone poprawnie.')
           PY
 
       - name: Zapisz wyniki bez konfliktu
@@ -100,7 +100,7 @@ jobs:
             cp /tmp/tactical-v1/* tactical_engine/
             git add tactical_engine/
             if git diff --cached --quiet; then exit 0; fi
-            git commit -m 'Update V8 tactical engine 12 assets'
+            git commit -m 'Update V8 tactical engine 14 assets'
             if git push origin main; then exit 0; fi
             echo "Konflikt zapisu — próba $attempt"
             sleep $((attempt*3))
