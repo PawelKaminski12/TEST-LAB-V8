@@ -1,0 +1,55 @@
+name: TEST LAB V8 Google Sheets Bridge
+
+on:
+  push:
+    paths:
+      - 'google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL.txt'
+      - '.github/workflows/test-lab-v8-google-sheets-bridge.yml'
+  workflow_dispatch:
+
+jobs:
+  validate-google-sheets-bridge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz projekt
+        uses: actions/checkout@v4
+
+      - name: Sprawdź składnię pełnego skryptu
+        run: |
+          cp google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL.txt /tmp/v8_bridge.js
+          node --check /tmp/v8_bridge.js
+
+      - name: Sprawdź panel ETF BTC ETH i LAB
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL.txt')
+          s=p.read_text(encoding='utf-8')
+          required=[
+            "ETF_BTC_ETH",
+            "LAB_ANALIZA_AKTYWA",
+            "writeEtfPanel_",
+            "writeLabPanel_",
+            "ODSWIEZ_ETF_BTC_ETH",
+            "ODSWIEZ_LAB",
+            "lab/LAB_REPORT.json",
+            "btc_etf_5d_usdm",
+            "btc_etf_20d_usdm",
+            "btc_etf_30d_usdm",
+            "eth_etf_5d_usdm",
+            "eth_etf_20d_usdm",
+            "eth_etf_30d_usdm",
+            "globalEtfMeaning_",
+            "KAPITAŁ NAPŁYWA RÓWNOCZEŚNIE DO BTC I ETH",
+            "No broker execution",
+            "V7 is not modified"
+          ]
+          missing=[x for x in required if x not in s]
+          if missing:
+              raise SystemExit('Brakuje elementów: '+', '.join(missing))
+          forbidden=['autoBuy','placeOrder','brokerExecution','executeTrade']
+          found=[x for x in forbidden if x in s]
+          if found:
+              raise SystemExit('Wykryto niedozwolone wykonanie transakcji: '+', '.join(found))
+          print('Panel ETF BTC/ETH + LAB obecny, pełny skrypt ma poprawną strukturę i nie wykonuje transakcji.')
+          PY
