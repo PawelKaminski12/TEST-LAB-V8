@@ -1,0 +1,84 @@
+{
+  "generated_at_utc": "2026-09-23T16:05:22.621998+00:00",
+  "generated_at_new_york": "2026-09-23T12:05:22.621998-04:00",
+  "engine": "V8_ETF_BTC_ETH_MONITOR_v1.0",
+  "assets": {
+    "BTC": {
+      "asset": "BTC",
+      "source_url": "https://raw.githubusercontent.com/haturatu/crypto-etf-flow/main/etf_btc.csv",
+      "primary_source": "Farside Investors",
+      "transport": "haturatu/crypto-etf-flow mirror",
+      "last_source_date": "2026-09-23",
+      "last_closed_date": "2026-09-22",
+      "last_closed_flow_usdm": 714.7,
+      "closed_5d_usdm": 2010.3,
+      "closed_20d_usdm": 2830.7,
+      "closed_30d_usdm": 4845.499999999999,
+      "closed_trend": {
+        "label_pl": "NAPŁYW PRZYSPIESZA",
+        "score_adjustment": 1.0,
+        "closed_5d_usdm": 2010.3,
+        "previous_5d_usdm": -706.5999999999999,
+        "acceleration_5d_usdm": 2716.8999999999996
+      },
+      "today_date": "2026-09-23",
+      "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
+      "today_flow_preview_usdm": 0.0,
+      "today_fund_completeness_pct": 0.0,
+      "today_funds_present": 0,
+      "today_funds_total": 12,
+      "today_note_pl": "Dzisiejszy wiersz jest tylko podglądem. Do oceny trendu używamy wyłącznie zakończonych dni.",
+      "rules": {
+        "today_never_treated_as_final_same_day": true,
+        "closed_trend_excludes_today": true,
+        "zero_today_does_not_mean_final_zero": true
+      }
+    },
+    "ETH": {
+      "asset": "ETH",
+      "source_url": "https://raw.githubusercontent.com/haturatu/crypto-etf-flow/main/etf_eth.csv",
+      "primary_source": "Farside Investors",
+      "transport": "haturatu/crypto-etf-flow mirror",
+      "last_source_date": "2026-09-23",
+      "last_closed_date": "2026-09-22",
+      "last_closed_flow_usdm": 162.2,
+      "closed_5d_usdm": 312.5,
+      "closed_20d_usdm": 1415.3000000000002,
+      "closed_30d_usdm": 2240.2,
+      "closed_trend": {
+        "label_pl": "NAPŁYW PRZYSPIESZA",
+        "score_adjustment": 1.0,
+        "closed_5d_usdm": 312.5,
+        "previous_5d_usdm": 200.3,
+        "acceleration_5d_usdm": 112.19999999999999
+      },
+      "today_date": "2026-09-23",
+      "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
+      "today_flow_preview_usdm": 0.0,
+      "today_fund_completeness_pct": 0.0,
+      "today_funds_present": 0,
+      "today_funds_total": 11,
+      "today_note_pl": "Dzisiejszy wiersz jest tylko podglądem. Do oceny trendu używamy wyłącznie zakończonych dni.",
+      "rules": {
+        "today_never_treated_as_final_same_day": true,
+        "closed_trend_excludes_today": true,
+        "zero_today_does_not_mean_final_zero": true
+      }
+    }
+  },
+  "global_institutional_interest": {
+    "score_0_10": 9.5,
+    "label_pl": "SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE ROŚNIE",
+    "btc_closed_5d_usdm": 2010.3,
+    "eth_closed_5d_usdm": 312.5,
+    "btc_acceleration_5d_usdm": 2716.8999999999996,
+    "eth_acceleration_5d_usdm": 112.19999999999999,
+    "role": "kontekst instytucjonalny, nie samodzielny sygnał kupna lub sprzedaży"
+  },
+  "safety": {
+    "research_only": true,
+    "execution_connected": false,
+    "same_day_etf_values_are_provisional": true,
+    "closed_day_values_drive_scores": true
+  }
+}
