@@ -23,7 +23,7 @@ LLAMA = "https://api.llama.fi"
 STABLE = "https://stablecoins.llama.fi"
 
 session = requests.Session()
-session.headers.update({"User-Agent": "TEST-LAB-V8/1.5"})
+session.headers.update({"User-Agent": "TEST-LAB-V8/1.6"})
 end = datetime.now(timezone.utc)
 start = end - timedelta(days=90)
 
@@ -136,9 +136,10 @@ def generic_series(url, value_key, params=None, list_mode=True):
     if not rows:
         return pd.DataFrame(), "NO_DATA"
     df = pd.DataFrame(rows)
-    df["date"] = pd.to_datetime(df["date"], unit="s", utc=True, errors="coerce")
+    df["date_num"] = pd.to_numeric(df["date"], errors="coerce")
+    df["date"] = pd.to_datetime(df["date_num"], unit="s", utc=True, errors="coerce")
     df["value"] = pd.to_numeric(df["value"], errors="coerce")
-    return df.dropna(subset=["date", "value"]).sort_values("date").tail(120), "OK"
+    return df.dropna(subset=["date", "value"]).sort_values("date").tail(120)[["date", "value"]], "OK"
 
 
 def chain_tvl(chain):
@@ -156,9 +157,10 @@ def chart_series(url, params=None):
     if not rows:
         return pd.DataFrame(), "NO_DATA"
     df = pd.DataFrame(rows)
-    df["date"] = pd.to_datetime(df["date"], unit="s", utc=True, errors="coerce")
+    df["date_num"] = pd.to_numeric(df["date"], errors="coerce")
+    df["date"] = pd.to_datetime(df["date_num"], unit="s", utc=True, errors="coerce")
     df["value"] = pd.to_numeric(df["value"], errors="coerce")
-    return df.dropna(subset=["date", "value"]).sort_values("date").tail(120), "OK"
+    return df.dropna(subset=["date", "value"]).sort_values("date").tail(120)[["date", "value"]], "OK"
 
 
 def dex_series(chain):
@@ -212,9 +214,13 @@ def stablecoin_series(chain):
     if not rows:
         return pd.DataFrame(), "NO_DATA"
     df = pd.DataFrame(rows)
-    df["date"] = pd.to_datetime(df["date"], unit="s", utc=True, errors="coerce")
+    df["date_num"] = pd.to_numeric(df["date"], errors="coerce")
+    df["date"] = pd.to_datetime(df["date_num"], unit="s", utc=True, errors="coerce")
     df["value"] = pd.to_numeric(df["value"], errors="coerce")
-    return df.dropna(subset=["date", "value"]).sort_values("date").tail(120), "OK"
+    df = df.dropna(subset=["date", "value"]).sort_values("date").tail(120)[["date", "value"]]
+    if df.empty:
+        return pd.DataFrame(), "NO_DATA_AFTER_PARSE"
+    return df, "OK"
 
 
 def _latest_from_chain_tvls(obj):
@@ -231,8 +237,9 @@ def _latest_from_chain_tvls(obj):
             for x in hist:
                 if isinstance(x, dict):
                     v = safe_float(x.get("totalLiquidityUSD"))
+                    ts = safe_float(x.get("date")) or 0
                     if v is not None:
-                        vals.append((x.get("date", 0), v))
+                        vals.append((ts, v))
             if vals:
                 latest.append(max(vals, key=lambda z: z[0])[1])
     return sum(latest) if latest else None
@@ -256,9 +263,10 @@ def protocol_snapshot(slug):
                     rows.append({"date": x["date"], "value": val})
         if rows:
             df = pd.DataFrame(rows)
-            df["date"] = pd.to_datetime(df["date"], unit="s", utc=True, errors="coerce")
+            df["date_num"] = pd.to_numeric(df["date"], errors="coerce")
+            df["date"] = pd.to_datetime(df["date_num"], unit="s", utc=True, errors="coerce")
             df["value"] = pd.to_numeric(df["value"], errors="coerce")
-            result["history"] = df.dropna(subset=["date", "value"]).sort_values("date").tail(120)
+            result["history"] = df.dropna(subset=["date", "value"]).sort_values("date").tail(120)[["date", "value"]]
 
     plist, pstatus = get_json(f"{LLAMA}/protocols", timeout=30)
     if pstatus == "OK" and isinstance(plist, list):
@@ -313,9 +321,10 @@ def protocol_fees(slug):
     rows = [{"date": x[0], "value": x[1]} for x in chart if isinstance(x, list) and len(x) >= 2]
     if rows:
         df = pd.DataFrame(rows)
-        df["date"] = pd.to_datetime(df["date"], unit="s", utc=True, errors="coerce")
+        df["date_num"] = pd.to_numeric(df["date"], errors="coerce")
+        df["date"] = pd.to_datetime(df["date_num"], unit="s", utc=True, errors="coerce")
         df["value"] = pd.to_numeric(df["value"], errors="coerce")
-        out["history"] = df.dropna(subset=["date", "value"]).sort_values("date").tail(120)
+        out["history"] = df.dropna(subset=["date", "value"]).sort_values("date").tail(120)[["date", "value"]]
     return out, "OK"
 
 
@@ -543,7 +552,7 @@ def main():
 
     payload = {
         "generated_at_utc": end.isoformat(),
-        "engine": "ONCHAIN_ACTIVITY_v0.5",
+        "engine": "ONCHAIN_ACTIVITY_v0.6",
         "assets": assets,
         "summary": {
             "assets_requested": len(assets),
