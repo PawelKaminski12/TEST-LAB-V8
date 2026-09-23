@@ -1,5 +1,5 @@
 // V8 DUAL ENGINE — GOOGLE SHEETS BRIDGE
-// Wersja użytkowa PL + alarmy ekstremów 1H/4H/1D.
+// Wersja użytkowa PL + alarmy ekstremów RSI / MACD context / MFI / FOMO na 1H/4H/1D.
 // Research / decision support only. No broker execution.
 // V7 is not modified by this script.
 
@@ -165,9 +165,9 @@ function writeTacticalEngine_(sheet, data, readiness) {
   (readiness.assets || []).forEach(a => readyMap[a.symbol] = a);
   const headers = [
     'AKTYWO','QA','GOTOWOŚĆ','WYNIK','STATUS','RYZYKO WYJŚCIA',
-    '1H RSI','1H MACD','1H FOMO','1H EKSTREMUM',
-    '4H RSI','4H MACD','4H TREND','4H FOMO','4H EKSTREMUM',
-    '1D RSI','1D MACD','1D TREND','1D FOMO','1D EKSTREMUM',
+    '1H RSI','1H MFI','1H MACD','1H FOMO','1H EKSTREMUM',
+    '4H RSI','4H MFI','4H MACD','4H TREND','4H FOMO','4H EKSTREMUM',
+    '1D RSI','1D MFI','1D MACD','1D TREND','1D FOMO','1D EKSTREMUM',
     'W PODAŻY','W POPYCIE','FAZA RYNKU','BLOKADY'
   ];
   const settings = getExtremeSettings_(SpreadsheetApp.getActiveSpreadsheet());
@@ -177,9 +177,9 @@ function writeTacticalEngine_(sheet, data, readiness) {
     return [
       a.symbol, a.qa, translateReady_(r.readiness_status || ''), a.tactical_score_0_10, translateTactical_(a.tactical_status),
       a.exit_risk_0_10,
-      h1.rsi14, h1.macd_hist, h1.fomo_score_0_10, extremeLabel_(h1, settings),
-      h4.rsi14, h4.macd_hist, h4.trend_score_0_4, h4.fomo_score_0_10, extremeLabel_(h4, settings),
-      d1.rsi14, d1.macd_hist, d1.trend_score_0_4, d1.fomo_score_0_10, extremeLabel_(d1, settings),
+      h1.rsi14, h1.mfi14, h1.macd_hist, h1.fomo_score_0_10, extremeLabel_(h1, settings),
+      h4.rsi14, h4.mfi14, h4.macd_hist, h4.trend_score_0_4, h4.fomo_score_0_10, extremeLabel_(h4, settings),
+      d1.rsi14, d1.mfi14, d1.macd_hist, d1.trend_score_0_4, d1.fomo_score_0_10, extremeLabel_(d1, settings),
       boolPl_(z.in_supply), boolPl_(z.in_demand), translateMarketPhase_((a.market_phase_context || {}).phase || ''),
       translateBlockers_(a.entry_blockers || a.blockers || [])
     ];
@@ -203,7 +203,10 @@ function setupPortfolioTactical_(sheet) {
 function setupSettings_(sheet) {
   const defaults = [
     ['TRYB','RESEARCH'],['AUTO_EXECUTION','OFF'],['V7_TOUCH','OFF'],['LONG_TACTICAL_CAPITAL_SHARED','NO'],
-    ['ALARMY_EKSTREMOW','ON'],['RSI_GORNY','75'],['RSI_DOLNY','25'],['FOMO_TWARDY','8'],
+    ['ALARMY_EKSTREMOW','ON'],
+    ['RSI_GORNY','75'],['RSI_DOLNY','25'],['FOMO_TWARDY','8'],
+    ['MFI_GORNY_OSTRZEZENIE','80'],['MFI_GORNY_SKRAJNY','90'],
+    ['MFI_DOLNY_OSTRZEZENIE','20'],['MFI_DOLNY_SKRAJNY','10'],
     ['EMAIL_ALERTY','OFF'],['EMAIL_DO',''],['LAST_REFRESH','']
   ];
   if (sheet.getLastRow() === 0) {
@@ -219,7 +222,7 @@ function setupSettings_(sheet) {
 
 function setupExtremes_(sheet) {
   if (sheet.getLastRow() === 0) {
-    sheet.getRange(1,1,1,8).setValues([['AKTYWNY','AKTYWO','INTERWAŁ','TYP','RSI','FOMO','WAGA','CZAS DANYCH']]);
+    sheet.getRange(1,1,1,9).setValues([['AKTYWNY','AKTYWO','INTERWAŁ','TYP','RSI','MFI','FOMO','WAGA','CZAS DANYCH']]);
     sheet.setFrozenRows(1);
   }
 }
@@ -238,6 +241,10 @@ function getExtremeSettings_(ss) {
     rsiHigh: Number(s.RSI_GORNY || 75),
     rsiLow: Number(s.RSI_DOLNY || 25),
     fomoHard: Number(s.FOMO_TWARDY || 8),
+    mfiWarnHigh: Number(s.MFI_GORNY_OSTRZEZENIE || 80),
+    mfiExtremeHigh: Number(s.MFI_GORNY_SKRAJNY || 90),
+    mfiWarnLow: Number(s.MFI_DOLNY_OSTRZEZENIE || 20),
+    mfiExtremeLow: Number(s.MFI_DOLNY_SKRAJNY || 10),
     emailOn: String(s.EMAIL_ALERTY || 'OFF').toUpperCase() === 'ON',
     emailTo: String(s.EMAIL_DO || '').trim()
   };
@@ -249,42 +256,63 @@ function buildExtremeAlarms_(ss, tacticalJson) {
   (tacticalJson.assets || []).forEach(a => {
     const t = a.timeframes || {};
     ['1H','4H','1D'].forEach(tf => {
-      const x = t[tf] || {}; const rsi = Number(x.rsi14); const fomo = Number(x.fomo_score_0_10);
+      const x = t[tf] || {};
+      const rsi = Number(x.rsi14), mfi = Number(x.mfi14), fomo = Number(x.fomo_score_0_10);
       const ts = x.last_close_time_utc || '';
-      if (Number.isFinite(rsi) && rsi >= cfg.rsiHigh) alarms.push(makeAlarm_(a.symbol,tf,'RSI WYKUPIENIE',rsi,fomo,rsi >= 80 ? 'EKSTREMALNY' : 'WYSOKI',ts));
-      if (Number.isFinite(rsi) && rsi <= cfg.rsiLow) alarms.push(makeAlarm_(a.symbol,tf,'RSI WYPRZEDANIE',rsi,fomo,rsi <= 20 ? 'EKSTREMALNY' : 'WYSOKI',ts));
-      if (Number.isFinite(fomo) && fomo >= cfg.fomoHard) alarms.push(makeAlarm_(a.symbol,tf,'FOMO HARD BLOCK',rsi,fomo,fomo >= 9 ? 'EKSTREMALNY' : 'WYSOKI',ts));
+
+      if (Number.isFinite(rsi) && rsi >= cfg.rsiHigh) alarms.push(makeAlarm_(a.symbol,tf,'RSI WYKUPIENIE',rsi,mfi,fomo,rsi >= 80 ? 'EKSTREMALNY' : 'WYSOKI',ts));
+      if (Number.isFinite(rsi) && rsi <= cfg.rsiLow) alarms.push(makeAlarm_(a.symbol,tf,'RSI WYPRZEDANIE',rsi,mfi,fomo,rsi <= 20 ? 'EKSTREMALNY' : 'WYSOKI',ts));
+
+      if (Number.isFinite(mfi)) {
+        if (mfi >= cfg.mfiExtremeHigh) alarms.push(makeAlarm_(a.symbol,tf,'MFI SKRAJNE WYKUPIENIE',rsi,mfi,fomo,'EKSTREMALNY',ts));
+        else if (mfi >= cfg.mfiWarnHigh) alarms.push(makeAlarm_(a.symbol,tf,'MFI WYKUPIENIE — OSTRZEŻENIE',rsi,mfi,fomo,'WYSOKI',ts));
+
+        if (mfi <= cfg.mfiExtremeLow) alarms.push(makeAlarm_(a.symbol,tf,'MFI SKRAJNE WYPRZEDANIE',rsi,mfi,fomo,'EKSTREMALNY',ts));
+        else if (mfi <= cfg.mfiWarnLow) alarms.push(makeAlarm_(a.symbol,tf,'MFI WYPRZEDANIE — OSTRZEŻENIE',rsi,mfi,fomo,'WYSOKI',ts));
+      }
+
+      if (Number.isFinite(fomo) && fomo >= cfg.fomoHard) alarms.push(makeAlarm_(a.symbol,tf,'FOMO HARD BLOCK',rsi,mfi,fomo,fomo >= 9 ? 'EKSTREMALNY' : 'WYSOKI',ts));
     });
   });
   return alarms;
 }
 
-function makeAlarm_(symbol, tf, type, rsi, fomo, severity, ts) {
-  return {aktywny:true, symbol:symbol, tf:tf, type:type, rsi:Number.isFinite(rsi)?rsi:'', fomo:Number.isFinite(fomo)?fomo:'', severity:severity, ts:ts, key:[symbol,tf,type].join('|')};
+function makeAlarm_(symbol, tf, type, rsi, mfi, fomo, severity, ts) {
+  return {
+    aktywny:true, symbol:symbol, tf:tf, type:type,
+    rsi:Number.isFinite(rsi)?rsi:'', mfi:Number.isFinite(mfi)?mfi:'', fomo:Number.isFinite(fomo)?fomo:'',
+    severity:severity, ts:ts, key:[symbol,tf,type].join('|')
+  };
 }
 
 function extremeLabel_(x, cfg) {
-  const rsi = Number(x.rsi14), fomo = Number(x.fomo_score_0_10), labels = [];
-  if (Number.isFinite(rsi) && rsi >= cfg.rsiHigh) labels.push('WYKUPIENIE');
-  if (Number.isFinite(rsi) && rsi <= cfg.rsiLow) labels.push('WYPRZEDANIE');
+  const rsi = Number(x.rsi14), mfi = Number(x.mfi14), fomo = Number(x.fomo_score_0_10), labels = [];
+  if (Number.isFinite(rsi) && rsi >= cfg.rsiHigh) labels.push('RSI WYKUPIENIE');
+  if (Number.isFinite(rsi) && rsi <= cfg.rsiLow) labels.push('RSI WYPRZEDANIE');
+  if (Number.isFinite(mfi)) {
+    if (mfi >= cfg.mfiExtremeHigh) labels.push('MFI SKRAJNE WYKUPIENIE');
+    else if (mfi >= cfg.mfiWarnHigh) labels.push('MFI WYKUPIENIE');
+    if (mfi <= cfg.mfiExtremeLow) labels.push('MFI SKRAJNE WYPRZEDANIE');
+    else if (mfi <= cfg.mfiWarnLow) labels.push('MFI WYPRZEDANIE');
+  }
   if (Number.isFinite(fomo) && fomo >= cfg.fomoHard) labels.push('FOMO HARD');
   return labels.length ? labels.join(' + ') : 'BRAK';
 }
 
 function writeExtremeAlarms_(sheet, alarms) {
   sheet.clearContents();
-  sheet.getRange(1,1,1,8).setValues([['AKTYWNY','AKTYWO','INTERWAŁ','TYP','RSI','FOMO','WAGA','CZAS DANYCH']]);
-  const rows = alarms.map(a => ['TAK',a.symbol,a.tf,a.type,a.rsi,a.fomo,a.severity,a.ts]);
-  if (rows.length) sheet.getRange(2,1,rows.length,8).setValues(rows);
-  else sheet.getRange(2,1,1,8).setValues([['NIE','','','BRAK AKTYWNYCH EKSTREMÓW','','','','']]);
+  sheet.getRange(1,1,1,9).setValues([['AKTYWNY','AKTYWO','INTERWAŁ','TYP','RSI','MFI','FOMO','WAGA','CZAS DANYCH']]);
+  const rows = alarms.map(a => ['TAK',a.symbol,a.tf,a.type,a.rsi,a.mfi,a.fomo,a.severity,a.ts]);
+  if (rows.length) sheet.getRange(2,1,rows.length,9).setValues(rows);
+  else sheet.getRange(2,1,1,9).setValues([['NIE','','','BRAK AKTYWNYCH EKSTREMÓW','','','','','']]);
   sheet.setFrozenRows(1);
-  sheet.autoResizeColumns(1,8);
+  sheet.autoResizeColumns(1,9);
 }
 
 function readActiveExtremeKeys_(sheet) {
   const out = {};
   if (!sheet || sheet.getLastRow() < 2) return out;
-  const rows = sheet.getRange(2,1,sheet.getLastRow()-1,8).getValues();
+  const rows = sheet.getRange(2,1,sheet.getLastRow()-1,Math.min(9,sheet.getLastColumn())).getValues();
   rows.forEach(r => { if (String(r[0]).toUpperCase() === 'TAK') out[[r[1],r[2],r[3]].join('|')] = true; });
   return out;
 }
@@ -297,13 +325,13 @@ function appendExtremeHistory_(ss, oldKeys, alarms) {
   }
   const now = new Date();
   alarms.forEach(a => {
-    if (!oldKeys[a.key]) sh.appendRow([now,a.symbol,'','',a.severity,'','EKSTREMUM '+a.tf,a.type+' | RSI='+a.rsi+' | FOMO='+a.fomo]);
+    if (!oldKeys[a.key]) sh.appendRow([now,a.symbol,'','',a.severity,'','EKSTREMUM '+a.tf,a.type+' | RSI='+a.rsi+' | MFI='+a.mfi+' | FOMO='+a.fomo]);
   });
 }
 
 function notifyNewExtremeAlarms_(ss, oldKeys, alarms) {
   const fresh = alarms.filter(a => !oldKeys[a.key]); if (!fresh.length) return;
-  const text = fresh.map(a => a.symbol+' '+a.tf+' — '+a.type+' (RSI '+a.rsi+', FOMO '+a.fomo+')').join('\n');
+  const text = fresh.map(a => a.symbol+' '+a.tf+' — '+a.type+' (RSI '+a.rsi+', MFI '+a.mfi+', FOMO '+a.fomo+')').join('\n');
   ss.toast(text.slice(0,250), 'NOWE EKSTREMA V8', 8);
   const cfg = getExtremeSettings_(ss);
   if (cfg.emailOn && cfg.emailTo) MailApp.sendEmail(cfg.emailTo, 'V8 DUAL ENGINE — alarm ekstremum', text);
