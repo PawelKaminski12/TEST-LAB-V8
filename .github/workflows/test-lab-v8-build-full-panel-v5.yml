@@ -1,0 +1,69 @@
+name: TEST LAB V8 Build Full Panel V5
+
+on:
+  push:
+    paths:
+      - 'google_sheets/V8_PANEL_PRIORITY_PACK_V5.txt'
+      - '.github/workflows/test-lab-v8-build-full-panel-v5.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-test-save:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz projekt
+        uses: actions/checkout@v4
+
+      - name: Zbuduj pełny skrypt V5
+        run: |
+          cat google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V4.txt google_sheets/V8_PANEL_PRIORITY_PACK_V5.txt > /tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V5.js
+
+      - name: Sprawdź składnię pełnego skryptu
+        run: node --check /tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V5.js
+
+      - name: Sprawdź integralność panelu V5
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('/tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V5.js').read_text(encoding='utf-8')
+          required=[
+            "['AKTYWO','CENA','LONG','TACTICAL','RYZYKO 0–10','ZGODNOŚĆ','ALERT']",
+            'function confluencePriorityForTf_',
+            'function compareExtremePriority_',
+            'function panelEligibleExtreme_',
+            'function selectMainPanelExtreme_',
+            'function updateMainPanelExtremeSummary_',
+            'function notifyNewExtremeAlarms_',
+            'function formatMainPanelAlerts_',
+            "a.tf === '1H' && a.priority === 'OSTRZEŻENIE'",
+            "if (tf === '1D')",
+            "return 'KRYTYCZNY'",
+            "return 'MOCNY'",
+            "return 'OSTRZEŻENIE'",
+            "['1H','4H','1D']",
+            'No broker execution',
+            'V7 is not modified by this script.'
+          ]
+          missing=[x for x in required if x not in s]
+          forbidden=['placeOrder(', 'createOrder(', 'broker.', 'AUTO_EXECUTION = ON']
+          bad=[x for x in forbidden if x in s]
+          if missing: raise SystemExit('BRAK: '+', '.join(missing))
+          if bad: raise SystemExit('NIEDOZWOLONE: '+', '.join(bad))
+          print('PASS — V5: panel 7 kolumn, hierarchia 1H/4H/1D, redukcja szumu i bezpieczeństwo')
+          PY
+
+      - name: Zapisz pełny skrypt V5
+        run: |
+          cp /tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V5.js google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V5.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V5.txt
+          if git diff --cached --quiet; then
+            echo 'Bez zmian do zapisu'
+          else
+            git commit -m 'Zapisz pełny panel V8 V5 z hierarchią alarmów'
+            git push
+          fi
