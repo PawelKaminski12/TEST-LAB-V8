@@ -8,13 +8,12 @@ on:
     paths:
       - 'scripts/v8_final_readiness.py'
       - '.github/workflows/test-lab-v8-final-readiness.yml'
-      - 'crypto_data_hub/ALT_COMPLETION_AUDIT.json'
+      - 'crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json'
+      - 'crypto_data_hub/ALT_DECISION_ENGINE.json'
+      - 'crypto_data_hub/ALT_ENGINE_READINESS.json'
+      - 'audit/V8_ZONE_FINAL_91_OF_91.json'
       - 'institutional_data_hub/ETF_BTC_ETH_STATUS.json'
-      - 'institutional_data_hub/ETF_BTC_ETH_HISTORY_STATUS.json'
       - 'lab/LAB_STATUS.json'
-      - 'lab/LAB_CHECKPOINTS.csv'
-      - 'lab/LAB_CHECKPOINT_STATUS.json'
-      - 'lab/LAB_DEEP_REPORT.md'
       - 'tactical_engine/TACTICAL_ENGINE.json'
       - 'tactical_engine/TACTICAL_READINESS.json'
       - 'tactical_validation/TACTICAL_VALIDATION.json'
@@ -47,29 +46,29 @@ jobs:
       - name: Sprawdź wynik i zasady bezpieczeństwa
         run: |
           python - <<'PY'
-          import json
+          import csv,json
           from pathlib import Path
-          import csv
-
-          j=Path('audit/V8_FINAL_READINESS.json')
-          m=Path('audit/V8_FINAL_READINESS_LATEST.md')
-          c=Path('google_sheets/V8_FINAL_READINESS.csv')
+          ALTS=['ETH','SOL','LINK','ONDO','RENDER','FLOKI','PEPE','SPX6900','XRP','XLM','HBAR','AVAX','AWE']
+          TACT=['BTC']+ALTS
+          j=Path('audit/V8_FINAL_READINESS.json'); m=Path('audit/V8_FINAL_READINESS_LATEST.md'); c=Path('google_sheets/V8_FINAL_READINESS.csv')
           assert j.exists() and m.exists() and c.exists()
           x=json.loads(j.read_text(encoding='utf-8'))
-          assert x['engine']=='V8_FINAL_READINESS_v1.1'
-          assert 0 <= x['readiness_percent'] <= 100
-          assert x['core_production_ready'] is True
+          assert x['engine']=='V8_FINAL_READINESS_v2.0'
+          assert x['readiness_percent']==100
+          assert x['active_long_alts']==ALTS and x['long_assets_count']==13
+          assert x['tactical_universe']==TACT and x['tactical_assets_count']==14
+          assert x['full_zone_map']=='91/91'
+          assert x['aave_status']=='ARCHIWUM — NIEAKTYWNE'
+          assert x['sui_status']=='NIE WCHODZI DO USTALONEGO ZAKRESU'
           assert x['safety']['execution_connected'] is False
           assert x['safety']['never_invent_user_zones'] is True
           assert x['safety']['v7_not_modified'] is True
-          assert x['production_assets_ready'] is True
-          assert x['extended_assets_auto_data_ready'] is True
           txt=m.read_text(encoding='utf-8')
-          assert 'KOŃCOWA GOTOWOŚĆ' in txt
-          assert 'System nie tworzy sztucznych stref' in txt
+          assert 'Gotowość całego projektu: 100%' in txt
+          assert 'TradingView' in txt and 'odłożone' in txt
           rows=list(csv.reader(c.open(encoding='utf-8')))
-          assert rows[-1][0]=='CAŁOŚĆ'
-          print('Końcowy audyt V8: rdzeń, wynik i zabezpieczenia sprawdzone poprawnie')
+          assert rows[-1][0]=='CAŁOŚĆ' and rows[-1][2]=='100%'
+          print('KOŃCOWA GOTOWOŚĆ — ZAKOŃCZONE POPRAWNIE: LONG 13, TACTICAL 14, strefy 91/91.')
           PY
 
       - name: Zapisz wynik bez konfliktu
@@ -86,9 +85,8 @@ jobs:
             cp /tmp/finalreadiness/V8_FINAL_READINESS.csv google_sheets/
             git add audit/V8_FINAL_READINESS.json audit/V8_FINAL_READINESS_LATEST.md google_sheets/V8_FINAL_READINESS.csv
             if git diff --cached --quiet; then exit 0; fi
-            git commit -m 'Update V8 final readiness'
+            git commit -m 'Update V8 final readiness 13 alts 91 zones'
             if git push origin main; then exit 0; fi
-            echo "Konflikt zapisu — próba $attempt"
             sleep $((attempt * 3))
           done
           exit 1
