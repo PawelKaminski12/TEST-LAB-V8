@@ -74,7 +74,7 @@ def main():
     onmap={a.get('symbol'):a for a in onc.get('assets',[])}; mmap={a.get('symbol'):a for a in master.get('assets',[])}
     reports=[]; rows=[]
     for _,r in cfg.iterrows():
-        sym=str(r.symbol).upper().strip(); src=str(r.source_symbol).strip(); typ=str(r.asset_type).upper().strip(); mode=str(r.mode).upper().strip()
+        sym=str(r['symbol']).upper().strip(); src=str(r['source_symbol']).strip(); typ=str(r['asset_type']).upper().strip(); mode=str(r['mode']).upper().strip()
         if typ=='AUTO': typ='CRYPTO' if src.upper().endswith('-USD') else 'STOCK'
         daily,ds=load_yf(src)
         td=tech(daily) if ds=='OK' else {'status':ds}
