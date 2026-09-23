@@ -9,6 +9,23 @@ def fmt(v,d=2):
     try:return f'{float(v):.{d}f}'
     except Exception:return str(v)
 
+def fmt_score(v):
+    return 'brak danych' if v is None else f'{v}/10'
+
+def fmt_trend(v):
+    return 'brak danych' if v is None else f'{v}/4'
+
+def fmt_fomo(v):
+    return 'brak danych' if v is None else f'{v}/10'
+
+def phase_pl(x):
+    return {
+        'ALT_ROTATION_CANDIDATE':'RYNEK ZACZYNA SPRZYJAĆ ALTOM',
+        'ALT_ROTATION_CONFIRMED':'ROTACJA W ALTY POTWIERDZONA',
+        'BTC_DOMINANCE':'DOMINUJE BITCOIN',
+        'RISK_OFF':'RYNEK OSTROŻNY / UCIECZKA OD RYZYKA',
+    }.get(x, 'brak jednoznacznej fazy rynku' if not x else str(x).replace('_',' '))
+
 def main():
     x=json.loads(REPORT.read_text(encoding='utf-8'))
     lines=['# V8 LAB — NAJNOWSZA ANALIZA','',f"Czas analizy: {x.get('generated_at_utc','')}",'']
@@ -21,17 +38,17 @@ def main():
             f"- Stan danych: **{pl.get('stan_danych','')}** ({a.get('data_quality_0_100')}/100). Pełne interwały: {a.get('mtf_ready_0_3')}/3.",
             f"- Wniosek z szybkiej analizy: **{pl.get('wniosek_szybki','')} — {fmt(fast.get('score_0_10'))}/10**.",
             f"- Ryzyka / ostrzeżenia: {', '.join(risks) if risks else 'brak ważnych ostrzeżeń'}.",
-            f"- 1 godzina: trend {t1.get('trend_0_4')}/4, RSI {fmt(t1.get('rsi14'))}, MFI {fmt(t1.get('mfi14'))}, FOMO {t1.get('fomo_0_10')}/10.",
-            f"- 4 godziny: trend {t4.get('trend_0_4')}/4, RSI {fmt(t4.get('rsi14'))}, MFI {fmt(t4.get('mfi14'))}, FOMO {t4.get('fomo_0_10')}/10.",
-            f"- 1 dzień: cena {fmt(td.get('price'))}, trend {td.get('trend_0_4')}/4, RSI {fmt(td.get('rsi14'))}, MFI {fmt(td.get('mfi14'))}, FOMO {td.get('fomo_0_10')}/10.",
+            f"- 1 godzina: trend {fmt_trend(t1.get('trend_0_4'))}, RSI {fmt(t1.get('rsi14'))}, MFI {fmt(t1.get('mfi14'))}, FOMO {fmt_fomo(t1.get('fomo_0_10'))}.",
+            f"- 4 godziny: trend {fmt_trend(t4.get('trend_0_4'))}, RSI {fmt(t4.get('rsi14'))}, MFI {fmt(t4.get('mfi14'))}, FOMO {fmt_fomo(t4.get('fomo_0_10'))}.",
+            f"- 1 dzień: cena {fmt(td.get('price'))}, trend {fmt_trend(td.get('trend_0_4'))}, RSI {fmt(td.get('rsi14'))}, MFI {fmt(td.get('mfi14'))}, FOMO {fmt_fomo(td.get('fomo_0_10'))}.",
         ]
         if a.get('asset_type') in ('CRYPTO','MEME'):
             m=a.get('crypto_market_context') or {}; o=a.get('onchain_context') or {}; e=a.get('existing_engine_context') or {}
             lines += [
-                f"- Sytuacja rynku krypto: {m.get('phase')} | siła rotacji w alty: {m.get('rotation_score_0_10')}/10.",
+                f"- Sytuacja rynku krypto: **{phase_pl(m.get('phase'))}** | siła rotacji w alty: {fmt_score(m.get('rotation_score_0_10'))}.",
                 f"- Dominacja BTC: {fmt(m.get('btc_dominance_pct'))}% | dominacja ETH: {fmt(m.get('eth_dominance_pct'))}% | ETH/BTC za 20 dni: {fmt(m.get('eth_btc_20d_pct'))}%.",
                 f"- Płynność stablecoinów: 7 dni {fmt(m.get('stablecoin_7d_pct'))}% | 30 dni {fmt(m.get('stablecoin_30d_pct'))}%.",
-                f"- Dane z sieci blockchain: długi termin {o.get('long_score')}/10 | krótki termin {o.get('tactical_score')}/10.",
+                f"- Dane z sieci blockchain: długi termin {fmt_score(o.get('long_score'))} | krótki termin {fmt_score(o.get('tactical_score'))}.",
                 f"- Decyzja głównego silnika: {e.get('decision') or 'brak osobnej decyzji dla tego aktywa'}.",
             ]
             if a.get('symbol')=='BTC':
