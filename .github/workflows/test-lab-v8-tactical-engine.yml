@@ -118,9 +118,12 @@ jobs:
               neg_sum=neg.rolling(n,min_periods=n).sum()
               ratio=pos_sum/neg_sum.replace(0,np.nan)
               out=100-(100/(1+ratio))
-              out=out.where(~((pos_sum==0)&(neg_sum==0)),50.0)
-              out=out.where(neg_sum!=0,100.0)
-              out=out.where(pos_sum!=0,0.0)
+              both_zero=(pos_sum==0)&(neg_sum==0)
+              only_pos=(pos_sum>0)&(neg_sum==0)
+              only_neg=(pos_sum==0)&(neg_sum>0)
+              out=out.mask(both_zero,50.0)
+              out=out.mask(only_pos,100.0)
+              out=out.mask(only_neg,0.0)
               return out.clip(0,100)
 
           def mfi_zone(v):
@@ -418,7 +421,7 @@ jobs:
 
           payload={
               'generated_at_utc':generated,
-              'engine':'V8_TACTICAL_ENGINE_v0.4',
+              'engine':'V8_TACTICAL_ENGINE_v0.5',
               'purpose':'short swing research engine using CLOSED 1H timing, CLOSED 4H decision, CLOSED 1D regime',
               'research_only':True,
               'not_execution_connected':True,
@@ -434,6 +437,7 @@ jobs:
                   'mfi_extreme_high':MFI_EXTREME_HIGH,
                   'mfi_warning_low':MFI_WARN_LOW,
                   'mfi_extreme_low':MFI_EXTREME_LOW,
+                  'mfi_edge_cases_fixed':True,
                   'fomo_hard_block':8,
                   'higher_timeframe_zones_are_context_not_standalone_signal':True,
                   'in_supply_blocks_tactical_long_labels':True,
