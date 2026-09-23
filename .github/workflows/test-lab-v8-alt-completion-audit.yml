@@ -7,6 +7,7 @@ on:
       - 'scripts/v8_alt_completion_audit.py'
       - 'config/alt_universe.csv'
       - 'config/alt_zones.csv'
+      - 'config/alt_zones_user_input.csv'
       - '.github/workflows/test-lab-v8-alt-completion-audit.yml'
   schedule:
     - cron: '40 6 * * *'
@@ -39,6 +40,124 @@ jobs:
       - name: Sprawdź wszystkie aktywa i ETF
         run: python scripts/v8_alt_completion_audit.py
 
+      - name: Przygotuj bezpieczny formularz brakujących stref AAVE i HBAR
+        run: |
+          python - <<'PY'
+          import csv
+          import json
+          from pathlib import Path
+
+          audit=json.loads(Path('crypto_data_hub/ALT_COMPLETION_AUDIT.json').read_text(encoding='utf-8'))
+          assets={a['symbol']:a for a in audit.get('assets',[])}
+          required=['1D','2D','3D','4D','5D','1T','2T']
+          targets=['AAVE','HBAR']
+          cfg=Path('config/alt_zones_user_input.csv')
+          cfg.parent.mkdir(exist_ok=True)
+
+          existing=[]
+          if cfg.exists():
+              with cfg.open(encoding='utf-8',newline='') as f:
+                  existing=list(csv.DictReader(f))
+          key={(str(r.get('symbol','')).upper().strip(),str(r.get('timeframe','')).upper().strip()) for r in existing}
+
+          rows=list(existing)
+          for sym in targets:
+              missing=assets.get(sym,{}).get('zones',{}).get('missing_timeframes') or required
+              for tf in missing:
+                  if (sym,tf) not in key:
+                      rows.append({
+                          'symbol':sym,'timeframe':tf,'side':'','from':'','to':'',
+                          'source_status':'BRAK_DANYCH_UZYTKOWNIKA',
+                          'source_note':'UZUPELNIJ_Z_TWOJEGO_MASTER_LUB_SCREENA'
+                      })
+          fields=['symbol','timeframe','side','from','to','source_status','source_note']
+          with cfg.open('w',encoding='utf-8',newline='') as f:
+              w=csv.DictWriter(f,fieldnames=fields); w.writeheader(); w.writerows(rows)
+
+          # Walidacja: żadnych automatycznie wymyślonych liczb.
+          for r in rows:
+              if str(r.get('source_status','')).upper().strip()=='BRAK_DANYCH_UZYTKOWNIKA':
+                  assert str(r.get('from','')).strip()=='' and str(r.get('to','')).strip()==''
+          print('Formularz stref AAVE/HBAR gotowy bez sztucznych poziomów.')
+          PY
+
+      - name: Zbuduj wspólny polski status V8 do panelu
+        run: |
+          python - <<'PY'
+          import csv
+          import json
+          from pathlib import Path
+
+          alt=json.loads(Path('crypto_data_hub/ALT_COMPLETION_AUDIT.json').read_text(encoding='utf-8'))
+          final_path=Path('audit/V8_FINAL_READINESS.json')
+          final=json.loads(final_path.read_text(encoding='utf-8')) if final_path.exists() else {}
+          etf_path=Path('institutional_data_hub/ETF_BTC_ETH_STATUS.json')
+          etf=json.loads(etf_path.read_text(encoding='utf-8')) if etf_path.exists() else {}
+
+          outdir=Path('google_sheets'); outdir.mkdir(exist_ok=True)
+          auditdir=Path('audit'); auditdir.mkdir(exist_ok=True)
+          assets={a['symbol']:a for a in alt.get('assets',[])}
+
+          rows=[]
+          readiness=final.get('readiness_percent')
+          rows.append(['CAŁOŚĆ','GOTOWOŚĆ V8',readiness if readiness is not None else 'brak danych',final.get('status_pl','BRAK KOŃCOWEGO ODCZYTU')])
+          for sym in ['ETH','SOL','LINK','ONDO','AAVE','HBAR']:
+              a=assets.get(sym,{})
+              rows.append([
+                  'ALTY',sym,
+                  'GOTOWE' if a.get('full_ready') else ('DANE AUTOMATYCZNE GOTOWE' if a.get('auto_layers_ready') else 'WYMAGA POPRAWY'),
+                  a.get('status_pl','BRAK DANYCH')
+              ])
+          for sym in ['BTC','ETH']:
+              e=(etf.get('assets') or {}).get(sym,{})
+              rows.append([
+                  'ETF',sym,
+                  e.get('closed_trend',{}).get('label_pl','BRAK DANYCH'),
+                  f"ostatni zamknięty dzień: {e.get('last_closed_date','brak')}; 5D: {e.get('closed_5d_usdm','brak')} mln USD"
+              ])
+
+          zone_status=[]
+          for sym in ['AAVE','HBAR']:
+              a=assets.get(sym,{})
+              missing=a.get('zones',{}).get('missing_timeframes') or []
+              zone_status.append({
+                  'AKTYWO':sym,
+                  'BRAKUJACE_INTERWALY':', '.join(missing) if missing else 'brak',
+                  'STATUS':'CZEKA NA STREFY UŻYTKOWNIKA' if missing else 'STREFY GOTOWE'
+              })
+              if missing:
+                  rows.append(['STREFY',sym,'BRAK DANYCH UŻYTKOWNIKA',', '.join(missing)])
+
+          with (outdir/'V8_STATUS_MASTER.csv').open('w',encoding='utf-8',newline='') as f:
+              w=csv.writer(f); w.writerow(['SEKCJA','ELEMENT','STATUS','SZCZEGÓŁY']); w.writerows(rows)
+          with (outdir/'ALT_ZONE_INPUT_STATUS.csv').open('w',encoding='utf-8',newline='') as f:
+              w=csv.DictWriter(f,fieldnames=['AKTYWO','BRAKUJACE_INTERWALY','STATUS']); w.writeheader(); w.writerows(zone_status)
+
+          report={
+              'engine':'V8_STATUS_MASTER_v1.0',
+              'readiness_percent':readiness,
+              'production_assets_ready':all(assets.get(s,{}).get('full_ready') is True for s in ['ETH','SOL','LINK','ONDO']),
+              'etf_btc_eth_ready':alt.get('etf',{}).get('ready') is True,
+              'aave_hbar_auto_data_ready':all(assets.get(s,{}).get('auto_layers_ready') is True for s in ['AAVE','HBAR']),
+              'aave_hbar_user_zones_ready':all(assets.get(s,{}).get('zones',{}).get('complete_7_of_7') is True for s in ['AAVE','HBAR']),
+              'remaining_user_input':zone_status,
+              'rules':{'never_invent_user_zones':True,'no_execution':True}
+          }
+          (auditdir/'V8_STATUS_MASTER.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+
+          md=['# V8 — WSPÓLNY STATUS','']
+          if readiness is not None: md.append(f'**Gotowość projektu: {readiness}%**')
+          md += [
+              f"- Produkcyjna czwórka ETH/SOL/LINK/ONDO: **{'GOTOWA' if report['production_assets_ready'] else 'WYMAGA POPRAWY'}**",
+              f"- ETF BTC/ETH: **{'GOTOWE' if report['etf_btc_eth_ready'] else 'WYMAGA POPRAWY'}**",
+              f"- AAVE/HBAR — dane automatyczne: **{'GOTOWE' if report['aave_hbar_auto_data_ready'] else 'WYMAGA POPRAWY'}**",
+              f"- AAVE/HBAR — strefy użytkownika: **{'GOTOWE' if report['aave_hbar_user_zones_ready'] else 'CZEKAJĄ NA DANE UŻYTKOWNIKA'}**",'',
+              'System nie tworzy ani nie zgaduje stref AAVE/HBAR.'
+          ]
+          (auditdir/'V8_STATUS_MASTER_LATEST.md').write_text('\n'.join(md),encoding='utf-8')
+          print(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
+
       - name: Sprawdź zasady bezpieczeństwa i kompletność
         run: |
           python - <<'PY'
@@ -49,7 +168,10 @@ jobs:
           j=Path('crypto_data_hub/ALT_COMPLETION_AUDIT.json')
           c=Path('crypto_data_hub/ALT_COMPLETION_PANEL.csv')
           m=Path('crypto_data_hub/ALT_COMPLETION_LATEST.md')
-          assert j.exists() and c.exists() and m.exists()
+          s=Path('audit/V8_STATUS_MASTER.json')
+          p=Path('google_sheets/V8_STATUS_MASTER.csv')
+          z=Path('config/alt_zones_user_input.csv')
+          assert j.exists() and c.exists() and m.exists() and s.exists() and p.exists() and z.exists()
           x=json.loads(j.read_text(encoding='utf-8'))
           assert x['engine']=='V8_ALT_COMPLETION_AUDIT_v1.0'
           assert x['rules']['no_fabricated_zones'] is True
@@ -64,22 +186,34 @@ jobs:
               assert a['freshness_ok'] is True, (a['symbol'],a['technical'])
           df=pd.read_csv(c)
           assert {'ETH','SOL','LINK','ONDO','AAVE','HBAR'}.issubset(set(df.AKTYWO))
-          print('Wszystkie aktywa mają komplet techniki 1H/4H/1D; ETF BTC/ETH potwierdzone.')
+          st=json.loads(s.read_text(encoding='utf-8'))
+          assert st['production_assets_ready'] is True
+          assert st['etf_btc_eth_ready'] is True
+          assert st['aave_hbar_auto_data_ready'] is True
+          assert st['rules']['never_invent_user_zones'] is True
+          print('Rdzeń altów, ETF, status panelu i zabezpieczenia sprawdzone poprawnie.')
           PY
 
       - name: Zapisz wynik bez konfliktu
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          mkdir -p /tmp/altcomplete
-          cp crypto_data_hub/ALT_COMPLETION_AUDIT.json crypto_data_hub/ALT_COMPLETION_PANEL.csv crypto_data_hub/ALT_COMPLETION_LATEST.md /tmp/altcomplete/
+          mkdir -p /tmp/altcomplete/crypto_data_hub /tmp/altcomplete/audit /tmp/altcomplete/google_sheets /tmp/altcomplete/config
+          cp crypto_data_hub/ALT_COMPLETION_AUDIT.json crypto_data_hub/ALT_COMPLETION_PANEL.csv crypto_data_hub/ALT_COMPLETION_LATEST.md /tmp/altcomplete/crypto_data_hub/
+          cp audit/V8_STATUS_MASTER.json audit/V8_STATUS_MASTER_LATEST.md /tmp/altcomplete/audit/
+          cp google_sheets/V8_STATUS_MASTER.csv google_sheets/ALT_ZONE_INPUT_STATUS.csv /tmp/altcomplete/google_sheets/
+          cp config/alt_zones_user_input.csv /tmp/altcomplete/config/
           for attempt in 1 2 3 4; do
             git fetch origin main
             git reset --hard origin/main
-            cp /tmp/altcomplete/ALT_COMPLETION_AUDIT.json /tmp/altcomplete/ALT_COMPLETION_PANEL.csv /tmp/altcomplete/ALT_COMPLETION_LATEST.md crypto_data_hub/
-            git add crypto_data_hub/ALT_COMPLETION_AUDIT.json crypto_data_hub/ALT_COMPLETION_PANEL.csv crypto_data_hub/ALT_COMPLETION_LATEST.md
+            mkdir -p crypto_data_hub audit google_sheets config
+            cp /tmp/altcomplete/crypto_data_hub/* crypto_data_hub/
+            cp /tmp/altcomplete/audit/* audit/
+            cp /tmp/altcomplete/google_sheets/* google_sheets/
+            cp /tmp/altcomplete/config/* config/
+            git add crypto_data_hub/ALT_COMPLETION_AUDIT.json crypto_data_hub/ALT_COMPLETION_PANEL.csv crypto_data_hub/ALT_COMPLETION_LATEST.md audit/V8_STATUS_MASTER.json audit/V8_STATUS_MASTER_LATEST.md google_sheets/V8_STATUS_MASTER.csv google_sheets/ALT_ZONE_INPUT_STATUS.csv config/alt_zones_user_input.csv
             if git diff --cached --quiet; then exit 0; fi
-            git commit -m 'Update V8 alt completion audit'
+            git commit -m 'Update V8 alt completion and master status'
             if git push origin main; then exit 0; fi
             echo "Konflikt zapisu — próba $attempt"
             sleep $((attempt*3))
