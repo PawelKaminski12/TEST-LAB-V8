@@ -1,0 +1,44 @@
+name: TEST LAB V8 Pełny Podwójny Audyt
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/v8_full_double_audit.py'
+      - '.github/workflows/test-lab-v8-full-double-audit.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test-1:
+    name: TEST 1 z 2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz najnowszy projekt
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Uruchom pełny test 1 z 2
+        run: python scripts/v8_full_double_audit.py --pass-number 1
+
+  test-2:
+    name: TEST 2 z 2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz najnowszy projekt
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Uruchom pełny test 2 z 2
+        run: python scripts/v8_full_double_audit.py --pass-number 2
