@@ -1,0 +1,80 @@
+name: TEST LAB V8 Tactical Shadow Monitor
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tactical_engine/TACTICAL_ENGINE.json'
+      - 'tactical_validation/TACTICAL_THRESHOLD_LAB.json'
+      - 'scripts/v8_tactical_shadow_monitor.py'
+      - '.github/workflows/test-lab-v8-tactical-shadow-monitor.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  shadow-monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz projekt
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Zapamiętaj sumy plików produkcyjnych
+        run: |
+          sha256sum tactical_engine/TACTICAL_ENGINE.json google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt > /tmp/prod_before.sha
+
+      - name: Sprawdź składnię monitora
+        run: python -m py_compile scripts/v8_tactical_shadow_monitor.py
+
+      - name: Uruchom shadow monitor
+        run: python scripts/v8_tactical_shadow_monitor.py
+
+      - name: Sprawdź kontrakt bezpieczeństwa
+        run: |
+          python - <<'PY'
+          import json, csv
+          p=json.load(open('tactical_validation/TACTICAL_SHADOW_LATEST.json',encoding='utf-8'))
+          assert p['research_only'] is True
+          assert p['deploy_block'] is True
+          assert p['auto_execution'] is False
+          assert p['production_thresholds_modified'] is False
+          assert p['promotion_ready'] is False
+          assert p['alt_count'] == 13
+          rows=list(csv.DictReader(open('tactical_validation/TACTICAL_SHADOW_LATEST.csv',encoding='utf-8')))
+          assert len(rows) == 14
+          assert sum(r['scope']=='SHADOW_ALT' for r in rows) == 13
+          assert sum(r['scope']=='MARKET_REGIME_ONLY' for r in rows) == 1
+          assert all(r['shadow_signal'] in {'PASS','HOLD'} for r in rows if r['scope']=='SHADOW_ALT')
+          print('SHADOW CONTRACT PASS')
+          PY
+
+      - name: Potwierdź brak zmian produkcyjnych
+        run: |
+          sha256sum tactical_engine/TACTICAL_ENGINE.json google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt > /tmp/prod_after.sha
+          diff -u /tmp/prod_before.sha /tmp/prod_after.sha
+
+      - name: Final readiness
+        run: python scripts/v8_final_readiness.py
+
+      - name: Pełny audyt 1 z 2
+        run: python scripts/v8_full_double_audit_v2.py --pass-number 1
+
+      - name: Pełny audyt 2 z 2
+        run: python scripts/v8_full_double_audit_v2.py --pass-number 2
+
+      - name: Zapisz wyniki shadow
+        run: |
+          git config user.name "PawelKaminski12"
+          git config user.email "pkaminski1@gmail.com"
+          git add tactical_validation/TACTICAL_SHADOW_LATEST.json tactical_validation/TACTICAL_SHADOW_LATEST.csv tactical_validation/TACTICAL_SHADOW_HISTORY.csv audit/V8_TACTICAL_SHADOW_MONITOR.md audit/V8_FINAL_READINESS.json audit/V8_FINAL_READINESS_LATEST.md audit/V8_FULL_AUDIT_PASS_1.json audit/V8_FULL_AUDIT_PASS_1.md audit/V8_FULL_AUDIT_PASS_2.json audit/V8_FULL_AUDIT_PASS_2.md google_sheets/V8_FINAL_READINESS.csv 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "Brak zmian do zapisu"
+          else
+            git commit -m "Zapisz shadow monitoring kandydata Tactical"
+            git push
+          fi
