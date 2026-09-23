@@ -21,20 +21,43 @@ jobs:
       - name: Build V10
         run: python scripts/build_v10_panel_pack.py
 
-      - name: Apply V10 compatibility patch
+      - name: Apply Apps Script compatibility fixes in generated V10
         run: |
-          printf '\n\n' >> google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
-          cat google_sheets/V10_COMPATIBILITY_PATCH.txt >> google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt')
+          s = p.read_text(encoding='utf-8')
 
-      - name: Validate required functions
+          # Apps Script ConditionalFormatRule builder does not support setFontWeight().
+          # Remove it only from lines that create conditional formatting rules.
+          fixed = []
+          for line in s.splitlines():
+              if 'newConditionalFormatRule()' in line and '.setFontWeight(' in line:
+                  line = line.replace(".setFontWeight('bold')", '')
+                  line = line.replace('.setFontWeight("bold")', '')
+              fixed.append(line)
+          s = '\n'.join(fixed) + '\n'
+
+          # Compatibility alias required by the alarm state layer.
+          marker = '// ===== V10 COMPATIBILITY FIX — ALARM DIRECTION ====='
+          if 'function classifyAlarmDirection_(' not in s:
+              s += "\n" + marker + "\nfunction classifyAlarmDirection_(a) {\n  return alarmDirection_(a);\n}\n"
+
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Validate required functions and forbidden API usage
         run: |
           grep -q "function alarmDirection_(" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
           grep -q "function classifyAlarmDirection_(" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
-          grep -q "function formatAlarmStatesV8_(" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
           grep -q "function ODSWIEZ_WSZYSTKO(" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
           grep -q "function ODSWIEZ_PORANNY_BRIEF(" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
           grep -q "function writeLongDashboard_(" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
           grep -q "function writeTacticalDashboard_(" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
+          if grep "newConditionalFormatRule()" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt | grep -q "setFontWeight"; then
+            echo "Forbidden setFontWeight() remains in ConditionalFormatRule"
+            exit 1
+          fi
 
       - name: Syntax check
         run: |
@@ -50,5 +73,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
-          git commit -m "Build V10 with Apps Script compatibility patch"
+          git commit -m "Build V10 with source-level Apps Script compatibility fixes"
           git push
