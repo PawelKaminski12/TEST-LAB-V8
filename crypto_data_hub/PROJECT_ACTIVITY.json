@@ -1,0 +1,197 @@
+{
+  "generated_at_utc": "2026-09-23T14:22:19.685436+00:00",
+  "engine": "PROJECT_ACTIVITY_v0.1",
+  "assets": [
+    {
+      "symbol": "ETH",
+      "metric_profile": "CHAIN_L1",
+      "source_status": {
+        "defillama_stablecoins": "OK",
+        "defillama_fees": "NOT_APPLICABLE",
+        "defillama_revenue": "NOT_APPLICABLE"
+      },
+      "quality_status": "TRUSTED",
+      "independent_layers_ready": 1,
+      "stablecoin_supply": {
+        "latest_usd": 148331105850.02,
+        "change_7d_pct": -0.27143611899025366,
+        "change_30d_pct": 0.27853280727077045,
+        "trend": "FLAT",
+        "rows": 3221
+      },
+      "protocol_fees": {
+        "latest_daily_usd": null,
+        "sum_7d_usd": null,
+        "sum_30d_usd": null,
+        "change_7d_vs_prev7_pct": null,
+        "change_30d_vs_prev30_pct": null,
+        "trend": "NO_DATA",
+        "rows": 0
+      },
+      "protocol_revenue": {
+        "latest_daily_usd": null,
+        "sum_7d_usd": null,
+        "sum_30d_usd": null,
+        "change_7d_vs_prev7_pct": null,
+        "change_30d_vs_prev30_pct": null,
+        "trend": "NO_DATA",
+        "rows": 0
+      },
+      "long_project_activity_score_0_10": 5,
+      "long_project_activity_label": "NEUTRAL",
+      "tactical_project_activity_score_0_10": 5,
+      "tactical_project_activity_label": "NEUTRAL",
+      "trusted": true,
+      "role": "project/liquidity context only; never standalone buy/sell signal"
+    },
+    {
+      "symbol": "SOL",
+      "metric_profile": "CHAIN_L1",
+      "source_status": {
+        "defillama_stablecoins": "OK",
+        "defillama_fees": "NOT_APPLICABLE",
+        "defillama_revenue": "NOT_APPLICABLE"
+      },
+      "quality_status": "TRUSTED",
+      "independent_layers_ready": 1,
+      "stablecoin_supply": {
+        "latest_usd": 16879246882.26,
+        "change_7d_pct": 5.7218752186347865,
+        "change_30d_pct": 3.721396099991514,
+        "trend": "RISING",
+        "rows": 1597
+      },
+      "protocol_fees": {
+        "latest_daily_usd": null,
+        "sum_7d_usd": null,
+        "sum_30d_usd": null,
+        "change_7d_vs_prev7_pct": null,
+        "change_30d_vs_prev30_pct": null,
+        "trend": "NO_DATA",
+        "rows": 0
+      },
+      "protocol_revenue": {
+        "latest_daily_usd": null,
+        "sum_7d_usd": null,
+        "sum_30d_usd": null,
+        "change_7d_vs_prev7_pct": null,
+        "change_30d_vs_prev30_pct": null,
+        "trend": "NO_DATA",
+        "rows": 0
+      },
+      "long_project_activity_score_0_10": 10,
+      "long_project_activity_label": "STRONG_POSITIVE",
+      "tactical_project_activity_score_0_10": 10,
+      "tactical_project_activity_label": "STRONG_POSITIVE",
+      "trusted": true,
+      "role": "project/liquidity context only; never standalone buy/sell signal"
+    },
+    {
+      "symbol": "LINK",
+      "metric_profile": "INFRA_ORACLE",
+      "source_status": {
+        "defillama_stablecoins": "NOT_APPLICABLE",
+        "defillama_fees": "OK",
+        "defillama_revenue": "OK"
+      },
+      "quality_status": "TRUSTED",
+      "independent_layers_ready": 2,
+      "stablecoin_supply": {
+        "latest_usd": null,
+        "change_7d_pct": null,
+        "change_30d_pct": null,
+        "trend": "NO_DATA",
+        "rows": 0
+      },
+      "protocol_fees": {
+        "latest_daily_usd": 3544.0,
+        "sum_7d_usd": 1122503.0,
+        "sum_30d_usd": 4574358.0,
+        "change_7d_vs_prev7_pct": 1.8993627335281982,
+        "change_30d_vs_prev30_pct": -4.373953453368706,
+        "trend": "FLAT",
+        "rows": 1017
+      },
+      "protocol_revenue": {
+        "latest_daily_usd": 0.0,
+        "sum_7d_usd": 1105263.0,
+        "sum_30d_usd": 4400472.0,
+        "change_7d_vs_prev7_pct": 4.496635158106921,
+        "change_30d_vs_prev30_pct": -2.9478416040471744,
+        "trend": "FLAT",
+        "rows": 755
+      },
+      "long_project_activity_score_0_10": 2,
+      "long_project_activity_label": "NEGATIVE",
+      "tactical_project_activity_score_0_10": 8,
+      "tactical_project_activity_label": "STRONG_POSITIVE",
+      "trusted": true,
+      "role": "project/liquidity context only; never standalone buy/sell signal"
+    },
+    {
+      "symbol": "ONDO",
+      "metric_profile": "DEFI_RWA",
+      "source_status": {
+        "defillama_stablecoins": "NOT_APPLICABLE",
+        "defillama_fees": "OK",
+        "defillama_revenue": "OK"
+      },
+      "quality_status": "TRUSTED",
+      "independent_layers_ready": 2,
+      "stablecoin_supply": {
+        "latest_usd": null,
+        "change_7d_pct": null,
+        "change_30d_pct": null,
+        "trend": "NO_DATA",
+        "rows": 0
+      },
+      "protocol_fees": {
+        "latest_daily_usd": 308171.0,
+        "sum_7d_usd": 1751389.0,
+        "sum_30d_usd": 7663856.0,
+        "change_7d_vs_prev7_pct": -9.543494956788335,
+        "change_30d_vs_prev30_pct": 11.5731025737708,
+        "trend": "FLAT",
+        "rows": 528
+      },
+      "protocol_revenue": {
+        "latest_daily_usd": 0.0,
+        "sum_7d_usd": 0.0,
+        "sum_30d_usd": 0.0,
+        "change_7d_vs_prev7_pct": null,
+        "change_30d_vs_prev30_pct": null,
+        "trend": "NO_DATA",
+        "rows": 528
+      },
+      "long_project_activity_score_0_10": 10,
+      "long_project_activity_label": "STRONG_POSITIVE",
+      "tactical_project_activity_score_0_10": 0,
+      "tactical_project_activity_label": "STRONG_NEGATIVE",
+      "trusted": true,
+      "role": "project/liquidity context only; never standalone buy/sell signal"
+    }
+  ],
+  "summary": {
+    "production_assets": 4,
+    "trusted_assets": 4,
+    "profiles": {
+      "ETH": "CHAIN_L1",
+      "SOL": "CHAIN_L1",
+      "LINK": "INFRA_ORACLE",
+      "ONDO": "DEFI_RWA"
+    }
+  },
+  "hard_rules": {
+    "MISSING_DATA_NEVER_IMPUTED": true,
+    "PROJECT_ACTIVITY_NOT_STANDALONE_SIGNAL": true,
+    "CHAIN_STABLECOIN_SUPPLY_IS_LIQUIDITY_CONTEXT_NOT_TOKEN_FLOW": true,
+    "PROTOCOL_FEES_REVENUE_ARE_USAGE_CONTEXT_NOT_TOKEN_DEMAND": true,
+    "V7_UNTOUCHED": true
+  },
+  "limitations": [
+    "Exchange netflow and whale-wallet flow are not inferred from protocol fees, revenue or stablecoin supply.",
+    "Stablecoin supply on Ethereum/Solana is chain liquidity context, not a direct ETH/SOL holder-flow metric.",
+    "LINK/ONDO protocol fees and revenue measure protocol usage/economics, not token buy pressure.",
+    "Unsupported or temporarily unavailable source values remain null."
+  ]
+}
