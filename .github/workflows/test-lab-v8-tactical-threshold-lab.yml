@@ -1,0 +1,97 @@
+name: TEST LAB V8 Tactical Threshold Lab
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'tactical_validation/TACTICAL_WALKFORWARD_OBSERVATIONS.csv'
+      - '.github/workflows/test-lab-v8-tactical-threshold-lab.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-tactical-threshold-lab
+  cancel-in-progress: false
+
+jobs:
+  threshold-lab:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install --quiet pandas numpy
+      - name: Evaluate threshold robustness with chronological holdout
+        run: |
+          python - <<'PY'
+          import json,itertools
+          from pathlib import Path
+          from datetime import datetime,timezone
+          import numpy as np
+          import pandas as pd
+
+          SRC=Path('tactical_validation/TACTICAL_WALKFORWARD_OBSERVATIONS.csv')
+          OUT=Path('tactical_validation'); OUT.mkdir(exist_ok=True)
+          if not SRC.exists(): raise SystemExit('Missing walk-forward observations')
+          df=pd.read_csv(SRC)
+          df['decision_time_utc']=pd.to_datetime(df['decision_time_utc'],utc=True)
+          prod=df[df['scope'].astype(str).str.upper().eq('PRODUCTION')].copy()
+          prod=prod.sort_values(['symbol','decision_time_utc']).reset_index(drop=True)
+          parts=[]
+          for sym,g in prod.groupby('symbol'):
+              g=g.sort_values('decision_time_utc').copy(); cut=max(1,int(len(g)*0.60)); g['sample']='TRAIN'; g.iloc[cut:,g.columns.get_loc('sample')]='HOLDOUT'; parts.append(g)
+          z=pd.concat(parts,ignore_index=True)
+
+          grid=[]
+          for score_min,fomo_max,trend4_min,rsi_lo,rsi_hi in itertools.product([6,7,8],[4,6,7],[3,4],[45,50],[65,70]):
+              rec={'score_min':score_min,'fomo_max':fomo_max,'trend4_min':trend4_min,'rsi_lo':rsi_lo,'rsi_hi':rsi_hi}
+              per_asset={}; valid=True
+              for sample in ['TRAIN','HOLDOUT']:
+                  d=z[z['sample'].eq(sample)]
+                  s=d[(d.score>=score_min)&(d.fomo_1h<=fomo_max)&(d.fomo_4h<=fomo_max)&(d.trend_4h>=trend4_min)&(d.rsi_4h.between(rsi_lo,rsi_hi,inclusive='both'))]
+                  rec[f'{sample.lower()}_n']=int(len(s))
+                  rec[f'{sample.lower()}_mean12']=float(s.fwd_3x4h_pct.mean()) if len(s) else None
+                  rec[f'{sample.lower()}_median12']=float(s.fwd_3x4h_pct.median()) if len(s) else None
+                  rec[f'{sample.lower()}_win12']=float((s.fwd_3x4h_pct>0).mean()*100) if len(s) else None
+                  rec[f'{sample.lower()}_mean24']=float(s.fwd_6x4h_pct.mean()) if len(s) else None
+                  vals=[]; counts=[]
+                  for sym,g in d.groupby('symbol'):
+                      q=s[s.symbol.eq(sym)]; counts.append(len(q)); vals.append(float(q.fwd_3x4h_pct.mean()) if len(q) else np.nan)
+                  rec[f'{sample.lower()}_min_asset_n']=int(min(counts)) if counts else 0
+                  arr=np.array([v for v in vals if not np.isnan(v)],dtype=float)
+                  rec[f'{sample.lower()}_worst_asset_mean12']=float(arr.min()) if len(arr) else None
+                  rec[f'{sample.lower()}_asset_dispersion12']=float(arr.std()) if len(arr) else None
+              # Robustness gate: enough holdout samples, all 4 production assets represented, no extreme concentration.
+              gate=(rec['holdout_n']>=30 and rec['holdout_min_asset_n']>=5 and rec['train_n']>=45)
+              rec['robustness_gate']=bool(gate)
+              if gate:
+                  rec['robustness_score']=float((rec['holdout_mean12'] or 0)*0.35+(rec['holdout_median12'] or 0)*0.20+(rec['holdout_mean24'] or 0)*0.20+(rec['holdout_worst_asset_mean12'] or 0)*0.15-abs(rec['holdout_asset_dispersion12'] or 0)*0.10)
+              else: rec['robustness_score']=None
+              grid.append(rec)
+
+          gdf=pd.DataFrame(grid)
+          gdf=gdf.sort_values(['robustness_gate','robustness_score','holdout_n'],ascending=[False,False,False],na_position='last').reset_index(drop=True)
+          gdf.to_csv(OUT/'TACTICAL_THRESHOLD_GRID.csv',index=False)
+          eligible=gdf[gdf.robustness_gate.eq(True)].copy()
+          candidate=None
+          if len(eligible):
+              r=eligible.iloc[0]
+              candidate={k:(None if pd.isna(v) else (bool(v) if isinstance(v,(np.bool_,bool)) else float(v) if isinstance(v,(np.floating,float)) else int(v) if isinstance(v,(np.integer,int)) else v)) for k,v in r.to_dict().items()}
+          payload={'generated_at_utc':datetime.now(timezone.utc).isoformat(),'engine':'V8_TACTICAL_THRESHOLD_LAB_v0.1','method':'chronological 60/40 train-holdout on production assets','research_only':True,'not_strategy_frozen':True,'not_execution_connected':True,'current_zones_not_used_historically':True,'market_reader_not_used_historically':True,'grid_candidates':int(len(gdf)),'eligible_candidates':int(len(eligible)),'candidate_for_next_validation':candidate,'selection_note':'Candidate is for another validation round only; do not deploy from this single holdout sample.'}
+          (OUT/'TACTICAL_THRESHOLD_LAB.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False),encoding='utf-8')
+          print(json.dumps(payload,indent=2,ensure_ascii=False))
+          PY
+      - name: Commit threshold-lab outputs
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tactical_validation/TACTICAL_THRESHOLD_GRID.csv tactical_validation/TACTICAL_THRESHOLD_LAB.json
+          if git diff --cached --quiet; then
+            echo 'No changes to commit'
+          else
+            git commit -m 'Update tactical threshold robustness lab'
+            git pull --rebase origin main
+            git push
+          fi
