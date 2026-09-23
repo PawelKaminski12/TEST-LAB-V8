@@ -1,6 +1,6 @@
 symbol,target_scope,price_data_ready,rotation_data_ready,zone_rows,zone_timeframes,core_zone_missing,full_zone_missing,zones_core_ready,zones_full_ready,decision,decision_ready,data_quality_score_0_100,readiness_status
 ETH,PRODUCTION,True,True,30,"1D,1T,2D,2T,3D,4D,5D",,,True,True,CZEKAJ,True,100,PRODUCTION_DATA_READY
-SOL,PRODUCTION,True,True,8,"1D,1T","3D,2T","2D,3D,4D,5D,2T",False,False,KUP PO RETEŚCIE,True,78,PRODUCTION_DATA_GAP
+SOL,PRODUCTION,True,True,33,"1D,1T,2D,2T,3D,4D,5D",,,True,True,CZEKAJ,True,100,PRODUCTION_DATA_READY
 LINK,PRODUCTION,True,True,27,"1D,1T,2D,2T,3D,4D,5D",,,True,True,SPRAWDŹ,True,100,PRODUCTION_DATA_READY
 ONDO,PRODUCTION,True,True,28,"1D,1T,2D,2T,3D,4D,5D",,,True,True,CZEKAJ,True,100,PRODUCTION_DATA_READY
 AAVE,TEST_VALIDATION,True,True,0,,"1D,3D,1T,2T","1D,2D,3D,4D,5D,1T,2T",False,False,DATA_PENDING,False,47,TEST_READY
