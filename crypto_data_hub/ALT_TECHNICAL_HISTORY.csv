@@ -1,0 +1,7 @@
+date,symbol,qa,trend_score_0_4,fresh_breakout_20d,retest_confirmed_10d,fomo_score_0_10,fomo_label
+2026-09-22,ETH,PASS,4,False,True,2,NORMAL
+2026-09-22,SOL,PASS,4,False,True,4,WATCH
+2026-09-22,LINK,PASS,4,False,False,2,NORMAL
+2026-09-22,AAVE,PASS,4,False,False,2,NORMAL
+2026-09-22,HBAR,PASS,3,True,True,5,WATCH
+2026-09-22,ONDO,PASS,3,False,True,3,NORMAL
