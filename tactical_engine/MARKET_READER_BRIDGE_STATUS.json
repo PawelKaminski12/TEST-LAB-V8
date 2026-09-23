@@ -1,0 +1,22 @@
+{
+  "generated_at_utc": "2026-09-23T11:20:18.028876+00:00",
+  "contract_file": "config/market_reader_signals.csv",
+  "schema_ok": true,
+  "rows_received": 0,
+  "usable_rows": 0,
+  "accepted_timeframes": [
+    "1H",
+    "4H",
+    "1D"
+  ],
+  "accepted_signals": [
+    "LONG",
+    "NEUTRAL",
+    "EXIT",
+    "SHORT"
+  ],
+  "strength_scale": "0-10",
+  "freshness_limit_hours": 6,
+  "role": "SECOND_EYE_ONLY_NOT_STANDALONE_SIGNAL",
+  "connected": false
+}
