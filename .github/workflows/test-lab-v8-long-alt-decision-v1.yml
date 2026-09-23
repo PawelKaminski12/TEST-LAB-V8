@@ -37,7 +37,7 @@ jobs:
       - name: Zainstaluj biblioteki
         run: pip install --quiet pandas
 
-      - name: Zbuduj decyzje LONG
+      - name: Zbuduj decyzje LONG po finalnym scaleniu stref 77 z 77
         run: python scripts/v8_long_alt_decision_v1.py
 
       - name: Sprawdź pełną listę i blokady bezpieczeństwa
@@ -57,10 +57,11 @@ jobs:
           assert [a['symbol'] for a in x['assets']]==expected
           for a in x['assets']:
               assert a['technical_ready'] is True
+              assert a['zones']['complete_7_of_7'] is True
+              assert not a['zones']['missing_timeframes']
               if a['decision'].startswith('KUP'):
                   assert not a['blockers'] and not a['entry_blockers']
-                  assert a['zones']['complete_7_of_7'] is True
-          print('LONG: 11/11 altów podłączonych; decyzje i blokady bezpieczeństwa sprawdzone poprawnie.')
+          print('LONG: 11/11 altów, strefy 7/7 oraz blokady bezpieczeństwa sprawdzone poprawnie.')
           PY
 
       - name: Zapisz wyniki bez konfliktu
@@ -75,7 +76,7 @@ jobs:
             cp /tmp/longdecision/ALT_DECISION_ENGINE.json /tmp/longdecision/ALT_DECISION_HISTORY.csv crypto_data_hub/
             git add crypto_data_hub/ALT_DECISION_ENGINE.json crypto_data_hub/ALT_DECISION_HISTORY.csv
             if git diff --cached --quiet; then exit 0; fi
-            git commit -m 'Update V8 LONG decisions 11 alts'
+            git commit -m 'Update V8 LONG decisions 11 alts after final zones'
             if git push origin main; then exit 0; fi
             sleep $((attempt*3))
           done
