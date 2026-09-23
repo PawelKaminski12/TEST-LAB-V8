@@ -1,0 +1,171 @@
+// V8 DUAL ENGINE — ALERT STATE TRANSITIONS V8
+// Warstwa dynamiki alarmów: NOWY / NASILA SIĘ / BEZ ZMIAN / SŁABNIE / WYGASŁ.
+// Nie zmienia logiki LONG/Tactical. Nie wykonuje transakcji.
+
+function alarmDirectionV8_(a) {
+  if (a && a.direction) return String(a.direction);
+  return classifyAlarmDirection_(String((a && a.type) || ''));
+}
+
+function alarmStateIdV8_(a) {
+  return [String(a.symbol||''), String(a.tf||''), alarmDirectionV8_(a)].join('|');
+}
+
+function alarmStrengthV8_(a) {
+  const p = {OSTRZEŻENIE:1,MOCNY:2,KRYTYCZNY:3};
+  const t = {'1H':1,'4H':2,'1D':3,'WIELE TF':4};
+  const tfCount = a && a.multiTfList ? a.multiTfList.length : 1;
+  return (p[String(a.priority||'')]||0)*100 + (t[String(a.tf||'')]||0)*10 + tfCount*3 + Number(a.signalCount||0);
+}
+
+function readExtremeStateMapV8_(sheet) {
+  const out = {};
+  if (!sheet || sheet.getLastRow() < 2) return out;
+  const values = sheet.getDataRange().getValues();
+  const h = values[0].map(String);
+  const idx = {}; h.forEach((x,i)=>idx[x]=i);
+  if (idx['AKTYWO'] == null || idx['INTERWAŁ'] == null) return out;
+  values.slice(1).forEach(r => {
+    const sym = String(r[idx['AKTYWO']]||'').trim();
+    const tf = String(r[idx['INTERWAŁ']]||'').trim();
+    if (!sym || !tf) return;
+    const direction = idx['KIERUNEK'] == null ? 'MIESZANY' : String(r[idx['KIERUNEK']]||'MIESZANY');
+    const a = {
+      symbol:sym, tf:tf, direction:direction,
+      aktywny:String(r[idx['AKTYWNY']]||'').toUpperCase()==='TAK',
+      priority:idx['PRIORYTET']==null?'':String(r[idx['PRIORYTET']]||''),
+      signalCount:idx['ZBIEŻNOŚĆ']==null?0:Number(r[idx['ZBIEŻNOŚĆ']]||0),
+      state:idx['STAN']==null?'':String(r[idx['STAN']]||''),
+      type:idx['SYGNAŁY']==null?'':String(r[idx['SYGNAŁY']]||''),
+      ts:idx['CZAS DANYCH']==null?'':r[idx['CZAS DANYCH']]
+    };
+    out[[sym,tf,direction].join('|')] = a;
+  });
+  return out;
+}
+
+function determineAlarmStateV8_(prev, cur) {
+  if (!cur.aktywny) return prev && prev.aktywny ? 'WYGASŁ' : 'BEZ ZMIAN';
+  if (!prev || !prev.aktywny) return 'NOWY';
+  const before = alarmStrengthV8_(prev), now = alarmStrengthV8_(cur);
+  if (now > before) return 'NASILA SIĘ';
+  if (now < before) return 'SŁABNIE';
+  return 'BEZ ZMIAN';
+}
+
+function applyAlarmStateTransitionsV8_(previous, alarms) {
+  const seen = {};
+  (alarms||[]).forEach(a => {
+    a.direction = alarmDirectionV8_(a);
+    a.stateId = alarmStateIdV8_(a);
+    const prev = previous[a.stateId];
+    a.previousPriority = prev ? prev.priority : '';
+    a.state = determineAlarmStateV8_(prev,a);
+    seen[a.stateId] = true;
+  });
+  Object.keys(previous).forEach(id => {
+    const p = previous[id];
+    if (!p.aktywny || seen[id]) return;
+    alarms.push({
+      aktywny:false,symbol:p.symbol,tf:p.tf,direction:p.direction,type:p.type||'ALARM WYGASŁ',
+      signalCount:0,priority:p.priority||'OSTRZEŻENIE',severity:p.priority||'OSTRZEŻENIE',tfWeight:'',signals:[],
+      rsi:'',mfi:'',macdPct:'',macdZ:'',fomo:'',reason:'Poprzedni aktywny alarm nie występuje już w bieżących danych.',
+      ts:p.ts||'',freshness:'WYGASŁ',ageHours:'',limitHours:'',multiTf:p.tf==='WIELE TF',multiTfList:[],
+      stateId:id,previousPriority:p.priority||'',state:'WYGASŁ',key:'WYGASŁ|'+id
+    });
+  });
+  return alarms;
+}
+
+function setupExtremes_(sheet) {
+  const headers = ['AKTYWNY','AKTYWO','INTERWAŁ','KIERUNEK','STAN','ŚWIEŻOŚĆ','WIEK H','LIMIT H','ZBIEŻNOŚĆ','PRIORYTET','POPRZ. PRIORYTET','WAGA INTERWAŁU','SYGNAŁY','RSI','MFI','MACD %','MACD Z','FOMO','OPIS','CZAS DANYCH'];
+  sheet.getRange(1,1,1,headers.length).setValues([headers]);
+  sheet.setFrozenRows(1); sheet.setFrozenColumns(5);
+}
+
+function writeExtremeAlarms_(sheet, alarms) {
+  const previous = readExtremeStateMapV8_(sheet);
+  applyAlarmStateTransitionsV8_(previous, alarms);
+  const headers = ['AKTYWNY','AKTYWO','INTERWAŁ','KIERUNEK','STAN','ŚWIEŻOŚĆ','WIEK H','LIMIT H','ZBIEŻNOŚĆ','PRIORYTET','POPRZ. PRIORYTET','WAGA INTERWAŁU','SYGNAŁY','RSI','MFI','MACD %','MACD Z','FOMO','OPIS','CZAS DANYCH'];
+  sheet.clearContents();
+  sheet.getRange(1,1,1,headers.length).setValues([headers]);
+  const rows = (alarms||[]).map(a => [
+    a.aktywny?'TAK':'NIE',a.symbol,a.tf,a.direction,a.state,a.freshness||'',a.ageHours,a.limitHours,
+    a.signalCount,a.priority,a.previousPriority||'',a.tfWeight||'',a.type,a.rsi,a.mfi,a.macdPct,a.macdZ,a.fomo,a.reason,a.ts
+  ]);
+  if (rows.length) sheet.getRange(2,1,rows.length,headers.length).setValues(rows);
+  else sheet.getRange(2,1,1,headers.length).setValues([['NIE','','','','BRAK','BRAK','','',0,'BRAK','','','BRAK AKTYWNYCH EKSTREMÓW','','','','','','','']]);
+  sheet.setFrozenRows(1); sheet.setFrozenColumns(5);
+  sheet.getRange(1,1,1,headers.length).setFontWeight('bold');
+  sheet.getRange(1,1,Math.max(2,rows.length+1),headers.length).setWrap(true).setVerticalAlignment('middle');
+  [70,78,80,105,105,90,65,65,75,95,100,105,280,65,65,75,75,65,400,170].forEach((w,i)=>sheet.setColumnWidth(i+1,w));
+  formatAlarmStatesV8_(sheet, rows.length);
+}
+
+function formatAlarmStatesV8_(sheet,rowCount) {
+  const n=Math.max(1,rowCount);
+  const stateRange=sheet.getRange(2,5,n,1), priorityRange=sheet.getRange(2,10,n,1), freshRange=sheet.getRange(2,6,n,1);
+  const rules=[];
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('NOWY').setBackground('#d9ead3').setFontWeight('bold').setRanges([stateRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('NASILA SIĘ').setBackground('#f4cccc').setFontWeight('bold').setRanges([stateRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('SŁABNIE').setBackground('#fff2cc').setRanges([stateRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('WYGASŁ').setBackground('#d9d9d9').setRanges([stateRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('KRYTYCZNY').setBackground('#f4cccc').setFontWeight('bold').setRanges([priorityRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('MOCNY').setBackground('#fce5cd').setFontWeight('bold').setRanges([priorityRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('STARY').setBackground('#d9d9d9').setRanges([freshRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('BRAK CZASU').setBackground('#d9d9d9').setRanges([freshRange]).build());
+  sheet.setConditionalFormatRules(rules);
+}
+
+function stateTagV8_(a) {
+  if (!a) return '';
+  if (a.state==='NOWY') return '● NOWY';
+  if (a.state==='NASILA SIĘ') return '↑ NASILA SIĘ';
+  if (a.state==='SŁABNIE') return '↓ SŁABNIE';
+  return '';
+}
+
+function updateMainPanelExtremeSummary_(sheet, alarms) {
+  if (!sheet || sheet.getLastRow()<2) return;
+  const bySymbol={};
+  (alarms||[]).forEach(a=>{ if(panelEligibleExtreme_(a)) (bySymbol[a.symbol]=bySymbol[a.symbol]||[]).push(a); });
+  const values=sheet.getDataRange().getValues(), head=values[0].map(String);
+  const symIdx=head.indexOf('AKTYWO'), alertIdx=head.indexOf('ALERT');
+  if(symIdx<0||alertIdx<0) return;
+  for(let i=1;i<values.length;i++){
+    const sym=String(values[i][symIdx]||'').trim(); if(!sym) continue;
+    const best=selectMainPanelExtreme_(bySymbol[sym]||[]);
+    let base=String(values[i][alertIdx]||'').trim();
+    base=base.replace(/\s*\|\s*[🟡🟠🔴]\s*(OSTRZEŻENIE|MOCNY|KRYTYCZNY)\s+(1H|4H|1D|WIELE TF)\s+—\s+[^|]+/g,'').trim();
+    if(best){
+      const icon=best.priority==='KRYTYCZNY'?'🔴':best.priority==='MOCNY'?'🟠':'🟡';
+      const core=best.multiTf ? icon+' '+best.priority+' WIELE TF — '+best.direction+' '+best.multiTfList.join('+') : icon+' '+best.priority+' '+best.tf+' — '+best.signalCount+' sygnał(y)';
+      const tag=stateTagV8_(best); const extra=tag?core+' '+tag:core;
+      values[i][alertIdx]=(!base||base==='BRAK')?extra:base+' | '+extra;
+    } else values[i][alertIdx]=base||'BRAK';
+  }
+  sheet.getRange(1,1,values.length,values[0].length).setValues(values); formatPanel_(sheet); formatMainPanelAlerts_(sheet);
+}
+
+function appendExtremeHistory_(ss, oldKeys, alarms) {
+  const sh=ss.getSheetByName(V8_SHEETS.history);
+  if(sh.getLastRow()===0){sh.appendRow(['CZAS','AKTYWO','LONG','TACTICAL','RYZYKO','ZGODNOŚĆ','ALERT','POWÓD']);sh.setFrozenRows(1);}
+  const now=new Date();
+  (alarms||[]).forEach(a=>{
+    if(a.state==='BEZ ZMIAN') return;
+    const label=a.state==='WYGASŁ'?'ALARM WYGASŁ '+a.tf:'ALARM '+a.state+' '+a.tf;
+    sh.appendRow([now,a.symbol,'','',a.priority,'',label,(a.direction||'')+' | '+(a.reason||a.type||'')]);
+  });
+}
+
+function notifyNewExtremeAlarms_(ss, oldKeys, alarms) {
+  const actionable=(alarms||[]).filter(a=>a.aktywny && panelEligibleExtreme_(a) && (a.state==='NOWY'||a.state==='NASILA SIĘ'));
+  if(!actionable.length) return;
+  const escalated=actionable.filter(a=>a.state==='NASILA SIĘ');
+  const chosen=escalated.length?escalated:actionable;
+  const text=chosen.map(a=>a.symbol+' '+a.tf+' — '+a.priority+' — '+a.state+' — '+(a.multiTf?a.type:(a.signalCount+' sygnał(y): '+a.type))).join('\n');
+  const title=escalated.length?'ALARM NASILA SIĘ V8':'NOWY ALARM V8';
+  ss.toast(text.slice(0,250),title,8);
+  const cfg=getExtremeSettings_(ss);
+  if(cfg.emailOn&&cfg.emailTo) MailApp.sendEmail(cfg.emailTo,'V8 DUAL ENGINE — '+title,text);
+}
