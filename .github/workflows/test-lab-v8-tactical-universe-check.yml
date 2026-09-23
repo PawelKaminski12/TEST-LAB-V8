@@ -48,25 +48,29 @@ jobs:
           if got != expected:
               raise SystemExit(f'Nieprawidłowa lista aktywów: {got}')
 
-          bases=['https://data-api.binance.vision/api/v3/klines','https://api.binance.com/api/v3/klines']
+          spot_bases=['https://data-api.binance.vision/api/v3/klines','https://api.binance.com/api/v3/klines']
+          futures_bases=['https://fapi.binance.com/fapi/v1/klines']
           intervals={'1H':'1h','4H':'4h','1D':'1d'}
           rows=[]
           all_ok=True
           for _,r in cfg.iterrows():
               sym=str(r['symbol']).upper().strip(); pair=str(r['pair']).upper().strip()
               for tf,iv in intervals.items():
-                  ok=False; count=0; err=''; src=''
-                  for base in bases:
+                  ok=False; count=0; err=''; src=''; source_type='SPOT'
+                  candidates=[('SPOT',x) for x in spot_bases]
+                  if sym=='SPX6900':
+                      candidates += [('FUTURES',x) for x in futures_bases]
+                  for typ,base in candidates:
                       try:
                           rr=requests.get(base,params={'symbol':pair,'interval':iv,'limit':500},timeout=25)
                           rr.raise_for_status(); data=rr.json()
                           count=len(data) if isinstance(data,list) else 0
                           if count < 220:
                               raise RuntimeError(f'za mało świec: {count}')
-                          ok=True; src=base; err=''; break
+                          ok=True; src=base; source_type=typ; err=''; break
                       except Exception as e:
                           err=str(e)
-                  rows.append({'AKTYWO':sym,'PARA':pair,'INTERWAŁ':tf,'STATUS':'OK' if ok else 'BŁĄD','LICZBA_ŚWIEC':count,'ŹRÓDŁO':src,'BŁĄD':err})
+                  rows.append({'AKTYWO':sym,'PARA':pair,'INTERWAŁ':tf,'STATUS':'OK' if ok else 'BŁĄD','LICZBA_ŚWIEC':count,'RODZAJ_ŹRÓDŁA':source_type if ok else 'BRAK','ŹRÓDŁO':src,'BŁĄD':err})
                   all_ok = all_ok and ok
 
           out=Path('audit'); out.mkdir(exist_ok=True)
@@ -74,11 +78,12 @@ jobs:
           df.to_csv(out/'TACTICAL_UNIVERSE_CHECK.csv',index=False)
           summary={
               'generated_at_utc':datetime.now(timezone.utc).isoformat(),
-              'engine':'V8_TACTICAL_UNIVERSE_CHECK_v1.0',
+              'engine':'V8_TACTICAL_UNIVERSE_CHECK_v1.1',
               'expected_assets':expected,
               'asset_count':len(expected),
               'timeframes':['1H','4H','1D'],
               'all_pairs_and_timeframes_ready':bool(all_ok),
+              'spx6900_policy':'SPOT first; Binance USD-M perpetual futures only if spot is unavailable',
               'results':rows,
               'tradingview_connected':False,
               'execution_connected':False,
