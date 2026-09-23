@@ -29,14 +29,14 @@ jobs:
       - name: Build crypto data hub
         run: |
           python - <<'PY'
-          import csv, io, json, re, urllib.request, zipfile
+          import csv, io, json, urllib.request, zipfile
           from datetime import date, datetime, timedelta, timezone
           from pathlib import Path
           import pandas as pd
 
           OUT=Path('crypto_data_hub'); OUT.mkdir(exist_ok=True)
           ART=Path('crypto_data_hub_artifact'); ART.mkdir(exist_ok=True)
-          UA={'User-Agent':'Mozilla/5.0 TEST-LAB-V8/7A.1'}
+          UA={'User-Agent':'Mozilla/5.0 TEST-LAB-V8/8A.1'}
           now=datetime.now(timezone.utc)
           target=now.date()-timedelta(days=1)
 
@@ -124,10 +124,12 @@ jobs:
                       'value':float(s.iloc[-1]),
                       'above_sma50':bool(s.iloc[-1]>m50.iloc[-1]),
                       'sma50_rising_20d':slope50_up(s),
-                      'change_20d_pct':float((s.iloc[-1]/s.iloc[-21]-1)*100)
+                      'change_5d_pct':float((s.iloc[-1]/s.iloc[-6]-1)*100),
+                      'change_10d_pct':float((s.iloc[-1]/s.iloc[-11]-1)*100),
+                      'change_20d_pct':float((s.iloc[-1]/s.iloc[-21]-1)*100),
+                      'change_50d_pct':float((s.iloc[-1]/s.iloc[-51]-1)*100),
                   }
 
-          # Market-cap rotation layer. Keep V8_EQ labels until TradingView parity is validated.
           cg_global=get_json('https://api.coingecko.com/api/v3/global')['data']
           cg_markets=get_json('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false')
           total=float(cg_global['total_market_cap']['usd'])
@@ -140,7 +142,6 @@ jobs:
           others_eq=max(0.0,total-top10_sum)
           others_btc_eq=others_eq/btc_mc if btc_mc else None
 
-          # Stablecoin liquidity — DefiLlama.
           stable_hist=get_json('https://stablecoins.llama.fi/stablecoincharts/all')
           sh=[]
           for x in stable_hist:
@@ -159,12 +160,10 @@ jobs:
               'market_cap_usd':stable_now,
               'change_1d_pct':((stable_now/stable_ago(1)-1)*100) if stable_now and stable_ago(1) else None,
               'change_7d_pct':((stable_now/stable_ago(7)-1)*100) if stable_now and stable_ago(7) else None,
+              'change_14d_pct':((stable_now/stable_ago(14)-1)*100) if stable_now and stable_ago(14) else None,
               'change_30d_pct':((stable_now/stable_ago(30)-1)*100) if stable_now and stable_ago(30) else None,
           }
 
-          # ETF flows.
-          # Farside blocks plain GitHub runner requests (403). Operational mirror below
-          # is refreshed every 30 minutes from Farside using headless Chrome.
           ETF_MIRROR='https://raw.githubusercontent.com/haturatu/crypto-etf-flow/main'
           def etf_flow(filename,label):
               txt=get_text(f'{ETF_MIRROR}/{filename}')
@@ -176,15 +175,27 @@ jobs:
               df=df.dropna(subset=['Date']).sort_values('Date').drop_duplicates('Date',keep='last')
               df.to_csv(ART/f'{label}_ETF_FLOWS.csv',index=False)
               s=df['Total']
-              sum5=float(s.tail(5).sum()) if len(s) else None
-              sum20=float(s.tail(20).sum()) if len(s) else None
+              def tsum(n): return float(s.tail(n).sum()) if len(s) else None
+              sum5=tsum(5); sum20=tsum(20); sum30=tsum(30)
               prev5=float(s.iloc[-10:-5].sum()) if len(s)>=10 else None
+              prev20=float(s.iloc[-40:-20].sum()) if len(s)>=40 else None
+              accel5=sum5-prev5 if prev5 is not None else None
+              trend='INSUFFICIENT'
+              if prev5 is not None:
+                  if sum5>0 and accel5>0: trend='INFLOW_ACCELERATING'
+                  elif sum5>0: trend='INFLOW_POSITIVE'
+                  elif sum5<0 and accel5<0: trend='OUTFLOW_ACCELERATING'
+                  elif sum5<0: trend='OUTFLOW_NEGATIVE'
+                  else: trend='NEUTRAL'
               return {
                   'last_date':df.iloc[-1]['Date'].date().isoformat() if len(df) else None,
                   'flow_1d_usdm':float(s.iloc[-1]) if len(s) else None,
                   'flow_5d_usdm':sum5,
                   'flow_20d_usdm':sum20,
-                  'acceleration_5d_vs_prev5_usdm':sum5-prev5 if prev5 is not None else None,
+                  'flow_30d_usdm':sum30,
+                  'acceleration_5d_vs_prev5_usdm':accel5,
+                  'acceleration_20d_vs_prev20_usdm':sum20-prev20 if prev20 is not None else None,
+                  'trend_label':trend,
                   'rows':int(len(df)),
                   'primary_source':'Farside Investors',
                   'transport':'haturatu/crypto-etf-flow mirror (30m refresh from Farside via headless Chrome)'
@@ -214,11 +225,12 @@ jobs:
               'sol_etf_rows':sol_etf['rows'],
               'coingecko_total_positive':total>0,
               'stablecoin_history_rows':len(sh),
+              'eth_btc_history_rows':int(len(base)),
               'etf_transport':'Farside mirror because direct Farside returned HTTP 403 on GitHub runner'
           }
           qa['PASS']=bool(qa['binance_all_end_target'] and qa['binance_min_rows']>=200 and
                           qa['btc_etf_rows']>100 and qa['eth_etf_rows']>100 and qa['sol_etf_rows']>=3 and
-                          qa['coingecko_total_positive'] and qa['stablecoin_history_rows']>100)
+                          qa['coingecko_total_positive'] and qa['stablecoin_history_rows']>100 and qa['eth_btc_history_rows']>200)
 
           snapshot={
               'generated_at_utc':now.isoformat(),
@@ -235,6 +247,9 @@ jobs:
               'market_rotation':{
                   'btc_dominance_pct':btc_dom,
                   'eth_dominance_pct':eth_dom,
+                  'eth_btc_ratio':ratios['ETH_BTC']['value'],
+                  'eth_btc_change_5d_pct':ratios['ETH_BTC']['change_5d_pct'],
+                  'eth_btc_change_20d_pct':ratios['ETH_BTC']['change_20d_pct'],
                   'V8_TOTAL3_EQ_usd':total3_eq,
                   'V8_OTHERS_EQ_usd':others_eq,
                   'V8_OTHERS_BTC_EQ_ratio':others_btc_eq,
@@ -252,12 +267,13 @@ jobs:
           row={
               'date':target.isoformat(),
               'btc_close':btc_reg['close'],'eth_close':eth_reg['close'],
+              'eth_btc_ratio':ratios['ETH_BTC']['value'],'eth_btc_5d_pct':ratios['ETH_BTC']['change_5d_pct'],'eth_btc_20d_pct':ratios['ETH_BTC']['change_20d_pct'],
               'btc_dom_pct':btc_dom,'eth_dom_pct':eth_dom,
               'v8_total3_eq_usd':total3_eq,'v8_others_btc_eq':others_btc_eq,
-              'btc_etf_1d_usdm':btc_etf['flow_1d_usdm'],'btc_etf_5d_usdm':btc_etf['flow_5d_usdm'],'btc_etf_20d_usdm':btc_etf['flow_20d_usdm'],
-              'eth_etf_1d_usdm':eth_etf['flow_1d_usdm'],'eth_etf_5d_usdm':eth_etf['flow_5d_usdm'],'eth_etf_20d_usdm':eth_etf['flow_20d_usdm'],
-              'sol_etf_1d_usdm':sol_etf['flow_1d_usdm'],'sol_etf_5d_usdm':sol_etf['flow_5d_usdm'],'sol_etf_20d_usdm':sol_etf['flow_20d_usdm'],
-              'stablecoin_mcap_usd':stable_now,'stablecoin_7d_pct':stable_liq['change_7d_pct'],
+              'btc_etf_1d_usdm':btc_etf['flow_1d_usdm'],'btc_etf_5d_usdm':btc_etf['flow_5d_usdm'],'btc_etf_20d_usdm':btc_etf['flow_20d_usdm'],'btc_etf_30d_usdm':btc_etf['flow_30d_usdm'],
+              'eth_etf_1d_usdm':eth_etf['flow_1d_usdm'],'eth_etf_5d_usdm':eth_etf['flow_5d_usdm'],'eth_etf_20d_usdm':eth_etf['flow_20d_usdm'],'eth_etf_30d_usdm':eth_etf['flow_30d_usdm'],
+              'sol_etf_1d_usdm':sol_etf['flow_1d_usdm'],'sol_etf_5d_usdm':sol_etf['flow_5d_usdm'],'sol_etf_20d_usdm':sol_etf['flow_20d_usdm'],'sol_etf_30d_usdm':sol_etf['flow_30d_usdm'],
+              'stablecoin_mcap_usd':stable_now,'stablecoin_7d_pct':stable_liq['change_7d_pct'],'stablecoin_14d_pct':stable_liq['change_14d_pct'],'stablecoin_30d_pct':stable_liq['change_30d_pct'],
               'qa_pass':qa['PASS']
           }
           new=pd.DataFrame([row])
@@ -265,7 +281,7 @@ jobs:
               old=pd.read_csv(hist_path)
               new=pd.concat([old,new],ignore_index=True).drop_duplicates('date',keep='last').sort_values('date')
           new.to_csv(hist_path,index=False)
-          print(json.dumps(snapshot,indent=2)[:16000])
+          print(json.dumps(snapshot,indent=2)[:18000])
           if not qa['PASS']: raise SystemExit('CRYPTO DATA HUB QA FAILED')
           PY
 
@@ -278,13 +294,6 @@ jobs:
             echo 'No snapshot changes to commit'
           else
             git commit -m 'Update V8 crypto data hub snapshot'
+            git pull --rebase origin main
             git push
           fi
-
-      - name: Upload detailed crypto data hub artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: TEST-LAB-V8-CRYPTO-DATA-HUB
-          path: crypto_data_hub_artifact/
-          if-no-files-found: error
-          retention-days: 14
