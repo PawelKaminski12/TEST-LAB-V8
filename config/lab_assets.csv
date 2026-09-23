@@ -1,0 +1,4 @@
+symbol,source_symbol,asset_type,mode,enabled,added_at_utc,notes
+ETH,ETH-USD,CRYPTO,BOTH,false,,example-disabled
+ANET,ANET,STOCK,BOTH,false,,example-disabled
+PEPE,PEPE-USD,MEME,FAST,false,,example-disabled
