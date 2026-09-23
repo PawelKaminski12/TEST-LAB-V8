@@ -45,13 +45,9 @@ jobs:
           CFG=Path('config/alt_universe.csv')
           ZONES=Path('config/alt_zones.csv')
 
-          required=[
-            ROOT/'LATEST_SNAPSHOT.json', ROOT/'ALT_ROTATION_SCORE.json',
-            ROOT/'ALT_TECHNICAL_LAYER.json', CFG, ZONES
-          ]
+          required=[ROOT/'LATEST_SNAPSHOT.json',ROOT/'ALT_ROTATION_SCORE.json',ROOT/'ALT_TECHNICAL_LAYER.json',CFG,ZONES]
           missing=[str(p) for p in required if not p.exists()]
-          if missing:
-              raise SystemExit('Missing: '+', '.join(missing))
+          if missing: raise SystemExit('Missing: '+', '.join(missing))
 
           snap=json.loads((ROOT/'LATEST_SNAPSHOT.json').read_text())
           rot=json.loads((ROOT/'ALT_ROTATION_SCORE.json').read_text())
@@ -62,8 +58,7 @@ jobs:
           zones['symbol']=zones['symbol'].astype(str).str.upper()
           zones['timeframe']=zones['timeframe'].astype(str).str.upper()
           zones['side']=zones['side'].astype(str).str.upper()
-          if 'source_note' not in zones.columns:
-              zones['source_note']=''
+          if 'source_note' not in zones.columns: zones['source_note']=''
           zones['source_note']=zones['source_note'].fillna('').astype(str)
 
           techmap={x['symbol']:x for x in tech.get('assets',[])}
@@ -75,8 +70,7 @@ jobs:
           def zone_state(sym,price):
               z=zones[zones.symbol.eq(sym)].copy()
               confirmed=z[z.source_status.astype(str).str.upper().eq('CONFIRMED')]
-              if confirmed.empty:
-                  return {'zone_ready':False,'zone_count':0}
+              if confirmed.empty: return {'zone_ready':False,'zone_count':0}
 
               def inrow(r): return float(r['from']) <= price <= float(r['to'])
               dem=confirmed[confirmed.side.eq('DEMAND')]
@@ -84,35 +78,21 @@ jobs:
               in_dem=[r for _,r in dem.iterrows() if inrow(r)]
               in_sup=[r for _,r in sup.iterrows() if inrow(r)]
 
-              # DCA1: highest top of confirmed 1D demand.
               d1=dem[dem.timeframe.eq('1D')]
               d1v=float(d1['to'].max()) if not d1.empty else None
 
-              # DCA3: explicit canonical marker wins. Otherwise use the lowest
-              # active 1T demand, excluding rows explicitly marked archival/reserve
-              # or 'do not use as DCA3'. This preserves historical zones without
-              # allowing them to corrupt the canonical DCA ladder.
               d3_all=dem[dem.timeframe.eq('1T')].copy()
-              d3v=None
-              d3_source='NONE'
+              d3v=None; d3_source='NONE'
               if not d3_all.empty:
                   note=d3_all['source_note'].str.upper()
                   canonical=d3_all[note.str.contains('KANON DCA3',regex=False)]
                   if not canonical.empty:
-                      d3v=float(canonical['from'].min())
-                      d3_source='EXPLICIT_CANON'
+                      d3v=float(canonical['from'].min()); d3_source='EXPLICIT_CANON'
                   else:
-                      excluded=(
-                          note.str.contains('NIE UZYWAJ JAKO DCA3',regex=False) |
-                          note.str.contains('NIE UŻYWAJ JAKO DCA3',regex=False) |
-                          note.str.contains('REZERWOWA',regex=False) |
-                          note.str.contains('HISTORYCZNA',regex=False) |
-                          note.str.contains('ARCHIWAL',regex=False)
-                      )
+                      excluded=(note.str.contains('NIE UZYWAJ JAKO DCA3',regex=False)|note.str.contains('NIE UŻYWAJ JAKO DCA3',regex=False)|note.str.contains('REZERWOWA',regex=False)|note.str.contains('HISTORYCZNA',regex=False)|note.str.contains('ARCHIWAL',regex=False))
                       active=d3_all[~excluded]
                       if not active.empty:
-                          d3v=float(active['from'].min())
-                          d3_source='LOWEST_ACTIVE_1T_DEMAND'
+                          d3v=float(active['from'].min()); d3_source='LOWEST_ACTIVE_1T_DEMAND'
 
               d2v=(d1v+d3v)/2 if d1v is not None and d3v is not None else None
 
@@ -120,21 +100,15 @@ jobs:
                   lo,hi=float(r['from']),float(r['to'])
                   if lo<=price<=hi: return 0.0
                   return min(abs(price-lo),abs(price-hi))
-              nearest_d=None
-              nearest_s=None
+              nearest_d=None; nearest_s=None
               if not dem.empty:
-                  rr=min((r for _,r in dem.iterrows()), key=dist_to_zone)
+                  rr=min((r for _,r in dem.iterrows()),key=dist_to_zone)
                   nearest_d={'timeframe':rr['timeframe'],'from':float(rr['from']),'to':float(rr['to']),'distance_pct':dist_to_zone(rr)/price*100}
               if not sup.empty:
-                  rr=min((r for _,r in sup.iterrows()), key=dist_to_zone)
+                  rr=min((r for _,r in sup.iterrows()),key=dist_to_zone)
                   nearest_s={'timeframe':rr['timeframe'],'from':float(rr['from']),'to':float(rr['to']),'distance_pct':dist_to_zone(rr)/price*100}
 
-              return {
-                'zone_ready':True,'zone_count':int(len(confirmed)),
-                'in_demand':bool(in_dem),'in_supply':bool(in_sup),
-                'dca1':d1v,'dca2':d2v,'dca3':d3v,'dca3_source':d3_source,
-                'nearest_demand':nearest_d,'nearest_supply':nearest_s
-              }
+              return {'zone_ready':True,'zone_count':int(len(confirmed)),'in_demand':bool(in_dem),'in_supply':bool(in_sup),'dca1':d1v,'dca2':d2v,'dca3':d3v,'dca3_source':d3_source,'nearest_demand':nearest_d,'nearest_supply':nearest_s}
 
           assets=[]
           for _,row in cfg.iterrows():
@@ -142,101 +116,63 @@ jobs:
               if sym=='BTC': continue
               t=techmap.get(sym)
               if not t:
-                  assets.append({'symbol':sym,'decision':'DATA_PENDING','reason':'No technical layer'})
+                  assets.append({'symbol':sym,'decision':'DATA_PENDING','reason':'No technical layer','blockers':['TECHNICAL_LAYER_MISSING'],'entry_blockers':['TECHNICAL_LAYER_MISSING']})
                   continue
 
-              price=float(t['close'])
-              zs=zone_state(sym,price)
-              trend=int(t.get('trend_score_0_4') or 0)
-              fomo=int(t.get('fomo_score_0_10') or 0)
-              retest=bool(t.get('retest_confirmed_10d'))
-              breakout=bool(t.get('fresh_breakout_20d'))
-              vr=float(t.get('volume_ratio_vs_20d') or 0)
+              price=float(t['close']); zs=zone_state(sym,price)
+              trend=int(t.get('trend_score_0_4') or 0); fomo=int(t.get('fomo_score_0_10') or 0)
+              retest=bool(t.get('retest_confirmed_10d')); breakout=bool(t.get('fresh_breakout_20d')); vr=float(t.get('volume_ratio_vs_20d') or 0)
 
               blockers=[]
               if not qa_pass: blockers.append('QA_FAIL')
               if not zs.get('zone_ready'): blockers.append('STREFY_MISSING')
 
-              decision='CZEKAJ'
-              reason=[]
+              entry_blockers=[]
+              if zs.get('in_supply'): entry_blockers.append('IN_SUPPLY')
+              if fomo>=8: entry_blockers.append('FOMO_HARD_BLOCK')
 
+              decision='CZEKAJ'; reason=[]
               if blockers:
-                  decision='DATA_PENDING'
-                  reason.append('Brakuje krytycznej warstwy: '+', '.join(blockers))
+                  decision='DATA_PENDING'; reason.append('Brakuje krytycznej warstwy: '+', '.join(blockers))
               elif fomo>=8:
-                  decision='CZEKAJ — FOMO'
-                  reason.append('FOMO hard block >=8')
+                  decision='CZEKAJ — FOMO'; reason.append('FOMO hard block >=8')
               elif zs.get('in_supply') and not retest:
-                  decision='SPRAWDŹ'
-                  reason.append('Cena w potwierdzonej podaży bez potwierdzonego retestu')
+                  decision='SPRAWDŹ'; reason.append('Cena w potwierdzonej podaży bez potwierdzonego retestu')
+              elif zs.get('in_supply'):
+                  decision='CZEKAJ'; reason.append('Cena w potwierdzonej podaży; price-action retest nie jest potwierdzeniem wybicia strefy podaży')
               elif zs.get('in_demand') and trend>=2 and fomo<8:
-                  decision='KUP DCA'
-                  reason.append('Cena w potwierdzonej strefie popytu + trend nie jest złamany')
-              elif global_score>=6 and trend>=3 and retest and fomo<=5 and not zs.get('in_supply'):
-                  decision='KUP PO RETEŚCIE'
-                  reason.append('Rotacja >=6, trend >=3, retest potwierdzony, brak FOMO hard block')
+                  decision='KUP DCA'; reason.append('Cena w potwierdzonej strefie popytu + trend nie jest złamany')
+              elif global_score>=6 and trend>=3 and retest and fomo<=5:
+                  decision='KUP PO RETEŚCIE'; reason.append('Rotacja >=6, trend >=3, retest potwierdzony, brak FOMO hard block i brak podaży')
               elif global_score>=6 and trend>=3 and breakout and fomo<=5:
-                  decision='SPRAWDŹ'
-                  reason.append('Breakout jest świeży, ale czekamy na potwierdzenie/retest')
-              elif global_score>=6 and trend>=4 and fomo<=4 and vr>=1.0 and not zs.get('in_supply'):
-                  decision='KUP TRENDOWO'
-                  reason.append('Silny trend + dodatni kontekst rotacji + wolumen')
+                  decision='SPRAWDŹ'; reason.append('Breakout jest świeży, ale czekamy na potwierdzenie/retest')
+              elif global_score>=6 and trend>=4 and fomo<=4 and vr>=1.0:
+                  decision='KUP TRENDOWO'; reason.append('Silny trend + dodatni kontekst rotacji + wolumen + brak podaży')
               else:
-                  decision='CZEKAJ'
-                  reason.append('Brak pełnego zestawu warunków wejścia')
+                  decision='CZEKAJ'; reason.append('Brak pełnego zestawu warunków wejścia')
 
-              assets.append({
-                'symbol':sym,
-                'decision':decision,
-                'reason':' | '.join(reason),
-                'price':price,
-                'rotation_score_0_10':global_score,
-                'rotation_status':global_status,
-                'rotation_confidence':global_conf,
-                'trend_score_0_4':trend,
-                'fomo_score_0_10':fomo,
-                'fomo_label':t.get('fomo_label'),
-                'fresh_breakout_20d':breakout,
-                'retest_confirmed_10d':retest,
-                'volume_ratio_vs_20d':vr,
-                'zones':zs,
-                'blockers':blockers
-              })
+              assets.append({'symbol':sym,'decision':decision,'reason':' | '.join(reason),'price':price,'rotation_score_0_10':global_score,'rotation_status':global_status,'rotation_confidence':global_conf,'trend_score_0_4':trend,'fomo_score_0_10':fomo,'fomo_label':t.get('fomo_label'),'fresh_breakout_20d':breakout,'retest_confirmed_10d':retest,'volume_ratio_vs_20d':vr,'zones':zs,'blockers':blockers,'entry_blockers':entry_blockers})
 
-          out={
-            'date':snap.get('target_date'),
-            'engine':'ALT_DECISION_ENGINE_v0.2',
-            'universe_source':'config/alt_universe.csv',
-            'zones_source':'config/alt_zones.csv',
-            'important_rules':{
-              'dynamic_universe':True,
-              'no_zone_guessing':True,
-              'relative_strength_not_hard_gate':True,
-              'rotation_score_not_standalone_buy_signal':True,
-              'fomo_hard_block_at_8':True,
-              'dca3_prefers_explicit_canon_and_excludes_archival_reserve_rows':True,
-              'current_output_is_research_engine_status_not_execution':True
-            },
-            'assets':assets
-          }
-          (ROOT/'ALT_DECISION_ENGINE.json').write_text(json.dumps(out,indent=2),encoding='utf-8')
+          out={'date':snap.get('target_date'),'engine':'ALT_DECISION_ENGINE_v0.3','universe_source':'config/alt_universe.csv','zones_source':'config/alt_zones.csv','important_rules':{'dynamic_universe':True,'no_zone_guessing':True,'relative_strength_not_hard_gate':True,'rotation_score_not_standalone_buy_signal':True,'fomo_hard_block_at_8':True,'dca3_prefers_explicit_canon_and_excludes_archival_reserve_rows':True,'in_supply_never_emits_buy_status_without_true_zone_breakout_retest':True,'price_action_retest_is_not_zone_retest':True,'current_output_is_research_engine_status_not_execution':True},'assets':assets}
+          (ROOT/'ALT_DECISION_ENGINE.json').write_text(json.dumps(out,indent=2,ensure_ascii=False),encoding='utf-8')
 
-          hist=ROOT/'ALT_DECISION_HISTORY.csv'
-          rows=[]
+          hist=ROOT/'ALT_DECISION_HISTORY.csv'; rows=[]
           for x in assets:
-              rows.append({
-                'date':out['date'],'symbol':x['symbol'],'decision':x['decision'],
-                'price':x.get('price'),'rotation_score':x.get('rotation_score_0_10'),
-                'trend_score':x.get('trend_score_0_4'),'fomo_score':x.get('fomo_score_0_10'),
-                'blockers':'|'.join(x.get('blockers',[]))
-              })
+              rows.append({'date':out['date'],'symbol':x['symbol'],'decision':x['decision'],'price':x.get('price'),'rotation_score':x.get('rotation_score_0_10'),'trend_score':x.get('trend_score_0_4'),'fomo_score':x.get('fomo_score_0_10'),'blockers':'|'.join(x.get('blockers',[])),'entry_blockers':'|'.join(x.get('entry_blockers',[]))})
           new=pd.DataFrame(rows)
           if hist.exists():
-              old=pd.read_csv(hist)
-              new=pd.concat([old,new],ignore_index=True).drop_duplicates(['date','symbol'],keep='last').sort_values(['date','symbol'])
+              old=pd.read_csv(hist); new=pd.concat([old,new],ignore_index=True)
+              new=new.drop_duplicates(['date','symbol'],keep='last').sort_values(['date','symbol'])
           new.to_csv(hist,index=False)
 
-          print(json.dumps(out,indent=2))
+          # Safety assertions: current supply/FOMO/missing-data states cannot emit buy labels.
+          buy_labels={'KUP DCA','KUP PO RETEŚCIE','KUP TRENDOWO'}
+          for x in assets:
+              if x.get('decision') in buy_labels:
+                  if 'IN_SUPPLY' in x.get('entry_blockers',[]): raise SystemExit(f"SAFETY FAIL {x['symbol']}: buy while IN_SUPPLY")
+                  if 'FOMO_HARD_BLOCK' in x.get('entry_blockers',[]): raise SystemExit(f"SAFETY FAIL {x['symbol']}: buy while FOMO hard block")
+                  if x.get('blockers'): raise SystemExit(f"SAFETY FAIL {x['symbol']}: buy with critical blockers")
+          print(json.dumps(out,indent=2,ensure_ascii=False))
           PY
 
       - name: Commit decision output
@@ -248,5 +184,6 @@ jobs:
             echo 'No changes to commit'
           else
             git commit -m 'Update V8 alt decision engine'
+            git pull --rebase origin main
             git push
           fi
