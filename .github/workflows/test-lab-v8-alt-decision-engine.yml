@@ -1,0 +1,221 @@
+name: TEST LAB V8 Alt Decision Engine
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '40 6 * * *'
+  push:
+    paths:
+      - 'config/alt_universe.csv'
+      - 'config/alt_zones.csv'
+      - 'crypto_data_hub/ALT_ROTATION_SCORE.json'
+      - 'crypto_data_hub/ALT_TECHNICAL_LAYER.json'
+      - '.github/workflows/test-lab-v8-alt-decision-engine.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-alt-decision-engine:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependency
+        run: pip install --quiet pandas
+
+      - name: Build final alt decision payload
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import pandas as pd
+
+          ROOT=Path('crypto_data_hub')
+          CFG=Path('config/alt_universe.csv')
+          ZONES=Path('config/alt_zones.csv')
+
+          required=[
+            ROOT/'LATEST_SNAPSHOT.json', ROOT/'ALT_ROTATION_SCORE.json',
+            ROOT/'ALT_TECHNICAL_LAYER.json', CFG, ZONES
+          ]
+          missing=[str(p) for p in required if not p.exists()]
+          if missing:
+              raise SystemExit('Missing: '+', '.join(missing))
+
+          snap=json.loads((ROOT/'LATEST_SNAPSHOT.json').read_text())
+          rot=json.loads((ROOT/'ALT_ROTATION_SCORE.json').read_text())
+          tech=json.loads((ROOT/'ALT_TECHNICAL_LAYER.json').read_text())
+          cfg=pd.read_csv(CFG)
+          cfg=cfg[cfg['enabled'].astype(str).str.lower().eq('true')].copy()
+          zones=pd.read_csv(ZONES)
+          zones['symbol']=zones['symbol'].astype(str).str.upper()
+          zones['timeframe']=zones['timeframe'].astype(str).str.upper()
+          zones['side']=zones['side'].astype(str).str.upper()
+
+          techmap={x['symbol']:x for x in tech.get('assets',[])}
+          global_score=int(rot.get('score_0_10',0))
+          global_status=rot.get('status','OFF')
+          global_conf=rot.get('confidence','LOW')
+          qa_pass=bool(snap.get('qa',{}).get('PASS'))
+
+          def zone_state(sym,price):
+              z=zones[zones.symbol.eq(sym)].copy()
+              confirmed=z[z.source_status.astype(str).str.upper().eq('CONFIRMED')]
+              if confirmed.empty:
+                  return {'zone_ready':False,'zone_count':0}
+
+              def inrow(r): return float(r['from']) <= price <= float(r['to'])
+              dem=confirmed[confirmed.side.eq('DEMAND')]
+              sup=confirmed[confirmed.side.eq('SUPPLY')]
+              in_dem=[r for _,r in dem.iterrows() if inrow(r)]
+              in_sup=[r for _,r in sup.iterrows() if inrow(r)]
+
+              # Canonical DCA logic from V7: DCA1 highest 1D DEMAND top;
+              # DCA3 lowest 1T DEMAND bottom; DCA2 midpoint.
+              d1=dem[dem.timeframe.eq('1D')]
+              d1v=float(d1['to'].max()) if not d1.empty else None
+              d3=dem[dem.timeframe.eq('1T')]
+              d3v=float(d3['from'].min()) if not d3.empty else None
+              d2v=(d1v+d3v)/2 if d1v is not None and d3v is not None else None
+
+              # nearest confirmed zones by absolute distance to edge
+              def dist_to_zone(r):
+                  lo,hi=float(r['from']),float(r['to'])
+                  if lo<=price<=hi: return 0.0
+                  return min(abs(price-lo),abs(price-hi))
+              nearest_d=None
+              nearest_s=None
+              if not dem.empty:
+                  rr=min((r for _,r in dem.iterrows()), key=dist_to_zone)
+                  nearest_d={'timeframe':rr['timeframe'],'from':float(rr['from']),'to':float(rr['to']),'distance_pct':dist_to_zone(rr)/price*100}
+              if not sup.empty:
+                  rr=min((r for _,r in sup.iterrows()), key=dist_to_zone)
+                  nearest_s={'timeframe':rr['timeframe'],'from':float(rr['from']),'to':float(rr['to']),'distance_pct':dist_to_zone(rr)/price*100}
+
+              return {
+                'zone_ready':True,'zone_count':int(len(confirmed)),
+                'in_demand':bool(in_dem),'in_supply':bool(in_sup),
+                'dca1':d1v,'dca2':d2v,'dca3':d3v,
+                'nearest_demand':nearest_d,'nearest_supply':nearest_s
+              }
+
+          assets=[]
+          for _,row in cfg.iterrows():
+              sym=str(row['symbol']).upper().strip()
+              if sym=='BTC': continue
+              t=techmap.get(sym)
+              if not t:
+                  assets.append({'symbol':sym,'decision':'DATA_PENDING','reason':'No technical layer'})
+                  continue
+
+              price=float(t['close'])
+              zs=zone_state(sym,price)
+              trend=int(t.get('trend_score_0_4') or 0)
+              fomo=int(t.get('fomo_score_0_10') or 0)
+              retest=bool(t.get('retest_confirmed_10d'))
+              breakout=bool(t.get('fresh_breakout_20d'))
+              vr=float(t.get('volume_ratio_vs_20d') or 0)
+
+              blockers=[]
+              if not qa_pass: blockers.append('QA_FAIL')
+              if not zs.get('zone_ready'): blockers.append('STREFY_MISSING')
+
+              decision='CZEKAJ'
+              reason=[]
+
+              if blockers:
+                  decision='DATA_PENDING'
+                  reason.append('Brakuje krytycznej warstwy: '+', '.join(blockers))
+              elif fomo>=8:
+                  decision='CZEKAJ — FOMO'
+                  reason.append('FOMO hard block >=8')
+              elif zs.get('in_supply') and not retest:
+                  decision='SPRAWDŹ'
+                  reason.append('Cena w potwierdzonej podaży bez potwierdzonego retestu')
+              elif zs.get('in_demand') and trend>=2 and fomo<8:
+                  decision='KUP DCA'
+                  reason.append('Cena w potwierdzonej strefie popytu + trend nie jest złamany')
+              elif global_score>=6 and trend>=3 and retest and fomo<=5 and not zs.get('in_supply'):
+                  decision='KUP PO RETEŚCIE'
+                  reason.append('Rotacja >=6, trend >=3, retest potwierdzony, brak FOMO hard block')
+              elif global_score>=6 and trend>=3 and breakout and fomo<=5:
+                  decision='SPRAWDŹ'
+                  reason.append('Breakout jest świeży, ale czekamy na potwierdzenie/retest')
+              elif global_score>=6 and trend>=4 and fomo<=4 and vr>=1.0 and not zs.get('in_supply'):
+                  decision='KUP TRENDOWO'
+                  reason.append('Silny trend + dodatni kontekst rotacji + wolumen')
+              else:
+                  decision='CZEKAJ'
+                  reason.append('Brak pełnego zestawu warunków wejścia')
+
+              assets.append({
+                'symbol':sym,
+                'decision':decision,
+                'reason':' | '.join(reason),
+                'price':price,
+                'rotation_score_0_10':global_score,
+                'rotation_status':global_status,
+                'rotation_confidence':global_conf,
+                'trend_score_0_4':trend,
+                'fomo_score_0_10':fomo,
+                'fomo_label':t.get('fomo_label'),
+                'fresh_breakout_20d':breakout,
+                'retest_confirmed_10d':retest,
+                'volume_ratio_vs_20d':vr,
+                'zones':zs,
+                'blockers':blockers
+              })
+
+          out={
+            'date':snap.get('target_date'),
+            'engine':'ALT_DECISION_ENGINE_v0.1',
+            'universe_source':'config/alt_universe.csv',
+            'zones_source':'config/alt_zones.csv',
+            'important_rules':{
+              'dynamic_universe':True,
+              'no_zone_guessing':True,
+              'relative_strength_not_hard_gate':True,
+              'rotation_score_not_standalone_buy_signal':True,
+              'fomo_hard_block_at_8':True,
+              'current_output_is_research_engine_status_not_execution':True
+            },
+            'assets':assets
+          }
+          (ROOT/'ALT_DECISION_ENGINE.json').write_text(json.dumps(out,indent=2),encoding='utf-8')
+
+          hist=ROOT/'ALT_DECISION_HISTORY.csv'
+          rows=[]
+          for x in assets:
+              rows.append({
+                'date':out['date'],'symbol':x['symbol'],'decision':x['decision'],
+                'price':x.get('price'),'rotation_score':x.get('rotation_score_0_10'),
+                'trend_score':x.get('trend_score_0_4'),'fomo_score':x.get('fomo_score_0_10'),
+                'blockers':'|'.join(x.get('blockers',[]))
+              })
+          new=pd.DataFrame(rows)
+          if hist.exists():
+              old=pd.read_csv(hist)
+              new=pd.concat([old,new],ignore_index=True).drop_duplicates(['date','symbol'],keep='last').sort_values(['date','symbol'])
+          new.to_csv(hist,index=False)
+
+          print(json.dumps(out,indent=2))
+          PY
+
+      - name: Commit decision output
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add crypto_data_hub/ALT_DECISION_ENGINE.json crypto_data_hub/ALT_DECISION_HISTORY.csv
+          if git diff --cached --quiet; then
+            echo 'No changes to commit'
+          else
+            git commit -m 'Update V8 alt decision engine'
+            git push
+          fi
