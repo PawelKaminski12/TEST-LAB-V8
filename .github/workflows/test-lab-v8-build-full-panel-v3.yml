@@ -1,0 +1,73 @@
+name: TEST LAB V8 Build Full Panel V3
+
+on:
+  push:
+    paths:
+      - 'google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V2.txt'
+      - 'google_sheets/V8_EXTREME_UI_V3.txt'
+      - '.github/workflows/test-lab-v8-build-full-panel-v3.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-test-save:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz projekt
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Zbuduj pełny skrypt V3
+        run: |
+          cat google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V2.txt > /tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V3.txt
+          printf '\n\n// ===== V8 EXTREME UI V3 — TESTED OVERRIDES =====\n\n' >> /tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V3.txt
+          cat google_sheets/V8_EXTREME_UI_V3.txt >> /tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V3.txt
+
+      - name: Sprawdź składnię pełnego skryptu
+        run: |
+          cp /tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V3.txt /tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V3.js
+          node --check /tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V3.js
+
+      - name: Sprawdź integralność panelu i stylu alarmów
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s = Path('/tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V3.txt').read_text(encoding='utf-8')
+          required = [
+            "portfolioLong: 'PORTFEL_LONG'",
+            "portfolioTactical: 'PORTFEL_TACTICAL'",
+            "extremes: 'ALARMY_EKSTREMOW'",
+            'function buildExtremeAlarms_',
+            'function confluencePriority_',
+            'function formatExtremeSheet_',
+            "setFrozenColumns(3)",
+            "whenTextEqualTo('KRYTYCZNY')",
+            "whenTextEqualTo('MOCNY')",
+            "whenTextEqualTo('OSTRZEŻENIE')",
+            "whenTextEqualTo('1D')",
+            'function ODSWIEZ_WSZYSTKO()',
+            'function SPRAWDZ_EKSTREMA()',
+          ]
+          missing = [x for x in required if x not in s]
+          forbidden = ['placeOrder(', 'createOrder(', 'broker.', 'AUTO_EXECUTION = ON']
+          bad = [x for x in forbidden if x in s]
+          if missing:
+            raise SystemExit('BRAK: ' + ', '.join(missing))
+          if bad:
+            raise SystemExit('NIEDOZWOLONA LOGIKA: ' + ', '.join(bad))
+          print('PASS — V3 zachowuje panel, alarmy i zabezpieczenia')
+          PY
+
+      - name: Zapisz pełny skrypt V3
+        run: |
+          cp /tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V3.txt google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V3.txt
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V3.txt
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Zbuduj pełny panel V8 V3 z czytelnymi alarmami'
+          git push origin main
