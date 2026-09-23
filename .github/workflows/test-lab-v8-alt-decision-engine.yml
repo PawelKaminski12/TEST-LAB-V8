@@ -62,6 +62,9 @@ jobs:
           zones['symbol']=zones['symbol'].astype(str).str.upper()
           zones['timeframe']=zones['timeframe'].astype(str).str.upper()
           zones['side']=zones['side'].astype(str).str.upper()
+          if 'source_note' not in zones.columns:
+              zones['source_note']=''
+          zones['source_note']=zones['source_note'].fillna('').astype(str)
 
           techmap={x['symbol']:x for x in tech.get('assets',[])}
           global_score=int(rot.get('score_0_10',0))
@@ -81,10 +84,36 @@ jobs:
               in_dem=[r for _,r in dem.iterrows() if inrow(r)]
               in_sup=[r for _,r in sup.iterrows() if inrow(r)]
 
+              # DCA1: highest top of confirmed 1D demand.
               d1=dem[dem.timeframe.eq('1D')]
               d1v=float(d1['to'].max()) if not d1.empty else None
-              d3=dem[dem.timeframe.eq('1T')]
-              d3v=float(d3['from'].min()) if not d3.empty else None
+
+              # DCA3: explicit canonical marker wins. Otherwise use the lowest
+              # active 1T demand, excluding rows explicitly marked archival/reserve
+              # or 'do not use as DCA3'. This preserves historical zones without
+              # allowing them to corrupt the canonical DCA ladder.
+              d3_all=dem[dem.timeframe.eq('1T')].copy()
+              d3v=None
+              d3_source='NONE'
+              if not d3_all.empty:
+                  note=d3_all['source_note'].str.upper()
+                  canonical=d3_all[note.str.contains('KANON DCA3',regex=False)]
+                  if not canonical.empty:
+                      d3v=float(canonical['from'].min())
+                      d3_source='EXPLICIT_CANON'
+                  else:
+                      excluded=(
+                          note.str.contains('NIE UZYWAJ JAKO DCA3',regex=False) |
+                          note.str.contains('NIE UŻYWAJ JAKO DCA3',regex=False) |
+                          note.str.contains('REZERWOWA',regex=False) |
+                          note.str.contains('HISTORYCZNA',regex=False) |
+                          note.str.contains('ARCHIWAL',regex=False)
+                      )
+                      active=d3_all[~excluded]
+                      if not active.empty:
+                          d3v=float(active['from'].min())
+                          d3_source='LOWEST_ACTIVE_1T_DEMAND'
+
               d2v=(d1v+d3v)/2 if d1v is not None and d3v is not None else None
 
               def dist_to_zone(r):
@@ -103,7 +132,7 @@ jobs:
               return {
                 'zone_ready':True,'zone_count':int(len(confirmed)),
                 'in_demand':bool(in_dem),'in_supply':bool(in_sup),
-                'dca1':d1v,'dca2':d2v,'dca3':d3v,
+                'dca1':d1v,'dca2':d2v,'dca3':d3v,'dca3_source':d3_source,
                 'nearest_demand':nearest_d,'nearest_supply':nearest_s
               }
 
@@ -176,7 +205,7 @@ jobs:
 
           out={
             'date':snap.get('target_date'),
-            'engine':'ALT_DECISION_ENGINE_v0.1',
+            'engine':'ALT_DECISION_ENGINE_v0.2',
             'universe_source':'config/alt_universe.csv',
             'zones_source':'config/alt_zones.csv',
             'important_rules':{
@@ -185,6 +214,7 @@ jobs:
               'relative_strength_not_hard_gate':True,
               'rotation_score_not_standalone_buy_signal':True,
               'fomo_hard_block_at_8':True,
+              'dca3_prefers_explicit_canon_and_excludes_archival_reserve_rows':True,
               'current_output_is_research_engine_status_not_execution':True
             },
             'assets':assets
