@@ -71,6 +71,26 @@
       "reason": "Final decision blocked until zones, own trend, breakout/retest and FOMO layers are present."
     },
     {
+      "symbol": "ONDO",
+      "role": "ALT",
+      "global_alt_rotation_score": 7,
+      "global_alt_rotation_status": "CONFIRMED",
+      "global_confidence": "MEDIUM",
+      "relative_strength_0_4": 2,
+      "context_label": "WATCH",
+      "vs_btc_20d_pct": 13.634345311328433,
+      "vs_eth_20d_pct": 10.026385669819948,
+      "own_trend_0_3": null,
+      "missing_layers": [
+        "GENERIC_PRICE_REGIME",
+        "STREFY",
+        "BREAKOUT_RETEST",
+        "FOMO"
+      ],
+      "trade_decision": "DATA_PENDING",
+      "reason": "Final decision blocked until zones, own trend, breakout/retest and FOMO layers are present."
+    },
+    {
       "symbol": "AAVE",
       "role": "ALT",
       "global_alt_rotation_score": 7,
@@ -100,26 +120,6 @@
       "context_label": "WATCH",
       "vs_btc_20d_pct": 19.207919522096994,
       "vs_eth_20d_pct": 15.422995506337811,
-      "own_trend_0_3": null,
-      "missing_layers": [
-        "GENERIC_PRICE_REGIME",
-        "STREFY",
-        "BREAKOUT_RETEST",
-        "FOMO"
-      ],
-      "trade_decision": "DATA_PENDING",
-      "reason": "Final decision blocked until zones, own trend, breakout/retest and FOMO layers are present."
-    },
-    {
-      "symbol": "ONDO",
-      "role": "ALT",
-      "global_alt_rotation_score": 7,
-      "global_alt_rotation_status": "CONFIRMED",
-      "global_confidence": "MEDIUM",
-      "relative_strength_0_4": 2,
-      "context_label": "WATCH",
-      "vs_btc_20d_pct": 13.634345311328433,
-      "vs_eth_20d_pct": 10.026385669819948,
       "own_trend_0_3": null,
       "missing_layers": [
         "GENERIC_PRICE_REGIME",
