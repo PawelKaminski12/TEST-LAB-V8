@@ -27,20 +27,20 @@ ONDO,4D,true,true,GOTOWE,MASTER FINAL 17/17
 ONDO,5D,true,true,GOTOWE,MASTER FINAL 17/17
 ONDO,1T,true,true,GOTOWE,MASTER FINAL 17/17
 ONDO,2T,true,true,GOTOWE,MASTER FINAL 17/17
-RENDER,1D,false,false,NOWY_PAKIET_POTRZEBNY,Import RENDER został zatrzymany; brak zachowanego liczbowego źródła stref
-RENDER,2D,false,false,NOWY_PAKIET_POTRZEBNY,Import RENDER został zatrzymany; brak zachowanego liczbowego źródła stref
-RENDER,3D,false,false,NOWY_PAKIET_POTRZEBNY,Import RENDER został zatrzymany; brak zachowanego liczbowego źródła stref
-RENDER,4D,false,false,NOWY_PAKIET_POTRZEBNY,Import RENDER został zatrzymany; brak zachowanego liczbowego źródła stref
-RENDER,5D,false,false,NOWY_PAKIET_POTRZEBNY,Import RENDER został zatrzymany; brak zachowanego liczbowego źródła stref
-RENDER,1T,false,false,NOWY_PAKIET_POTRZEBNY,Import RENDER został zatrzymany; brak zachowanego liczbowego źródła stref
-RENDER,2T,false,false,NOWY_PAKIET_POTRZEBNY,Import RENDER został zatrzymany; brak zachowanego liczbowego źródła stref
+RENDER,1D,true,false,STARE_STREFY_POTWIERDZONE_W_MASTERZE_LICZBY_DO_ODZYSKANIA,V273.5 potwierdza udany import RENDER oraz aktywną DEMAND 1D potrzebną do wyliczenia DCA1
+RENDER,2D,false,false,SZUKAM_STAREGO_ZRODLA,Brak jeszcze twardego rekordu liczbowego 2D
+RENDER,3D,false,false,SZUKAM_STAREGO_ZRODLA,Brak jeszcze twardego rekordu liczbowego 3D
+RENDER,4D,false,false,SZUKAM_STAREGO_ZRODLA,Brak jeszcze twardego rekordu liczbowego 4D
+RENDER,5D,false,false,SZUKAM_STAREGO_ZRODLA,Brak jeszcze twardego rekordu liczbowego 5D
+RENDER,1T,true,false,STARE_STREFY_POTWIERDZONE_W_MASTERZE_LICZBY_DO_ODZYSKANIA,V273.5 potwierdza udany import RENDER oraz aktywną DEMAND 1T potrzebną do wyliczenia DCA3
+RENDER,2T,false,false,SZUKAM_STAREGO_ZRODLA,Brak jeszcze twardego rekordu liczbowego 2T
 FLOKI,1D,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
-FLOKI,2D,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla FLOKI zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 2D
-FLOKI,3D,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla FLOKI zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 3D
-FLOKI,4D,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla FLOKI zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 4D
-FLOKI,5D,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla FLOKI zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 5D
+FLOKI,2D,true,false,STARY_PAKIET_7_7_POTWIERDZONY_WARTOSCI_DO_ODZYSKANIA,FLOKI był importowany z pakietem stref obejmującym pełne 7 interwałów; liczby 2D nieodzyskane
+FLOKI,3D,true,false,STARY_PAKIET_7_7_POTWIERDZONY_WARTOSCI_DO_ODZYSKANIA,FLOKI był importowany z pakietem stref obejmującym pełne 7 interwałów; liczby 3D nieodzyskane
+FLOKI,4D,true,false,STARY_PAKIET_7_7_POTWIERDZONY_WARTOSCI_DO_ODZYSKANIA,FLOKI był importowany z pakietem stref obejmującym pełne 7 interwałów; liczby 4D nieodzyskane
+FLOKI,5D,true,false,STARY_PAKIET_7_7_POTWIERDZONY_WARTOSCI_DO_ODZYSKANIA,FLOKI był importowany z pakietem stref obejmującym pełne 7 interwałów; liczby 5D nieodzyskane
 FLOKI,1T,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
-FLOKI,2T,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla FLOKI zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 2T
+FLOKI,2T,true,false,STARY_PAKIET_7_7_POTWIERDZONY_WARTOSCI_DO_ODZYSKANIA,FLOKI był importowany z pakietem stref obejmującym pełne 7 interwałów; liczby 2T nieodzyskane
 PEPE,1D,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
 PEPE,2D,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla PEPE zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 2D
 PEPE,3D,false,false,NOWY_SCREEN_POTRZEBNY,Legacy dla PEPE zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 3D
