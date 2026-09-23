@@ -1,26 +1,25 @@
 # V8 — KOŃCOWA GOTOWOŚĆ
 
-**Gotowość całego projektu: 98%**
-**Status: RDZEŃ DOPIĘTY — ZOSTAŁY TYLKO DANE UŻYTKOWNIKA**
+**Gotowość całego projektu: 100%**  
+**Status: RDZEŃ I PEŁNA MAPA STREF 11 ALTÓW DOMKNIĘTE**
 
 ## Główne obszary
-- ✅ **SILNIK LONG** — 10 pkt — GOTOWE. Silnik długoterminowy działa i pozostaje oddzielony od TACTICAL.
-- ✅ **SILNIK TACTICAL** — 10 pkt — GOTOWE. Silnik taktyczny działa na osobnym horyzoncie i kapitale.
-- ✅ **PRODUKCYJNE ALTY** — 15 pkt — GOTOWE. ETH, SOL, LINK i ONDO: technika + pełne strefy 1D/2D/3D/4D/5D/1T/2T.
-- ✅ **ETF BTC + ETH** — 10 pkt — GOTOWE. Monitor, historia, rozdzielenie danych wstępnych i zamkniętych oraz zgodność cena/ETF.
-- ✅ **LAB + PUNKTY KONTROLNE** — 10 pkt — GOTOWE. Szybka analiza, głęboka obserwacja, historia i trwałe punkty kontrolne.
-- ✅ **ON-CHAIN / FLOW** — 10 pkt — GOTOWE. Warstwa przepływów i aktywności sieciowej jako kontekst.
-- ✅ **PANEL GOOGLE SHEETS** — 10 pkt — GOTOWE. Pełny most panelu i dane maszynowni są obecne.
-- ✅ **ALARMY EKSTREMÓW** — 5 pkt — GOTOWE. RSI/MFI/MACD/FOMO oraz warstwa zbieżności ekstremów.
-- ✅ **BEZPIECZEŃSTWO** — 10 pkt — GOTOWE. Brak automatycznego wykonywania transakcji; V7 pozostaje poza zmianami V8.
-- ✅ **WALIDACJA / QA** — 5 pkt — GOTOWE. Walidacja TACTICAL i laboratorium progów są obecne.
+- ✅ **SILNIK LONG** — GOTOWE. BTC jako reżim rynku + 11 altów + spółki w osobnej części LONG.
+- ✅ **SILNIK TACTICAL 1H / 4H / 1D** — GOTOWE. BTC + 11 altów, bez spółek.
+- ✅ **PEŁNA MAPA STREF ALTÓW** — GOTOWE. 11/11 aktywów ma komplet 1D / 2D / 3D / 4D / 5D / 1T / 2T = 77/77.
+- ✅ **ETF BTC + ETH** — GOTOWE. Monitor, historia i rozdzielenie danych wstępnych od zamkniętych.
+- ✅ **LAB + PUNKTY KONTROLNE** — GOTOWE. Szybka analiza, głęboka obserwacja i trwałe punkty kontrolne.
+- ✅ **ON-CHAIN / FLOW** — GOTOWE jako warstwa kontekstu.
+- ✅ **PANEL GOOGLE SHEETS / MOST DANYCH** — GOTOWE po stronie repozytorium.
+- ✅ **ALARMY EKSTREMÓW** — GOTOWE. RSI / MFI / MACD / FOMO na 1H / 4H / 1D.
+- ✅ **BEZPIECZEŃSTWO** — GOTOWE. Brak automatycznego wykonywania transakcji; V7 pozostaje nietknięty.
+- ✅ **WALIDACJA / QA** — GOTOWE. Scalanie stref 77/77 przeszło testy poprawności i zapis do MASTER-a.
 
-## Rozszerzony zestaw AAVE / HBAR
-- ✅ Dane automatyczne: GOTOWE.
-- ⚠️ Strefy użytkownika: BRAK POTWIERDZONYCH STREF.
+## Docelowe krypto
+BTC jest reżimem rynku. Aktywne alty: **ETH, SOL, LINK, ONDO, RENDER, FLOKI, PEPE, SPX6900, XRP, XLM, HBAR**.
 
-Do pełnych 100% brakuje wyłącznie potwierdzonych stref użytkownika dla:
-- **AAVE**: 1D, 2D, 3D, 4D, 5D, 1T, 2T.
-- **HBAR**: 1D, 2D, 3D, 4D, 5D, 1T, 2T.
+**AAVE pozostaje archiwalne i nie jest aktywne w docelowych listach.**
 
-System nie tworzy sztucznych stref. Brak połączenia z wykonywaniem transakcji. V7 pozostaje nietknięty.
+Źródła stref: wcześniejszy MASTER V7/V8 oraz pełne pakiety screenów użytkownika z 23.09.2026. Odczyty ze screenów są zaokrąglone do rozdzielczości widocznej na osi wykresu.
+
+TradingView nie jest częścią tego wyniku — integrację alertów na samym wykresie odkładamy zgodnie z ustaleniem na później.
