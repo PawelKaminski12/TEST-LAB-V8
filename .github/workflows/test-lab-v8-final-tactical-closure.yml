@@ -1,0 +1,93 @@
+name: TEST LAB V8 Final Tactical Closure
+
+on:
+  push:
+    paths:
+      - 'google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt'
+      - 'google_sheets/V8_STATUS_MASTER.csv'
+      - 'google_sheets/DUAL_ENGINE_PANEL_SPEC.md'
+      - '.github/workflows/test-lab-v8-final-tactical-closure.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  final-tactical-closure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz projekt
+        uses: actions/checkout@v4
+
+      - name: Sprawdź składnię panelu V9
+        run: |
+          cp google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt /tmp/v9.js
+          node --check /tmp/v9.js
+
+      - name: Sprawdź kompletność warstw Tactical
+        run: |
+          grep -q "function tacticalRiskAssessment_" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt
+          grep -q "ZGODNOŚĆ WIELU INTERWAŁÓW" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt
+          grep -q "NASILA SIĘ" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt
+          grep -q "WYGASŁ" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt
+          grep -q "ALARM_MAX_WIEK_1H_H" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt
+          grep -q "CENTRUM RYZYKA" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt
+          grep -q "POWÓD RYZYKA" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt
+          grep -q "AUTO_EXECUTION','OFF" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt
+          grep -q "V7_TOUCH','OFF" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt
+          grep -q "91/91" google_sheets/V8_STATUS_MASTER.csv
+          grep -q "13 altów" google_sheets/V8_STATUS_MASTER.csv
+          grep -q "14 aktywów" google_sheets/V8_STATUS_MASTER.csv
+
+      - name: Sprawdź final readiness
+        run: python scripts/v8_final_readiness.py
+
+      - name: Pełny audyt 1 z 2
+        run: python scripts/v8_full_double_audit_v2.py --pass-number 1
+
+      - name: Pełny audyt 2 z 2
+        run: python scripts/v8_full_double_audit_v2.py --pass-number 2
+
+      - name: Zbuduj raport zamknięcia Tactical
+        run: |
+          cat > audit/V8_TACTICAL_PANEL_CLOSURE.md <<'EOF'
+          # V8 DUAL ENGINE — TACTICAL PANEL CLOSURE
+
+          Status: **ZAMKNIĘTE FUNKCJONALNIE**
+
+          ## Zakres potwierdzony
+          - LONG: 13 aktywnych altów.
+          - TACTICAL: BTC + 13 altów = 14 aktywów.
+          - STREFY LONG: 91/91.
+          - Panel Google Sheets: polski, kompaktowy, 7 kolumn w widoku głównym.
+          - Alarmy ekstremów: RSI + MFI + MACD + FOMO dla 1H / 4H / 1D.
+          - Zbieżność sygnałów w ramach interwału.
+          - Hierarchia 1H / 4H / 1D.
+          - Świeżość i automatyczne wygaszanie starych alarmów.
+          - Zgodność wielu interwałów z kierunkiem PRZEGRZANIE / WYPRZEDANIE.
+          - Dynamika alarmów: NOWY / NASILA SIĘ / BEZ ZMIAN / SŁABNIE / WYGASŁ.
+          - Centrum ryzyka Tactical: NORMALNIE / UWAGA / PODWYŻSZONE RYZYKO / OCHRONA KAPITAŁU.
+          - HISTORIA oraz opcjonalne powiadomienia.
+          - AUTO EXECUTION: OFF.
+          - V7 TOUCH: OFF.
+
+          ## Ograniczenia świadome
+          - Market Reader zewnętrzny pozostaje second-eye i może oczekiwać na źródło.
+          - Kalibracja progów strategii pozostaje etapem badawczym; nie jest zamrożoną strategią wykonawczą.
+          - Alarmy i centrum ryzyka nie wykonują zleceń.
+
+          ## Wynik QA
+          Final readiness oraz dwa pełne przebiegi audytu wykonano w tym workflow. Workflow musi zakończyć się SUCCESS, aby ten raport został zapisany do gałęzi main.
+          EOF
+
+      - name: Zapisz raporty audytu
+        run: |
+          git config user.name "PawelKaminski12"
+          git config user.email "pkaminski1@gmail.com"
+          git add audit/V8_TACTICAL_PANEL_CLOSURE.md audit/V8_FINAL_READINESS.json audit/V8_FINAL_READINESS_LATEST.md audit/V8_FULL_AUDIT_PASS_1.json audit/V8_FULL_AUDIT_PASS_1.md audit/V8_FULL_AUDIT_PASS_2.json audit/V8_FULL_AUDIT_PASS_2.md google_sheets/V8_FINAL_READINESS.csv 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "Brak zmian do zapisu"
+          else
+            git commit -m "Zamknij finalny audyt Tactical V8"
+            git push
+          fi
