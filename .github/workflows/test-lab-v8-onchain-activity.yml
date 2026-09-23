@@ -44,34 +44,34 @@ jobs:
 
           OUT=Path('crypto_data_hub')
           OUT.mkdir(exist_ok=True)
-          CFG=Path('config/alt_universe.csv')
-          cfg=pd.read_csv(CFG)
+          cfg=pd.read_csv('config/alt_universe.csv')
           cfg=cfg[cfg['enabled'].astype(str).str.lower().eq('true')].copy()
 
           ASSET_MAP={
-              'ETH': {'cm':'eth','chain':'Ethereum','protocol':None},
-              'SOL': {'cm':'sol','chain':'Solana','protocol':None},
-              'LINK': {'cm':'link','chain':None,'protocol':None},
-              'ONDO': {'cm':'ondo','chain':None,'protocol':'ondo-finance'},
+              'ETH': {'cm':'eth','chain':'Ethereum','protocol':None,'oracle':None},
+              'SOL': {'cm':'sol','chain':'Solana','protocol':None,'oracle':None},
+              'LINK': {'cm':'link','chain':None,'protocol':None,'oracle':'Chainlink'},
+              'ONDO': {'cm':'ondo','chain':None,'protocol':'ondo-finance','oracle':None},
           }
           METRICS=['AdrActCnt','TxCnt','TxTfrValAdjUSD']
           CM='https://community-api.coinmetrics.io/v4/timeseries/asset-metrics'
           LLAMA='https://api.llama.fi'
           session=requests.Session()
-          session.headers.update({'User-Agent':'TEST-LAB-V8/1.1'})
+          session.headers.update({'User-Agent':'TEST-LAB-V8/1.2'})
           end=datetime.now(timezone.utc)
           start=end-timedelta(days=45)
-
-          def pct(a,b):
-              if a is None or b in (None,0): return None
-              try: return (float(a)/float(b)-1.0)*100.0
-              except Exception: return None
 
           def safe_float(v):
               try:
                   x=float(v)
                   return x if math.isfinite(x) else None
-              except Exception: return None
+              except Exception:
+                  return None
+
+          def pct(a,b):
+              a=safe_float(a); b=safe_float(b)
+              if a is None or b in (None,0): return None
+              return (a/b-1.0)*100.0
 
           def trend_label(v7,v30):
               vals=[v for v in [v7,v30] if v is not None]
@@ -83,117 +83,172 @@ jobs:
               if avg<=-2: return 'FALLING'
               return 'FLAT'
 
-          def cm_series(asset):
-              params={
-                  'assets':asset,
-                  'metrics':','.join(METRICS),
-                  'frequency':'1d',
-                  'start_time':start.isoformat().replace('+00:00','Z'),
-                  'end_time':end.isoformat().replace('+00:00','Z'),
-                  'page_size':10000,
-              }
-              try:
-                  r=session.get(CM,params=params,timeout=20)
-                  if r.status_code!=200:
-                      return pd.DataFrame(), f'HTTP_{r.status_code}'
-                  data=r.json().get('data',[])
-                  if not data: return pd.DataFrame(), 'NO_DATA'
-                  df=pd.DataFrame(data)
-                  df['time']=pd.to_datetime(df['time'],utc=True,errors='coerce')
-                  for m in METRICS:
-                      if m in df.columns: df[m]=pd.to_numeric(df[m],errors='coerce')
-                  return df.sort_values('time'), 'OK'
-              except Exception as e:
-                  return pd.DataFrame(), 'ERROR_'+type(e).__name__
-
-          def llama_tvl(chain):
-              if not chain: return pd.DataFrame(), 'NOT_APPLICABLE'
-              try:
-                  r=session.get(f'{LLAMA}/v2/historicalChainTvl/{chain}',timeout=20)
-                  if r.status_code!=200: return pd.DataFrame(), f'HTTP_{r.status_code}'
-                  data=r.json()
-                  if not isinstance(data,list) or not data: return pd.DataFrame(), 'NO_DATA'
-                  df=pd.DataFrame(data)
-                  df['date']=pd.to_datetime(df['date'],unit='s',utc=True,errors='coerce')
-                  df['tvl']=pd.to_numeric(df['tvl'],errors='coerce')
-                  return df.dropna(subset=['date','tvl']).sort_values('date').tail(90), 'OK'
-              except Exception as e:
-                  return pd.DataFrame(), 'ERROR_'+type(e).__name__
-
-          def llama_dex(chain):
-              if not chain: return pd.DataFrame(), 'NOT_APPLICABLE'
-              try:
-                  url=f'{LLAMA}/overview/dexs/{chain}'
-                  params={'excludeTotalDataChart':'false','excludeTotalDataChartBreakdown':'true','dataType':'dailyVolume'}
-                  r=session.get(url,params=params,timeout=20)
-                  if r.status_code!=200: return pd.DataFrame(), f'HTTP_{r.status_code}'
-                  obj=r.json(); chart=obj.get('totalDataChart') or []
-                  rows=[]
-                  for x in chart:
-                      if isinstance(x,list) and len(x)>=2: rows.append({'date':x[0],'volume':x[1]})
-                  if not rows: return pd.DataFrame(), 'NO_DATA'
-                  df=pd.DataFrame(rows)
-                  df['date']=pd.to_datetime(df['date'],unit='s',utc=True,errors='coerce')
-                  df['volume']=pd.to_numeric(df['volume'],errors='coerce')
-                  return df.dropna(subset=['date','volume']).sort_values('date').tail(90), 'OK'
-              except Exception as e:
-                  return pd.DataFrame(), 'ERROR_'+type(e).__name__
-
-          def llama_protocol_tvl(slug):
-              if not slug: return pd.DataFrame(), 'NOT_APPLICABLE'
-              try:
-                  r=session.get(f'{LLAMA}/protocol/{slug}',timeout=20)
-                  if r.status_code!=200: return pd.DataFrame(), f'HTTP_{r.status_code}'
-                  obj=r.json(); hist=obj.get('tvl') or []
-                  rows=[]
-                  for x in hist:
-                      if isinstance(x,dict) and x.get('date') is not None:
-                          val=x.get('totalLiquidityUSD')
-                          if val is not None: rows.append({'date':x.get('date'),'tvl':val})
-                  if not rows: return pd.DataFrame(), 'NO_DATA'
-                  df=pd.DataFrame(rows)
-                  df['date']=pd.to_datetime(df['date'],unit='s',utc=True,errors='coerce')
-                  df['tvl']=pd.to_numeric(df['tvl'],errors='coerce')
-                  return df.dropna(subset=['date','tvl']).sort_values('date').tail(90), 'OK'
-              except Exception as e:
-                  return pd.DataFrame(), 'ERROR_'+type(e).__name__
-
           def point_change(s,days):
               s=s.dropna()
               if len(s)<2: return None
-              cur=float(s.iloc[-1]); idx=max(0,len(s)-1-days); old=float(s.iloc[idx])
-              return pct(cur,old)
+              return pct(float(s.iloc[-1]),float(s.iloc[max(0,len(s)-1-days)]))
 
           def sum_change(s,days):
               s=s.dropna()
               if len(s)<days*2: return None
-              recent=float(s.iloc[-days:].sum()); prev=float(s.iloc[-2*days:-days].sum())
-              return pct(recent,prev)
+              return pct(float(s.iloc[-days:].sum()),float(s.iloc[-2*days:-days].sum()))
+
+          def cm_series(asset):
+              try:
+                  r=session.get(CM,params={
+                      'assets':asset,'metrics':','.join(METRICS),'frequency':'1d',
+                      'start_time':start.isoformat().replace('+00:00','Z'),
+                      'end_time':end.isoformat().replace('+00:00','Z'),'page_size':10000,
+                  },timeout=20)
+                  if r.status_code!=200: return pd.DataFrame(),f'HTTP_{r.status_code}'
+                  data=r.json().get('data',[])
+                  if not data: return pd.DataFrame(),'NO_DATA'
+                  df=pd.DataFrame(data)
+                  df['time']=pd.to_datetime(df['time'],utc=True,errors='coerce')
+                  for m in METRICS:
+                      if m in df.columns: df[m]=pd.to_numeric(df[m],errors='coerce')
+                  return df.sort_values('time'),'OK'
+              except Exception as e:
+                  return pd.DataFrame(),'ERROR_'+type(e).__name__
+
+          def chain_tvl(chain):
+              if not chain: return pd.DataFrame(),'NOT_APPLICABLE'
+              try:
+                  r=session.get(f'{LLAMA}/v2/historicalChainTvl/{chain}',timeout=20)
+                  if r.status_code!=200: return pd.DataFrame(),f'HTTP_{r.status_code}'
+                  data=r.json()
+                  if not isinstance(data,list) or not data: return pd.DataFrame(),'NO_DATA'
+                  df=pd.DataFrame(data)
+                  df['date']=pd.to_datetime(df['date'],unit='s',utc=True,errors='coerce')
+                  df['tvl']=pd.to_numeric(df['tvl'],errors='coerce')
+                  return df.dropna(subset=['date','tvl']).sort_values('date').tail(90),'OK'
+              except Exception as e:
+                  return pd.DataFrame(),'ERROR_'+type(e).__name__
+
+          def dex_series(chain):
+              if not chain: return pd.DataFrame(),'NOT_APPLICABLE'
+              try:
+                  r=session.get(f'{LLAMA}/overview/dexs/{chain}',params={
+                      'excludeTotalDataChart':'false','excludeTotalDataChartBreakdown':'true','dataType':'dailyVolume'
+                  },timeout=20)
+                  if r.status_code!=200: return pd.DataFrame(),f'HTTP_{r.status_code}'
+                  chart=(r.json() or {}).get('totalDataChart') or []
+                  rows=[{'date':x[0],'volume':x[1]} for x in chart if isinstance(x,list) and len(x)>=2]
+                  if not rows: return pd.DataFrame(),'NO_DATA'
+                  df=pd.DataFrame(rows)
+                  df['date']=pd.to_datetime(df['date'],unit='s',utc=True,errors='coerce')
+                  df['volume']=pd.to_numeric(df['volume'],errors='coerce')
+                  return df.dropna(subset=['date','volume']).sort_values('date').tail(90),'OK'
+              except Exception as e:
+                  return pd.DataFrame(),'ERROR_'+type(e).__name__
+
+          def protocol_tvl(slug):
+              if not slug: return pd.DataFrame(),'NOT_APPLICABLE'
+              try:
+                  r=session.get(f'{LLAMA}/protocol/{slug}',timeout=20)
+                  if r.status_code==200:
+                      obj=r.json() or {}; hist=obj.get('tvl') or []
+                      rows=[]
+                      for x in hist:
+                          if isinstance(x,dict) and x.get('date') is not None:
+                              val=x.get('totalLiquidityUSD')
+                              if val is not None: rows.append({'date':x['date'],'tvl':val})
+                      if rows:
+                          df=pd.DataFrame(rows)
+                          df['date']=pd.to_datetime(df['date'],unit='s',utc=True,errors='coerce')
+                          df['tvl']=pd.to_numeric(df['tvl'],errors='coerce')
+                          df=df.dropna(subset=['date','tvl']).sort_values('date').tail(90)
+                          if not df.empty: return df,'OK_HISTORY'
+                  # fallback: /protocols current snapshot + reported 1d/7d/1m changes
+                  p=session.get(f'{LLAMA}/protocols',timeout=25)
+                  if p.status_code!=200: return pd.DataFrame(),f'FALLBACK_HTTP_{p.status_code}'
+                  arr=p.json() if isinstance(p.json(),list) else []
+                  candidates=[]
+                  for x in arr:
+                      if not isinstance(x,dict): continue
+                      name=str(x.get('name','')).lower(); s=str(x.get('slug','')).lower(); symbol=str(x.get('symbol','')).upper()
+                      if s==slug.lower() or (slug=='ondo-finance' and ('ondo' in name or symbol=='ONDO')):
+                          candidates.append(x)
+                  if not candidates: return pd.DataFrame(),'NO_DATA'
+                  x=sorted(candidates,key=lambda z:safe_float(z.get('tvl')) or 0,reverse=True)[0]
+                  latest=safe_float(x.get('tvl'))
+                  if latest is None: return pd.DataFrame(),'NO_DATA'
+                  c7=safe_float(x.get('change_7d')); c30=safe_float(x.get('change_1m'))
+                  rows=[{'date':end,'tvl':latest}]
+                  if c7 is not None and c7>-99.9: rows.append({'date':end-timedelta(days=7),'tvl':latest/(1+c7/100)})
+                  if c30 is not None and c30>-99.9: rows.append({'date':end-timedelta(days=30),'tvl':latest/(1+c30/100)})
+                  return pd.DataFrame(rows).sort_values('date'),'OK_PROTOCOLS_FALLBACK'
+              except Exception as e:
+                  return pd.DataFrame(),'ERROR_'+type(e).__name__
+
+          def oracle_snapshot(name):
+              if not name: return None,'NOT_APPLICABLE'
+              urls=[f'{LLAMA}/oracles', 'https://api.llama.fi/oracles']
+              last='NO_DATA'
+              for url in urls:
+                  try:
+                      r=session.get(url,timeout=20)
+                      if r.status_code!=200:
+                          last=f'HTTP_{r.status_code}'; continue
+                      obj=r.json(); arr=[]
+                      if isinstance(obj,list): arr=obj
+                      elif isinstance(obj,dict):
+                          for key in ['oracles','data','protocols']:
+                              if isinstance(obj.get(key),list): arr=obj[key]; break
+                      for x in arr:
+                          if not isinstance(x,dict): continue
+                          n=str(x.get('name') or x.get('oracle') or '').strip().lower()
+                          if n==name.lower() or name.lower() in n:
+                              value=None
+                              for key in ['tvs','totalValueSecured','totalValue','tvl','totalValueSecuredUsd']:
+                                  value=safe_float(x.get(key))
+                                  if value is not None: break
+                              if value is not None: return value,'OK'
+                      last='NO_MATCH'
+                  except Exception as e:
+                      last='ERROR_'+type(e).__name__
+              return None,last
 
           def tvl_block(df):
               out={'latest_usd':None,'change_7d_pct':None,'change_30d_pct':None,'trend':'NO_DATA'}
-              if df.empty: return out
-              s=df['tvl'].dropna()
+              if df.empty or 'tvl' not in df.columns: return out
+              s=pd.to_numeric(df['tvl'],errors='coerce').dropna()
               if s.empty: return out
               c7=point_change(s,7); c30=point_change(s,30)
               return {'latest_usd':safe_float(s.iloc[-1]),'change_7d_pct':c7,'change_30d_pct':c30,'trend':trend_label(c7,c30)}
+
+          def history_change(old,symbol,column,latest,days):
+              if latest is None or old.empty or column not in old.columns: return None
+              z=old[old['symbol'].astype(str).str.upper().eq(symbol)].copy()
+              if z.empty or 'date' not in z.columns: return None
+              z['date']=pd.to_datetime(z['date'],errors='coerce',utc=True)
+              z[column]=pd.to_numeric(z[column],errors='coerce')
+              z=z.dropna(subset=['date',column]).sort_values('date')
+              if z.empty: return None
+              cutoff=end-timedelta(days=days)
+              prior=z[z['date']<=cutoff]
+              if prior.empty: return None
+              return pct(latest,float(prior.iloc[-1][column]))
 
           def context(votes):
               votes=[v for v in votes if v is not None]
               if not votes: return {'score':None,'label':'NO_DATA'}
               pos=sum(v>2 for v in votes); neg=sum(v<-2 for v in votes); n=len(votes)
-              score=round((pos-neg+n)/(2*n)*10); score=max(0,min(10,score))
+              score=max(0,min(10,round((pos-neg+n)/(2*n)*10)))
               label='STRONG_POSITIVE' if score>=8 else 'POSITIVE' if score>=6 else 'NEUTRAL' if score>=4 else 'NEGATIVE' if score>=2 else 'STRONG_NEGATIVE'
               return {'score':score,'label':label}
 
+          history_path=OUT/'ONCHAIN_ACTIVITY_HISTORY.csv'
+          old_history=pd.read_csv(history_path) if history_path.exists() else pd.DataFrame()
           assets=[]; raw_rows=[]
           symbols=[str(x).upper().strip() for x in cfg['symbol'].tolist() if str(x).upper().strip() in ASSET_MAP]
           for sym in symbols:
               meta=ASSET_MAP[sym]
               cm,cm_status=cm_series(meta['cm'])
-              tvl,tvl_status=llama_tvl(meta['chain'])
-              dex,dex_status=llama_dex(meta['chain'])
-              protocol,protocol_status=llama_protocol_tvl(meta['protocol'])
+              ctv,ctv_status=chain_tvl(meta['chain'])
+              dex,dex_status=dex_series(meta['chain'])
+              ptv,ptv_status=protocol_tvl(meta['protocol'])
+              oracle_value,oracle_status=oracle_snapshot(meta['oracle'])
 
               metrics={}
               for m in METRICS:
@@ -203,36 +258,36 @@ jobs:
                   else:
                       metrics[m]={'latest':None,'change_7d_pct':None,'change_30d_pct':None,'trend':'NO_DATA'}
 
-              chain_tvl=tvl_block(tvl)
-              protocol_tvl=tvl_block(protocol)
-
+              chain_block=tvl_block(ctv); protocol_block=tvl_block(ptv)
               dex_block={'latest_daily_usd':None,'change_7d_vs_prev7_pct':None,'change_30d_vs_prev30_pct':None,'trend':'NO_DATA'}
               if not dex.empty:
                   s=dex['volume'].dropna(); c7=sum_change(s,7); c30=sum_change(s,30)
-                  if not s.empty:
-                      dex_block={'latest_daily_usd':safe_float(s.iloc[-1]),'change_7d_vs_prev7_pct':c7,'change_30d_vs_prev30_pct':c30,'trend':trend_label(c7,c30)}
+                  if not s.empty: dex_block={'latest_daily_usd':safe_float(s.iloc[-1]),'change_7d_vs_prev7_pct':c7,'change_30d_vs_prev30_pct':c30,'trend':trend_label(c7,c30)}
+
+              oracle7=history_change(old_history,sym,'oracle_tvs_usd',oracle_value,7)
+              oracle30=history_change(old_history,sym,'oracle_tvs_usd',oracle_value,30)
+              oracle_block={'latest_usd':oracle_value,'change_7d_pct':oracle7,'change_30d_pct':oracle30,'trend':trend_label(oracle7,oracle30)}
 
               possible=3; available=sum(metrics[m]['latest'] is not None for m in METRICS)
               if meta['chain']:
-                  possible+=2; available+=int(chain_tvl['latest_usd'] is not None)+int(dex_block['latest_daily_usd'] is not None)
+                  possible+=2; available+=int(chain_block['latest_usd'] is not None)+int(dex_block['latest_daily_usd'] is not None)
               if meta['protocol']:
-                  possible+=1; available+=int(protocol_tvl['latest_usd'] is not None)
+                  possible+=1; available+=int(protocol_block['latest_usd'] is not None)
+              if meta['oracle']:
+                  possible+=1; available+=int(oracle_value is not None)
               coverage=round(available/possible*100) if possible else 0
 
-              long_votes=[metrics[m]['change_30d_pct'] for m in METRICS]
-              tactical_votes=[metrics[m]['change_7d_pct'] for m in METRICS]
-              long_votes += [chain_tvl['change_30d_pct'],dex_block['change_30d_vs_prev30_pct'],protocol_tvl['change_30d_pct']]
-              tactical_votes += [chain_tvl['change_7d_pct'],dex_block['change_7d_vs_prev7_pct'],protocol_tvl['change_7d_pct']]
+              long_votes=[metrics[m]['change_30d_pct'] for m in METRICS]+[chain_block['change_30d_pct'],dex_block['change_30d_vs_prev30_pct'],protocol_block['change_30d_pct'],oracle30]
+              tactical_votes=[metrics[m]['change_7d_pct'] for m in METRICS]+[chain_block['change_7d_pct'],dex_block['change_7d_vs_prev7_pct'],protocol_block['change_7d_pct'],oracle7]
               lc=context(long_votes); tc=context(tactical_votes)
 
+              source_status={'coinmetrics':cm_status,'defillama_chain_tvl':ctv_status,'defillama_dex':dex_status,'defillama_protocol_tvl':ptv_status,'defillama_oracle':oracle_status}
               asset={
-                  'symbol':sym,'coinmetrics_asset':meta['cm'],'defillama_chain':meta['chain'],'defillama_protocol':meta['protocol'],
-                  'source_status':{'coinmetrics':cm_status,'defillama_chain_tvl':tvl_status,'defillama_dex':dex_status,'defillama_protocol_tvl':protocol_status},
-                  'coverage_pct':coverage,'network_metrics':metrics,
-                  'chain_tvl':chain_tvl,'protocol_tvl':protocol_tvl,'dex_volume':dex_block,
+                  'symbol':sym,'coverage_pct':coverage,'source_status':source_status,
+                  'network_metrics':metrics,'chain_tvl':chain_block,'protocol_tvl':protocol_block,'dex_volume':dex_block,'oracle_tvs':oracle_block,
                   'long_onchain_score_0_10':lc['score'],'long_onchain_label':lc['label'],
                   'tactical_onchain_score_0_10':tc['score'],'tactical_onchain_label':tc['label'],
-                  'role':'context only; never standalone trade signal',
+                  'role':'context only; never standalone trade signal'
               }
               assets.append(asset)
               raw_rows.append({
@@ -240,41 +295,45 @@ jobs:
                   'active_addresses':metrics['AdrActCnt']['latest'],'active_addresses_7d_pct':metrics['AdrActCnt']['change_7d_pct'],'active_addresses_30d_pct':metrics['AdrActCnt']['change_30d_pct'],
                   'tx_count':metrics['TxCnt']['latest'],'tx_count_7d_pct':metrics['TxCnt']['change_7d_pct'],'tx_count_30d_pct':metrics['TxCnt']['change_30d_pct'],
                   'transfer_value_adj_usd':metrics['TxTfrValAdjUSD']['latest'],'transfer_value_7d_pct':metrics['TxTfrValAdjUSD']['change_7d_pct'],'transfer_value_30d_pct':metrics['TxTfrValAdjUSD']['change_30d_pct'],
-                  'chain_tvl_usd':chain_tvl['latest_usd'],'chain_tvl_7d_pct':chain_tvl['change_7d_pct'],'chain_tvl_30d_pct':chain_tvl['change_30d_pct'],
-                  'protocol_tvl_usd':protocol_tvl['latest_usd'],'protocol_tvl_7d_pct':protocol_tvl['change_7d_pct'],'protocol_tvl_30d_pct':protocol_tvl['change_30d_pct'],
+                  'chain_tvl_usd':chain_block['latest_usd'],'chain_tvl_7d_pct':chain_block['change_7d_pct'],'chain_tvl_30d_pct':chain_block['change_30d_pct'],
+                  'protocol_tvl_usd':protocol_block['latest_usd'],'protocol_tvl_7d_pct':protocol_block['change_7d_pct'],'protocol_tvl_30d_pct':protocol_block['change_30d_pct'],
                   'dex_daily_usd':dex_block['latest_daily_usd'],'dex_7d_vs_prev7_pct':dex_block['change_7d_vs_prev7_pct'],'dex_30d_vs_prev30_pct':dex_block['change_30d_vs_prev30_pct'],
+                  'oracle_tvs_usd':oracle_value,'oracle_tvs_7d_pct':oracle7,'oracle_tvs_30d_pct':oracle30,
                   'long_onchain_score_0_10':lc['score'],'long_onchain_label':lc['label'],'tactical_onchain_score_0_10':tc['score'],'tactical_onchain_label':tc['label'],
               })
-              time.sleep(0.25)
+              time.sleep(0.2)
 
-          coverage_assets=sum(a['coverage_pct']>0 for a in assets)
           source_health={
               'defillama_chain_assets_ok':sum(a['source_status']['defillama_chain_tvl']=='OK' for a in assets),
               'defillama_dex_assets_ok':sum(a['source_status']['defillama_dex']=='OK' for a in assets),
-              'defillama_protocol_assets_ok':sum(a['source_status']['defillama_protocol_tvl']=='OK' for a in assets),
+              'defillama_protocol_assets_ok':sum(str(a['source_status']['defillama_protocol_tvl']).startswith('OK') for a in assets),
+              'defillama_oracle_assets_ok':sum(a['source_status']['defillama_oracle']=='OK' for a in assets),
               'coinmetrics_assets_ok':sum(a['source_status']['coinmetrics']=='OK' for a in assets),
           }
           payload={
-              'generated_at_utc':end.isoformat(),'engine':'ONCHAIN_ACTIVITY_v0.2','assets':assets,
-              'summary':{'assets_requested':len(assets),'assets_with_any_data':coverage_assets,'source_health':source_health,'coinmetrics_metrics':METRICS,'defillama_layers':['CHAIN_TVL','DEX_VOLUME','PROTOCOL_TVL']},
+              'generated_at_utc':end.isoformat(),'engine':'ONCHAIN_ACTIVITY_v0.3','assets':assets,
+              'summary':{'assets_requested':len(assets),'assets_with_any_data':sum(a['coverage_pct']>0 for a in assets),'source_health':source_health,'coinmetrics_metrics':METRICS,'defillama_layers':['CHAIN_TVL','DEX_VOLUME','PROTOCOL_TVL','ORACLE_TVS']},
               'hard_rules':{
                   'onchain_is_context_not_signal':True,'missing_data_is_never_imputed':True,'network_metrics_not_equal_token_fundamentals':True,
-                  'exchange_netflow_not_claimed_without_verified_source':True,'whale_flow_not_claimed_without_verified_source':True,'V7_UNTOUCHED':True,
+                  'current_oracle_tvs_magnitude_not_scored_without_history':True,'exchange_netflow_not_claimed_without_verified_source':True,
+                  'whale_flow_not_claimed_without_verified_source':True,'V7_UNTOUCHED':True,
               },
               'limitations':[
-                  'Coin Metrics community time-series access is currently unavailable from this runner for some assets; HTTP errors are surfaced, never hidden.',
-                  'ETH/SOL chain TVL and DEX activity describe their networks, not solely the token investment case.',
-                  'ONDO protocol TVL is tracked separately from chain TVL.',
-                  'Verified exchange netflow and whale-wallet flow remain pending until a reliable source is connected.',
-                  'Missing LINK/ONDO network-address metrics are not guessed or replaced with unrelated proxies.'
+                  'Coin Metrics community time-series may be unavailable from GitHub runners; source errors remain visible.',
+                  'ETH/SOL chain TVL and DEX activity describe network activity, not solely token fundamentals.',
+                  'ONDO protocol TVL and LINK oracle TVS are project-specific context and are not treated as direct buy signals.',
+                  'Oracle TVS trend is scored only after persisted history exists; current magnitude alone receives no directional vote.',
+                  'Verified exchange netflow and whale-wallet flow remain pending until a reliable source is connected.'
               ]
           }
           (OUT/'ONCHAIN_ACTIVITY.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False),encoding='utf-8')
-          df=pd.DataFrame(raw_rows); df.to_csv(OUT/'ONCHAIN_ACTIVITY.csv',index=False)
-          hf=OUT/'ONCHAIN_ACTIVITY_HISTORY.csv'
-          if hf.exists() and not df.empty:
-              old=pd.read_csv(hf); df=pd.concat([old,df],ignore_index=True).drop_duplicates(['date','symbol'],keep='last').sort_values(['date','symbol'])
-          df.to_csv(hf,index=False)
+          current=pd.DataFrame(raw_rows)
+          current.to_csv(OUT/'ONCHAIN_ACTIVITY.csv',index=False)
+          combined=current
+          if history_path.exists() and not current.empty:
+              old=pd.read_csv(history_path)
+              combined=pd.concat([old,current],ignore_index=True,sort=False).drop_duplicates(['date','symbol'],keep='last').sort_values(['date','symbol'])
+          combined.to_csv(history_path,index=False)
           print(json.dumps(payload,indent=2,ensure_ascii=False))
           PY
 
@@ -285,6 +344,11 @@ jobs:
           git add crypto_data_hub/ONCHAIN_ACTIVITY.json crypto_data_hub/ONCHAIN_ACTIVITY.csv crypto_data_hub/ONCHAIN_ACTIVITY_HISTORY.csv
           if ! git diff --cached --quiet; then
             git commit -m 'Update V8 onchain activity layer'
-            git pull --rebase origin main
-            git push
+            for attempt in 1 2 3; do
+              if git pull --rebase origin main && git push; then exit 0; fi
+              echo "Push attempt $attempt failed; retrying"
+              sleep $((attempt * 4))
+            done
+            echo 'Push failed after 3 attempts'
+            exit 1
           fi
