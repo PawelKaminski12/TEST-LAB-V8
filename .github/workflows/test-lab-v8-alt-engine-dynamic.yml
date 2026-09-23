@@ -1,0 +1,173 @@
+name: TEST LAB V8 Dynamic Alt Engine
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '25 6 * * *'
+  push:
+    paths:
+      - 'config/alt_universe.csv'
+      - '.github/workflows/test-lab-v8-alt-engine-dynamic.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-dynamic-alt-engine:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependency
+        run: pip install --quiet pandas
+
+      - name: Build dynamic alt engine payload
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import pandas as pd
+
+          ROOT=Path('crypto_data_hub')
+          CFG=Path('config/alt_universe.csv')
+          OUT=ROOT/'ALT_ENGINE_DYNAMIC.json'
+          HIST=ROOT/'ALT_ENGINE_DYNAMIC_HISTORY.csv'
+
+          if not CFG.exists():
+              raise SystemExit('Missing config/alt_universe.csv')
+          if not (ROOT/'LATEST_SNAPSHOT.json').exists():
+              raise SystemExit('Missing crypto_data_hub/LATEST_SNAPSHOT.json')
+          if not (ROOT/'ALT_ROTATION_SCORE.json').exists():
+              raise SystemExit('Missing crypto_data_hub/ALT_ROTATION_SCORE.json')
+
+          cfg=pd.read_csv(CFG)
+          cfg=cfg[cfg['enabled'].astype(str).str.lower().eq('true')].copy()
+          snap=json.loads((ROOT/'LATEST_SNAPSHOT.json').read_text(encoding='utf-8'))
+          rot=json.loads((ROOT/'ALT_ROTATION_SCORE.json').read_text(encoding='utf-8'))
+          rs=snap.get('relative_strength',{})
+          global_score=int(rot.get('score_0_10',0))
+          global_status=rot.get('status','OFF')
+          confidence=rot.get('confidence','LOW')
+
+          def own_trend(symbol):
+              # Current hub stores full price regime only for BTC/ETH.
+              if symbol=='ETH':
+                  e=snap.get('eth_regime',{})
+                  pts=0
+                  pts += 1 if e.get('above_sma50') else 0
+                  pts += 1 if e.get('above_sma200') else 0
+                  pts += 1 if e.get('sma50_rising_20d') else 0
+                  return pts, e
+              # Until generic per-alt price-regime is added, RS is used only as context.
+              return None, {}
+
+          results=[]
+          for _,r in cfg.iterrows():
+              sym=str(r['symbol']).upper().strip()
+              role=str(r.get('role','ALT')).upper().strip()
+              if sym=='BTC':
+                  continue
+
+              b=rs.get(f'{sym}_BTC',{})
+              e=rs.get(f'{sym}_ETH',{}) if sym!='ETH' else {}
+              rs_pts=0
+              rs_pts += 1 if b.get('above_sma50') else 0
+              rs_pts += 1 if b.get('sma50_rising_20d') else 0
+              if sym!='ETH':
+                  rs_pts += 1 if e.get('above_sma50') else 0
+                  rs_pts += 1 if e.get('sma50_rising_20d') else 0
+              else:
+                  rs_pts *= 2  # normalize ETH to 0-4 scale from ETH/BTC only
+
+              trend_pts, trend_detail=own_trend(sym)
+              missing=[]
+              if not b:
+                  missing.append('RS_VS_BTC')
+              if sym!='ETH' and not e:
+                  missing.append('RS_VS_ETH')
+              if trend_pts is None:
+                  missing.append('GENERIC_PRICE_REGIME')
+              missing += ['STREFY','BREAKOUT_RETEST','FOMO']
+
+              # Context label only. This is intentionally NOT the final trade decision.
+              if global_score>=8 and rs_pts>=4:
+                  context='LEADER'
+              elif global_score>=6 and rs_pts>=3:
+                  context='WATCH_STRONG'
+              elif rs_pts>=2:
+                  context='WATCH'
+              else:
+                  context='WEAK_RELATIVE'
+
+              trade_decision='DATA_PENDING'
+              reason='Final decision blocked until zones, own trend, breakout/retest and FOMO layers are present.'
+
+              results.append({
+                  'symbol':sym,
+                  'role':role,
+                  'global_alt_rotation_score':global_score,
+                  'global_alt_rotation_status':global_status,
+                  'global_confidence':confidence,
+                  'relative_strength_0_4':rs_pts,
+                  'context_label':context,
+                  'vs_btc_20d_pct':b.get('change_20d_pct'),
+                  'vs_eth_20d_pct':e.get('change_20d_pct') if sym!='ETH' else None,
+                  'own_trend_0_3':trend_pts,
+                  'missing_layers':missing,
+                  'trade_decision':trade_decision,
+                  'reason':reason,
+              })
+
+          payload={
+              'date':snap.get('target_date'),
+              'engine':'ALT_ENGINE_DYNAMIC_v0.1',
+              'universe_source':'config/alt_universe.csv',
+              'universe_count':len(results),
+              'design_rules':{
+                  'not_hardcoded_to_five_test_alts':True,
+                  'every_enabled_registry_row_is_processed':True,
+                  'relative_strength_is_context_not_hard_gate':True,
+                  'rotation_score_is_context_not_buy_signal':True,
+                  'final_trade_decision_requires_all_layers':True,
+              },
+              'assets':results
+          }
+          OUT.write_text(json.dumps(payload,indent=2),encoding='utf-8')
+
+          hist_rows=[]
+          for x in results:
+              hist_rows.append({
+                  'date':payload['date'],'symbol':x['symbol'],
+                  'rotation_score':x['global_alt_rotation_score'],
+                  'rotation_status':x['global_alt_rotation_status'],
+                  'rs_0_4':x['relative_strength_0_4'],
+                  'context_label':x['context_label'],
+                  'trade_decision':x['trade_decision']
+              })
+          new=pd.DataFrame(hist_rows)
+          if HIST.exists():
+              old=pd.read_csv(HIST)
+              new=pd.concat([old,new],ignore_index=True)
+              new=new.drop_duplicates(['date','symbol'],keep='last').sort_values(['date','symbol'])
+          new.to_csv(HIST,index=False)
+
+          print(json.dumps(payload,indent=2))
+          PY
+
+      - name: Commit dynamic engine payload
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add crypto_data_hub/ALT_ENGINE_DYNAMIC.json crypto_data_hub/ALT_ENGINE_DYNAMIC_HISTORY.csv
+          if git diff --cached --quiet; then
+            echo 'No changes to commit'
+          else
+            git commit -m 'Update V8 dynamic alt engine payload'
+            git push
+          fi
