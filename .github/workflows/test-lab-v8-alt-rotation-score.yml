@@ -34,41 +34,127 @@ jobs:
           import json
           from pathlib import Path
           import pandas as pd
+
           R=Path('crypto_data_hub')
           s=json.loads((R/'LATEST_SNAPSHOT.json').read_text())
           h=pd.read_csv(R/'HISTORY.csv') if (R/'HISTORY.csv').exists() else pd.DataFrame()
           q=s.get('qa',{})
           if not q.get('PASS'): raise SystemExit('DATA HUB QA FAIL')
+
           rs=s['relative_strength']; parts={}
           b=s['btc_regime']; parts['BTC_REGIME']=1 if b.get('above_sma200') and b.get('sma50_rising_20d') else 0
-          x=rs['ETH_BTC']; parts['ETH_BTC']=int(bool(x.get('above_sma50')))+int(bool(x.get('sma50_rising_20d')))
-          e=s['etf_flows']; bp=float(e['BTC'].get('flow_5d_usdm') or 0); ep=float(e['ETH'].get('flow_5d_usdm') or 0); ea=float(e['ETH'].get('acceleration_5d_vs_prev5_usdm') or 0); sp=float(e['SOL'].get('flow_5d_usdm') or 0)
+
+          x=rs['ETH_BTC']
+          ethbtc_5=float(x.get('change_5d_pct') or 0)
+          ethbtc_20=float(x.get('change_20d_pct') or 0)
+          parts['ETH_BTC']=int(bool(x.get('above_sma50')))+int(bool(x.get('sma50_rising_20d')))
+
+          e=s['etf_flows']
+          bp=float(e['BTC'].get('flow_5d_usdm') or 0)
+          ep=float(e['ETH'].get('flow_5d_usdm') or 0)
+          e20=float(e['ETH'].get('flow_20d_usdm') or 0)
+          ea=float(e['ETH'].get('acceleration_5d_vs_prev5_usdm') or 0)
+          sp=float(e['SOL'].get('flow_5d_usdm') or 0)
           parts['ETF_FLOW']=int(bp>0 and ep>0)+int(ea>0 and sp>0)
-          parts['STABLECOIN_LIQUIDITY']=int(float(s['stablecoin_liquidity'].get('change_30d_pct') or 0)>0)
+
+          liq=s['stablecoin_liquidity']
+          st7=float(liq.get('change_7d_pct') or 0)
+          st14=float(liq.get('change_14d_pct') or 0)
+          st30=float(liq.get('change_30d_pct') or 0)
+          parts['STABLECOIN_LIQUIDITY']=int(st30>0)
+
           keys=['SOL_BTC','LINK_BTC','AAVE_BTC','HBAR_BTC','ONDO_BTC']
           strong=[k for k in keys if rs[k].get('above_sma50') and rs[k].get('sma50_rising_20d')]
           parts['ALT_RS_BREADTH']=2 if len(strong)>=4 else 1 if len(strong)>=2 else 0
+
           rot=0; ready=False; detail={}
           if len(h)>=20:
-              z=h.dropna(subset=['btc_dom_pct','v8_total3_eq_usd','v8_others_btc_eq'])
-              if len(z)>=20:
-                  ready=True; a=z.iloc[-1]; p=z.iloc[-20]
-                  bd=float(a.btc_dom_pct)<float(p.btc_dom_pct); t3=float(a.v8_total3_eq_usd)>float(p.v8_total3_eq_usd); ob=float(a.v8_others_btc_eq)>float(p.v8_others_btc_eq)
-                  rot=int(bd and t3)+int(ob)
-                  detail={'btc_dom_20d_change_pp':float(a.btc_dom_pct)-float(p.btc_dom_pct),'total3_eq_20d_change_pct':(float(a.v8_total3_eq_usd)/float(p.v8_total3_eq_usd)-1)*100,'others_btc_eq_20d_change_pct':(float(a.v8_others_btc_eq)/float(p.v8_others_btc_eq)-1)*100}
+              required=['btc_dom_pct','v8_total3_eq_usd','v8_others_btc_eq']
+              if all(c in h.columns for c in required):
+                  z=h.dropna(subset=required)
+                  if len(z)>=20:
+                      ready=True
+                      a=z.iloc[-1]; p20=z.iloc[-20]
+                      bd20=float(a.btc_dom_pct)<float(p20.btc_dom_pct)
+                      t320=float(a.v8_total3_eq_usd)>float(p20.v8_total3_eq_usd)
+                      ob20=float(a.v8_others_btc_eq)>float(p20.v8_others_btc_eq)
+                      rot=int(bd20 and t320)+int(ob20)
+                      detail={
+                          'btc_dom_20d_change_pp':float(a.btc_dom_pct)-float(p20.btc_dom_pct),
+                          'total3_eq_20d_change_pct':(float(a.v8_total3_eq_usd)/float(p20.v8_total3_eq_usd)-1)*100,
+                          'others_btc_eq_20d_change_pct':(float(a.v8_others_btc_eq)/float(p20.v8_others_btc_eq)-1)*100,
+                      }
+                      if len(z)>=5:
+                          p5=z.iloc[-5]
+                          detail.update({
+                              'btc_dom_5d_change_pp':float(a.btc_dom_pct)-float(p5.btc_dom_pct),
+                              'total3_eq_5d_change_pct':(float(a.v8_total3_eq_usd)/float(p5.v8_total3_eq_usd)-1)*100,
+                              'others_btc_eq_5d_change_pct':(float(a.v8_others_btc_eq)/float(p5.v8_others_btc_eq)-1)*100,
+                          })
           parts['BROAD_ROTATION_TREND']=rot
-          score=sum(parts.values()); status='OFF' if score<=3 else 'EARLY' if score<=5 else 'CONFIRMED' if score<=7 else 'STRONG'
-          cp=int(q.get('binance_all_end_target',False))+int(int(q.get('btc_etf_rows',0))>100 and int(q.get('eth_etf_rows',0))>100)+int(int(q.get('stablecoin_history_rows',0))>100)+int(ready)+int(int(q.get('sol_etf_rows',0))>=20)
-          conf=round(cp/5*100); clevel='HIGH' if conf>=80 else 'MEDIUM' if conf>=60 else 'LOW'
+
+          score=sum(parts.values())
+          status='OFF' if score<=3 else 'EARLY' if score<=5 else 'CONFIRMED' if score<=7 else 'STRONG'
+
+          cp=int(q.get('binance_all_end_target',False))
+          cp+=int(int(q.get('btc_etf_rows',0))>100 and int(q.get('eth_etf_rows',0))>100)
+          cp+=int(int(q.get('stablecoin_history_rows',0))>100)
+          cp+=int(ready)
+          cp+=int(int(q.get('sol_etf_rows',0))>=20)
+          conf=round(cp/5*100)
+          clevel='HIGH' if conf>=80 else 'MEDIUM' if conf>=60 else 'LOW'
+
           amap={'SOL':('SOL_BTC','SOL_ETH'),'LINK':('LINK_BTC','LINK_ETH'),'AAVE':('AAVE_BTC','AAVE_ETH'),'HBAR':('HBAR_BTC','HBAR_ETH'),'ONDO':('ONDO_BTC','ONDO_ETH')}
           ar={}
           for alt,(kb,ke) in amap.items():
-              rb,re=rs[kb],rs[ke]; i=sum([bool(rb.get('above_sma50')),bool(rb.get('sma50_rising_20d')),bool(re.get('above_sma50')),bool(re.get('sma50_rising_20d'))])
+              rb,re=rs[kb],rs[ke]
+              i=sum([bool(rb.get('above_sma50')),bool(rb.get('sma50_rising_20d')),bool(re.get('above_sma50')),bool(re.get('sma50_rising_20d'))])
               lab='LEADER' if i>=4 and score>=6 else 'WATCH_STRONG' if i>=3 and score>=5 else 'WATCH' if i>=2 else 'WEAK_RELATIVE'
-              ar[alt]={'individual_rs_0_4':int(i),'label':lab,'vs_btc_20d_pct':rb.get('change_20d_pct'),'vs_eth_20d_pct':re.get('change_20d_pct')}
-          out={'date':s['target_date'],'engine':'ALT_ROTATION_SCORE_v0.2','score_0_10':score,'status':status,'confidence':clevel,'confidence_pct':conf,'parts':parts,'broad_rotation_history_ready':ready,'broad_rotation_detail':detail,'selected_alt_breadth_strong':strong,'alt_readiness':ar,'hard_rules':{'score_is_not_buy_signal':True,'relative_strength_is_not_hard_gate':True,'requires_price_zone_trend_retest_layer_before_trade_decision':True,'requires_data_quality_pass':True},'limitations':['V8_TOTAL3_EQ and V8_OTHERS_BTC_EQ are CoinGecko equivalents, not yet certified 1:1 with TradingView.','Broad rotation trend scores only after 20 persisted daily snapshots.','SOL ETF is immature below 20 rows.']}
+              ar[alt]={
+                  'individual_rs_0_4':int(i),'label':lab,
+                  'vs_btc_5d_pct':rb.get('change_5d_pct'),'vs_btc_20d_pct':rb.get('change_20d_pct'),
+                  'vs_eth_5d_pct':re.get('change_5d_pct'),'vs_eth_20d_pct':re.get('change_20d_pct')
+              }
+
+          flow_context={
+              'eth_btc':{
+                  'change_5d_pct':ethbtc_5,'change_20d_pct':ethbtc_20,
+                  'above_sma50':bool(x.get('above_sma50')),'sma50_rising_20d':bool(x.get('sma50_rising_20d'))
+              },
+              'etf':{
+                  'btc_5d_usdm':bp,'eth_5d_usdm':ep,'eth_20d_usdm':e20,'eth_acceleration_5d_usdm':ea,'sol_5d_usdm':sp,
+                  'btc_trend':e['BTC'].get('trend_label'),'eth_trend':e['ETH'].get('trend_label'),'sol_trend':e['SOL'].get('trend_label')
+              },
+              'stablecoin':{'change_7d_pct':st7,'change_14d_pct':st14,'change_30d_pct':st30},
+              'broad_rotation':detail
+          }
+
+          out={
+              'date':s['target_date'],'engine':'ALT_ROTATION_SCORE_v0.3','score_0_10':score,'status':status,
+              'confidence':clevel,'confidence_pct':conf,'parts':parts,
+              'flow_context':flow_context,
+              'broad_rotation_history_ready':ready,'broad_rotation_detail':detail,
+              'selected_alt_breadth_strong':strong,'alt_readiness':ar,
+              'hard_rules':{
+                  'score_is_not_buy_signal':True,'relative_strength_is_not_hard_gate':True,
+                  'etf_flow_is_confirmation_not_oracle':True,'flow_context_is_not_standalone_signal':True,
+                  'requires_price_zone_trend_retest_layer_before_trade_decision':True,'requires_data_quality_pass':True
+              },
+              'limitations':[
+                  'V8_TOTAL3_EQ and V8_OTHERS_BTC_EQ are CoinGecko equivalents, not yet certified 1:1 with TradingView.',
+                  'Broad rotation trend scores only after 20 persisted daily snapshots.',
+                  'SOL ETF is immature below 20 rows.'
+              ]
+          }
           (R/'ALT_ROTATION_SCORE.json').write_text(json.dumps(out,indent=2))
-          row={'date':s['target_date'],'score':score,'status':status,'confidence_pct':conf,**parts}
+
+          row={
+              'date':s['target_date'],'score':score,'status':status,'confidence_pct':conf,
+              'eth_btc_5d_pct':ethbtc_5,'eth_btc_20d_pct':ethbtc_20,
+              'btc_etf_5d_usdm':bp,'eth_etf_5d_usdm':ep,'eth_etf_20d_usdm':e20,'eth_etf_accel_5d_usdm':ea,
+              'stablecoin_7d_pct':st7,'stablecoin_14d_pct':st14,'stablecoin_30d_pct':st30,
+              **parts
+          }
           f=R/'ALT_ROTATION_HISTORY.csv'; n=pd.DataFrame([row])
           if f.exists(): n=pd.concat([pd.read_csv(f),n],ignore_index=True).drop_duplicates('date',keep='last').sort_values('date')
           n.to_csv(f,index=False)
