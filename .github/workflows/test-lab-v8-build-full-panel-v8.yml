@@ -1,0 +1,72 @@
+name: TEST LAB V8 Build Full Panel V8
+
+on:
+  push:
+    paths:
+      - 'google_sheets/V8_ALERT_STATE_TRANSITIONS_V8.txt'
+      - '.github/workflows/test-lab-v8-build-full-panel-v8.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-test-save:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz projekt
+        uses: actions/checkout@v4
+
+      - name: Zbuduj pełny skrypt V8
+        run: |
+          cat google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V7.txt > /tmp/full_v8.txt
+          printf '\n\n// ===== V8 ALERT STATE TRANSITIONS =====\n\n' >> /tmp/full_v8.txt
+          cat google_sheets/V8_ALERT_STATE_TRANSITIONS_V8.txt >> /tmp/full_v8.txt
+
+      - name: Sprawdź składnię pełnego skryptu
+        run: |
+          cp /tmp/full_v8.txt /tmp/full_v8.js
+          node --check /tmp/full_v8.js
+
+      - name: Sprawdź integralność V8
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('/tmp/full_v8.txt').read_text(encoding='utf-8')
+          req=['NOWY','NASILA SIĘ','BEZ ZMIAN','SŁABNIE','WYGASŁ','function determineAlarmStateV8_','function applyAlarmStateTransitionsV8_','function readExtremeStateMapV8_','function notifyNewExtremeAlarms_','AUTO_EXECUTION','OFF','function updateMainPanelExtremeSummary_']
+          miss=[x for x in req if x not in s]
+          bad=[x for x in ['placeOrder(','createOrder(','AUTO_EXECUTION = ON'] if x in s]
+          if miss: raise SystemExit('BRAK: '+', '.join(miss))
+          if bad: raise SystemExit('NIEDOZWOLONE: '+', '.join(bad))
+          print('PASS — integralność V8')
+          PY
+
+      - name: Test dynamiki stanów alarmów
+        run: |
+          node <<'JS'
+          const p={OSTRZEŻENIE:1,MOCNY:2,KRYTYCZNY:3};
+          const t={'1H':1,'4H':2,'1D':3,'WIELE TF':4};
+          function strength(a){const c=a.multiTfList?a.multiTfList.length:1;return (p[a.priority]||0)*100+(t[a.tf]||0)*10+c*3+Number(a.signalCount||0)}
+          function state(prev,cur){if(!cur.aktywny)return prev&&prev.aktywny?'WYGASŁ':'BEZ ZMIAN';if(!prev||!prev.aktywny)return 'NOWY';const b=strength(prev),n=strength(cur);if(n>b)return 'NASILA SIĘ';if(n<b)return 'SŁABNIE';return 'BEZ ZMIAN'}
+          const base={aktywny:true,priority:'MOCNY',tf:'4H',signalCount:2};
+          if(state(null,base)!=='NOWY') throw Error('NOWY fail');
+          if(state(base,{aktywny:true,priority:'KRYTYCZNY',tf:'4H',signalCount:3})!=='NASILA SIĘ') throw Error('NASILA fail');
+          if(state(base,{aktywny:true,priority:'MOCNY',tf:'4H',signalCount:2})!=='BEZ ZMIAN') throw Error('BEZ ZMIAN fail');
+          if(state(base,{aktywny:true,priority:'OSTRZEŻENIE',tf:'4H',signalCount:1})!=='SŁABNIE') throw Error('SŁABNIE fail');
+          if(state(base,{aktywny:false,priority:'MOCNY',tf:'4H',signalCount:0})!=='WYGASŁ') throw Error('WYGASŁ fail');
+          if(state({aktywny:true,priority:'MOCNY',tf:'4H',signalCount:2},{aktywny:true,priority:'KRYTYCZNY',tf:'WIELE TF',signalCount:4,multiTfList:['4H','1D']})!=='NASILA SIĘ') throw Error('WIELE TF escalation fail');
+          console.log('PASS — NOWY / NASILA SIĘ / BEZ ZMIAN / SŁABNIE / WYGASŁ')
+          JS
+
+      - name: Zapisz pełny skrypt V8
+        run: |
+          cp /tmp/full_v8.txt google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V8.txt
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V8.txt
+          if git diff --cached --quiet; then
+            echo 'Brak zmian do zapisu'
+          else
+            git commit -m 'Zapisz pełny panel V8 z dynamiką alarmów'
+            git push
+          fi
