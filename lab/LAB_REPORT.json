@@ -1,7 +1,117 @@
 {
-  "generated_at_utc": "2026-09-23T14:53:51.871660+00:00",
+  "generated_at_utc": "2026-09-23T14:57:27.012214+00:00",
   "engine": "V8_ASSET_LAB_v0.1",
-  "active_assets": 0,
-  "reports": [],
+  "active_assets": 2,
+  "reports": [
+    {
+      "generated_at_utc": "2026-09-23T14:57:27.012214+00:00",
+      "symbol": "ETH",
+      "source_symbol": "ETH-USD",
+      "asset_type": "CRYPTO",
+      "mode": "<BOUND METHOD SERIES.MODE OF SYMBOL                              ETH\nSOURCE_SYMBOL                   ETH-USD\nASSET_TYPE                       CRYPTO\nMODE                               BOTH\nENABLED                            TRUE\nADDED_AT_UTC       2026-09-23T14:45:00Z\nNOTES            VALIDATION-SEED-CRYPTO\nNAME: 0, DTYPE: OBJECT>",
+      "checkpoint": "D0",
+      "data_quality_0_100": 75,
+      "data_status": "DATA_READY",
+      "technical_1D": {
+        "status": "OK",
+        "price": 2674.800048828125,
+        "trend_0_4": 4,
+        "rsi14": 62.47614570501171,
+        "mfi14": 57.81112743444789,
+        "macd_hist": 12.898989388519226,
+        "ret5_pct": 2.429890657117495,
+        "ret20_pct": 6.649837197125286,
+        "fomo_0_10": 0
+      },
+      "stock_fundamentals": {
+        "status": "NOT_APPLICABLE"
+      },
+      "crypto_market_context": {
+        "phase": "ALT_ROTATION_CANDIDATE",
+        "confidence": "MEDIUM",
+        "rotation_score": null
+      },
+      "onchain_context": {
+        "quality_gate": "TRUSTED",
+        "coverage_pct": 57,
+        "long_score": 9,
+        "tactical_score": 9
+      },
+      "existing_engine_context": {
+        "decision": "CZEKAJ",
+        "long_flow": 7,
+        "tactical_flow": 3
+      },
+      "rules": {
+        "FAST_is_current_snapshot": true,
+        "DEEP_crypto_checkpoints": [
+          "D0",
+          "D1",
+          "D3",
+          "D7",
+          "D30"
+        ],
+        "DEEP_stock_checkpoints": [
+          "D0",
+          "D7",
+          "D30"
+        ],
+        "never_auto_add_to_portfolio": true,
+        "not_trade_execution": true
+      }
+    },
+    {
+      "generated_at_utc": "2026-09-23T14:57:27.012214+00:00",
+      "symbol": "ANET",
+      "source_symbol": "ANET",
+      "asset_type": "STOCK",
+      "mode": "<BOUND METHOD SERIES.MODE OF SYMBOL                            ANET\nSOURCE_SYMBOL                     ANET\nASSET_TYPE                       STOCK\nMODE                              BOTH\nENABLED                           TRUE\nADDED_AT_UTC      2026-09-23T14:45:00Z\nNOTES            VALIDATION-SEED-STOCK\nNAME: 1, DTYPE: OBJECT>",
+      "checkpoint": "D0",
+      "data_quality_0_100": 65,
+      "data_status": "DATA_READY",
+      "technical_1D": {
+        "status": "OK",
+        "price": 203.08999633789062,
+        "trend_0_4": 4,
+        "rsi14": 57.6500623516563,
+        "mfi14": 74.90238281183454,
+        "macd_hist": 0.7442363342441034,
+        "ret5_pct": 5.315287385735146,
+        "ret20_pct": 7.940474582011348,
+        "fomo_0_10": 0
+      },
+      "stock_fundamentals": {
+        "status": "OK",
+        "market_cap": 256142114816.0,
+        "trailing_pe": 64.26898,
+        "forward_pe": 39.150482,
+        "price_to_sales": 24.300064,
+        "revenue_growth": 0.377,
+        "earnings_growth": 0.357,
+        "debt_to_equity": null,
+        "free_cashflow": 3891512576.0
+      },
+      "crypto_market_context": null,
+      "onchain_context": null,
+      "existing_engine_context": null,
+      "rules": {
+        "FAST_is_current_snapshot": true,
+        "DEEP_crypto_checkpoints": [
+          "D0",
+          "D1",
+          "D3",
+          "D7",
+          "D30"
+        ],
+        "DEEP_stock_checkpoints": [
+          "D0",
+          "D7",
+          "D30"
+        ],
+        "never_auto_add_to_portfolio": true,
+        "not_trade_execution": true
+      }
+    }
+  ],
   "purpose": "FAST current analysis plus DEEP observation; research only"
 }
