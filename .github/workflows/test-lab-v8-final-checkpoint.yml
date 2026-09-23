@@ -1,0 +1,71 @@
+name: TEST LAB V8 Final Checkpoint
+
+on:
+  push:
+    paths:
+      - 'scripts/v8_final_checkpoint_v1.py'
+      - 'google_sheets/V8_STATUS_MASTER.csv'
+      - 'audit/V8_FINAL_READINESS.json'
+      - 'audit/V8_TACTICAL_STABILITY_PACK_V6.md'
+      - '.github/workflows/test-lab-v8-final-checkpoint.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  final-checkpoint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz projekt
+        uses: actions/checkout@v4
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Zapamiętaj produkcję
+        run: |
+          sha256sum tactical_engine/TACTICAL_ENGINE.json > /tmp/prod_before.sha
+          sha256sum google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt >> /tmp/prod_before.sha
+      - name: Sprawdź składnię finalnego checkpointu
+        run: python -m py_compile scripts/v8_final_checkpoint_v1.py
+      - name: Zbuduj finalny checkpoint
+        run: python scripts/v8_final_checkpoint_v1.py
+      - name: Sprawdź kontrakt finalny
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path('audit/V8_FINAL_CHECKPOINT.json').read_text(encoding='utf-8'))
+          assert p['production_status']=='CLOSED_STABLE'
+          assert p['research_status']=='HOLD_RESEARCH'
+          assert p['missing_required_status_rows']==[]
+          assert p['production_readiness_percent']==100
+          assert p['safety']['auto_execution'] is False
+          assert p['safety']['v7_touch'] is False
+          assert p['safety']['research_auto_promotion'] is False
+          assert p['final_decision']=='FREEZE_PRODUCTION_CONTINUE_OBSERVATION_ONLY'
+          print('FINAL CONTRACT PASS')
+          PY
+      - name: Potwierdź brak zmian produkcyjnych
+        run: |
+          sha256sum tactical_engine/TACTICAL_ENGINE.json > /tmp/prod_after.sha
+          sha256sum google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt >> /tmp/prod_after.sha
+          diff -u /tmp/prod_before.sha /tmp/prod_after.sha
+      - name: Final readiness
+        run: python scripts/v8_final_readiness.py
+      - name: Pełny audyt 1 z 2
+        run: python scripts/v8_full_double_audit_v2.py --pass-number 1
+      - name: Pełny audyt 2 z 2
+        run: python scripts/v8_full_double_audit_v2.py --pass-number 2
+      - name: Zapisz finalny checkpoint i audyty
+        run: |
+          git config user.name 'PawelKaminski12'
+          git config user.email 'pkaminski1@gmail.com'
+          git add audit/V8_FINAL_CHECKPOINT.json audit/V8_FINAL_CHECKPOINT.md audit/V8_FINAL_READINESS.json audit/V8_FINAL_READINESS_LATEST.md audit/V8_FULL_AUDIT_PASS_1.json audit/V8_FULL_AUDIT_PASS_1.md audit/V8_FULL_AUDIT_PASS_2.json audit/V8_FULL_AUDIT_PASS_2.md google_sheets/V8_FINAL_READINESS.csv 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo 'Brak zmian do zapisu'
+          else
+            git commit -m 'Zapisz finalny checkpoint V8'
+            git push
+          fi
