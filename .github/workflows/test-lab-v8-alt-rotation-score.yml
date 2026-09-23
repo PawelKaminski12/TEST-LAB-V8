@@ -14,7 +14,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: v8-alt-engine-writes
+  group: v8-alt-rotation-writes
   cancel-in-progress: false
 
 jobs:
