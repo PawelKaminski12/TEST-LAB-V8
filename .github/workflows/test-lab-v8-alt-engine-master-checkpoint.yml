@@ -20,7 +20,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: v8-alt-engine-writes
+  group: v8-alt-master-checkpoint-writes
   cancel-in-progress: false
 
 jobs:
