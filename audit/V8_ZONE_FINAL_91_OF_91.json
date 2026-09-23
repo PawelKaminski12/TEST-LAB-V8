@@ -1,0 +1,89 @@
+{
+  "generated_at_utc": "2026-09-23T19:46:17.389686+00:00",
+  "ready_points": 91,
+  "total_points": 91,
+  "percent": 100.0,
+  "assets_complete": 13,
+  "assets_total": 13,
+  "rows": [
+    {
+      "symbol": "ETH",
+      "got": 7,
+      "complete_7_of_7": true,
+      "timeframes": "1D,2D,3D,4D,5D,1T,2T"
+    },
+    {
+      "symbol": "SOL",
+      "got": 7,
+      "complete_7_of_7": true,
+      "timeframes": "1D,2D,3D,4D,5D,1T,2T"
+    },
+    {
+      "symbol": "LINK",
+      "got": 7,
+      "complete_7_of_7": true,
+      "timeframes": "1D,2D,3D,4D,5D,1T,2T"
+    },
+    {
+      "symbol": "ONDO",
+      "got": 7,
+      "complete_7_of_7": true,
+      "timeframes": "1D,2D,3D,4D,5D,1T,2T"
+    },
+    {
+      "symbol": "RENDER",
+      "got": 7,
+      "complete_7_of_7": true,
+      "timeframes": "1D,2D,3D,4D,5D,1T,2T"
+    },
+    {
+      "symbol": "FLOKI",
+      "got": 7,
+      "complete_7_of_7": true,
+      "timeframes": "1D,2D,3D,4D,5D,1T,2T"
+    },
+    {
+      "symbol": "PEPE",
+      "got": 7,
+      "complete_7_of_7": true,
+      "timeframes": "1D,2D,3D,4D,5D,1T,2T"
+    },
+    {
+      "symbol": "SPX6900",
+      "got": 7,
+      "complete_7_of_7": true,
+      "timeframes": "1D,2D,3D,4D,5D,1T,2T"
+    },
+    {
+      "symbol": "XRP",
+      "got": 7,
+      "complete_7_of_7": true,
+      "timeframes": "1D,2D,3D,4D,5D,1T,2T"
+    },
+    {
+      "symbol": "XLM",
+      "got": 7,
+      "complete_7_of_7": true,
+      "timeframes": "1D,2D,3D,4D,5D,1T,2T"
+    },
+    {
+      "symbol": "HBAR",
+      "got": 7,
+      "complete_7_of_7": true,
+      "timeframes": "1D,2D,3D,4D,5D,1T,2T"
+    },
+    {
+      "symbol": "AVAX",
+      "got": 7,
+      "complete_7_of_7": true,
+      "timeframes": "1D,2D,3D,4D,5D,1T,2T"
+    },
+    {
+      "symbol": "AWE",
+      "got": 7,
+      "complete_7_of_7": true,
+      "timeframes": "1D,2D,3D,4D,5D,1T,2T"
+    }
+  ],
+  "source": "MASTER + user screens 2026-09-23"
+}
