@@ -15,6 +15,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: v8-alt-engine-writes
+  cancel-in-progress: false
+
 jobs:
   build-alt-decision-engine:
     runs-on: ubuntu-latest
@@ -77,15 +81,12 @@ jobs:
               in_dem=[r for _,r in dem.iterrows() if inrow(r)]
               in_sup=[r for _,r in sup.iterrows() if inrow(r)]
 
-              # Canonical DCA logic from V7: DCA1 highest 1D DEMAND top;
-              # DCA3 lowest 1T DEMAND bottom; DCA2 midpoint.
               d1=dem[dem.timeframe.eq('1D')]
               d1v=float(d1['to'].max()) if not d1.empty else None
               d3=dem[dem.timeframe.eq('1T')]
               d3v=float(d3['from'].min()) if not d3.empty else None
               d2v=(d1v+d3v)/2 if d1v is not None and d3v is not None else None
 
-              # nearest confirmed zones by absolute distance to edge
               def dist_to_zone(r):
                   lo,hi=float(r['from']),float(r['to'])
                   if lo<=price<=hi: return 0.0
