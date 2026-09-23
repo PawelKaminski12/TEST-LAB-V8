@@ -1,27 +1,29 @@
 # V8 DUAL ENGINE — GOOGLE SHEETS PANEL SPEC
 
 ## Cel
-Jeden skoroszyt Google Sheets jako centrum dowodzenia dla dwóch niezależnych portfeli i dwóch niezależnych silników:
+Jeden skoroszyt Google Sheets jako centrum dowodzenia dla dwóch niezależnych horyzontów:
+- LONG PORTFEL / LONG ENGINE — średni i długi termin.
+- TACTICAL PORTFEL / TACTICAL ENGINE — 1H / 4H / 1D.
 
-- LONG PORTFEL / LONG ENGINE — spokojne, średnio- i długoterminowe decyzje.
-- TACTICAL PORTFEL / TACTICAL ENGINE — krótkie ruchy 1H / 4H / 1D.
+Zasada nadrzędna: SILNIK = MASZYNOWNIA, PANEL = KRÓTKA DECYZJA. Warstwa V8 jest research / decision support only. Brak automatycznego wykonywania transakcji.
 
-Zasada nadrzędna: SILNIK = MASZYNOWNIA, PANEL = KRÓTKA DECYZJA.
-
-## Zakładki
+## Zakładki użytkowe
 1. PANEL
 2. PORTFEL_LONG
 3. PORTFEL_TACTICAL
 4. SILNIK_LONG
 5. SILNIK_TACTICAL
 6. PRZEPLYWY
-7. MARKET_READER
-8. ALARMY_EKSTREMOW
-9. HISTORIA
-10. USTAWIENIA
+7. ETF_BTC_ETH
+8. ETF_HISTORIA
+9. LAB_ANALIZA_AKTYWA
+10. MARKET_READER
+11. ALARMY_EKSTREMOW
+12. HISTORIA
+13. USTAWIENIA
 
-## PANEL — minimalny widok po polsku
-Kolumny:
+## PANEL — kompaktowy widok po polsku
+Panel pozostaje w układzie 7 kolumn:
 - AKTYWO
 - CENA
 - LONG
@@ -30,169 +32,154 @@ Kolumny:
 - ZGODNOŚĆ
 - ALERT
 
-Panel użytkownika ma pokazywać statusy po polsku. Wewnętrzne statusy repozytorium mogą pozostać techniczne/angielskie.
+Nie dokładamy kolejnych kolumn do głównego PANELU. Kolumna ALERT pokazuje najważniejszy świeży alarm ekstremum / zgodność wielu TF oraz skrót centrum ryzyka Tactical. Szczegóły pozostają w maszynowni i ALARMY_EKSTREMOW.
 
-Przykładowe tłumaczenia TACTICAL:
-- WAIT → CZEKAJ
-- NO_TRADE → NIE GRAJ
-- NO_TRADE_FOMO → NIE GRAJ — FOMO
-- WATCH_SUPPLY → OBSERWUJ PODAŻ
-- WATCH_BREAKOUT → OBSERWUJ WYBICIE
-- LONG_SETUP_WATCH → LONG — OBSERWUJ SETUP
-- LONG_SETUP_RETEST → LONG — RETEST
-- TAKE_PROFIT_WATCH → OBSERWUJ REALIZACJĘ ZYSKU
-- EXIT_RISK_HIGH → WYSOKIE RYZYKO WYJŚCIA
-
-Główny PANEL pozostaje kompaktowy. MACD, RSI, MFI, ATR, FOMO, strefy, punktacja, przepływy, rotacja i szczegóły Market Reader są dostępne w maszynowni, PRZEPLYWY oraz alarmach.
-
-## PORTFEL_LONG
-Tylko pozycje długoterminowe. Minimalne dane użytkowe:
-- AKTYWO
-- ILOŚĆ
-- ŚR. CENA
-- WARTOŚĆ
-- ZYSK/STRATA
-- DCA1
-- DCA2
-- DCA3
-- STATUS LONG
-- POTWIERDZONE WYKONANIE
-
-## PORTFEL_TACTICAL
-Osobna pula kapitału. Nie mieszać pozycji z LONG.
-Kolumny:
-- AKTYWO
-- ILOŚĆ
-- CENA WEJŚCIA
-- WARTOŚĆ
-- P&L
-- STATUS TACTICAL
-- RYZYKO 0–10
-- PLAN WYJŚCIA
-- WYKONANE
-
-## SILNIK_LONG — maszynownia
+## SILNIK_LONG
 Źródło: `crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json` + warstwy V8.
 Rdzeń:
-- jakość danych
-- strefy 1D–2T
-- trend
-- FOMO
-- rotacja
-- faza rynku
-- FLOW LONG 0–10
-- ocena przepływu
-- bezpośredni ETF 5D / 20D / 30D, jeśli istnieje dla danego aktywa
-- DCA1/2/3
-- decyzja końcowa
-- blokady
+- jakość danych,
+- strefy 1D / 2D / 3D / 4D / 5D / 1T / 2T,
+- trend,
+- FOMO,
+- rotacja,
+- faza rynku,
+- FLOW LONG 0–10,
+- ETF 5D / 20D / 30D, gdy dotyczy,
+- DCA1 / DCA2 / DCA3,
+- decyzja,
+- blokady.
 
-FLOW LONG ma horyzont 20D / 30D i mierzy trwałość kapitału. Jest warstwą potwierdzającą, nie samodzielnym sygnałem KUP.
+Strefy użytkownika są źródłem prawdy dla mapy DCA. System nie wymyśla brakujących stref.
 
-## SILNIK_TACTICAL — maszynownia
-Źródło: `tactical_engine/TACTICAL_ENGINE.json` + `TACTICAL_READINESS.json` + `CRYPTO_MARKET_PHASE.json` + `TACTICAL_CONFLUENCE.csv`.
+## SILNIK_TACTICAL
+Źródła: `tactical_engine/TACTICAL_ENGINE.json`, `TACTICAL_READINESS.json`, `CRYPTO_MARKET_PHASE.json`, `TACTICAL_CONFLUENCE.csv`.
 
 Warstwy:
-- 1H timing
-- 4H decision
-- 1D regime
-- MACD
-- RSI
-- MFI(14)
-- wolumen
-- ATR
-- breakout/retest
-- FOMO
-- kontekst stref wyższego interwału
-- Market Reader jako second-eye
-- exit risk
-- tactical score
-- tactical status
-- ekstrema 1H / 4H / 1D
-- FLOW TACTICAL 0–5
+- 1H timing,
+- 4H decision,
+- 1D regime,
+- MACD,
+- RSI,
+- MFI(14),
+- wolumen,
+- ATR,
+- breakout / retest,
+- FOMO,
+- kontekst stref,
+- Market Reader jako second-eye,
+- exit risk,
+- tactical score,
+- tactical status,
+- FLOW TACTICAL 0–5,
+- ekstrema 1H / 4H / 1D,
+- CENTRUM RYZYKA,
+- POWÓD RYZYKA.
 
-FLOW TACTICAL ma horyzont 1D / 5D / 7D i ma pokazywać przyspieszenie przepływu. Jest potwierdzeniem, nie triggerem wejścia.
+MFI nie jest samodzielnym sygnałem kupna / sprzedaży. Jest potwierdzeniem razem z RSI, MACD, FOMO, trendem i strefami.
 
-MFI nie jest samodzielnym sygnałem kupna/sprzedaży. Działa jako warstwa potwierdzenia i wykrywania skrajności razem z RSI, MACD, FOMO, trendem i strefami.
+## ALARMY_EKSTREMOW — logika finalna
+Alarmy są informacyjne i nie wykonują transakcji.
 
-## PRZEPLYWY
-Widoczna zakładka użytkowa dla przepływów i rotacji kapitału.
-
-Pokazuje:
-- ETH/BTC — zmiana 5D i 20D,
-- BTC.D — poziom oraz zmianę, gdy historia jest dojrzała,
-- ETH.D,
-- OTHERS/BTC EQ — trend 5D / 20D po zbudowaniu odpowiedniej historii,
-- stablecoin liquidity — 7D / 14D / 30D,
-- BTC ETF — 5D / 20D / 30D,
-- ETH ETF — 5D / 20D / 30D,
-- SOL ETF — 5D / 20D / 30D,
-- LONG FLOW score,
-- TACTICAL FLOW score.
-
-Źródła danych:
-- Binance Vision — ceny i relacje ETH/BTC oraz ALT/BTC/ETH,
-- CoinGecko — dominacje i odpowiedniki TOTAL3 / OTHERS,
-- DefiLlama — płynność stablecoinów,
-- Farside Investors przez operacyjny mirror — ETF flows.
-
-Ważne ograniczenie: `V8_TOTAL3_EQ` i `V8_OTHERS_BTC_EQ` są odpowiednikami liczonymi z CoinGecko i nie są jeszcze certyfikowane jako 1:1 z TradingView TOTAL3/OTHERS.
-
-## MFI — zatwierdzona logika ekstremów
-MFI liczymy automatycznie na zamkniętych świecach dla 1H / 4H / 1D.
-
-Poziomy:
-- 80–90 → wykupienie / ostrzeżenie
-- >= 90 → skrajne wykupienie
-- 10–20 → wyprzedanie / ostrzeżenie
-- <= 10 → skrajne wyprzedanie
-
-Znaczenie interwałów:
-- 1H — szybkie lokalne przegrzanie/wyprzedanie; najniższa waga,
-- 4H — główny interwał decyzji TACTICAL; wysoka waga,
-- 1D — rzadsze, ale najważniejsze skrajności; najwyższy kontekst.
-
-## ALARMY_EKSTREMOW
-Osobna zakładka użytkowa. Alarm jest informacyjny i nie wykonuje transakcji.
-
-Źródła alarmów:
+### Źródła
 - RSI,
 - MFI,
-- MACD względny do własnej historii aktywa,
+- MACD względny do historii aktywa,
 - FOMO.
 
-Domyślne progi RSI/FOMO:
-- RSI wykupienie: RSI >= 75
-- RSI wyprzedanie: RSI <= 25
-- FOMO HARD BLOCK: FOMO >= 8
+### Interwały i hierarchia
+- 1H — szybkie lokalne ekstrema; najniższa waga.
+- 4H — główny interwał Tactical; wysoka waga.
+- 1D — najwyższy kontekst.
 
-Domyślne progi MFI:
-- ostrzeżenie górne: 80
-- skrajne górne: 90
-- ostrzeżenie dolne: 20
-- skrajne dolne: 10
+Pojedyncze ostrzeżenie 1H pozostaje w zakładce alarmów i historii, ale nie zaśmieca głównego PANELU.
 
-MACD jest oceniany względnie do własnej historii aktywa, a nie przez jeden surowy próg wspólny dla ETH/SOL/LINK/ONDO.
+### Zbieżność w ramach jednego interwału
+Dla jednego aktywa + interwału sygnały RSI / MFI / MACD / FOMO są grupowane w jeden alarm zbiorczy.
+Priorytety:
+- OSTRZEŻENIE,
+- MOCNY,
+- KRYTYCZNY.
 
-Interwały:
-- 1H
-- 4H
-- 1D
+1D ma wyższy kontekst niż 4H i 1H.
 
-Kolumny:
-- AKTYWNY
-- AKTYWO
-- INTERWAŁ
-- TYP
-- RSI
-- MFI
-- MACD %
-- MACD Z
-- FOMO
-- WAGA
-- CZAS DANYCH
+### Świeżość i wygaszanie
+Domyślne maksymalne wieku danych:
+- 1H: 3 godziny,
+- 4H: 10 godzin,
+- 1D: 36 godzin.
 
-Nowy alarm jest dopisywany do HISTORIA. Przy odświeżeniu pojawia się toast w Google Sheets. Opcjonalny e-mail może zostać aktywowany w USTAWIENIA.
+Stary alarm dostaje status STARY, nie trafia do głównego PANELU i nie wysyła powiadomienia. Brak poprawnego czasu danych daje BRAK CZASU i również blokuje alarm aktywny.
+
+### Zgodność wielu interwałów
+Świeże alarmy są łączone kierunkowo:
+- PRZEGRZANIE,
+- WYPRZEDANIE.
+
+Reguły:
+- 1H + 4H w tym samym kierunku → MOCNY,
+- 4H + 1D → KRYTYCZNY,
+- 1H + 4H + 1D → KRYTYCZNY WIELE TF.
+
+Sygnały o przeciwnych kierunkach nie są sztucznie sumowane.
+
+### Dynamika alarmu
+System rozpoznaje zmianę stanu:
+- NOWY,
+- NASILA SIĘ,
+- BEZ ZMIAN,
+- SŁABNIE,
+- WYGASŁ.
+
+Powiadomienia są nastawione na nowe lub nasilające się zdarzenia. Stan BEZ ZMIAN nie powinien generować powtarzalnego hałasu.
+
+### Zakładka ALARMY_EKSTREMOW
+Aktualny widok obejmuje m.in.:
+- AKTYWNY,
+- AKTYWO,
+- INTERWAŁ,
+- ŚWIEŻOŚĆ,
+- WIEK H,
+- LIMIT H,
+- ZBIEŻNOŚĆ,
+- PRIORYTET,
+- WAGA INTERWAŁU,
+- KIERUNEK,
+- STAN,
+- POPRZ. PRIORYTET,
+- SYGNAŁY,
+- RSI,
+- MFI,
+- MACD %,
+- MACD Z,
+- FOMO,
+- OPIS,
+- CZAS DANYCH.
+
+## CENTRUM RYZYKA TACTICAL
+Centrum ryzyka nie zastępuje silnika Tactical. Jest warstwą podsumowującą ryzyko i kontekst.
+
+Łączy:
+- exit risk,
+- maksymalne FOMO z 1H / 4H / 1D,
+- strefę podaży / popytu,
+- status Tactical,
+- aktywne świeże ekstrema,
+- zgodność wielu TF,
+- kierunek PRZEGRZANIE / WYPRZEDANIE.
+
+Stany użytkowe:
+- 🟢 NORMALNIE,
+- 🟠 UWAGA,
+- 🔴 PODWYŻSZONE RYZYKO,
+- 🛡️ OCHRONA KAPITAŁU.
+
+Wielointerwałowe PRZEGRZANIE może mocno podnieść poziom ryzyka. Wielointerwałowe WYPRZEDANIE nie jest automatycznie traktowane jako sygnał ochrony kapitału.
+
+W `SILNIK_TACTICAL` dodawane są kolumny:
+- CENTRUM RYZYKA,
+- POWÓD RYZYKA.
+
+W głównym PANELU pojawia się wyłącznie skrót najważniejszego stanu, bez rozszerzania układu.
 
 ## USTAWIENIA alarmów
 - ALARMY_EKSTREMOW = ON/OFF
@@ -203,50 +190,54 @@ Nowy alarm jest dopisywany do HISTORIA. Przy odświeżeniu pojawia się toast w 
 - MFI_GORNY_SKRAJNY = 90
 - MFI_DOLNY_OSTRZEZENIE = 20
 - MFI_DOLNY_SKRAJNY = 10
+- ALARM_MAX_WIEK_1H_H = 3
+- ALARM_MAX_WIEK_4H_H = 10
+- ALARM_MAX_WIEK_1D_H = 36
 - EMAIL_ALERTY = ON/OFF
 - EMAIL_DO = adres docelowy
 
+## PRZEPLYWY
+Warstwa potwierdzająca obejmuje m.in. ETH/BTC, dominacje, stablecoin liquidity, ETF BTC / ETH / SOL oraz FLOW LONG i FLOW TACTICAL. Nie jest samodzielnym triggerem wejścia.
+
 ## MARKET_READER
-Dane z zewnętrznego programu tylko jako potwierdzenie.
-Nigdy nie nadpisują twardych blokad wewnętrznego silnika.
+Zewnętrzny Market Reader jest second-eye. Nie może nadpisywać twardych blokad wewnętrznego silnika. Adapter może pozostawać w stanie oczekiwania, jeśli zewnętrzne źródło nie jest podłączone.
 
-## ZGODNOŚĆ — logika na PANELU
-- 2/2 POZYTYWNE — oba silniki wspierają pozycję w swoim horyzoncie.
-- TYLKO TACTICAL — tylko silnik krótkoterminowy widzi setup.
-- TYLKO LONG — tylko silnik długoterminowy widzi okazję.
-- NEUTRALNIE — brak mocnego sygnału.
-- KONFLIKT — kierunki są rozbieżne i wymagają uwagi.
+## ZGODNOŚĆ na PANELU
+- 2/2 POZYTYWNE,
+- TYLKO TACTICAL,
+- TYLKO LONG,
+- NEUTRALNIE,
+- KONFLIKT.
 
-ZGODNOŚĆ nie jest sygnałem wykonawczym. To skrót informacyjny.
+To skrót informacyjny, nie sygnał wykonawczy.
 
 ## Odświeżanie
-Jeden przycisk `ODŚWIEŻ_WSZYSTKO` kolejno:
-1. pobiera CORE/LONG,
-2. pobiera TACTICAL,
-3. pobiera MARKET PHASE + ETF / stablecoin / rotację,
-4. pobiera MARKET_READER jeśli dostępny,
-5. odświeża maszynownię LONG i TACTICAL,
-6. odświeża PRZEPLYWY,
-7. przelicza polski PANEL,
-8. skanuje RSI / MFI / MACD / FOMO na 1H / 4H / 1D,
-9. zapisuje nowe alarmy do HISTORIA,
-10. opcjonalnie wysyła e-mail,
-11. aktualizuje znacznik czasu.
+`ODŚWIEŻ_WSZYSTKO`:
+1. pobiera LONG / TACTICAL / phase / ETF / LAB / Market Reader,
+2. odświeża maszynownię,
+3. buduje świeże alarmy ekstremów,
+4. ocenia zbieżność jednego TF,
+5. ocenia zgodność wielu TF,
+6. wyznacza dynamikę alarmów,
+7. wyznacza centrum ryzyka Tactical,
+8. aktualizuje PANEL,
+9. zapisuje istotne zmiany do HISTORIA,
+10. wysyła opcjonalne powiadomienia,
+11. aktualizuje LAST_REFRESH.
 
-Dodatkowa komenda `SPRAWDŹ EKSTREMA` wykonuje sam skan ekstremów bez pełnego odświeżania panelu.
+`SPRAWDŹ EKSTREMA` wykonuje warstwę alarmową bez pełnego odświeżania pozostałych danych.
 
 ## Zasady bezpieczeństwa
+- AUTO_EXECUTION = OFF.
+- V7_TOUCH = OFF.
 - LONG i TACTICAL mają osobne pule kapitału.
-- Brak automatycznych transakcji.
-- Status silnika to status badawczy/decyzyjny, nie zlecenie giełdowe.
 - Brak synchronizacji ilości między portfelami.
-- V7 produkcyjny pozostaje nietknięty.
-- Market Reader nie może nadpisywać twardych blokad.
-- ETF / stablecoin / ETH-BTC / OTHERS-BTC są warstwą potwierdzającą, nie automatycznym sygnałem KUP.
-- RSI/MFI/MACD/FOMO ekstremum nie jest automatycznie sygnałem sprzedaży ani zakupu.
-- Dane maszynowni nie rozrastają głównego PANELU.
+- Alarmy, centrum ryzyka i FLOW są warstwami informacyjnymi.
+- Market Reader nie nadpisuje hard guardów.
+- System nie zgaduje stref użytkownika.
+- RSI / MFI / MACD / FOMO ekstremum nie jest automatycznym sygnałem kupna lub sprzedaży.
 
 ## Status projektu
-Warstwa panelu i integracji Google Sheets jest domknięta funkcjonalnie dla: LONG + TACTICAL, polskiego widoku użytkownika, oddzielnych portfeli, historii, alarmów ekstremów RSI/MFI/MACD/FOMO oraz osobnej zakładki PRZEPLYWY z ETF / stablecoin / ETH-BTC / OTHERS-BTC.
+Warstwa Google Sheets dla LONG + TACTICAL jest funkcjonalnie domknięta: polski kompaktowy PANEL, oddzielne portfele, przepływy, ETF, LAB, alarmy ekstremów, świeżość, wiele TF, dynamika alarmów, historia oraz centrum ryzyka Tactical.
 
-Kalibracja progów strategii TACTICAL pozostaje osobnym etapem badawczym. Nie wolno oznaczać jej jako zamrożonej strategii wykonawczej wyłącznie na podstawie pojedynczego holdoutu.
+Kalibracja progów strategii Tactical pozostaje osobnym etapem badawczym. Nie wolno traktować obecnych progów jako zamrożonej strategii wykonawczej bez dalszej walidacji na danych poza próbką.
