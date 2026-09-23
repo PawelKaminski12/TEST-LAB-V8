@@ -1,11 +1,12 @@
 name: TEST LAB V8 Tactical MACD Extremes
 
 # V8 TACTICAL MACD EXTREMES v0.5 — relative to each asset's own history
+# Pipeline: base TACTICAL v0.4 -> MACD v0.5 -> confluence v0.6 -> readiness
 on:
   workflow_dispatch:
   push:
     paths:
-      - 'tactical_engine/TACTICAL_ENGINE.json'
+      - 'tactical_engine/TACTICAL_QA.csv'
       - '.github/workflows/test-lab-v8-tactical-macd-extremes.yml'
 
 permissions:
@@ -102,6 +103,10 @@ jobs:
               }
 
           data=json.loads(ENGINE.read_text(encoding='utf-8'))
+          source_engine=str(data.get('engine',''))
+          if source_engine != 'V8_TACTICAL_ENGINE_v0.4':
+              raise SystemExit(f'EXPECTED BASE V0.4, GOT {source_engine}')
+
           all_ok=True
           for asset in data.get('assets',[]):
               if asset.get('qa')!='PASS':
@@ -116,7 +121,7 @@ jobs:
                   close=pd.to_numeric(df['close'],errors='coerce').dropna()
                   ext=classify(macd_hist(close))
                   st=(asset.get('timeframes') or {}).get(tf)
-                  if st is None:
+                  if st is None or st.get('mfi14') is None:
                       all_ok=False
                       continue
                   st.update(ext)
