@@ -1,0 +1,42 @@
+{
+  "generated_at_utc": "2026-09-23T16:13:38.021283+00:00",
+  "engine": "V8_ETF_PRICE_DIVERGENCE_v1.0",
+  "assets": {
+    "BTC": {
+      "price_change_5d_pct": 4.492849953362432,
+      "etf_closed_5d_usdm": 2010.3,
+      "etf_acceleration_5d_usdm": 2716.8999999999996,
+      "etf_last_closed_date": "2026-09-22",
+      "etf_last_closed_flow_usdm": 714.7,
+      "streak_direction_pl": null,
+      "streak_days": null,
+      "status_pl": "CENA I ETF POTWIERDZAJĄ WZROST",
+      "quality_pl": "MOCNE POTWIERDZENIE",
+      "meaning_pl": "Cena rośnie, a kapitał ETF napływa i przyspiesza. Ruch ma wsparcie ze strony rynku tradycyjnego.",
+      "score_adjustment": 0.4,
+      "risk_flag": null,
+      "today_data_policy_pl": "Dzisiejsze niepełne dane ETF nie wpływają na ocenę rozbieżności. Używamy tylko zakończonych dni."
+    },
+    "ETH": {
+      "price_change_5d_pct": 2.530983786767438,
+      "etf_closed_5d_usdm": 312.5,
+      "etf_acceleration_5d_usdm": 112.19999999999999,
+      "etf_last_closed_date": "2026-09-22",
+      "etf_last_closed_flow_usdm": 162.2,
+      "streak_direction_pl": null,
+      "streak_days": null,
+      "status_pl": "CENA I ETF POTWIERDZAJĄ WZROST",
+      "quality_pl": "MOCNE POTWIERDZENIE",
+      "meaning_pl": "Cena rośnie, a kapitał ETF napływa i przyspiesza. Ruch ma wsparcie ze strony rynku tradycyjnego.",
+      "score_adjustment": 0.4,
+      "risk_flag": null,
+      "today_data_policy_pl": "Dzisiejsze niepełne dane ETF nie wpływają na ocenę rozbieżności. Używamy tylko zakończonych dni."
+    }
+  },
+  "rules": {
+    "closed_etf_days_only": true,
+    "same_day_preview_excluded": true,
+    "context_not_trade_signal": true,
+    "execution_connected": false
+  }
+}
