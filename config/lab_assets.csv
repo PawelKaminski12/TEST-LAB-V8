@@ -1,4 +1,4 @@
 symbol,source_symbol,asset_type,mode,enabled,added_at_utc,notes
-ETH,ETH-USD,CRYPTO,BOTH,false,,example-disabled
-ANET,ANET,STOCK,BOTH,false,,example-disabled
+ETH,ETH-USD,CRYPTO,BOTH,true,2026-09-23T14:45:00Z,validation-seed-crypto
+ANET,ANET,STOCK,BOTH,true,2026-09-23T14:45:00Z,validation-seed-stock
 PEPE,PEPE-USD,MEME,FAST,false,,example-disabled
