@@ -1,0 +1,257 @@
+{
+  "generated_at_utc": "2026-09-23T16:22:16.606599+00:00",
+  "engine": "V8_FINAL_READINESS_v1.0",
+  "readiness_percent": 88,
+  "status_pl": "SYSTEM WYMAGA JESZCZE PRACY",
+  "core_production_ready": false,
+  "production_assets_ready": true,
+  "extended_assets_auto_data_ready": true,
+  "extended_assets_user_zones_ready": false,
+  "areas": [
+    {
+      "obszar": "SILNIK LONG",
+      "waga_pkt": 10,
+      "gotowe": true,
+      "opis": "Silnik długoterminowy działa i pozostaje oddzielony od TACTICAL."
+    },
+    {
+      "obszar": "SILNIK TACTICAL",
+      "waga_pkt": 10,
+      "gotowe": true,
+      "opis": "Silnik taktyczny działa na osobnym horyzoncie i kapitale."
+    },
+    {
+      "obszar": "PRODUKCYJNE ALTY",
+      "waga_pkt": 15,
+      "gotowe": true,
+      "opis": "ETH, SOL, LINK i ONDO: technika + pełne strefy 1D/2D/3D/4D/5D/1T/2T."
+    },
+    {
+      "obszar": "ETF BTC + ETH",
+      "waga_pkt": 10,
+      "gotowe": true,
+      "opis": "Monitor, historia, rozdzielenie danych wstępnych i zamkniętych oraz zgodność cena/ETF."
+    },
+    {
+      "obszar": "LAB + PUNKTY KONTROLNE",
+      "waga_pkt": 10,
+      "gotowe": false,
+      "opis": "Szybka analiza, głęboka obserwacja i trwałe punkty kontrolne."
+    },
+    {
+      "obszar": "ON-CHAIN / FLOW",
+      "waga_pkt": 10,
+      "gotowe": true,
+      "opis": "Warstwa przepływów i aktywności sieciowej jako kontekst."
+    },
+    {
+      "obszar": "PANEL GOOGLE SHEETS",
+      "waga_pkt": 10,
+      "gotowe": true,
+      "opis": "Pełny most panelu i dane maszynowni są obecne."
+    },
+    {
+      "obszar": "ALARMY EKSTREMÓW",
+      "waga_pkt": 5,
+      "gotowe": true,
+      "opis": "RSI/MFI/MACD/FOMO oraz warstwa zbieżności ekstremów."
+    },
+    {
+      "obszar": "BEZPIECZEŃSTWO",
+      "waga_pkt": 10,
+      "gotowe": true,
+      "opis": "Brak automatycznego wykonywania transakcji; V7 pozostaje poza zmianami V8."
+    },
+    {
+      "obszar": "WALIDACJA / QA",
+      "waga_pkt": 5,
+      "gotowe": true,
+      "opis": "Walidacja TACTICAL i laboratorium progów są obecne."
+    }
+  ],
+  "extended_universe": {
+    "auto_data_points_0_3": 3,
+    "user_zone_points_0_2": 0,
+    "AAVE": {
+      "symbol": "AAVE",
+      "pair": "AAVEUSDT",
+      "scope": "TEST_VALIDATION",
+      "role": "ALT",
+      "technical": {
+        "1H": {
+          "rows": 499,
+          "price": 138.91,
+          "trend_0_4": 2,
+          "rsi14": 32.55008189387935,
+          "mfi14": 29.884269280130212,
+          "macd_hist": -1.2702671391875615,
+          "ret5_pct": -7.37480829499233,
+          "ret20_pct": -3.7486141906873605,
+          "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
+          "age_hours": 0.297,
+          "closed_candles_only": true
+        },
+        "4H": {
+          "rows": 499,
+          "price": 138.91,
+          "trend_0_4": 3,
+          "rsi14": 45.61790150447421,
+          "mfi14": 63.74483158103728,
+          "macd_hist": -0.3762483270667638,
+          "ret5_pct": -3.7486141906873605,
+          "ret20_pct": 1.6315481416447009,
+          "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
+          "age_hours": 0.297,
+          "closed_candles_only": true
+        },
+        "1D": {
+          "rows": 499,
+          "price": 148.06,
+          "trend_0_4": 4,
+          "rsi14": 67.09314952544511,
+          "mfi14": 65.24573203679208,
+          "macd_hist": 1.3618273415414652,
+          "ret5_pct": 15.12324080553611,
+          "ret20_pct": 16.390220894583774,
+          "last_closed_utc": "2026-09-22T23:59:59.999000+00:00",
+          "age_hours": 16.297,
+          "closed_candles_only": true
+        }
+      },
+      "technical_sources": {
+        "1H": "https://data-api.binance.vision/api/v3/klines",
+        "4H": "https://data-api.binance.vision/api/v3/klines",
+        "1D": "https://data-api.binance.vision/api/v3/klines"
+      },
+      "technical_complete": true,
+      "freshness_ok": true,
+      "zones": {
+        "confirmed_timeframes": [],
+        "count": 0,
+        "complete_7_of_7": false,
+        "missing_timeframes": [
+          "1D",
+          "2D",
+          "3D",
+          "4D",
+          "5D",
+          "1T",
+          "2T"
+        ]
+      },
+      "auto_layers_ready": true,
+      "full_ready": false,
+      "production_asset": false,
+      "status_pl": "DANE RYNKOWE KOMPLETNE — BRAKUJE POTWIERDZONYCH STREF UŻYTKOWNIKA",
+      "errors": []
+    },
+    "HBAR": {
+      "symbol": "HBAR",
+      "pair": "HBARUSDT",
+      "scope": "TEST_VALIDATION",
+      "role": "ALT",
+      "technical": {
+        "1H": {
+          "rows": 499,
+          "price": 0.08998,
+          "trend_0_4": 2,
+          "rsi14": 27.150611714016677,
+          "mfi14": 9.963167997959928,
+          "macd_hist": -0.0011751902739455286,
+          "ret5_pct": -7.42798353909464,
+          "ret20_pct": -8.927125506072864,
+          "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
+          "age_hours": 0.297,
+          "closed_candles_only": true
+        },
+        "4H": {
+          "rows": 499,
+          "price": 0.08998,
+          "trend_0_4": 3,
+          "rsi14": 49.323047624751354,
+          "mfi14": 72.66923856369812,
+          "macd_hist": -0.0005108296378859099,
+          "ret5_pct": -8.927125506072864,
+          "ret20_pct": 10.418456252300889,
+          "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
+          "age_hours": 0.297,
+          "closed_candles_only": true
+        },
+        "1D": {
+          "rows": 499,
+          "price": 0.0991,
+          "trend_0_4": 4,
+          "rsi14": 79.6945984620717,
+          "mfi14": 75.3207408407051,
+          "macd_hist": 0.002081154937168786,
+          "ret5_pct": 32.84182305630026,
+          "ret20_pct": 32.87744703673907,
+          "last_closed_utc": "2026-09-22T23:59:59.999000+00:00",
+          "age_hours": 16.297,
+          "closed_candles_only": true
+        }
+      },
+      "technical_sources": {
+        "1H": "https://data-api.binance.vision/api/v3/klines",
+        "4H": "https://data-api.binance.vision/api/v3/klines",
+        "1D": "https://data-api.binance.vision/api/v3/klines"
+      },
+      "technical_complete": true,
+      "freshness_ok": true,
+      "zones": {
+        "confirmed_timeframes": [],
+        "count": 0,
+        "complete_7_of_7": false,
+        "missing_timeframes": [
+          "1D",
+          "2D",
+          "3D",
+          "4D",
+          "5D",
+          "1T",
+          "2T"
+        ]
+      },
+      "auto_layers_ready": true,
+      "full_ready": false,
+      "production_asset": false,
+      "status_pl": "DANE RYNKOWE KOMPLETNE — BRAKUJE POTWIERDZONYCH STREF UŻYTKOWNIKA",
+      "errors": []
+    }
+  },
+  "blockers": [
+    {
+      "asset": "AAVE",
+      "missing": [
+        "1D",
+        "2D",
+        "3D",
+        "4D",
+        "5D",
+        "1T",
+        "2T"
+      ],
+      "status_pl": "BRAKUJE POTWIERDZONYCH STREF UŻYTKOWNIKA",
+      "rule": "System nie tworzy sztucznych stref."
+    },
+    {
+      "asset": "HBAR",
+      "missing": [
+        "1D",
+        "2D",
+        "3D",
+        "4D",
+        "5D",
+        "1T",
+        "2T"
+      ],
+      "status_pl": "BRAKUJE POTWIERDZONYCH STREF UŻYTKOWNIKA",
+      "rule": "System nie tworzy sztucznych stref."
+    }
+  ],
+  "safety": {
+    "execution_connected": false,
+    "never_invent_user_zones": true,
+    "v7_not_modified": true
+  }
+}
