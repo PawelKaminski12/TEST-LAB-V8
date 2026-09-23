@@ -1,0 +1,140 @@
+{
+  "date": "2026-09-22",
+  "engine": "CRYPTO_MARKET_PHASE_v0.1",
+  "phase": "ALT_ROTATION_CANDIDATE",
+  "phase_score_0_10": 9,
+  "phase_confidence": "MEDIUM",
+  "phase_confidence_pct": 60,
+  "rotation_score_0_10": 7,
+  "rotation_status": "CONFIRMED",
+  "rotation_confidence": "MEDIUM",
+  "history_days": 1,
+  "broad_rotation_history_ready": false,
+  "inputs": {
+    "btc_trend": true,
+    "eth_trend": true,
+    "eth_btc_strength": true,
+    "btc_drawdown_365d_pct": -30.844240595148953,
+    "eth_drawdown_365d_pct": -41.212123799906486,
+    "btc_dominance_pct": 58.66452395904368,
+    "eth_dominance_pct": 11.354705847552708,
+    "stablecoin_7d_pct": 0.4542013197231354,
+    "stablecoin_30d_pct": 1.099864519367677,
+    "btc_etf_5d_usdm": 2010.3,
+    "eth_etf_5d_usdm": 312.5,
+    "sol_etf_5d_usdm": 103.30000000000001
+  },
+  "phase_points": {
+    "BTC_TREND": 2,
+    "ETH_TREND": 2,
+    "ETH_BTC": 1,
+    "ETF_RISK_ON": 1,
+    "STABLECOIN_LIQUIDITY": 1,
+    "ALT_ROTATION_SCORE": 2,
+    "BROAD_HISTORY_CONFIRMATION": 0
+  },
+  "asset_context": [
+    {
+      "symbol": "ETH",
+      "target_scope": "PRODUCTION",
+      "market_phase": "ALT_ROTATION_CANDIDATE",
+      "rotation_score_0_10": 7,
+      "rotation_status": "CONFIRMED",
+      "rotation_label": "CORE_ALT",
+      "individual_rs_0_4": null,
+      "trend_score_0_4": 4,
+      "fomo_score_0_10": 2,
+      "direct_etf_context": {
+        "flow_1d_usdm": 162.2,
+        "flow_5d_usdm": 312.5,
+        "flow_20d_usdm": 1415.3000000000002,
+        "rows": 554,
+        "mature": true
+      },
+      "stablecoin_30d_pct": 1.099864519367677
+    },
+    {
+      "symbol": "SOL",
+      "target_scope": "PRODUCTION",
+      "market_phase": "ALT_ROTATION_CANDIDATE",
+      "rotation_score_0_10": 7,
+      "rotation_status": "CONFIRMED",
+      "rotation_label": "LEADER",
+      "individual_rs_0_4": 4,
+      "trend_score_0_4": 4,
+      "fomo_score_0_10": 4,
+      "direct_etf_context": {
+        "flow_1d_usdm": 28.9,
+        "flow_5d_usdm": 103.30000000000001,
+        "flow_20d_usdm": 120.69999999999999,
+        "rows": 12,
+        "mature": false
+      },
+      "stablecoin_30d_pct": 1.099864519367677
+    },
+    {
+      "symbol": "LINK",
+      "target_scope": "PRODUCTION",
+      "market_phase": "ALT_ROTATION_CANDIDATE",
+      "rotation_score_0_10": 7,
+      "rotation_status": "CONFIRMED",
+      "rotation_label": "LEADER",
+      "individual_rs_0_4": 4,
+      "trend_score_0_4": 4,
+      "fomo_score_0_10": 2,
+      "direct_etf_context": null,
+      "stablecoin_30d_pct": 1.099864519367677
+    },
+    {
+      "symbol": "ONDO",
+      "target_scope": "PRODUCTION",
+      "market_phase": "ALT_ROTATION_CANDIDATE",
+      "rotation_score_0_10": 7,
+      "rotation_status": "CONFIRMED",
+      "rotation_label": "WATCH",
+      "individual_rs_0_4": 2,
+      "trend_score_0_4": 3,
+      "fomo_score_0_10": 3,
+      "direct_etf_context": null,
+      "stablecoin_30d_pct": 1.099864519367677
+    },
+    {
+      "symbol": "AAVE",
+      "target_scope": "TEST_VALIDATION",
+      "market_phase": "ALT_ROTATION_CANDIDATE",
+      "rotation_score_0_10": 7,
+      "rotation_status": "CONFIRMED",
+      "rotation_label": "LEADER",
+      "individual_rs_0_4": 4,
+      "trend_score_0_4": 4,
+      "fomo_score_0_10": 2,
+      "direct_etf_context": null,
+      "stablecoin_30d_pct": 1.099864519367677
+    },
+    {
+      "symbol": "HBAR",
+      "target_scope": "TEST_VALIDATION",
+      "market_phase": "ALT_ROTATION_CANDIDATE",
+      "rotation_score_0_10": 7,
+      "rotation_status": "CONFIRMED",
+      "rotation_label": "WATCH",
+      "individual_rs_0_4": 2,
+      "trend_score_0_4": 3,
+      "fomo_score_0_10": 5,
+      "direct_etf_context": null,
+      "stablecoin_30d_pct": 1.099864519367677
+    }
+  ],
+  "limitations": [
+    "BROAD_ROTATION_TREND_NOT_MATURE: fewer than 20 persisted daily market-rotation snapshots.",
+    "SOL_ETF_HISTORY_IMMATURE: direct SOL ETF flow is context only.",
+    "V8_TOTAL3_EQ and V8_OTHERS_BTC_EQ remain CoinGecko equivalents and are not certified 1:1 versus TradingView.",
+    "Market phase is descriptive context; it is not an execution signal."
+  ],
+  "hard_rules": {
+    "not_execution_signal": true,
+    "no_broad_alt_confirmation_without_history": true,
+    "relative_strength_not_hard_gate": true,
+    "etf_flow_is_confirmation_not_oracle": true
+  }
+}

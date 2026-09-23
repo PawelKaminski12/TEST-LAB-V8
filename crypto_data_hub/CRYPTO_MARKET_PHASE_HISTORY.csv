@@ -1,0 +1,2 @@
+date,phase,phase_score,phase_confidence_pct,rotation_score,btc_trend,eth_trend,eth_btc_strength,btc_dom_pct,eth_dom_pct,stablecoin_30d_pct,btc_etf_5d_usdm,eth_etf_5d_usdm,sol_etf_5d_usdm,broad_history_ready
+2026-09-22,ALT_ROTATION_CANDIDATE,9,60,7,True,True,True,58.66452395904368,11.354705847552708,1.099864519367677,2010.3,312.5,103.30000000000001,False
