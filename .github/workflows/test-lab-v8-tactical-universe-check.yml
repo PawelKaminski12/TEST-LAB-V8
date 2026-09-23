@@ -49,25 +49,37 @@ jobs:
               raise SystemExit(f'Nieprawidłowa lista aktywów: {got}')
 
           spot_bases=['https://data-api.binance.vision/api/v3/klines','https://api.binance.com/api/v3/klines']
-          futures_bases=['https://fapi.binance.com/fapi/v1/klines']
           intervals={'1H':'1h','4H':'4h','1D':'1d'}
+          kraken_intervals={'1H':60,'4H':240,'1D':1440}
           rows=[]
           all_ok=True
           for _,r in cfg.iterrows():
               sym=str(r['symbol']).upper().strip(); pair=str(r['pair']).upper().strip()
               for tf,iv in intervals.items():
-                  ok=False; count=0; err=''; src=''; source_type='SPOT'
-                  candidates=[('SPOT',x) for x in spot_bases]
-                  if sym=='SPX6900':
-                      candidates += [('FUTURES',x) for x in futures_bases]
-                  for typ,base in candidates:
+                  ok=False; count=0; err=''; src=''; source_type='SPOT_BINANCE'
+                  for base in spot_bases:
                       try:
                           rr=requests.get(base,params={'symbol':pair,'interval':iv,'limit':500},timeout=25)
                           rr.raise_for_status(); data=rr.json()
                           count=len(data) if isinstance(data,list) else 0
                           if count < 220:
                               raise RuntimeError(f'za mało świec: {count}')
-                          ok=True; src=base; source_type=typ; err=''; break
+                          ok=True; src=base; err=''; break
+                      except Exception as e:
+                          err=str(e)
+                  if not ok and sym=='SPX6900':
+                      try:
+                          base='https://api.kraken.com/0/public/OHLC'
+                          rr=requests.get(base,params={'pair':'SPXUSD','interval':kraken_intervals[tf]},timeout=25)
+                          rr.raise_for_status(); data=rr.json()
+                          if data.get('error'):
+                              raise RuntimeError(str(data['error']))
+                          result=data.get('result',{})
+                          key=next((k for k in result if k!='last'),None)
+                          count=len(result.get(key,[])) if key else 0
+                          if count < 220:
+                              raise RuntimeError(f'za mało świec Kraken: {count}')
+                          ok=True; src=base; source_type='SPOT_KRAKEN'; err=''
                       except Exception as e:
                           err=str(e)
                   rows.append({'AKTYWO':sym,'PARA':pair,'INTERWAŁ':tf,'STATUS':'OK' if ok else 'BŁĄD','LICZBA_ŚWIEC':count,'RODZAJ_ŹRÓDŁA':source_type if ok else 'BRAK','ŹRÓDŁO':src,'BŁĄD':err})
@@ -78,12 +90,12 @@ jobs:
           df.to_csv(out/'TACTICAL_UNIVERSE_CHECK.csv',index=False)
           summary={
               'generated_at_utc':datetime.now(timezone.utc).isoformat(),
-              'engine':'V8_TACTICAL_UNIVERSE_CHECK_v1.1',
+              'engine':'V8_TACTICAL_UNIVERSE_CHECK_v1.2',
               'expected_assets':expected,
               'asset_count':len(expected),
               'timeframes':['1H','4H','1D'],
               'all_pairs_and_timeframes_ready':bool(all_ok),
-              'spx6900_policy':'SPOT first; Binance USD-M perpetual futures only if spot is unavailable',
+              'spx6900_policy':'Binance spot first; Kraken SPX/USD spot if Binance spot is unavailable',
               'results':rows,
               'tradingview_connected':False,
               'execution_connected':False,
@@ -106,7 +118,11 @@ jobs:
             git add audit/TACTICAL_UNIVERSE_CHECK.json audit/TACTICAL_UNIVERSE_CHECK.csv
             if ! git diff --cached --quiet; then
               git commit -m 'Update V8 tactical universe check'
-              git pull --rebase origin main
-              git push
+              for attempt in 1 2 3 4; do
+                git pull --rebase origin main || true
+                if git push; then exit 0; fi
+                sleep $((attempt*3))
+              done
+              exit 1
             fi
           fi
