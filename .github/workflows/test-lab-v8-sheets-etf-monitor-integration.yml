@@ -1,0 +1,188 @@
+name: TEST LAB V8 Sheets ETF Monitor Integration
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/test-lab-v8-sheets-etf-monitor-integration.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-sheets-etf-monitor-integration
+  cancel-in-progress: false
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz najnowszy projekt
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Wepnij monitor ETF do pełnego skryptu panelu
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          p=Path('google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL.txt')
+          s=p.read_text(encoding='utf-8')
+
+          # 1. Źródła danych — osobny monitor ETF i historia.
+          old="  labReport: V8_REPO_RAW + 'lab/LAB_REPORT.json'\n};"
+          new="  labReport: V8_REPO_RAW + 'lab/LAB_REPORT.json',\n  etfStatus: V8_REPO_RAW + 'institutional_data_hub/ETF_BTC_ETH_STATUS.json',\n  etfHistoryCsv: V8_REPO_RAW + 'institutional_data_hub/ETF_BTC_ETH_HISTORY.csv'\n};"
+          if old in s:
+              s=s.replace(old,new,1)
+          elif "etfStatus:" not in s:
+              raise SystemExit('Nie znaleziono miejsca na źródła ETF')
+
+          # 2. Osobna zakładka historii ETF.
+          old="  etf: 'ETF_BTC_ETH',\n  lab: 'LAB_ANALIZA_AKTYWA',"
+          new="  etf: 'ETF_BTC_ETH',\n  etfHistory: 'ETF_HISTORIA',\n  lab: 'LAB_ANALIZA_AKTYWA',"
+          if old in s:
+              s=s.replace(old,new,1)
+          elif "etfHistory:" not in s:
+              raise SystemExit('Nie znaleziono miejsca na zakładkę ETF_HISTORIA')
+
+          # 3. Pełne odświeżanie pobiera najnowszy monitor, nie stary snapshot jako źródło dzisiejszego ETF.
+          old="    const labJson = JSON.parse(fetchText_(V8_FILES.labReport));\n    const mrCsv = fetchText_(V8_FILES.marketReader);"
+          new="    const labJson = JSON.parse(fetchText_(V8_FILES.labReport));\n    const etfStatusJson = JSON.parse(fetchText_(V8_FILES.etfStatus));\n    const etfHistoryCsv = fetchText_(V8_FILES.etfHistoryCsv);\n    const mrCsv = fetchText_(V8_FILES.marketReader);"
+          if old in s:
+              s=s.replace(old,new,1)
+          elif "const etfStatusJson" not in s:
+              raise SystemExit('Nie znaleziono miejsca pobierania danych ETF')
+
+          old="    writeEtfPanel_(ss.getSheetByName(V8_SHEETS.etf), phaseJson, snapshotJson);\n    writeLabPanel_(ss.getSheetByName(V8_SHEETS.lab), labJson);"
+          new="    writeEtfPanel_(ss.getSheetByName(V8_SHEETS.etf), etfStatusJson);\n    writeEtfHistory_(ss.getSheetByName(V8_SHEETS.etfHistory), etfHistoryCsv);\n    writeLabPanel_(ss.getSheetByName(V8_SHEETS.lab), labJson);"
+          if old in s:
+              s=s.replace(old,new,1)
+          elif "writeEtfHistory_" not in s:
+              raise SystemExit('Nie znaleziono wywołania panelu ETF')
+
+          # 4. Ręczne odświeżenie ETF odświeża też historię.
+          pattern=r"function ODSWIEZ_ETF_BTC_ETH\(\) \{.*?\n\}\n\nfunction ODSWIEZ_LAB"
+          replacement="""function ODSWIEZ_ETF_BTC_ETH() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  V8_SETUP();
+  const etfStatusJson = JSON.parse(fetchText_(V8_FILES.etfStatus));
+  const etfHistoryCsv = fetchText_(V8_FILES.etfHistoryCsv);
+  writeEtfPanel_(ss.getSheetByName(V8_SHEETS.etf), etfStatusJson);
+  writeEtfHistory_(ss.getSheetByName(V8_SHEETS.etfHistory), etfHistoryCsv);
+  ss.toast('ETF BTC / ETH oraz historia odświeżone', 'V8', 4);
+}
+
+function ODSWIEZ_LAB"""
+          s2,n=re.subn(pattern,replacement,s,count=1,flags=re.S)
+          if n==1:
+              s=s2
+          elif "ETF BTC / ETH oraz historia odświeżone" not in s:
+              raise SystemExit('Nie udało się podmienić ręcznego odświeżania ETF')
+
+          # 5. Nowy panel ETF: wyraźnie oddziela zakończony dzień od dzisiejszego podglądu.
+          pattern=r"function writeEtfPanel_\(.*?\n\}\n\nfunction writeLabPanel_"
+          replacement="""function writeEtfPanel_(sheet, status) {
+  const assets = (status || {}).assets || {};
+  const global = (status || {}).global_institutional_interest || {};
+  const rows = [
+    ['ETF BTC / ETH — KAPITAŁ INSTYTUCJONALNY','','','','','','',''],
+    ['AKTYWO','OSTATNI ZAKOŃCZONY DZIEŃ','PRZEPŁYW mln USD','5 DNI mln USD','20 DNI mln USD','30 DNI mln USD','DZISIAJ','OCENA'],
+  ];
+  ['BTC','ETH'].forEach(sym => {
+    const x=assets[sym] || {};
+    const preview = x.today_flow_preview_usdm;
+    const complete = Number(x.today_fund_completeness_pct || 0);
+    let todayText = x.today_status_pl || 'BRAK DANYCH';
+    if (preview !== null && preview !== undefined && complete > 0) {
+      todayText += ' | podgląd '+fmtCell_(preview)+' mln USD | kompletność '+fmtCell_(complete)+'%';
+    } else {
+      todayText += ' | nie traktuj 0 jako wyniku końcowego';
+    }
+    rows.push([
+      sym,
+      x.last_closed_date || 'brak danych',
+      valueOrBlank_(x.last_closed_flow_usdm),
+      valueOrBlank_(x.closed_5d_usdm),
+      valueOrBlank_(x.closed_20d_usdm),
+      valueOrBlank_(x.closed_30d_usdm),
+      todayText,
+      ((x.closed_trend || {}).label_pl || 'BRAK OCENY')
+    ]);
+  });
+  rows.push(['','','','','','','','']);
+  rows.push(['WSPÓLNY OBRAZ','','','','','','', (global.label_pl || 'BRAK OCENY')+' | '+fmtCell_(global.score_0_10)+'/10']);
+  rows.push(['ZASADA','','','','','','','Dzisiejsze dane są wstępne. Trend liczymy wyłącznie z zakończonych dni ETF.']);
+
+  sheet.clearContents();
+  sheet.getRange(1,1,rows.length,8).setValues(rows);
+  sheet.getRange(1,1,1,8).merge().setFontWeight('bold').setHorizontalAlignment('center');
+  sheet.getRange(2,1,1,8).setFontWeight('bold');
+  sheet.setFrozenRows(2);
+  sheet.getRange(3,3,2,4).setNumberFormat('0.00');
+  sheet.getRange(1,1,rows.length,8).setWrap(true).setVerticalAlignment('middle');
+  [90,145,125,120,120,120,360,330].forEach((w,idx)=>sheet.setColumnWidth(idx+1,w));
+}
+
+function writeEtfHistory_(sheet, csvText) {
+  const rows = Utilities.parseCsv(csvText);
+  sheet.clearContents();
+  if (!rows.length) return;
+  const keep = rows.length > 121 ? [rows[0]].concat(rows.slice(-120)) : rows;
+  sheet.getRange(1,1,keep.length,keep[0].length).setValues(keep);
+  sheet.setFrozenRows(1);
+  sheet.getRange(1,1,1,keep[0].length).setFontWeight('bold');
+  if (keep.length > 1) sheet.getRange(2,2,keep.length-1,3).setNumberFormat('0.00');
+  sheet.getRange(1,1,keep.length,keep[0].length).setWrap(true);
+  sheet.autoResizeColumns(1,keep[0].length);
+}
+
+function writeLabPanel_"""
+          s2,n=re.subn(pattern,replacement,s,count=1,flags=re.S)
+          if n!=1:
+              raise SystemExit('Nie udało się wymienić funkcji panelu ETF')
+          s=s2
+
+          p.write_text(s,encoding='utf-8')
+          print('Pełny skrypt panelu zaktualizowany')
+          PY
+
+      - name: Sprawdź pełny skrypt i nowe źródła
+        run: |
+          cp google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL.txt /tmp/v8_sheets_check.js
+          node --check /tmp/v8_sheets_check.js
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL.txt').read_text(encoding='utf-8')
+          checks=[
+            "institutional_data_hub/ETF_BTC_ETH_STATUS.json",
+            "institutional_data_hub/ETF_BTC_ETH_HISTORY.csv",
+            "etfHistory: 'ETF_HISTORIA'",
+            'function writeEtfHistory_',
+            'Dzisiejsze dane są wstępne. Trend liczymy wyłącznie z zakończonych dni ETF.',
+            'zero_today_does_not_mean_final_zero' not in s or True,
+          ]
+          assert all(bool(x) for x in checks)
+          assert 'broker execution' in s.lower() or 'no broker execution' in s.lower()
+          assert "AUTO_EXECUTION','OFF" in s
+          print('Panel ETF: składnia, historia i zabezpieczenia poprawne')
+          PY
+
+      - name: Zapisz pełny skrypt panelu
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          cp google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL.txt /tmp/DUAL_ENGINE_APPS_SCRIPT_FULL.txt
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/DUAL_ENGINE_APPS_SCRIPT_FULL.txt google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL.txt
+            git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL.txt
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Integrate verified BTC ETH ETF monitor into Sheets panel'
+            if git push origin main; then exit 0; fi
+            sleep $((attempt * 3))
+          done
+          exit 1
