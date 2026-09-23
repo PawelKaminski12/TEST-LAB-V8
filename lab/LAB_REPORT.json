@@ -1,27 +1,78 @@
 {
-  "generated_at_utc": "2026-09-23T15:03:14.436917+00:00",
-  "engine": "V8_ASSET_LAB_v0.2",
+  "generated_at_utc": "2026-09-23T15:06:09.619025+00:00",
+  "engine": "V8_ASSET_LAB_v0.3",
   "active_assets": 2,
   "reports": [
     {
-      "generated_at_utc": "2026-09-23T15:03:14.436917+00:00",
+      "generated_at_utc": "2026-09-23T15:06:09.619025+00:00",
       "symbol": "ETH",
       "source_symbol": "ETH-USD",
       "asset_type": "CRYPTO",
       "mode": "BOTH",
       "checkpoint": "D0",
-      "data_quality_0_100": 75,
+      "data_quality_0_100": 80,
       "data_status": "DATA_READY",
+      "mtf_ready_0_3": 3,
+      "fast_analysis": {
+        "score_0_10": 8.17,
+        "label": "STRONG_CONTEXT",
+        "risk_flags": [],
+        "role": "research context only; never standalone buy/sell signal"
+      },
+      "technical": {
+        "1H": {
+          "status": "OK",
+          "rows": 1432,
+          "age_hours": 0.10267195138888889,
+          "price": 2675.9599609375,
+          "trend_0_4": 2,
+          "rsi14": 24.658691824184274,
+          "mfi14": 4.320586062192959,
+          "macd_hist": -9.205084897682427,
+          "ret5_pct": -2.2444634908346917,
+          "ret20_pct": -2.7581397135584496,
+          "fomo_0_10": 0
+        },
+        "4H": {
+          "status": "OK",
+          "rows": 358,
+          "age_hours": 3.102671951388889,
+          "price": 2675.9599609375,
+          "trend_0_4": 3,
+          "rsi14": 48.793436350045845,
+          "mfi14": 74.15389064922391,
+          "macd_hist": -10.658855120285445,
+          "ret5_pct": -2.7581397135584496,
+          "ret20_pct": 3.878818665852868,
+          "fomo_0_10": 0
+        },
+        "1D": {
+          "status": "OK",
+          "rows": 731,
+          "age_hours": 15.102671951388889,
+          "price": 2675.9599609375,
+          "trend_0_4": 4,
+          "rsi14": 62.57373093603458,
+          "mfi14": 57.638112757854266,
+          "macd_hist": 12.973012269573275,
+          "ret5_pct": 2.474308807396497,
+          "ret20_pct": 6.696085303663946,
+          "fomo_0_10": 0
+        },
+        "bar_policy": "LATEST_AVAILABLE_MAY_BE_OPEN",
+        "4H_source": "synthetic resample from 1H"
+      },
       "technical_1D": {
         "status": "OK",
         "rows": 731,
-        "price": 2677.31005859375,
+        "age_hours": 15.102671951388889,
+        "price": 2675.9599609375,
         "trend_0_4": 4,
-        "rsi14": 62.68770139889461,
-        "mfi14": 57.66829233838381,
-        "macd_hist": 13.059172347920807,
-        "ret5_pct": 2.5260100010489728,
-        "ret20_pct": 6.74991650323431,
+        "rsi14": 62.57373093603458,
+        "mfi14": 57.638112757854266,
+        "macd_hist": 12.973012269573275,
+        "ret5_pct": 2.474308807396497,
+        "ret20_pct": 6.696085303663946,
         "fomo_0_10": 0
       },
       "stock_fundamentals": {
@@ -36,7 +87,13 @@
         "btc_dominance_pct": 58.72003957091988,
         "eth_dominance_pct": 11.325673395922939,
         "eth_btc_5d_pct": -0.2617891141950768,
-        "eth_btc_20d_pct": 3.279176735238498
+        "eth_btc_20d_pct": 3.279176735238498,
+        "btc_etf_5d_usdm": 2306.2,
+        "btc_etf_20d_usdm": 2516.4,
+        "eth_etf_5d_usdm": 536.5999999999999,
+        "eth_etf_20d_usdm": 1235.5000000000002,
+        "stablecoin_7d_pct": 0.4492048921584946,
+        "stablecoin_30d_pct": 1.094835977572206
       },
       "onchain_context": {
         "quality_gate": "TRUSTED",
@@ -52,11 +109,11 @@
       "deep_observation": {
         "status": "TRACKING",
         "baseline_utc": "2026-09-23 14:57:27.012214+00:00",
-        "elapsed_days": 0.004021119247685186,
-        "price_change_pct": 0.0938391550697304,
+        "elapsed_days": 0.00604868994212963,
+        "price_change_pct": 0.043364441760163075,
         "trend_change": 0.0,
-        "rsi_change": 0.2115556938829002,
-        "mfi_change": -0.14283509606408273,
+        "rsi_change": 0.09758523102286887,
+        "mfi_change": -0.17301467659362402,
         "fomo_change": 0.0,
         "onchain_long_change": 0.0,
         "onchain_tactical_change": 0.0,
@@ -78,36 +135,80 @@
           "D30"
         ],
         "never_auto_add_to_portfolio": true,
-        "not_trade_execution": true
+        "not_trade_execution": true,
+        "fast_score_is_context_not_trade_signal": true
       }
     },
     {
-      "generated_at_utc": "2026-09-23T15:03:14.436917+00:00",
+      "generated_at_utc": "2026-09-23T15:06:09.619025+00:00",
       "symbol": "ANET",
       "source_symbol": "ANET",
       "asset_type": "STOCK",
       "mode": "BOTH",
       "checkpoint": "D0",
-      "data_quality_0_100": 65,
-      "data_status": "DATA_READY",
+      "data_quality_0_100": 55,
+      "data_status": "PARTIAL",
+      "mtf_ready_0_3": 2,
+      "fast_analysis": {
+        "score_0_10": 5.15,
+        "label": "MIXED_CONTEXT",
+        "risk_flags": [],
+        "role": "research context only; never standalone buy/sell signal"
+      },
+      "technical": {
+        "1H": {
+          "status": "OK",
+          "rows": 415,
+          "age_hours": 0.6026719513888888,
+          "price": 201.92559814453125,
+          "trend_0_4": 3,
+          "rsi14": 49.38429807623892,
+          "mfi14": 67.70482994589528,
+          "macd_hist": -0.38827313306969824,
+          "ret5_pct": -1.1234957704717052,
+          "ret20_pct": 2.1838963214666496,
+          "fomo_0_10": 0
+        },
+        "4H": {
+          "status": "INSUFFICIENT_HISTORY",
+          "rows": 119,
+          "age_hours": 3.102671951388889
+        },
+        "1D": {
+          "status": "OK",
+          "rows": 501,
+          "age_hours": 15.102671951388889,
+          "price": 201.92559814453125,
+          "trend_0_4": 4,
+          "rsi14": 56.610867353956884,
+          "mfi14": 74.82959506901308,
+          "macd_hist": 0.6699271617903859,
+          "ret5_pct": 4.711471675575529,
+          "ret20_pct": 7.321607597620172,
+          "fomo_0_10": 0
+        },
+        "bar_policy": "LATEST_AVAILABLE_MAY_BE_OPEN",
+        "4H_source": "synthetic resample from 1H"
+      },
       "technical_1D": {
         "status": "OK",
         "rows": 501,
-        "price": 202.19000244140625,
+        "age_hours": 15.102671951388889,
+        "price": 201.92559814453125,
         "trend_0_4": 4,
-        "rsi14": 56.843540021192325,
-        "mfi14": 74.85846707291728,
-        "macd_hist": 0.6868008263203391,
-        "ret5_pct": 4.848582390103728,
-        "ret20_pct": 7.462136061851998,
+        "rsi14": 56.610867353956884,
+        "mfi14": 74.82959506901308,
+        "macd_hist": 0.6699271617903859,
+        "ret5_pct": 4.711471675575529,
+        "ret20_pct": 7.321607597620172,
         "fomo_0_10": 0
       },
       "stock_fundamentals": {
         "status": "OK",
-        "market_cap": 255007031296.0,
-        "trailing_pe": 63.984177,
-        "forward_pe": 38.97699,
-        "price_to_sales": 24.192379,
+        "market_cap": 254673551360.0,
+        "trailing_pe": 63.900505,
+        "forward_pe": 38.926018,
+        "price_to_sales": 24.160742,
         "revenue_growth": 0.377,
         "earnings_growth": 0.357,
         "debt_to_equity": null,
@@ -119,11 +220,11 @@
       "deep_observation": {
         "status": "TRACKING",
         "baseline_utc": "2026-09-23 14:57:27.012214+00:00",
-        "elapsed_days": 0.004021119247685186,
-        "price_change_pct": -0.4431502844615909,
+        "elapsed_days": 0.00604868994212963,
+        "price_change_pct": -0.5733409888993957,
         "trend_change": 0.0,
-        "rsi_change": -0.8065223304639773,
-        "mfi_change": -0.043915738917263525,
+        "rsi_change": -1.0391949976994184,
+        "mfi_change": -0.07278774282146117,
         "fomo_change": 0.0,
         "onchain_long_change": null,
         "onchain_tactical_change": null,
@@ -145,9 +246,10 @@
           "D30"
         ],
         "never_auto_add_to_portfolio": true,
-        "not_trade_execution": true
+        "not_trade_execution": true,
+        "fast_score_is_context_not_trade_signal": true
       }
     }
   ],
-  "purpose": "FAST current analysis plus DEEP observation; research only"
+  "purpose": "FAST multi-timeframe current analysis plus DEEP observation; research only"
 }
