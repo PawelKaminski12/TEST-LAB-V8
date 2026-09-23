@@ -1,0 +1,30 @@
+# V8 ASSET LAB — latest
+
+Generated: 2026-09-23T15:03:14.436917+00:00
+Engine: V8_ASSET_LAB_v0.2
+
+## ETH — CRYPTO — BOTH
+- Data: **DATA_READY** (75/100)
+- Checkpoint: **D0**
+- Price: 2677.31005859375
+- Trend: 4/4 | RSI14: 62.68770139889461 | MFI14: 57.66829233838381 | MACD hist: 13.059172347920807 | FOMO: 0/10
+- Market phase: ALT_ROTATION_CANDIDATE | rotation: 7/10 CONFIRMED
+- BTC.D: 58.72003957091988 | ETH.D: 11.325673395922939 | ETH/BTC 20D: 3.279176735238498%
+- On-chain LONG: 9/10 | Tactical: 9/10 | quality: TRUSTED
+- Existing engine decision: CZEKAJ
+- DEEP: TRACKING | elapsed days: 0.004021119247685186 | price Δ: 0.0938391550697304% | RSI Δ: 0.2115556938829002 | MFI Δ: -0.14283509606408273
+
+---
+
+## ANET — STOCK — BOTH
+- Data: **DATA_READY** (65/100)
+- Checkpoint: **D0**
+- Price: 202.19000244140625
+- Trend: 4/4 | RSI14: 56.843540021192325 | MFI14: 74.85846707291728 | MACD hist: 0.6868008263203391 | FOMO: 0/10
+- Market cap: 255007031296.0 | P/E: 63.984177 | Forward P/E: 38.97699 | P/S: 24.192379
+- Revenue growth: 0.377 | Earnings growth: 0.357 | FCF: 3891512576.0
+- DEEP: TRACKING | elapsed days: 0.004021119247685186 | price Δ: -0.4431502844615909% | RSI Δ: -0.8065223304639773 | MFI Δ: -0.043915738917263525
+
+---
+
+Research only. LAB never executes trades and never auto-adds an asset to the production portfolio.
