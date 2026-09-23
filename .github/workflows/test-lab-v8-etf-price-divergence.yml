@@ -1,0 +1,85 @@
+name: TEST LAB V8 ETF Price Divergence
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '40 * * * *'
+  push:
+    paths:
+      - 'scripts/v8_etf_price_divergence.py'
+      - '.github/workflows/test-lab-v8-etf-price-divergence.yml'
+      - 'institutional_data_hub/ETF_BTC_ETH_STATUS.json'
+      - 'institutional_data_hub/ETF_BTC_ETH_HISTORY_STATUS.json'
+      - 'lab/LAB_REPORT.json'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-etf-price-divergence
+  cancel-in-progress: true
+
+jobs:
+  build-etf-price-divergence:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz najnowszy projekt
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Przygotuj Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Policz zgodność ceny z przepływami ETF
+        run: python scripts/v8_etf_price_divergence.py
+
+      - name: Sprawdź logikę i bezpieczeństwo
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('institutional_data_hub/ETF_PRICE_DIVERGENCE.json')
+          m=Path('institutional_data_hub/ETF_PRICE_DIVERGENCE_LATEST.md')
+          assert p.exists() and m.exists()
+          x=json.loads(p.read_text(encoding='utf-8'))
+          assert x['engine']=='V8_ETF_PRICE_DIVERGENCE_v1.0'
+          assert x['rules']['closed_etf_days_only'] is True
+          assert x['rules']['same_day_preview_excluded'] is True
+          assert x['rules']['context_not_trade_signal'] is True
+          assert x['rules']['execution_connected'] is False
+          assert set(x['assets'])=={'BTC','ETH'}
+          for a in ['BTC','ETH']:
+              z=x['assets'][a]
+              assert z['status_pl']
+              assert z['quality_pl']
+              assert z['today_data_policy_pl']
+              assert z['price_change_5d_pct'] is not None
+              assert z['etf_closed_5d_usdm'] is not None
+          txt=m.read_text(encoding='utf-8')
+          assert 'ZGODNOŚĆ CENY Z PRZEPŁYWAMI ETF' in txt
+          assert 'Dzisiejszy podgląd nie jest traktowany jako wynik końcowy' in txt
+          print('Zgodność cena/ETF: sprawdzona poprawnie')
+          PY
+
+      - name: Zapisz wynik bez konfliktu
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          mkdir -p /tmp/etfdiv
+          cp institutional_data_hub/ETF_PRICE_DIVERGENCE.json institutional_data_hub/ETF_PRICE_DIVERGENCE_LATEST.md /tmp/etfdiv/
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            mkdir -p institutional_data_hub
+            cp /tmp/etfdiv/ETF_PRICE_DIVERGENCE.json /tmp/etfdiv/ETF_PRICE_DIVERGENCE_LATEST.md institutional_data_hub/
+            git add institutional_data_hub/ETF_PRICE_DIVERGENCE.json institutional_data_hub/ETF_PRICE_DIVERGENCE_LATEST.md
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Update V8 ETF price divergence'
+            if git push origin main; then exit 0; fi
+            sleep $((attempt * 3))
+          done
+          exit 1
