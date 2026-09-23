@@ -1,0 +1,258 @@
+// V8 DUAL ENGINE — GOOGLE SHEETS BRIDGE
+// Research / decision support only. No broker execution.
+// V7 is not modified by this script.
+
+const V8_REPO_RAW = 'https://raw.githubusercontent.com/PawelKaminski12/TEST-LAB-V8/main/';
+
+const V8_FILES = {
+  panel: V8_REPO_RAW + 'google_sheets/DUAL_PANEL.csv',
+  machine: V8_REPO_RAW + 'google_sheets/DUAL_ENGINE_MACHINE_ROOM.csv',
+  long: V8_REPO_RAW + 'crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json',
+  tactical: V8_REPO_RAW + 'tactical_engine/TACTICAL_ENGINE.json',
+  tacticalReadiness: V8_REPO_RAW + 'tactical_engine/TACTICAL_READINESS.json',
+  marketReader: V8_REPO_RAW + 'market_reader/TACTICAL_CONFLUENCE.csv'
+};
+
+const V8_SHEETS = {
+  panel: 'PANEL',
+  portfolioLong: 'PORTFEL_LONG',
+  portfolioTactical: 'PORTFEL_TACTICAL',
+  long: 'SILNIK_LONG',
+  tactical: 'SILNIK_TACTICAL',
+  marketReader: 'MARKET_READER',
+  history: 'HISTORIA',
+  settings: 'USTAWIENIA'
+};
+
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu('V8 DUAL ENGINE')
+    .addItem('ODŚWIEŻ_WSZYSTKO', 'ODSWIEZ_WSZYSTKO')
+    .addSeparator()
+    .addItem('UTWÓRZ / NAPRAW UKŁAD', 'V8_SETUP')
+    .addToUi();
+}
+
+function V8_SETUP() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  Object.values(V8_SHEETS).forEach(name => getOrCreateSheet_(ss, name));
+
+  setupPortfolioLong_(ss.getSheetByName(V8_SHEETS.portfolioLong));
+  setupPortfolioTactical_(ss.getSheetByName(V8_SHEETS.portfolioTactical));
+  setupSettings_(ss.getSheetByName(V8_SHEETS.settings));
+  formatPanel_(ss.getSheetByName(V8_SHEETS.panel));
+
+  ss.toast('Układ V8 DUAL ENGINE gotowy', 'V8', 4);
+}
+
+function ODSWIEZ_WSZYSTKO() {
+  const lock = LockService.getDocumentLock();
+  if (!lock.tryLock(1000)) throw new Error('Odświeżanie już trwa.');
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    V8_SETUP();
+
+    const oldPanel = readPanelState_(ss.getSheetByName(V8_SHEETS.panel));
+
+    const panelCsv = fetchText_(V8_FILES.panel);
+    const machineCsv = fetchText_(V8_FILES.machine);
+    const longJson = JSON.parse(fetchText_(V8_FILES.long));
+    const tacticalJson = JSON.parse(fetchText_(V8_FILES.tactical));
+    const readinessJson = JSON.parse(fetchText_(V8_FILES.tacticalReadiness));
+    const mrCsv = fetchText_(V8_FILES.marketReader);
+
+    writeCsvSheet_(ss.getSheetByName(V8_SHEETS.panel), panelCsv, true);
+    writeLongEngine_(ss.getSheetByName(V8_SHEETS.long), longJson);
+    writeTacticalEngine_(ss.getSheetByName(V8_SHEETS.tactical), tacticalJson, readinessJson);
+    writeCsvSheet_(ss.getSheetByName(V8_SHEETS.marketReader), mrCsv, false);
+
+    // Full hidden machine-room export can be useful for diagnostics.
+    const machineSheet = getOrCreateSheet_(ss, 'DANE_MASZYNOWNIA');
+    writeCsvSheet_(machineSheet, machineCsv, false);
+    machineSheet.hideSheet();
+
+    formatPanel_(ss.getSheetByName(V8_SHEETS.panel));
+    appendHistoryOnChanges_(ss, oldPanel, readPanelState_(ss.getSheetByName(V8_SHEETS.panel)));
+    stampRefresh_(ss);
+
+    ss.toast('LONG + TACTICAL odświeżone', 'V8 DUAL ENGINE', 4);
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function fetchText_(url) {
+  const response = UrlFetchApp.fetch(url, {
+    muteHttpExceptions: true,
+    followRedirects: true,
+    headers: {'Cache-Control': 'no-cache'}
+  });
+  const code = response.getResponseCode();
+  if (code < 200 || code >= 300) throw new Error('HTTP ' + code + ' dla ' + url);
+  return response.getContentText('UTF-8');
+}
+
+function getOrCreateSheet_(ss, name) {
+  return ss.getSheetByName(name) || ss.insertSheet(name);
+}
+
+function writeCsvSheet_(sheet, csvText, preserveCompactPanel) {
+  const rows = Utilities.parseCsv(csvText);
+  sheet.clearContents();
+  if (!rows.length) return;
+  sheet.getRange(1, 1, rows.length, rows[0].length).setValues(rows);
+  sheet.setFrozenRows(1);
+  if (preserveCompactPanel) {
+    // PANEL stays intentionally small.
+    const maxCols = 7;
+    if (sheet.getMaxColumns() > maxCols) {
+      sheet.hideColumns(maxCols + 1, sheet.getMaxColumns() - maxCols);
+    }
+  }
+}
+
+function writeLongEngine_(sheet, data) {
+  const headers = [
+    'AKTYWO','JAKOŚĆ','STATUS_DANYCH','STREFY','TREND','FOMO','ROTACJA','FAZA_RYNKU',
+    'DECYZJA','DCA1','DCA2','DCA3','BLOCKERS'
+  ];
+  const assets = (data.assets || []).map(a => [
+    a.symbol, a.data_quality, a.readiness_status, a.zone_timeframes,
+    a.trend_score_0_4, a.fomo_score_0_10, a.rotation_label, a.market_phase,
+    a.decision, a.dca1, a.dca2, a.dca3, a.blockers
+  ]);
+  sheet.clearContents();
+  sheet.getRange(1,1,1,headers.length).setValues([headers]);
+  if (assets.length) sheet.getRange(2,1,assets.length,headers.length).setValues(assets);
+  sheet.setFrozenRows(1);
+}
+
+function writeTacticalEngine_(sheet, data, readiness) {
+  const readyMap = {};
+  (readiness.assets || []).forEach(a => readyMap[a.symbol] = a);
+
+  const headers = [
+    'AKTYWO','QA','READY','SCORE','STATUS','RYZYKO','1H_RSI','1H_MACD','1H_FOMO',
+    '4H_RSI','4H_MACD','4H_TREND','4H_FOMO','1D_RSI','1D_TREND','IN_SUPPLY','IN_DEMAND','FAZA_RYNKU'
+  ];
+
+  const assets = (data.assets || []).map(a => {
+    const t = a.timeframes || {};
+    const h1 = t['1H'] || {};
+    const h4 = t['4H'] || {};
+    const d1 = t['1D'] || {};
+    const z = a.zone_context || {};
+    const r = readyMap[a.symbol] || {};
+    return [
+      a.symbol, a.qa, r.readiness_status || '', a.tactical_score_0_10, a.tactical_status,
+      a.exit_risk_0_10, h1.rsi14, h1.macd_hist, h1.fomo_score_0_10,
+      h4.rsi14, h4.macd_hist, h4.trend_score_0_4, h4.fomo_score_0_10,
+      d1.rsi14, d1.trend_score_0_4, z.in_supply, z.in_demand,
+      (a.market_phase_context || {}).phase || ''
+    ];
+  });
+
+  sheet.clearContents();
+  sheet.getRange(1,1,1,headers.length).setValues([headers]);
+  if (assets.length) sheet.getRange(2,1,assets.length,headers.length).setValues(assets);
+  sheet.setFrozenRows(1);
+}
+
+function setupPortfolioLong_(sheet) {
+  const headers = ['AKTYWO','ILOŚĆ','ŚR. CENA','WARTOŚĆ','ZYSK/STRATA','DCA1','DCA2','DCA3','STATUS LONG','WYKONANE'];
+  if (sheet.getLastRow() === 0) {
+    sheet.getRange(1,1,1,headers.length).setValues([headers]);
+    sheet.setFrozenRows(1);
+  }
+}
+
+function setupPortfolioTactical_(sheet) {
+  const headers = ['AKTYWO','ILOŚĆ','CENA WEJŚCIA','WARTOŚĆ','P&L','STATUS TACTICAL','RYZYKO 0–10','PLAN WYJŚCIA','WYKONANE'];
+  if (sheet.getLastRow() === 0) {
+    sheet.getRange(1,1,1,headers.length).setValues([headers]);
+    sheet.setFrozenRows(1);
+  }
+}
+
+function setupSettings_(sheet) {
+  if (sheet.getLastRow() > 0) return;
+  const rows = [
+    ['PARAMETR','WARTOŚĆ'],
+    ['TRYB','RESEARCH'],
+    ['AUTO_EXECUTION','OFF'],
+    ['V7_TOUCH','OFF'],
+    ['LONG_TACTICAL_CAPITAL_SHARED','NO'],
+    ['LAST_REFRESH','']
+  ];
+  sheet.getRange(1,1,rows.length,2).setValues(rows);
+  sheet.setFrozenRows(1);
+}
+
+function stampRefresh_(ss) {
+  const sh = ss.getSheetByName(V8_SHEETS.settings);
+  const vals = sh.getRange(1,1,Math.max(1,sh.getLastRow()),2).getValues();
+  for (let i=0; i<vals.length; i++) {
+    if (vals[i][0] === 'LAST_REFRESH') {
+      sh.getRange(i+1,2).setValue(new Date());
+      return;
+    }
+  }
+}
+
+function readPanelState_(sheet) {
+  const out = {};
+  if (!sheet || sheet.getLastRow() < 2) return out;
+  const values = sheet.getDataRange().getValues();
+  const head = values[0].map(String);
+  const idx = {};
+  head.forEach((h,i) => idx[h]=i);
+  values.slice(1).forEach(r => {
+    const sym = String(r[idx['AKTYWO']] || '').trim();
+    if (!sym) return;
+    out[sym] = {
+      LONG: r[idx['LONG']],
+      TACTICAL: r[idx['TACTICAL']],
+      RYZYKO: r[idx['RYZYKO_0_10']],
+      ZGODNOSC: r[idx['ZGODNOSC']],
+      ALERT: r[idx['ALERT']]
+    };
+  });
+  return out;
+}
+
+function appendHistoryOnChanges_(ss, oldState, newState) {
+  const sh = ss.getSheetByName(V8_SHEETS.history);
+  if (sh.getLastRow() === 0) {
+    sh.appendRow(['CZAS','AKTYWO','LONG','TACTICAL','RYZYKO','ZGODNOŚĆ','ALERT','POWÓD']);
+    sh.setFrozenRows(1);
+  }
+
+  const now = new Date();
+  Object.keys(newState).forEach(sym => {
+    const n = newState[sym];
+    const o = oldState[sym];
+    const changed = !o || ['LONG','TACTICAL','RYZYKO','ZGODNOSC','ALERT'].some(k => String(o[k]) !== String(n[k]));
+    if (changed) {
+      sh.appendRow([now,sym,n.LONG,n.TACTICAL,n.RYZYKO,n.ZGODNOSC,n.ALERT,o ? 'ZMIANA STATUSU' : 'PIERWSZY ZAPIS']);
+    }
+  });
+}
+
+function formatPanel_(sheet) {
+  if (!sheet) return;
+  sheet.setFrozenRows(1);
+  sheet.setFrozenColumns(1);
+  sheet.getRange('A:G').setVerticalAlignment('middle');
+  sheet.setColumnWidth(1,90);
+  sheet.setColumnWidth(2,100);
+  sheet.setColumnWidth(3,150);
+  sheet.setColumnWidth(4,180);
+  sheet.setColumnWidth(5,90);
+  sheet.setColumnWidth(6,130);
+  sheet.setColumnWidth(7,170);
+
+  if (sheet.getLastRow() >= 2) {
+    const range = sheet.getRange(2,1,sheet.getLastRow()-1,7);
+    range.setWrap(true);
+  }
+}
