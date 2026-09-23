@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-23T13:03:02.715744+00:00",
+  "generated_at_utc": "2026-09-23T15:45:45.390359+00:00",
   "engine": "V8_TACTICAL_TECHNICAL_VALIDATION_v0.1",
   "method": "walk-forward closed-candle observational validation anchored on 4H closes",
   "no_lookahead": true,
@@ -16,43 +16,43 @@
     {
       "symbol": "ETH",
       "scope": "PRODUCTION",
-      "observations": 193,
-      "positive_setups": 105,
+      "observations": 192,
+      "positive_setups": 104,
       "no_trade_observations": 35,
-      "setup_mean_12h_pct": 0.0686934422361,
-      "setup_median_12h_pct": 0.020799517124925337,
-      "setup_winrate_12h_pct": 50.476190476190474,
-      "setup_mean_24h_pct": -0.03373956871326656,
+      "setup_mean_12h_pct": 0.052370557912679076,
+      "setup_median_12h_pct": -0.01108256168874111,
+      "setup_winrate_12h_pct": 50.0,
+      "setup_mean_24h_pct": -0.059058652204667675,
       "no_trade_mean_12h_pct": 0.35500141443420463
     },
     {
       "symbol": "SOL",
       "scope": "PRODUCTION",
-      "observations": 193,
-      "positive_setups": 93,
+      "observations": 192,
+      "positive_setups": 92,
       "no_trade_observations": 38,
-      "setup_mean_12h_pct": 0.5217583217911542,
-      "setup_median_12h_pct": -0.17932987258140187,
-      "setup_winrate_12h_pct": 47.31182795698925,
-      "setup_mean_24h_pct": 0.4836199894424221,
+      "setup_mean_12h_pct": 0.5208172189256021,
+      "setup_median_12h_pct": -0.19615089950463793,
+      "setup_winrate_12h_pct": 46.73913043478261,
+      "setup_mean_24h_pct": 0.440185500573536,
       "no_trade_mean_12h_pct": 0.2824951118984734
     },
     {
       "symbol": "LINK",
       "scope": "PRODUCTION",
-      "observations": 193,
+      "observations": 192,
       "positive_setups": 93,
-      "no_trade_observations": 60,
+      "no_trade_observations": 59,
       "setup_mean_12h_pct": 0.2845185380929339,
       "setup_median_12h_pct": 0.2527646129541816,
       "setup_winrate_12h_pct": 53.76344086021505,
       "setup_mean_24h_pct": 0.21126103693694542,
-      "no_trade_mean_12h_pct": -0.19017814405434147
+      "no_trade_mean_12h_pct": -0.2113184646512571
     },
     {
       "symbol": "ONDO",
       "scope": "PRODUCTION",
-      "observations": 193,
+      "observations": 192,
       "positive_setups": 66,
       "no_trade_observations": 93,
       "setup_mean_12h_pct": -0.12036469988676154,
@@ -64,19 +64,19 @@
     {
       "symbol": "AAVE",
       "scope": "TEST_VALIDATION",
-      "observations": 193,
+      "observations": 192,
       "positive_setups": 83,
-      "no_trade_observations": 42,
+      "no_trade_observations": 41,
       "setup_mean_12h_pct": 0.3252195861610607,
       "setup_median_12h_pct": -0.07948493760433495,
       "setup_winrate_12h_pct": 44.57831325301205,
       "setup_mean_24h_pct": 0.5971984216494346,
-      "no_trade_mean_12h_pct": 1.0943489950775462
+      "no_trade_mean_12h_pct": 1.0232950330874135
     },
     {
       "symbol": "HBAR",
       "scope": "TEST_VALIDATION",
-      "observations": 193,
+      "observations": 192,
       "positive_setups": 77,
       "no_trade_observations": 72,
       "setup_mean_12h_pct": 0.5975864234519396,
@@ -110,12 +110,12 @@
     {
       "symbol": "AAVE",
       "status": "NO_TRADE_FOMO",
-      "n": 11,
-      "mean_4h_pct": 1.3254159234180343,
-      "mean_12h_pct": 3.7429386927662023,
-      "median_12h_pct": 1.7789583836432366,
-      "winrate_12h_pct": 72.72727272727273,
-      "mean_24h_pct": 3.9539158060314916
+      "n": 10,
+      "mean_4h_pct": 1.1139121471397992,
+      "mean_12h_pct": 3.7164764183755246,
+      "median_12h_pct": 1.5170772030694835,
+      "winrate_12h_pct": 70.0,
+      "mean_24h_pct": 2.737776195708364
     },
     {
       "symbol": "AAVE",
@@ -140,12 +140,12 @@
     {
       "symbol": "ETH",
       "status": "LONG_SETUP_WATCH",
-      "n": 102,
-      "mean_4h_pct": -0.014811066334570267,
-      "mean_12h_pct": 0.09820956688467188,
-      "median_12h_pct": 0.04131193326883942,
-      "winrate_12h_pct": 51.9607843137255,
-      "mean_24h_pct": 0.024028581048920673
+      "n": 101,
+      "mean_4h_pct": -0.014460920197144738,
+      "mean_12h_pct": 0.08169408327093713,
+      "median_12h_pct": 0.04057610027519143,
+      "winrate_12h_pct": 51.48514851485149,
+      "mean_24h_pct": -0.0014705925485400094
     },
     {
       "symbol": "ETH",
@@ -220,12 +220,12 @@
     {
       "symbol": "HBAR",
       "status": "WAIT",
-      "n": 44,
-      "mean_4h_pct": 0.3055720055495227,
-      "mean_12h_pct": 0.29452218217565496,
-      "median_12h_pct": 0.2073775983984838,
-      "winrate_12h_pct": 52.27272727272727,
-      "mean_24h_pct": 0.2418332701947082
+      "n": 43,
+      "mean_4h_pct": 0.31728465912611087,
+      "mean_12h_pct": 0.29062343689519493,
+      "median_12h_pct": 0.07440476190474499,
+      "winrate_12h_pct": 51.162790697674424,
+      "mean_24h_pct": 0.16177960142402828
     },
     {
       "symbol": "HBAR",
@@ -260,12 +260,12 @@
     {
       "symbol": "LINK",
       "status": "NO_TRADE_FOMO",
-      "n": 5,
-      "mean_4h_pct": -0.5869562420137896,
-      "mean_12h_pct": -1.469706511035871,
-      "median_12h_pct": -0.40807073226025725,
-      "winrate_12h_pct": 40.0,
-      "mean_24h_pct": -2.2913405501854833
+      "n": 4,
+      "mean_4h_pct": -0.14665778410462005,
+      "mean_12h_pct": -2.101408331585758,
+      "median_12h_pct": -1.4800987522852638,
+      "winrate_12h_pct": 25.0,
+      "mean_24h_pct": -3.312577039434475
     },
     {
       "symbol": "LINK",
@@ -320,12 +320,12 @@
     {
       "symbol": "ONDO",
       "status": "WAIT",
-      "n": 34,
-      "mean_4h_pct": 0.6321454211926328,
-      "mean_12h_pct": 0.30382786043293625,
-      "median_12h_pct": 0.6342969401627485,
-      "winrate_12h_pct": 52.94117647058824,
-      "mean_24h_pct": 0.8899537050087905
+      "n": 33,
+      "mean_4h_pct": 0.6658856891821032,
+      "mean_12h_pct": 0.2717124512449535,
+      "median_12h_pct": 0.4946413849958864,
+      "winrate_12h_pct": 51.515151515151516,
+      "mean_24h_pct": 0.8350876124527447
     },
     {
       "symbol": "ONDO",
@@ -340,12 +340,12 @@
     {
       "symbol": "SOL",
       "status": "LONG_SETUP_WATCH",
-      "n": 91,
-      "mean_4h_pct": 0.28028376381575293,
-      "mean_12h_pct": 0.5503469666649106,
-      "median_12h_pct": -0.12442572741195868,
-      "winrate_12h_pct": 48.35164835164835,
-      "mean_24h_pct": 0.5433859604198457
+      "n": 90,
+      "mean_4h_pct": 0.2848727909743246,
+      "mean_12h_pct": 0.5497026020120545,
+      "median_12h_pct": -0.16869882691991633,
+      "winrate_12h_pct": 47.77777777777778,
+      "mean_24h_pct": 0.4996503270314001
     },
     {
       "symbol": "SOL",
