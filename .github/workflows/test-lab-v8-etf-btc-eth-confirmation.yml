@@ -1,0 +1,94 @@
+name: TEST LAB V8 ETF BTC ETH Confirmation
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '35 * * * *'
+  push:
+    paths:
+      - 'institutional_data_hub/ETF_BTC_ETH_STATUS.json'
+      - 'lab/LAB_REPORT.json'
+      - 'scripts/v8_etf_btc_eth_confirmation.py'
+      - '.github/workflows/test-lab-v8-etf-btc-eth-confirmation.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-etf-btc-eth-confirmation
+  cancel-in-progress: false
+
+jobs:
+  build-confirmation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz najnowszy projekt
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Przygotuj Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Zainstaluj biblioteki
+        run: pip install --quiet pandas
+
+      - name: Porównaj cenę z przepływami ETF BTC i ETH
+        run: python scripts/v8_etf_btc_eth_confirmation.py
+
+      - name: Sprawdź jakość, polski opis i blokady bezpieczeństwa
+        run: |
+          python - <<'PY'
+          import json
+          import pandas as pd
+          from pathlib import Path
+
+          j=Path('institutional_data_hub/ETF_BTC_ETH_CONFIRMATION.json')
+          c=Path('institutional_data_hub/ETF_BTC_ETH_CONFIRMATION.csv')
+          m=Path('institutional_data_hub/ETF_BTC_ETH_CONFIRMATION.md')
+          assert j.exists() and c.exists() and m.exists()
+          x=json.loads(j.read_text(encoding='utf-8'))
+          assert x['engine']=='V8_ETF_BTC_ETH_CONFIRMATION_v1.0'
+          assert x['rules']['closed_etf_days_only_for_confirmation'] is True
+          assert x['rules']['today_preview_never_used_as_final'] is True
+          assert x['rules']['price_etf_divergence_reduces_confirmation'] is True
+          assert x['rules']['etf_never_overrides_hard_blockers'] is True
+          assert x['rules']['execution_connected'] is False
+          assert set(x['assets'])=={'BTC','ETH'}
+          for sym in ['BTC','ETH']:
+              a=x['assets'][sym]
+              assert 0 <= a['quality']['score_0_100'] <= 100
+              assert a['quality']['label_pl']
+              assert a['price_vs_etf_5d']['label_pl']
+              assert a['price_vs_etf_20d']['label_pl']
+              assert a['overall_confirmation_pl']
+          df=pd.read_csv(c)
+          assert list(df['AKTYWO'])==['BTC','ETH']
+          text=m.read_text(encoding='utf-8')
+          assert 'nie jest używany jako finalny przepływ' in text
+          assert 'nie nadpisuje twardych blokad silnika' in text
+          print('Potwierdzenie ETF BTC/ETH: testy zakończone poprawnie')
+          PY
+
+      - name: Zapisz wyniki bez konfliktu z innymi procesami
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          mkdir -p /tmp/etfconfirm
+          cp institutional_data_hub/ETF_BTC_ETH_CONFIRMATION.json institutional_data_hub/ETF_BTC_ETH_CONFIRMATION.csv institutional_data_hub/ETF_BTC_ETH_CONFIRMATION.md /tmp/etfconfirm/
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            mkdir -p institutional_data_hub
+            cp /tmp/etfconfirm/ETF_BTC_ETH_CONFIRMATION.json /tmp/etfconfirm/ETF_BTC_ETH_CONFIRMATION.csv /tmp/etfconfirm/ETF_BTC_ETH_CONFIRMATION.md institutional_data_hub/
+            git add institutional_data_hub/ETF_BTC_ETH_CONFIRMATION.json institutional_data_hub/ETF_BTC_ETH_CONFIRMATION.csv institutional_data_hub/ETF_BTC_ETH_CONFIRMATION.md
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Update V8 ETF BTC ETH confirmation'
+            if git push origin main; then exit 0; fi
+            echo "Konflikt zapisu — ponawiam próbę $attempt"
+            sleep $((attempt * 3))
+          done
+          exit 1
