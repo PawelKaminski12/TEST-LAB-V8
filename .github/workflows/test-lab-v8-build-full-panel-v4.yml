@@ -1,0 +1,89 @@
+name: TEST LAB V8 Build Full Panel V4
+
+on:
+  push:
+    paths:
+      - 'google_sheets/V8_MAIN_PANEL_ALERT_SUMMARY_V4.txt'
+      - '.github/workflows/test-lab-v8-build-full-panel-v4.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-test-save:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz projekt
+        uses: actions/checkout@v4
+
+      - name: Zbuduj pełny skrypt V4
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          base = Path('google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V3.txt').read_text(encoding='utf-8')
+          helper = Path('google_sheets/V8_MAIN_PANEL_ALERT_SUMMARY_V4.txt').read_text(encoding='utf-8')
+
+          old1 = "    writeExtremeAlarms_(ss.getSheetByName(V8_SHEETS.extremes), alarms);\n    appendExtremeHistory_(ss, oldAlarms, alarms);"
+          new1 = "    writeExtremeAlarms_(ss.getSheetByName(V8_SHEETS.extremes), alarms);\n    updateMainPanelExtremeSummary_(ss.getSheetByName(V8_SHEETS.panel), alarms);\n    appendExtremeHistory_(ss, oldAlarms, alarms);"
+          if old1 not in base:
+              raise SystemExit('Nie znaleziono miejsca integracji w ODSWIEZ_WSZYSTKO')
+          base = base.replace(old1, new1, 1)
+
+          old2 = "  writeExtremeAlarms_(ss.getSheetByName(V8_SHEETS.extremes), alarms);\n  appendExtremeHistory_(ss, oldAlarms, alarms);"
+          new2 = "  writeExtremeAlarms_(ss.getSheetByName(V8_SHEETS.extremes), alarms);\n  updateMainPanelExtremeSummary_(ss.getSheetByName(V8_SHEETS.panel), alarms);\n  appendExtremeHistory_(ss, oldAlarms, alarms);"
+          if old2 not in base:
+              raise SystemExit('Nie znaleziono miejsca integracji w SPRAWDZ_EKSTREMA')
+          base = base.replace(old2, new2, 1)
+
+          out = base.rstrip() + '\n\n// ===== V8 MAIN PANEL ALERT SUMMARY V4 =====\n\n' + helper.strip() + '\n'
+          Path('/tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V4.js').write_text(out, encoding='utf-8')
+          Path('google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V4.txt').write_text(out, encoding='utf-8')
+          PY
+
+      - name: Sprawdź składnię pełnego skryptu
+        run: node --check /tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V4.js
+
+      - name: Sprawdź integralność panelu V4
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s = Path('google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V4.txt').read_text(encoding='utf-8')
+          required = [
+              "['AKTYWO','CENA','LONG','TACTICAL','RYZYKO 0–10','ZGODNOŚĆ','ALERT']",
+              'function updateMainPanelExtremeSummary_',
+              'function formatMainPanelAlertColumn_',
+              "'🔴'",
+              "'🟠'",
+              "'🟡'",
+              "updateMainPanelExtremeSummary_(ss.getSheetByName(V8_SHEETS.panel), alarms);",
+              'function buildExtremeAlarms_',
+              'function writeExtremeAlarms_',
+              'function writeLongEngine_',
+              'function writeTacticalEngine_',
+              "AUTO_EXECUTION','OFF'",
+              "V7_TOUCH','OFF'",
+          ]
+          missing = [x for x in required if x not in s]
+          forbidden = ['placeOrder(', 'createOrder(', 'broker.', 'AUTO_EXECUTION = ON']
+          found = [x for x in forbidden if x in s]
+          if missing:
+              raise SystemExit('BRAK ELEMENTÓW: ' + ', '.join(missing))
+          if found:
+              raise SystemExit('NIEDOZWOLONA LOGIKA: ' + ', '.join(found))
+          if s.count("updateMainPanelExtremeSummary_(ss.getSheetByName(V8_SHEETS.panel), alarms);") != 2:
+              raise SystemExit('Błędna liczba integracji skrótu alarmów z panelem')
+          print('PASS — pełny panel V4 zachowuje 7 kolumn i pokazuje najwyższy alarm ekstremum w ALERT')
+          PY
+
+      - name: Zapisz pełny skrypt V4
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V4.txt
+          if git diff --cached --quiet; then
+            echo 'Brak zmian do zapisania'
+          else
+            git commit -m 'Zbuduj pełny panel V8 V4 z alarmem na panelu głównym'
+            git push
+          fi
