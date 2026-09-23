@@ -1,0 +1,13 @@
+{
+  "generated_at_utc": "2026-09-23T15:41:15.312796+00:00",
+  "engine": "V8_LAB_CANONICAL_CHECKPOINTS_v0.1",
+  "deep_assets_seen": 3,
+  "new_checkpoints_written": 3,
+  "total_checkpoints": 3,
+  "skipped_not_due": 10,
+  "skipped_existing": 0,
+  "immutable_checkpoints": true,
+  "snapshot_sha256_enabled": true,
+  "portfolio_connection": false,
+  "execution_connection": false
+}
