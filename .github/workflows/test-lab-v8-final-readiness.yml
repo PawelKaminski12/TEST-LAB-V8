@@ -13,6 +13,8 @@ on:
       - 'institutional_data_hub/ETF_BTC_ETH_HISTORY_STATUS.json'
       - 'lab/LAB_STATUS.json'
       - 'lab/LAB_CHECKPOINTS.csv'
+      - 'lab/LAB_CHECKPOINT_STATUS.json'
+      - 'lab/LAB_DEEP_REPORT.md'
       - 'tactical_engine/TACTICAL_ENGINE.json'
       - 'tactical_engine/TACTICAL_READINESS.json'
       - 'tactical_validation/TACTICAL_VALIDATION.json'
@@ -54,8 +56,9 @@ jobs:
           c=Path('google_sheets/V8_FINAL_READINESS.csv')
           assert j.exists() and m.exists() and c.exists()
           x=json.loads(j.read_text(encoding='utf-8'))
-          assert x['engine']=='V8_FINAL_READINESS_v1.0'
+          assert x['engine']=='V8_FINAL_READINESS_v1.1'
           assert 0 <= x['readiness_percent'] <= 100
+          assert x['core_production_ready'] is True
           assert x['safety']['execution_connected'] is False
           assert x['safety']['never_invent_user_zones'] is True
           assert x['safety']['v7_not_modified'] is True
@@ -66,7 +69,7 @@ jobs:
           assert 'System nie tworzy sztucznych stref' in txt
           rows=list(csv.reader(c.open(encoding='utf-8')))
           assert rows[-1][0]=='CAŁOŚĆ'
-          print('Końcowy audyt V8: wynik i zabezpieczenia sprawdzone poprawnie')
+          print('Końcowy audyt V8: rdzeń, wynik i zabezpieczenia sprawdzone poprawnie')
           PY
 
       - name: Zapisz wynik bez konfliktu
