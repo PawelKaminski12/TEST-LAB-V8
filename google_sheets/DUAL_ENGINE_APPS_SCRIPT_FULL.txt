@@ -17,7 +17,8 @@ const V8_FILES = {
   marketReader: V8_REPO_RAW + 'market_reader/TACTICAL_CONFLUENCE.csv',
   labReport: V8_REPO_RAW + 'lab/LAB_REPORT.json',
   etfStatus: V8_REPO_RAW + 'institutional_data_hub/ETF_BTC_ETH_STATUS.json',
-  etfHistoryCsv: V8_REPO_RAW + 'institutional_data_hub/ETF_BTC_ETH_HISTORY.csv'
+  etfHistoryCsv: V8_REPO_RAW + 'institutional_data_hub/ETF_BTC_ETH_HISTORY.csv',
+  etfConfirmation: V8_REPO_RAW + 'institutional_data_hub/ETF_BTC_ETH_CONFIRMATION.json'
 };
 
 const V8_SHEETS = {
@@ -79,13 +80,14 @@ function ODSWIEZ_WSZYSTKO() {
     const labJson = JSON.parse(fetchText_(V8_FILES.labReport));
     const etfStatusJson = JSON.parse(fetchText_(V8_FILES.etfStatus));
     const etfHistoryCsv = fetchText_(V8_FILES.etfHistoryCsv);
+    const etfConfirmationJson = JSON.parse(fetchText_(V8_FILES.etfConfirmation));
     const mrCsv = fetchText_(V8_FILES.marketReader);
 
     writePolishPanel_(ss.getSheetByName(V8_SHEETS.panel), panelCsv);
     writeLongEngine_(ss.getSheetByName(V8_SHEETS.long), longJson);
     writeTacticalEngine_(ss.getSheetByName(V8_SHEETS.tactical), tacticalJson, readinessJson, phaseJson);
     writeFlowEngine_(ss.getSheetByName(V8_SHEETS.flow), phaseJson, snapshotJson);
-    writeEtfPanel_(ss.getSheetByName(V8_SHEETS.etf), etfStatusJson);
+    writeEtfPanel_(ss.getSheetByName(V8_SHEETS.etf), etfStatusJson, etfConfirmationJson);
     writeEtfHistory_(ss.getSheetByName(V8_SHEETS.etfHistory), etfHistoryCsv);
     writeLabPanel_(ss.getSheetByName(V8_SHEETS.lab), labJson);
     writeCsvSheet_(ss.getSheetByName(V8_SHEETS.marketReader), mrCsv, false);
@@ -115,7 +117,8 @@ function ODSWIEZ_ETF_BTC_ETH() {
   V8_SETUP();
   const etfStatusJson = JSON.parse(fetchText_(V8_FILES.etfStatus));
   const etfHistoryCsv = fetchText_(V8_FILES.etfHistoryCsv);
-  writeEtfPanel_(ss.getSheetByName(V8_SHEETS.etf), etfStatusJson);
+  const etfConfirmationJson = JSON.parse(fetchText_(V8_FILES.etfConfirmation));
+  writeEtfPanel_(ss.getSheetByName(V8_SHEETS.etf), etfStatusJson, etfConfirmationJson);
   writeEtfHistory_(ss.getSheetByName(V8_SHEETS.etfHistory), etfHistoryCsv);
   ss.toast('ETF BTC / ETH oraz historia odświeżone', 'V8', 4);
 }
@@ -253,46 +256,54 @@ function writeFlowEngine_(sheet, phase, snap) {
   sheet.autoResizeColumns(1,rows[0].length);
 }
 
-function writeEtfPanel_(sheet, status) {
+function writeEtfPanel_(sheet, status, confirmation) {
   const assets = (status || {}).assets || {};
-  const globalCtx = (status || {}).global_institutional_interest || {};
+  const confAssets = (confirmation || {}).assets || {};
+  const global = (confirmation || {}).global_institutional_interest || (status || {}).global_institutional_interest || {};
   const rows = [
-    ['ETF BTC / ETH — KAPITAŁ INSTYTUCJONALNY','','','','','','',''],
-    ['AKTYWO','OSTATNI ZAKOŃCZONY DZIEŃ','PRZEPŁYW mln USD','5 DNI mln USD','20 DNI mln USD','30 DNI mln USD','DZISIAJ','OCENA']
+    ['ETF BTC / ETH — KAPITAŁ INSTYTUCJONALNY + POTWIERDZENIE CENY','','','','','','','','','',''],
+    ['AKTYWO','OSTATNI ZAKOŃCZONY DZIEŃ','PRZEPŁYW mln USD','5 DNI mln USD','20 DNI mln USD','30 DNI mln USD','DZISIAJ','JAKOŚĆ DANYCH','CENA vs ETF 5D','CENA vs ETF 20D','WNIOSKI'],
   ];
   ['BTC','ETH'].forEach(sym => {
-    const x = assets[sym] || {};
+    const x=assets[sym] || {};
+    const c=confAssets[sym] || {};
+    const q=c.quality || {};
+    const p5=c.price_vs_etf_5d || {};
+    const p20=c.price_vs_etf_20d || {};
     const preview = x.today_flow_preview_usdm;
     const complete = Number(x.today_fund_completeness_pct || 0);
-    let todayText = x.today_status_pl || 'BRAK DANYCH';
+    let todayText = x.today_status_pl || c.today_status_pl || 'BRAK DANYCH';
     if (preview !== null && preview !== undefined && complete > 0) {
-      todayText += ' | podgląd ' + fmtCell_(preview) + ' mln USD | kompletność ' + fmtCell_(complete) + '%';
+      todayText += ' | podgląd '+fmtCell_(preview)+' mln USD | kompletność '+fmtCell_(complete)+'%';
     } else {
-      todayText += ' | nie traktuj 0 jako wyniku końcowego';
+      todayText += ' | brak finalnych danych za dziś';
     }
     rows.push([
       sym,
-      x.last_closed_date || 'brak danych',
+      x.last_closed_date || c.last_closed_date || 'brak danych',
       valueOrBlank_(x.last_closed_flow_usdm),
       valueOrBlank_(x.closed_5d_usdm),
       valueOrBlank_(x.closed_20d_usdm),
       valueOrBlank_(x.closed_30d_usdm),
       todayText,
-      ((x.closed_trend || {}).label_pl || 'BRAK OCENY')
+      (q.label_pl || 'BRAK OCENY') + (q.score_0_100 !== undefined ? ' — '+fmtCell_(q.score_0_100)+'/100' : ''),
+      p5.label_pl || 'BRAK OCENY',
+      p20.label_pl || 'BRAK OCENY',
+      c.overall_confirmation_pl || ((x.closed_trend || {}).label_pl || 'BRAK OCENY')
     ]);
   });
-  rows.push(['','','','','','','','']);
-  rows.push(['WSPÓLNY OBRAZ','','','','','','', (globalCtx.label_pl || 'BRAK OCENY') + ' | ' + fmtCell_(globalCtx.score_0_10) + '/10']);
-  rows.push(['ZASADA','','','','','','','Dzisiejsze dane są wstępne. Trend liczymy wyłącznie z zakończonych dni ETF.']);
+  rows.push(['','','','','','','','','','','']);
+  rows.push(['WSPÓLNY OBRAZ','','','','','','','','','', (global.label_pl || 'BRAK OCENY')+' | '+fmtCell_(global.score_0_10)+'/10']);
+  rows.push(['ZASADA','','','','','','','','','','Dzisiejsze dane są wstępne. Filtr ceny vs ETF używa tylko zakończonych dni i nie nadpisuje twardych blokad LONG ani TACTICAL.']);
 
   sheet.clearContents();
-  sheet.getRange(1,1,rows.length,8).setValues(rows);
-  sheet.getRange(1,1,1,8).merge().setFontWeight('bold').setHorizontalAlignment('center');
-  sheet.getRange(2,1,1,8).setFontWeight('bold');
+  sheet.getRange(1,1,rows.length,11).setValues(rows);
+  sheet.getRange(1,1,1,11).merge().setFontWeight('bold').setHorizontalAlignment('center');
+  sheet.getRange(2,1,1,11).setFontWeight('bold');
   sheet.setFrozenRows(2);
   sheet.getRange(3,3,2,4).setNumberFormat('0.00');
-  sheet.getRange(1,1,rows.length,8).setWrap(true).setVerticalAlignment('middle');
-  [90,145,125,120,120,120,360,330].forEach((w,idx)=>sheet.setColumnWidth(idx+1,w));
+  sheet.getRange(1,1,rows.length,11).setWrap(true).setVerticalAlignment('middle');
+  [80,135,110,105,105,105,300,260,300,300,320].forEach((w,idx)=>sheet.setColumnWidth(idx+1,w));
 }
 
 function writeEtfHistory_(sheet, csvText) {
