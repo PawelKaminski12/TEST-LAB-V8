@@ -1,5 +1,6 @@
 // V8 DUAL ENGINE — GOOGLE SHEETS BRIDGE
 // Wersja użytkowa PL + alarmy ekstremów RSI / MACD / MFI / FOMO na 1H/4H/1D.
+// Dodano panel ETF BTC/ETH oraz panel LAB — ANALIZA AKTYWA.
 // Research / decision support only. No broker execution.
 // V7 is not modified by this script.
 
@@ -13,7 +14,8 @@ const V8_FILES = {
   tacticalReadiness: V8_REPO_RAW + 'tactical_engine/TACTICAL_READINESS.json',
   marketPhase: V8_REPO_RAW + 'crypto_data_hub/CRYPTO_MARKET_PHASE.json',
   snapshot: V8_REPO_RAW + 'crypto_data_hub/LATEST_SNAPSHOT.json',
-  marketReader: V8_REPO_RAW + 'market_reader/TACTICAL_CONFLUENCE.csv'
+  marketReader: V8_REPO_RAW + 'market_reader/TACTICAL_CONFLUENCE.csv',
+  labReport: V8_REPO_RAW + 'lab/LAB_REPORT.json'
 };
 
 const V8_SHEETS = {
@@ -23,6 +25,8 @@ const V8_SHEETS = {
   long: 'SILNIK_LONG',
   tactical: 'SILNIK_TACTICAL',
   flow: 'PRZEPLYWY',
+  etf: 'ETF_BTC_ETH',
+  lab: 'LAB_ANALIZA_AKTYWA',
   marketReader: 'MARKET_READER',
   extremes: 'ALARMY_EKSTREMOW',
   history: 'HISTORIA',
@@ -33,6 +37,8 @@ function onOpen() {
   SpreadsheetApp.getUi()
     .createMenu('V8 DUAL ENGINE')
     .addItem('ODŚWIEŻ_WSZYSTKO', 'ODSWIEZ_WSZYSTKO')
+    .addItem('ODŚWIEŻ ETF BTC / ETH', 'ODSWIEZ_ETF_BTC_ETH')
+    .addItem('ODŚWIEŻ LAB — ANALIZA AKTYWA', 'ODSWIEZ_LAB')
     .addItem('SPRAWDŹ EKSTREMA', 'SPRAWDZ_EKSTREMA')
     .addSeparator()
     .addItem('UTWÓRZ / NAPRAW UKŁAD', 'V8_SETUP')
@@ -67,12 +73,15 @@ function ODSWIEZ_WSZYSTKO() {
     const readinessJson = JSON.parse(fetchText_(V8_FILES.tacticalReadiness));
     const phaseJson = JSON.parse(fetchText_(V8_FILES.marketPhase));
     const snapshotJson = JSON.parse(fetchText_(V8_FILES.snapshot));
+    const labJson = JSON.parse(fetchText_(V8_FILES.labReport));
     const mrCsv = fetchText_(V8_FILES.marketReader);
 
     writePolishPanel_(ss.getSheetByName(V8_SHEETS.panel), panelCsv);
     writeLongEngine_(ss.getSheetByName(V8_SHEETS.long), longJson);
     writeTacticalEngine_(ss.getSheetByName(V8_SHEETS.tactical), tacticalJson, readinessJson, phaseJson);
     writeFlowEngine_(ss.getSheetByName(V8_SHEETS.flow), phaseJson, snapshotJson);
+    writeEtfPanel_(ss.getSheetByName(V8_SHEETS.etf), phaseJson, snapshotJson);
+    writeLabPanel_(ss.getSheetByName(V8_SHEETS.lab), labJson);
     writeCsvSheet_(ss.getSheetByName(V8_SHEETS.marketReader), mrCsv, false);
 
     const machineSheet = getOrCreateSheet_(ss, 'DANE_MASZYNOWNIA');
@@ -89,10 +98,27 @@ function ODSWIEZ_WSZYSTKO() {
     stampRefresh_(ss);
 
     const active = alarms.filter(a => a.aktywny).length;
-    ss.toast('LONG + TACTICAL + PRZEPŁYWY odświeżone. Aktywne ekstrema: ' + active, 'V8 DUAL ENGINE', 5);
+    ss.toast('LONG + TACTICAL + ETF + LAB odświeżone. Aktywne ekstrema: ' + active, 'V8 DUAL ENGINE', 5);
   } finally {
     lock.releaseLock();
   }
+}
+
+function ODSWIEZ_ETF_BTC_ETH() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  V8_SETUP();
+  const phaseJson = JSON.parse(fetchText_(V8_FILES.marketPhase));
+  const snapshotJson = JSON.parse(fetchText_(V8_FILES.snapshot));
+  writeEtfPanel_(ss.getSheetByName(V8_SHEETS.etf), phaseJson, snapshotJson);
+  ss.toast('ETF BTC / ETH odświeżone', 'V8', 4);
+}
+
+function ODSWIEZ_LAB() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  V8_SETUP();
+  const labJson = JSON.parse(fetchText_(V8_FILES.labReport));
+  writeLabPanel_(ss.getSheetByName(V8_SHEETS.lab), labJson);
+  ss.toast('LAB — ANALIZA AKTYWA odświeżony', 'V8', 4);
 }
 
 function SPRAWDZ_EKSTREMA() {
@@ -208,9 +234,9 @@ function writeFlowEngine_(sheet, phase, snap) {
     ['ROTACJA','ETH.D',i.eth_dominance_pct,'','', 'dominacja ETH'],
     ['ROTACJA','OTHERS/BTC EQ',i.others_btc_eq_5d_change_pct,i.others_btc_eq_20d_change_pct,'', 'trend altów vs BTC'],
     ['PŁYNNOŚĆ','STABLECOINY',i.stablecoin_7d_pct,i.stablecoin_14d_pct,i.stablecoin_30d_pct, i.stablecoin_30d_pct > 0 ? 'NAPŁYW PŁYNNOŚCI' : 'BRAK NAPŁYWU'],
-    ['ETF','BTC ETF',i.btc_etf_5d_usdm,i.btc_etf_20d_usdm,i.btc_etf_30d_usdm, ((etf.BTC || {}).trend_label || '')],
-    ['ETF','ETH ETF',i.eth_etf_5d_usdm,i.eth_etf_20d_usdm,i.eth_etf_30d_usdm, ((etf.ETH || {}).trend_label || '')],
-    ['ETF','SOL ETF',i.sol_etf_5d_usdm,i.sol_etf_20d_usdm,i.sol_etf_30d_usdm, ((etf.SOL || {}).trend_label || '')],
+    ['ETF','BTC ETF',i.btc_etf_5d_usdm,i.btc_etf_20d_usdm,i.btc_etf_30d_usdm, translateEtfTrend_(((etf.BTC || {}).trend_label || ''))],
+    ['ETF','ETH ETF',i.eth_etf_5d_usdm,i.eth_etf_20d_usdm,i.eth_etf_30d_usdm, translateEtfTrend_(((etf.ETH || {}).trend_label || ''))],
+    ['ETF','SOL ETF',i.sol_etf_5d_usdm,i.sol_etf_20d_usdm,i.sol_etf_30d_usdm, translateEtfTrend_(((etf.SOL || {}).trend_label || ''))],
     ['SCORE','LONG FLOW',((f.LONG || {}).score_0_10 || ''),'','',translateFlow_((f.LONG || {}).label)],
     ['SCORE','TACTICAL FLOW',((f.TACTICAL || {}).score_0_5 || ''),'','',translateFlow_((f.TACTICAL || {}).label)]
   ];
@@ -218,6 +244,93 @@ function writeFlowEngine_(sheet, phase, snap) {
   sheet.getRange(1,1,rows.length,rows[0].length).setValues(rows);
   sheet.setFrozenRows(1);
   sheet.autoResizeColumns(1,rows[0].length);
+}
+
+function writeEtfPanel_(sheet, phase, snap) {
+  const i = (phase || {}).inputs || {};
+  const e = (snap || {}).etf_flows || {};
+  const rows = [
+    ['ETF — PRZEPŁYWY KAPITAŁU BTC / ETH','','','','',''],
+    ['AKTYWO','DZIŚ / 1D mln USD','5 DNI mln USD','20 DNI mln USD','30 DNI mln USD','CO TO ZNACZY'],
+    ['BTC',valueOrBlank_(i.btc_etf_1d_usdm),valueOrBlank_(i.btc_etf_5d_usdm),valueOrBlank_(i.btc_etf_20d_usdm),valueOrBlank_(i.btc_etf_30d_usdm),etfMeaning_(i.btc_etf_5d_usdm,i.btc_etf_20d_usdm,i.btc_etf_accel_5d_usdm,(e.BTC||{}).trend_label)],
+    ['ETH',valueOrBlank_(i.eth_etf_1d_usdm),valueOrBlank_(i.eth_etf_5d_usdm),valueOrBlank_(i.eth_etf_20d_usdm),valueOrBlank_(i.eth_etf_30d_usdm),etfMeaning_(i.eth_etf_5d_usdm,i.eth_etf_20d_usdm,i.eth_etf_accel_5d_usdm,(e.ETH||{}).trend_label)],
+    ['', '', '', '', '', ''],
+    ['WSPÓLNY OBRAZ','', '', '', '', globalEtfMeaning_(i)]
+  ];
+  sheet.clearContents();
+  sheet.getRange(1,1,rows.length,6).setValues(rows);
+  sheet.setFrozenRows(2);
+  sheet.getRange(1,1,1,6).merge().setFontWeight('bold').setHorizontalAlignment('center');
+  sheet.getRange(2,1,1,6).setFontWeight('bold');
+  sheet.getRange(3,2,2,4).setNumberFormat('0.00');
+  sheet.getRange(1,1,rows.length,6).setWrap(true).setVerticalAlignment('middle');
+  [90,130,130,130,130,360].forEach((w,idx)=>sheet.setColumnWidth(idx+1,w));
+}
+
+function writeLabPanel_(sheet, lab) {
+  const rows = [['LAB — ANALIZA AKTYWA','','','','','','','','']];
+  rows.push(['AKTYWO','TYP','TRYB','STAN DANYCH','WYNIK /10','OCENA','1H','4H','1D / GŁÓWNE INFORMACJE']);
+  (lab.reports || []).forEach(a => {
+    const pl = a.opis_po_polsku || {};
+    const fast = a.fast_analysis || {};
+    const t = a.technical || {};
+    const h1=t['1H']||{}, h4=t['4H']||{}, d1=t['1D']||{};
+    let details='Cena '+fmtCell_(d1.price)+' | RSI '+fmtCell_(d1.rsi14)+' | MFI '+fmtCell_(d1.mfi14)+' | FOMO '+fmtCell_(d1.fomo_0_10);
+    if (a.symbol === 'BTC' || a.symbol === 'ETH') {
+      const x = a.symbol === 'BTC' ? (a.btc_etf_context||{}) : (a.eth_etf_context||{});
+      details += ' | ETF: '+(x.label_pl || 'BRAK DANYCH')+' | 5D '+fmtCell_(x.flow_5d_usdm)+' mln USD | 20D '+fmtCell_(x.flow_20d_usdm)+' mln USD';
+    }
+    rows.push([
+      a.symbol || '', pl.typ_aktywa || a.asset_type || '', pl.tryb || a.mode || '', pl.stan_danych || '',
+      fast.score_0_10 == null ? '' : fast.score_0_10, pl.wniosek_szybki || '',
+      labTfText_(h1), labTfText_(h4), details
+    ]);
+  });
+  sheet.clearContents();
+  sheet.getRange(1,1,rows.length,9).setValues(rows);
+  sheet.getRange(1,1,1,9).merge().setFontWeight('bold').setHorizontalAlignment('center');
+  sheet.getRange(2,1,1,9).setFontWeight('bold');
+  sheet.setFrozenRows(2);
+  sheet.getRange(1,1,rows.length,9).setWrap(true).setVerticalAlignment('middle');
+  [90,130,190,240,90,220,220,220,430].forEach((w,idx)=>sheet.setColumnWidth(idx+1,w));
+}
+
+function labTfText_(x) {
+  if (!x || x.status !== 'OK') return 'BRAK PEŁNYCH DANYCH';
+  return 'TREND '+fmtCell_(x.trend_0_4)+'/4 | RSI '+fmtCell_(x.rsi14)+' | MFI '+fmtCell_(x.mfi14)+' | FOMO '+fmtCell_(x.fomo_0_10)+'/10';
+}
+
+function fmtCell_(v) {
+  if (v === null || v === undefined || v === '') return 'brak danych';
+  const n = Number(v); return Number.isFinite(n) ? Math.round(n*100)/100 : String(v);
+}
+function valueOrBlank_(v) { const n=Number(v); return Number.isFinite(n) ? n : ''; }
+
+function etfMeaning_(five, twenty, accel, fallback) {
+  five=Number(five); twenty=Number(twenty); accel=Number(accel);
+  if (Number.isFinite(five) && Number.isFinite(twenty)) {
+    if (five>0 && twenty>0) return Number.isFinite(accel) && accel>0 ? 'NAPŁYW PRZYSPIESZA — zainteresowanie rośnie' : 'NAPŁYW KAPITAŁU — zainteresowanie dodatnie';
+    if (five<0 && twenty<0) return Number.isFinite(accel) && accel<0 ? 'ODPŁYW PRZYSPIESZA — zainteresowanie słabnie' : 'ODPŁYW KAPITAŁU — zainteresowanie słabnie';
+    return 'PRZEPŁYWY MIESZANE — brak jednolitego kierunku';
+  }
+  return fallback ? translateEtfTrend_(fallback) : 'ZA MAŁO DANYCH';
+}
+
+function globalEtfMeaning_(i) {
+  const b5=Number(i.btc_etf_5d_usdm), b20=Number(i.btc_etf_20d_usdm), e5=Number(i.eth_etf_5d_usdm), e20=Number(i.eth_etf_20d_usdm);
+  if ([b5,b20,e5,e20].every(Number.isFinite)) {
+    if (b5>0 && b20>0 && e5>0 && e20>0) return 'KAPITAŁ NAPŁYWA RÓWNOCZEŚNIE DO BTC I ETH — szerokie zainteresowanie instytucjonalne krypto rośnie.';
+    if (b5>0 && b20>0 && (e5<=0 || e20<=0)) return 'KAPITAŁ KONCENTRUJE SIĘ GŁÓWNIE NA BTC — zainteresowanie ETH nie potwierdza jeszcze szerokiego napływu.';
+    if (e5>0 && e20>0 && (b5<=0 || b20<=0)) return 'ETH przyciąga kapitał mimo słabszego obrazu BTC — obserwuj możliwe przesunięcie zainteresowania.';
+    if (b5<0 && b20<0 && e5<0 && e20<0) return 'KAPITAŁ ODPŁYWA RÓWNOCZEŚNIE Z BTC I ETH — zainteresowanie instytucjonalne słabnie.';
+    return 'BTC i ETH pokazują różne kierunki przepływów — obraz jest mieszany.';
+  }
+  return 'Za mało kompletnych danych, aby ocenić wspólny obraz BTC i ETH.';
+}
+
+function translateEtfTrend_(v) {
+  const m={'INFLOW_ACCELERATING':'NAPŁYW PRZYSPIESZA','INFLOW_POSITIVE':'NAPŁYW KAPITAŁU','OUTFLOW_ACCELERATING':'ODPŁYW PRZYSPIESZA','OUTFLOW_NEGATIVE':'ODPŁYW KAPITAŁU','MIXED':'PRZEPŁYWY MIESZANE','NEUTRAL':'NEUTRALNIE'};
+  return m[String(v||'').toUpperCase()] || translateGeneric_(v);
 }
 
 function setupPortfolioLong_(sheet) {
@@ -290,23 +403,19 @@ function buildExtremeAlarms_(ss, tacticalJson) {
       const rsi = Number(x.rsi14), mfi = Number(x.mfi14), fomo = Number(x.fomo_score_0_10);
       const macdPct = Number(x.macd_hist_percentile), macdZ = Number(x.macd_hist_zscore);
       const ts = x.last_close_time_utc || '';
-
       if (Number.isFinite(rsi) && rsi >= cfg.rsiHigh) alarms.push(makeAlarm_(a.symbol,tf,'RSI WYKUPIENIE',rsi,mfi,macdPct,macdZ,fomo,rsi >= 80 ? 'EKSTREMALNY' : 'WYSOKI',ts));
       if (Number.isFinite(rsi) && rsi <= cfg.rsiLow) alarms.push(makeAlarm_(a.symbol,tf,'RSI WYPRZEDANIE',rsi,mfi,macdPct,macdZ,fomo,rsi <= 20 ? 'EKSTREMALNY' : 'WYSOKI',ts));
-
       if (Number.isFinite(mfi)) {
         if (mfi >= cfg.mfiExtremeHigh) alarms.push(makeAlarm_(a.symbol,tf,'MFI SKRAJNE WYKUPIENIE',rsi,mfi,macdPct,macdZ,fomo,'EKSTREMALNY',ts));
         else if (mfi >= cfg.mfiWarnHigh) alarms.push(makeAlarm_(a.symbol,tf,'MFI WYKUPIENIE — OSTRZEŻENIE',rsi,mfi,macdPct,macdZ,fomo,'WYSOKI',ts));
         if (mfi <= cfg.mfiExtremeLow) alarms.push(makeAlarm_(a.symbol,tf,'MFI SKRAJNE WYPRZEDANIE',rsi,mfi,macdPct,macdZ,fomo,'EKSTREMALNY',ts));
         else if (mfi <= cfg.mfiWarnLow) alarms.push(makeAlarm_(a.symbol,tf,'MFI WYPRZEDANIE — OSTRZEŻENIE',rsi,mfi,macdPct,macdZ,fomo,'WYSOKI',ts));
       }
-
       const ml = String(x.macd_extreme_label || 'NORMAL');
       if (ml === 'EXTREME_POSITIVE') alarms.push(makeAlarm_(a.symbol,tf,'MACD SKRAJNIE DODATNIE',rsi,mfi,macdPct,macdZ,fomo,'EKSTREMALNY',ts));
       else if (ml === 'EXTREME_NEGATIVE') alarms.push(makeAlarm_(a.symbol,tf,'MACD SKRAJNIE UJEMNE',rsi,mfi,macdPct,macdZ,fomo,'EKSTREMALNY',ts));
       else if (ml === 'WARNING_POSITIVE') alarms.push(makeAlarm_(a.symbol,tf,'MACD MOCNO DODATNIE — OSTRZEŻENIE',rsi,mfi,macdPct,macdZ,fomo,'WYSOKI',ts));
       else if (ml === 'WARNING_NEGATIVE') alarms.push(makeAlarm_(a.symbol,tf,'MACD MOCNO UJEMNE — OSTRZEŻENIE',rsi,mfi,macdPct,macdZ,fomo,'WYSOKI',ts));
-
       if (Number.isFinite(fomo) && fomo >= cfg.fomoHard) alarms.push(makeAlarm_(a.symbol,tf,'FOMO HARD BLOCK',rsi,mfi,macdPct,macdZ,fomo,fomo >= 9 ? 'EKSTREMALNY' : 'WYSOKI',ts));
     });
   });
@@ -314,13 +423,7 @@ function buildExtremeAlarms_(ss, tacticalJson) {
 }
 
 function makeAlarm_(symbol, tf, type, rsi, mfi, macdPct, macdZ, fomo, severity, ts) {
-  return {
-    aktywny:true, symbol:symbol, tf:tf, type:type,
-    rsi:Number.isFinite(rsi)?rsi:'', mfi:Number.isFinite(mfi)?mfi:'',
-    macdPct:Number.isFinite(macdPct)?macdPct:'', macdZ:Number.isFinite(macdZ)?macdZ:'',
-    fomo:Number.isFinite(fomo)?fomo:'', severity:severity, ts:ts,
-    key:[symbol,tf,type].join('|')
-  };
+  return {aktywny:true,symbol:symbol,tf:tf,type:type,rsi:Number.isFinite(rsi)?rsi:'',mfi:Number.isFinite(mfi)?mfi:'',macdPct:Number.isFinite(macdPct)?macdPct:'',macdZ:Number.isFinite(macdZ)?macdZ:'',fomo:Number.isFinite(fomo)?fomo:'',severity:severity,ts:ts,key:[symbol,tf,type].join('|')};
 }
 
 function extremeLabel_(x, cfg) {
@@ -348,13 +451,11 @@ function writeExtremeAlarms_(sheet, alarms) {
   const rows = alarms.map(a => ['TAK',a.symbol,a.tf,a.type,a.rsi,a.mfi,a.macdPct,a.macdZ,a.fomo,a.severity,a.ts]);
   if (rows.length) sheet.getRange(2,1,rows.length,11).setValues(rows);
   else sheet.getRange(2,1,1,11).setValues([['NIE','','','BRAK AKTYWNYCH EKSTREMÓW','','','','','','','']]);
-  sheet.setFrozenRows(1);
-  sheet.autoResizeColumns(1,11);
+  sheet.setFrozenRows(1); sheet.autoResizeColumns(1,11);
 }
 
 function readActiveExtremeKeys_(sheet) {
-  const out = {};
-  if (!sheet || sheet.getLastRow() < 2) return out;
+  const out = {}; if (!sheet || sheet.getLastRow() < 2) return out;
   const rows = sheet.getRange(2,1,sheet.getLastRow()-1,Math.min(11,sheet.getLastColumn())).getValues();
   rows.forEach(r => { if (String(r[0]).toUpperCase() === 'TAK') out[[r[1],r[2],r[3]].join('|')] = true; });
   return out;
@@ -362,14 +463,9 @@ function readActiveExtremeKeys_(sheet) {
 
 function appendExtremeHistory_(ss, oldKeys, alarms) {
   const sh = ss.getSheetByName(V8_SHEETS.history);
-  if (sh.getLastRow() === 0) {
-    sh.appendRow(['CZAS','AKTYWO','LONG','TACTICAL','RYZYKO','ZGODNOŚĆ','ALERT','POWÓD']);
-    sh.setFrozenRows(1);
-  }
+  if (sh.getLastRow() === 0) { sh.appendRow(['CZAS','AKTYWO','LONG','TACTICAL','RYZYKO','ZGODNOŚĆ','ALERT','POWÓD']); sh.setFrozenRows(1); }
   const now = new Date();
-  alarms.forEach(a => {
-    if (!oldKeys[a.key]) sh.appendRow([now,a.symbol,'','',a.severity,'','EKSTREMUM '+a.tf,a.type+' | RSI='+a.rsi+' | MFI='+a.mfi+' | MACD%='+a.macdPct+' | MACDz='+a.macdZ+' | FOMO='+a.fomo]);
-  });
+  alarms.forEach(a => { if (!oldKeys[a.key]) sh.appendRow([now,a.symbol,'','',a.severity,'','EKSTREMUM '+a.tf,a.type+' | RSI='+a.rsi+' | MFI='+a.mfi+' | MACD%='+a.macdPct+' | MACDz='+a.macdZ+' | FOMO='+a.fomo]); });
 }
 
 function notifyNewExtremeAlarms_(ss, oldKeys, alarms) {
@@ -411,37 +507,30 @@ function translateLong_(v) {
   const m = {'WAIT':'CZEKAJ','CHECK':'SPRAWDŹ','BUY_DCA':'KUP DCA','BUY_TREND':'KUP TRENDOWO','BUY_RETEST':'KUP PO RETEŚCIE','HOLD':'TRZYMAJ','PROTECT_PROFIT':'OCHRONA ZYSKU','EXIT':'WYJDŹ'};
   return m[String(v||'').toUpperCase()] || v || '';
 }
-
 function translateTactical_(v) {
   const m = {'WAIT':'CZEKAJ','NO_TRADE':'NIE GRAJ','NO_TRADE_FOMO':'NIE GRAJ — FOMO','WATCH_SUPPLY':'OBSERWUJ PODAŻ','WATCH_BREAKOUT':'OBSERWUJ WYBICIE','LONG_SETUP_WATCH':'LONG — OBSERWUJ SETUP','LONG_SETUP_RETEST':'LONG — RETEST','HOLD_TACTICAL_OK':'TRZYMAJ TACTICAL','TAKE_PROFIT_WATCH':'OBSERWUJ REALIZACJĘ ZYSKU','EXIT_RISK_HIGH':'WYSOKIE RYZYKO WYJŚCIA'};
   return m[String(v||'').toUpperCase()] || v || '';
 }
-
 function translateAgreement_(v) {
   const m = {'2/2 POSITIVE':'2/2 POZYTYWNE','TACTICAL ONLY':'TYLKO TACTICAL','LONG ONLY':'TYLKO LONG','NEUTRAL':'NEUTRALNIE','CONFLICT':'KONFLIKT'};
   return m[String(v||'').toUpperCase()] || v || '';
 }
-
 function translateAlert_(v) {
   const m = {'IN SUPPLY':'W STREFIE PODAŻY','IN DEMAND':'W STREFIE POPYTU','FOMO':'FOMO','NONE':'BRAK','NO ALERT':'BRAK'};
   return m[String(v||'').toUpperCase()] || v || '';
 }
-
 function translateReady_(v) {
   const m = {'TACTICAL_CORE_READY':'RDZEŃ TACTICAL GOTOWY','READY_FOR_PAPER_OBSERVATION':'GOTOWY DO OBSERWACJI','READY':'GOTOWY','PASS':'OK','PRODUCTION_DATA_READY':'DANE PRODUKCYJNE GOTOWE'};
   return m[String(v||'').toUpperCase()] || v || '';
 }
-
 function translateMarketPhase_(v) {
-  const m = {'ALT_ROTATION_CANDIDATE':'KANDYDAT DO ROTACJI W ALTY','ALT_ROTATION_CONFIRMED':'ROTACJA W ALTY POTWIERDZONA','BTC_LEAD':'PROWADZI BTC','BROAD_RECOVERY':'SZEROKIE ODBICIE','ALT_WATCH':'OBSERWUJ ALTY','RISK_OFF_OR_REPAIR':'RISK-OFF / NAPRAWA RYNKU','BTC_DOMINANT':'DOMINACJA BTC','RISK_OFF':'RISK-OFF','RISK_ON':'RISK-ON','NEUTRAL':'NEUTRALNIE'};
+  const m = {'ALT_ROTATION_CANDIDATE':'RYNEK ZACZYNA SPRZYJAĆ ALTOM','ALT_ROTATION_CONFIRMED':'ROTACJA W ALTY POTWIERDZONA','BTC_LEAD':'PROWADZI BTC','BROAD_RECOVERY':'SZEROKIE ODBICIE','ALT_WATCH':'OBSERWUJ ALTY','RISK_OFF_OR_REPAIR':'RYNEK OSTROŻNY / NAPRAWA','BTC_DOMINANT':'DOMINACJA BTC','RISK_OFF':'RYNEK OSTROŻNY','RISK_ON':'RYNEK SPRZYJA RYZYKU','NEUTRAL':'NEUTRALNIE'};
   return m[String(v||'').toUpperCase()] || v || '';
 }
-
 function translateFlow_(v) {
   const m = {'STRONG_POSITIVE':'MOCNO DODATNIO','POSITIVE':'DODATNIO','NEUTRAL':'NEUTRALNIE','WEAK':'SŁABO','INFLOW_ACCELERATING':'NAPŁYW PRZYSPIESZA','INFLOW_POSITIVE':'NAPŁYW DODATNI','OUTFLOW_ACCELERATING':'ODPŁYW PRZYSPIESZA','OUTFLOW_NEGATIVE':'ODPŁYW','INSUFFICIENT':'ZA MAŁO DANYCH'};
   return m[String(v||'').toUpperCase()] || v || '';
 }
-
 function translateGeneric_(v) { return String(v || '').replaceAll('_',' '); }
 function translateBlockers_(v) { return Array.isArray(v) ? v.map(translateGeneric_).join(' | ') : translateGeneric_(v); }
 function boolPl_(v) { return v === true ? 'TAK' : v === false ? 'NIE' : ''; }
