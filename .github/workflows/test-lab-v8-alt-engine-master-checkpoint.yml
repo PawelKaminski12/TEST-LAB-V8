@@ -49,84 +49,80 @@ jobs:
           import pandas as pd
 
           R=Path('crypto_data_hub')
-          required={
-              'snapshot':R/'LATEST_SNAPSHOT.json',
-              'rotation':R/'ALT_ROTATION_SCORE.json',
-              'technical':R/'ALT_TECHNICAL_LAYER.json',
-              'decision':R/'ALT_DECISION_ENGINE.json',
-              'readiness':R/'ALT_ENGINE_READINESS.json',
-              'phase':R/'CRYPTO_MARKET_PHASE.json',
-              'onchain':R/'ONCHAIN_ACTIVITY.json',
-              'universe':Path('config/alt_universe.csv'),
-              'zones':Path('config/alt_zones.csv'),
+          paths={
+              'snapshot':R/'LATEST_SNAPSHOT.json','rotation':R/'ALT_ROTATION_SCORE.json',
+              'technical':R/'ALT_TECHNICAL_LAYER.json','decision':R/'ALT_DECISION_ENGINE.json',
+              'readiness':R/'ALT_ENGINE_READINESS.json','phase':R/'CRYPTO_MARKET_PHASE.json',
+              'onchain':R/'ONCHAIN_ACTIVITY.json','universe':Path('config/alt_universe.csv'),
+              'zones':Path('config/alt_zones.csv')
           }
-          missing=[k for k,p in required.items() if not p.exists()]
+          missing=[k for k,p in paths.items() if not p.exists()]
           if missing: raise SystemExit('Missing core modules: '+', '.join(missing))
 
-          snap=json.loads(required['snapshot'].read_text(encoding='utf-8'))
-          rot=json.loads(required['rotation'].read_text(encoding='utf-8'))
-          tech=json.loads(required['technical'].read_text(encoding='utf-8'))
-          dec=json.loads(required['decision'].read_text(encoding='utf-8'))
-          ready=json.loads(required['readiness'].read_text(encoding='utf-8'))
-          phase=json.loads(required['phase'].read_text(encoding='utf-8'))
-          onchain=json.loads(required['onchain'].read_text(encoding='utf-8'))
-          cfg=pd.read_csv(required['universe'])
+          snap=json.loads(paths['snapshot'].read_text(encoding='utf-8'))
+          rot=json.loads(paths['rotation'].read_text(encoding='utf-8'))
+          tech=json.loads(paths['technical'].read_text(encoding='utf-8'))
+          dec=json.loads(paths['decision'].read_text(encoding='utf-8'))
+          ready=json.loads(paths['readiness'].read_text(encoding='utf-8'))
+          phase=json.loads(paths['phase'].read_text(encoding='utf-8'))
+          onchain=json.loads(paths['onchain'].read_text(encoding='utf-8'))
+          cfg=pd.read_csv(paths['universe'])
           cfg=cfg[(cfg['enabled'].astype(str).str.lower()=='true') & (cfg['target_scope'].astype(str).str.upper()=='PRODUCTION')].copy()
-          zones=pd.read_csv(required['zones'])
+          zones=pd.read_csv(paths['zones'])
 
           symbols=[str(x).upper().strip() for x in cfg['symbol'].tolist()]
           techmap={x.get('symbol'):x for x in tech.get('assets',[])}
           decmap={x.get('symbol'):x for x in dec.get('assets',[])}
           readymap={x.get('symbol'):x for x in ready.get('assets',[])}
           phasemap={x.get('symbol'):x for x in phase.get('asset_context',[])}
-          onchainmap={x.get('symbol'):x for x in onchain.get('assets',[])}
+          onmap={x.get('symbol'):x for x in onchain.get('assets',[])}
           dual_flow=phase.get('dual_horizon_flow_context',{}) or {}
           long_flow=dual_flow.get('LONG',{}) or {}
           tactical_flow=dual_flow.get('TACTICAL',{}) or {}
 
+          def valid_onchain(x):
+              coverage=int(x.get('coverage_pct',0) or 0)
+              if coverage<40: return False
+              src=x.get('source_status',{}) or {}
+              useful=sum(str(v).startswith('OK') for k,v in src.items() if k!='coinmetrics')
+              return useful>=1
+
           rows=[]
+          trusted_onchain=0
+          project_specific=0
           for sym in symbols:
-              t=techmap.get(sym,{})
-              d=decmap.get(sym,{})
-              rr=readymap.get(sym,{})
-              pc=phasemap.get(sym,{})
-              oc=onchainmap.get(sym,{})
+              t=techmap.get(sym,{}); d=decmap.get(sym,{}); rr=readymap.get(sym,{}); pc=phasemap.get(sym,{})
+              oc=onmap.get(sym,{})
+              trusted=valid_onchain(oc)
+              if trusted: trusted_onchain+=1
+              protocol=(oc.get('protocol_tvl') or {}) if isinstance(oc.get('protocol_tvl'),dict) else {}
+              oracle=(oc.get('oracle_tvs') or {}) if isinstance(oc.get('oracle_tvs'),dict) else {}
+              project_ok=(protocol.get('latest_usd') is not None or oracle.get('latest_usd') is not None) and trusted
+              if project_ok: project_specific+=1
+              chain=(oc.get('chain_tvl') or {}) if isinstance(oc.get('chain_tvl'),dict) else {}
+              dex=(oc.get('dex_volume') or {}) if isinstance(oc.get('dex_volume'),dict) else {}
               z=zones[zones['symbol'].astype(str).str.upper().eq(sym)]
               tfs=sorted(set(z['timeframe'].astype(str).str.upper())) if not z.empty else []
-              chain_tvl=oc.get('chain_tvl',{}) or {}
-              protocol_tvl=oc.get('protocol_tvl',{}) or {}
-              dex=oc.get('dex_volume',{}) or {}
               rows.append({
-                  'symbol':sym,
-                  'data_quality':rr.get('data_quality_score_0_100'),
-                  'readiness_status':rr.get('readiness_status'),
-                  'full_zones_ready':rr.get('zones_full_ready'),
-                  'zone_timeframes':','.join(tfs),
-                  'trend_score_0_4':t.get('trend_score_0_4'),
-                  'fomo_score_0_10':t.get('fomo_score_0_10'),
-                  'rotation_label':pc.get('rotation_label'),
-                  'market_phase':phase.get('phase'),
-                  'long_flow_score_0_10':d.get('long_flow_score_0_10',pc.get('long_flow_score_0_10')),
-                  'long_flow_label':d.get('long_flow_label'),
+                  'symbol':sym,'data_quality':rr.get('data_quality_score_0_100'),'readiness_status':rr.get('readiness_status'),
+                  'full_zones_ready':rr.get('zones_full_ready'),'zone_timeframes':','.join(tfs),
+                  'trend_score_0_4':t.get('trend_score_0_4'),'fomo_score_0_10':t.get('fomo_score_0_10'),
+                  'rotation_label':pc.get('rotation_label'),'market_phase':phase.get('phase'),
+                  'long_flow_score_0_10':d.get('long_flow_score_0_10',pc.get('long_flow_score_0_10')),'long_flow_label':d.get('long_flow_label'),
                   'tactical_flow_score_0_5':pc.get('tactical_flow_score_0_5'),
                   'direct_etf_5d_usdm':(pc.get('direct_etf_context') or {}).get('flow_5d_usdm') if isinstance(pc.get('direct_etf_context'),dict) else None,
                   'direct_etf_20d_usdm':(pc.get('direct_etf_context') or {}).get('flow_20d_usdm') if isinstance(pc.get('direct_etf_context'),dict) else None,
                   'direct_etf_30d_usdm':(pc.get('direct_etf_context') or {}).get('flow_30d_usdm') if isinstance(pc.get('direct_etf_context'),dict) else None,
-                  'onchain_coverage_pct':oc.get('coverage_pct'),
-                  'long_onchain_score_0_10':oc.get('long_onchain_score_0_10'),
-                  'long_onchain_label':oc.get('long_onchain_label'),
-                  'tactical_onchain_score_0_10':oc.get('tactical_onchain_score_0_10'),
-                  'tactical_onchain_label':oc.get('tactical_onchain_label'),
-                  'chain_tvl_usd':chain_tvl.get('latest_usd'),
-                  'chain_tvl_30d_pct':chain_tvl.get('change_30d_pct'),
-                  'protocol_tvl_usd':protocol_tvl.get('latest_usd'),
-                  'protocol_tvl_30d_pct':protocol_tvl.get('change_30d_pct'),
-                  'dex_daily_usd':dex.get('latest_daily_usd'),
-                  'dex_30d_vs_prev30_pct':dex.get('change_30d_vs_prev30_pct'),
-                  'decision':d.get('decision'),
-                  'dca1':d.get('zones',{}).get('dca1'),
-                  'dca2':d.get('zones',{}).get('dca2'),
-                  'dca3':d.get('zones',{}).get('dca3'),
+                  'onchain_coverage_pct':oc.get('coverage_pct'),'onchain_trusted':trusted,
+                  'long_onchain_score_0_10':oc.get('long_onchain_score_0_10') if trusted else None,
+                  'long_onchain_label':oc.get('long_onchain_label') if trusted else 'INSUFFICIENT_COVERAGE',
+                  'tactical_onchain_score_0_10':oc.get('tactical_onchain_score_0_10') if trusted else None,
+                  'tactical_onchain_label':oc.get('tactical_onchain_label') if trusted else 'INSUFFICIENT_COVERAGE',
+                  'chain_tvl_usd':chain.get('latest_usd'),'chain_tvl_30d_pct':chain.get('change_30d_pct'),
+                  'protocol_tvl_usd':protocol.get('latest_usd') if trusted else None,'protocol_tvl_30d_pct':protocol.get('change_30d_pct') if trusted else None,
+                  'oracle_tvs_usd':oracle.get('latest_usd') if trusted else None,'oracle_tvs_30d_pct':oracle.get('change_30d_pct') if trusted else None,
+                  'dex_daily_usd':dex.get('latest_daily_usd'),'dex_30d_vs_prev30_pct':dex.get('change_30d_vs_prev30_pct'),
+                  'decision':d.get('decision'),'dca1':d.get('zones',{}).get('dca1'),'dca2':d.get('zones',{}).get('dca2'),'dca3':d.get('zones',{}).get('dca3'),
                   'blockers':'|'.join(d.get('blockers',[])),
               })
 
@@ -137,42 +133,36 @@ jobs:
           technical_ready=all(sym in techmap and techmap[sym].get('qa')=='PASS' for sym in symbols)
           rotation_ready=rot.get('score_0_10') is not None
           phase_ready=phase.get('phase') is not None
-          snapshot_qa=bool(snap.get('qa',{}).get('PASS'))
+          q=snap.get('qa',{}) or {}
+          snapshot_qa=bool(q.get('PASS'))
           long_flow_ready=long_flow.get('score_0_10') is not None and long_flow.get('label') is not None
           tactical_flow_ready=tactical_flow.get('score_0_5') is not None and tactical_flow.get('label') is not None
-          etf_ready=int(snap.get('qa',{}).get('btc_etf_rows',0) or 0)>100 and int(snap.get('qa',{}).get('eth_etf_rows',0) or 0)>100
-          stablecoin_ready=int(snap.get('qa',{}).get('stablecoin_history_rows',0) or 0)>100
-          ethbtc_ready=int(snap.get('qa',{}).get('eth_btc_history_rows',0) or 0)>200
-          onchain_any=sum(1 for s in symbols if (onchainmap.get(s,{}) or {}).get('coverage_pct',0)>0)
-          onchain_defi_ready=onchain_any>=2
-          onchain_network_ready=sum(1 for s in symbols if ((onchainmap.get(s,{}) or {}).get('source_status',{}) or {}).get('coinmetrics')=='OK')>=2
-          onchain_exchange_whale_ready=False
+          etf_ready=int(q.get('btc_etf_rows',0) or 0)>100 and int(q.get('eth_etf_rows',0) or 0)>100
+          stablecoin_ready=int(q.get('stablecoin_history_rows',0) or 0)>100
+          ethbtc_ready=int(q.get('eth_btc_history_rows',0) or 0)>200
 
           core_modules={
-              'PRICE_DATA_QA':snapshot_qa,
-              'FULL_ZONES_1D_TO_2T':full_zones,
-              'TECHNICAL_LAYER':technical_ready,
-              'ROTATION_LAYER':rotation_ready,
-              'MARKET_PHASE_LAYER':phase_ready,
-              'DUAL_HORIZON_FLOW_CONTEXT':long_flow_ready and tactical_flow_ready,
-              'ETF_BTC_ETH_FEED':etf_ready,
-              'STABLECOIN_LIQUIDITY_FEED':stablecoin_ready,
-              'ETH_BTC_RELATIVE_STRENGTH':ethbtc_ready,
+              'PRICE_DATA_QA':snapshot_qa,'FULL_ZONES_1D_TO_2T':full_zones,'TECHNICAL_LAYER':technical_ready,
+              'ROTATION_LAYER':rotation_ready,'MARKET_PHASE_LAYER':phase_ready,'DUAL_HORIZON_FLOW_CONTEXT':long_flow_ready and tactical_flow_ready,
+              'ETF_BTC_ETH_FEED':etf_ready,'STABLECOIN_LIQUIDITY_FEED':stablecoin_ready,'ETH_BTC_RELATIVE_STRENGTH':ethbtc_ready,
               'DECISION_LAYER':decisions_present,
           }
           core_ready=sum(bool(v) for v in core_modules.values())
-
+          source_health=(onchain.get('summary',{}) or {}).get('source_health',{}) or {}
+          network_feed=int(source_health.get('coinmetrics_assets_ok',0) or 0)>0
+          tvl_dex_layer=trusted_onchain>=2
+          project_context=project_specific>=1
           extended={
               'BROAD_ROTATION_20D_HISTORY':bool(rot.get('broad_rotation_history_ready')),
-              'SOL_ETF_MATURE_20_ROWS':int(snap.get('qa',{}).get('sol_etf_rows',0) or 0)>=20,
-              'ONCHAIN_TVL_DEX_LAYER':onchain_defi_ready,
-              'ONCHAIN_NETWORK_ACTIVITY_FEED':onchain_network_ready,
-              'EXCHANGE_WHALE_FLOW_FEED':onchain_exchange_whale_ready,
+              'SOL_ETF_MATURE_20_ROWS':int(q.get('sol_etf_rows',0) or 0)>=20,
+              'ONCHAIN_TVL_DEX_LAYER':tvl_dex_layer,
+              'ONCHAIN_PROJECT_SPECIFIC_CONTEXT':project_context,
+              'ONCHAIN_NETWORK_ACTIVITY_FEED':network_feed,
+              'EXCHANGE_WHALE_FLOW_FEED':False,
               'ETF_INDEPENDENT_SOURCE_CROSSCHECK':False,
               'PORTFOLIO_EXECUTION_CONNECTION':False,
           }
           ext_ready=sum(bool(v) for v in extended.values())
-
           status='CORE_ALT_ENGINE_READY_FOR_VALIDATION' if core_ready==len(core_modules) else 'CORE_ALT_ENGINE_INCOMPLETE'
 
           blockers=[]
@@ -184,51 +174,30 @@ jobs:
           if not stablecoin_ready: blockers.append('STABLECOIN_FEED_NOT_READY')
           if not ethbtc_ready: blockers.append('ETH_BTC_HISTORY_NOT_READY')
           if not rot.get('broad_rotation_history_ready'): blockers.append('BROAD_ROTATION_HISTORY_MATURING')
-          if int(snap.get('qa',{}).get('sol_etf_rows',0) or 0)<20: blockers.append('SOL_ETF_HISTORY_IMMATURE')
-          if not onchain_defi_ready: blockers.append('ONCHAIN_TVL_DEX_LAYER_PENDING')
-          if not onchain_network_ready: blockers.append('ONCHAIN_NETWORK_ACTIVITY_SOURCE_PENDING')
-          if not onchain_exchange_whale_ready: blockers.append('EXCHANGE_WHALE_FLOW_SOURCE_PENDING')
-          blockers.append('ETF_SOURCE_CROSSCHECK_PENDING')
-          blockers.append('NOT_CONNECTED_TO_PORTFOLIO_EXECUTION')
+          if int(q.get('sol_etf_rows',0) or 0)<20: blockers.append('SOL_ETF_HISTORY_IMMATURE')
+          if not network_feed: blockers.append('ONCHAIN_NETWORK_ACTIVITY_SOURCE_PENDING')
+          blockers += ['EXCHANGE_WHALE_FLOW_SOURCE_PENDING','ETF_SOURCE_CROSSCHECK_PENDING','NOT_CONNECTED_TO_PORTFOLIO_EXECUTION']
 
           out={
-              'date':snap.get('target_date'),
-              'engine':'ALT_ENGINE_MASTER_CHECKPOINT_v0.3',
-              'status':status,
-              'production_universe':symbols,
-              'production_assets_count':len(symbols),
-              'production_assets_ready':int(df['readiness_status'].eq('PRODUCTION_DATA_READY').sum()),
-              'core_modules_ready':f'{core_ready}/{len(core_modules)}',
-              'core_modules':core_modules,
-              'extended_modules_ready':f'{ext_ready}/{len(extended)}',
-              'extended_modules':extended,
-              'crypto_market_phase':phase.get('phase'),
-              'market_phase_confidence':phase.get('phase_confidence'),
-              'alt_rotation_score_0_10':rot.get('score_0_10'),
-              'alt_rotation_status':rot.get('status'),
-              'long_flow_context':long_flow,
-              'tactical_flow_context':tactical_flow,
+              'date':snap.get('target_date'),'engine':'ALT_ENGINE_MASTER_CHECKPOINT_v0.4','status':status,
+              'production_universe':symbols,'production_assets_count':len(symbols),'production_assets_ready':int(df['readiness_status'].eq('PRODUCTION_DATA_READY').sum()),
+              'core_modules_ready':f'{core_ready}/{len(core_modules)}','core_modules':core_modules,
+              'extended_modules_ready':f'{ext_ready}/{len(extended)}','extended_modules':extended,
+              'crypto_market_phase':phase.get('phase'),'market_phase_confidence':phase.get('phase_confidence'),
+              'alt_rotation_score_0_10':rot.get('score_0_10'),'alt_rotation_status':rot.get('status'),
+              'long_flow_context':long_flow,'tactical_flow_context':tactical_flow,
               'onchain_context':{
-                  'engine':onchain.get('engine'),
-                  'generated_at_utc':onchain.get('generated_at_utc'),
+                  'engine':onchain.get('engine'),'generated_at_utc':onchain.get('generated_at_utc'),
                   'assets_with_any_data':(onchain.get('summary',{}) or {}).get('assets_with_any_data'),
-                  'source_health':(onchain.get('summary',{}) or {}).get('source_health'),
-                  'role':'context only; never standalone buy/sell signal'
+                  'trusted_assets_coverage_ge_40':trusted_onchain,'project_specific_trusted_assets':project_specific,
+                  'source_health':source_health,'role':'context only; never standalone buy/sell signal'
               },
-              'research_only':True,
-              'not_strategy_frozen':True,
-              'not_execution_connected':True,
-              'blockers_or_maturity_gaps':blockers,
-              'assets':rows,
+              'research_only':True,'not_strategy_frozen':True,'not_execution_connected':True,
+              'blockers_or_maturity_gaps':blockers,'assets':rows,
               'rules':{
-                  'V7_UNTOUCHED':True,
-                  'NO_ZONE_GUESSING':True,
-                  'PRODUCTION_AND_TEST_UNIVERSES_SEPARATE':True,
-                  'DATA_PENDING_NOT_TRADE_SIGNAL':True,
-                  'MARKET_PHASE_CONTEXT_NOT_HARD_BUY_GATE':True,
-                  'ETF_FLOW_CONFIRMATION_NOT_ORACLE':True,
-                  'ONCHAIN_CONTEXT_NOT_STANDALONE_SIGNAL':True,
-                  'MISSING_ONCHAIN_DATA_NOT_IMPUTED':True,
+                  'V7_UNTOUCHED':True,'NO_ZONE_GUESSING':True,'PRODUCTION_AND_TEST_UNIVERSES_SEPARATE':True,
+                  'DATA_PENDING_NOT_TRADE_SIGNAL':True,'MARKET_PHASE_CONTEXT_NOT_HARD_BUY_GATE':True,'ETF_FLOW_CONFIRMATION_NOT_ORACLE':True,
+                  'ONCHAIN_CONTEXT_NOT_STANDALONE_SIGNAL':True,'ONCHAIN_SCORE_REQUIRES_MIN_40PCT_COVERAGE':True,'MISSING_ONCHAIN_DATA_NOT_IMPUTED':True,
                   'LONG_AND_TACTICAL_USE_SEPARATE_FLOW_HORIZONS':True,
               }
           }
@@ -244,6 +213,11 @@ jobs:
           git add crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json crypto_data_hub/ALT_ENGINE_MASTER_COCKPIT.csv
           if ! git diff --cached --quiet; then
             git commit -m 'Update V8 alt engine master checkpoint'
-            git pull --rebase origin main
-            git push
+            for attempt in 1 2 3; do
+              if git pull --rebase origin main && git push; then exit 0; fi
+              echo "Push attempt $attempt failed; retrying"
+              sleep $((attempt * 4))
+            done
+            echo 'Push failed after 3 attempts'
+            exit 1
           fi
