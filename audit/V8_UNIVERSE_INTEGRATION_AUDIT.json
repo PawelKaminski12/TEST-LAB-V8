@@ -1,0 +1,229 @@
+{
+  "generated_at_utc": "2026-09-23T17:16:59.367044+00:00",
+  "engine": "V8_UNIVERSE_INTEGRATION_AUDIT_v1.0",
+  "integration_status_pl": "OBA SILNIKI PODŁĄCZONE I SPRAWDZONE",
+  "core_checks_pass": true,
+  "checks": {
+    "tactical_universe_exact": true,
+    "long_universe_exact": true,
+    "aave_archived_not_active": true,
+    "tactical_engine_v1": true,
+    "tactical_12_ready": true,
+    "tactical_timeframes": true,
+    "tactical_no_stocks": true,
+    "tactical_no_execution": true,
+    "tradingview_deferred": true,
+    "readiness_12": true,
+    "long_technical_11": true,
+    "long_decisions_11": true,
+    "long_no_execution": true,
+    "no_buy_with_blocker": true,
+    "sheet_alarm_and_email_support": true
+  },
+  "tactical": {
+    "asset_count": 12,
+    "assets": [
+      "BTC",
+      "ETH",
+      "SOL",
+      "LINK",
+      "ONDO",
+      "RENDER",
+      "FLOKI",
+      "PEPE",
+      "SPX6900",
+      "XRP",
+      "XLM",
+      "HBAR"
+    ],
+    "timeframes": [
+      "1H",
+      "4H",
+      "1D"
+    ],
+    "stocks_included": false,
+    "tradingview_connected": false,
+    "execution_connected": false
+  },
+  "long": {
+    "alt_count": 11,
+    "alts": [
+      "ETH",
+      "SOL",
+      "LINK",
+      "ONDO",
+      "RENDER",
+      "FLOKI",
+      "PEPE",
+      "SPX6900",
+      "XRP",
+      "XLM",
+      "HBAR"
+    ],
+    "btc_role": "REŻIM RYNKU",
+    "stocks_role": "OSOBNA CZĘŚĆ LONG",
+    "technical_assets_ready": 11,
+    "execution_connected": false
+  },
+  "alerts": {
+    "google_sheets_panel": true,
+    "email_supported_by_bridge": true,
+    "tradingview": "PÓŹNIEJ"
+  },
+  "zones": {
+    "ETH": {
+      "complete_7_of_7": true,
+      "confirmed_timeframes": [
+        "1D",
+        "1T",
+        "2D",
+        "2T",
+        "3D",
+        "4D",
+        "5D"
+      ],
+      "missing_timeframes": []
+    },
+    "SOL": {
+      "complete_7_of_7": true,
+      "confirmed_timeframes": [
+        "1D",
+        "1T",
+        "2D",
+        "2T",
+        "3D",
+        "4D",
+        "5D"
+      ],
+      "missing_timeframes": []
+    },
+    "LINK": {
+      "complete_7_of_7": true,
+      "confirmed_timeframes": [
+        "1D",
+        "1T",
+        "2D",
+        "2T",
+        "3D",
+        "4D",
+        "5D"
+      ],
+      "missing_timeframes": []
+    },
+    "ONDO": {
+      "complete_7_of_7": true,
+      "confirmed_timeframes": [
+        "1D",
+        "1T",
+        "2D",
+        "2T",
+        "3D",
+        "4D",
+        "5D"
+      ],
+      "missing_timeframes": []
+    },
+    "RENDER": {
+      "complete_7_of_7": false,
+      "confirmed_timeframes": [],
+      "missing_timeframes": [
+        "1D",
+        "2D",
+        "3D",
+        "4D",
+        "5D",
+        "1T",
+        "2T"
+      ]
+    },
+    "FLOKI": {
+      "complete_7_of_7": false,
+      "confirmed_timeframes": [],
+      "missing_timeframes": [
+        "1D",
+        "2D",
+        "3D",
+        "4D",
+        "5D",
+        "1T",
+        "2T"
+      ]
+    },
+    "PEPE": {
+      "complete_7_of_7": false,
+      "confirmed_timeframes": [],
+      "missing_timeframes": [
+        "1D",
+        "2D",
+        "3D",
+        "4D",
+        "5D",
+        "1T",
+        "2T"
+      ]
+    },
+    "SPX6900": {
+      "complete_7_of_7": false,
+      "confirmed_timeframes": [],
+      "missing_timeframes": [
+        "1D",
+        "2D",
+        "3D",
+        "4D",
+        "5D",
+        "1T",
+        "2T"
+      ]
+    },
+    "XRP": {
+      "complete_7_of_7": false,
+      "confirmed_timeframes": [],
+      "missing_timeframes": [
+        "1D",
+        "2D",
+        "3D",
+        "4D",
+        "5D",
+        "1T",
+        "2T"
+      ]
+    },
+    "XLM": {
+      "complete_7_of_7": false,
+      "confirmed_timeframes": [],
+      "missing_timeframes": [
+        "1D",
+        "2D",
+        "3D",
+        "4D",
+        "5D",
+        "1T",
+        "2T"
+      ]
+    },
+    "HBAR": {
+      "complete_7_of_7": false,
+      "confirmed_timeframes": [],
+      "missing_timeframes": [
+        "1D",
+        "2D",
+        "3D",
+        "4D",
+        "5D",
+        "1T",
+        "2T"
+      ]
+    }
+  },
+  "assets_missing_full_user_zones": [
+    "RENDER",
+    "FLOKI",
+    "PEPE",
+    "SPX6900",
+    "XRP",
+    "XLM",
+    "HBAR"
+  ],
+  "important_note_pl": "Brak stref nie wyłącza monitoringu wskaźników TACTICAL. W LONG blokuje pełną decyzję do czasu potwierdzenia mapy 7/7.",
+  "aave": "ARCHIWUM — NIEAKTYWNY"
+}
