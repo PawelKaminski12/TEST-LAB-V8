@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-23T16:54:06.093246+00:00",
+  "generated_at_utc": "2026-09-23T19:45:17.038559+00:00",
   "engine": "PROJECT_ACTIVITY_v0.1",
   "assets": [
     {
@@ -13,9 +13,9 @@
       "quality_status": "TRUSTED",
       "independent_layers_ready": 1,
       "stablecoin_supply": {
-        "latest_usd": 148344800105.21,
-        "change_7d_pct": -0.26222895778361677,
-        "change_30d_pct": 0.2877907428229243,
+        "latest_usd": 148336660935.29,
+        "change_7d_pct": -0.2677012268849088,
+        "change_30d_pct": 0.2822882960288542,
         "trend": "FLAT",
         "rows": 3221
       },
@@ -55,9 +55,9 @@
       "quality_status": "TRUSTED",
       "independent_layers_ready": 1,
       "stablecoin_supply": {
-        "latest_usd": 16881330928.6,
-        "change_7d_pct": 5.734928483904511,
-        "change_30d_pct": 3.7342023701663507,
+        "latest_usd": 16880709335.16,
+        "change_7d_pct": 5.73103518081115,
+        "change_30d_pct": 3.730382736514848,
         "trend": "RISING",
         "rows": 1597
       },
