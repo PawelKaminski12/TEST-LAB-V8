@@ -1,0 +1,215 @@
+name: TEST LAB V8 Alt Rotation Score
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '10 6 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  build-alt-rotation-score:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependency
+        run: pip install --quiet pandas
+
+      - name: Build score
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import pandas as pd
+
+          ROOT=Path('crypto_data_hub')
+          snap_path=ROOT/'LATEST_SNAPSHOT.json'
+          hist_path=ROOT/'HISTORY.csv'
+          if not snap_path.exists():
+              raise SystemExit('Missing crypto_data_hub/LATEST_SNAPSHOT.json')
+
+          snap=json.loads(snap_path.read_text(encoding='utf-8'))
+          hist=pd.read_csv(hist_path) if hist_path.exists() else pd.DataFrame()
+          target=snap['target_date']
+          qa=snap.get('qa',{})
+          if not qa.get('PASS'):
+              raise SystemExit('Crypto Data Hub QA is not PASS')
+
+          def pts_bool(v):
+              return 1 if bool(v) else 0
+
+          # ---------- COMMON MARKET SCORE 0-10 ----------
+          parts={}
+
+          # 1) BTC market regime: max 1
+          btc=snap['btc_regime']
+          btc_regime=1 if btc.get('above_sma200') and btc.get('sma50_rising_20d') else 0
+          parts['BTC_REGIME']=btc_regime
+
+          # 2) ETH/BTC rotation: max 2
+          rs=snap['relative_strength']
+          ethbtc=rs.get('ETH_BTC',{})
+          ethbtc_pts=pts_bool(ethbtc.get('above_sma50')) + pts_bool(ethbtc.get('sma50_rising_20d'))
+          parts['ETH_BTC']=ethbtc_pts
+
+          # 3) ETF flow: max 2
+          etf=snap['etf_flows']
+          btc5=float(etf['BTC'].get('flow_5d_usdm') or 0)
+          eth5=float(etf['ETH'].get('flow_5d_usdm') or 0)
+          eth_acc=float(etf['ETH'].get('acceleration_5d_vs_prev5_usdm') or 0)
+          sol5=float(etf['SOL'].get('flow_5d_usdm') or 0)
+          etf_pts=0
+          if btc5>0 and eth5>0: etf_pts+=1
+          if eth_acc>0 and sol5>0: etf_pts+=1
+          parts['ETF_FLOW']=etf_pts
+
+          # 4) Stablecoin liquidity: max 1
+          stable=snap['stablecoin_liquidity']
+          stable_pts=1 if float(stable.get('change_30d_pct') or 0)>0 else 0
+          parts['STABLECOIN_LIQUIDITY']=stable_pts
+
+          # 5) Alt breadth vs BTC: max 2
+          alt_keys=['SOL_BTC','LINK_BTC','AAVE_BTC','HBAR_BTC','ONDO_BTC']
+          strong=[]
+          for k in alt_keys:
+              x=rs.get(k,{})
+              if x.get('above_sma50') and x.get('sma50_rising_20d'):
+                  strong.append(k)
+          breadth_pts=2 if len(strong)>=4 else 1 if len(strong)>=2 else 0
+          parts['ALT_RS_BREADTH']=breadth_pts
+
+          # 6) Broad market-cap rotation trend: max 2.
+          # Award only when we have at least 20 persisted daily rows.
+          rotation_pts=0
+          rotation_ready=False
+          rotation_detail={}
+          if len(hist)>=20:
+              h=hist.dropna(subset=['btc_dom_pct','v8_total3_eq_usd','v8_others_btc_eq']).copy()
+              if len(h)>=20:
+                  rotation_ready=True
+                  last=h.iloc[-1]
+                  prev=h.iloc[-20]
+                  btc_dom_down=float(last['btc_dom_pct']) < float(prev['btc_dom_pct'])
+                  total3_up=float(last['v8_total3_eq_usd']) > float(prev['v8_total3_eq_usd'])
+                  othersbtc_up=float(last['v8_others_btc_eq']) > float(prev['v8_others_btc_eq'])
+                  if btc_dom_down and total3_up: rotation_pts+=1
+                  if othersbtc_up: rotation_pts+=1
+                  rotation_detail={
+                    'btc_dom_20d_change_pp':float(last['btc_dom_pct'])-float(prev['btc_dom_pct']),
+                    'total3_eq_20d_change_pct':(float(last['v8_total3_eq_usd'])/float(prev['v8_total3_eq_usd'])-1)*100,
+                    'others_btc_eq_20d_change_pct':(float(last['v8_others_btc_eq'])/float(prev['v8_others_btc_eq'])-1)*100,
+                  }
+          parts['BROAD_ROTATION_TREND']=rotation_pts
+
+          score=sum(parts.values())
+          if score<=3: status='OFF'
+          elif score<=5: status='EARLY'
+          elif score<=7: status='CONFIRMED'
+          else: status='STRONG'
+
+          # Confidence is separate from score; prevents false certainty while history matures.
+          confidence_points=0
+          confidence_max=5
+          confidence_points += 1 if qa.get('binance_all_end_target') else 0
+          confidence_points += 1 if int(qa.get('btc_etf_rows',0))>100 and int(qa.get('eth_etf_rows',0))>100 else 0
+          confidence_points += 1 if int(qa.get('stablecoin_history_rows',0))>100 else 0
+          confidence_points += 1 if rotation_ready else 0
+          confidence_points += 1 if int(qa.get('sol_etf_rows',0))>=20 else 0
+          confidence_pct=round(confidence_points/confidence_max*100)
+          confidence='HIGH' if confidence_pct>=80 else 'MEDIUM' if confidence_pct>=60 else 'LOW'
+
+          # ---------- PER-ALT READINESS ----------
+          # Common score is market context; individual RS is the selector.
+          alt_map={
+            'SOL':('SOL_BTC','SOL_ETH'),
+            'LINK':('LINK_BTC','LINK_ETH'),
+            'AAVE':('AAVE_BTC','AAVE_ETH'),
+            'HBAR':('HBAR_BTC','HBAR_ETH'),
+            'ONDO':('ONDO_BTC','ONDO_ETH'),
+          }
+          alt_readiness={}
+          for alt,(kb,ke) in alt_map.items():
+              b=rs.get(kb,{})
+              e=rs.get(ke,{})
+              indiv=0
+              indiv += pts_bool(b.get('above_sma50'))
+              indiv += pts_bool(b.get('sma50_rising_20d'))
+              indiv += pts_bool(e.get('above_sma50'))
+              indiv += pts_bool(e.get('sma50_rising_20d'))
+              # 0-4 individual RS score; do not use as a hard gate.
+              if indiv>=4 and score>=6: label='LEADER'
+              elif indiv>=3 and score>=5: label='WATCH_STRONG'
+              elif indiv>=2: label='WATCH'
+              else: label='WEAK_RELATIVE'
+              alt_readiness[alt]={
+                'individual_rs_0_4':indiv,
+                'label':label,
+                'vs_btc_20d_pct':b.get('change_20d_pct'),
+                'vs_eth_20d_pct':e.get('change_20d_pct'),
+              }
+
+          out={
+            'date':target,
+            'engine':'ALT_ROTATION_SCORE_v0.2',
+            'score_0_10':score,
+            'status':status,
+            'confidence':confidence,
+            'confidence_pct':confidence_pct,
+            'parts':parts,
+            'broad_rotation_history_ready':rotation_ready,
+            'broad_rotation_detail':rotation_detail,
+            'selected_alt_breadth_strong_count':len(strong),
+            'selected_alt_breadth_strong':strong,
+            'alt_readiness':alt_readiness,
+            'hard_rules':{
+              'score_is_not_buy_signal':True,
+              'relative_strength_is_not_hard_gate':True,
+              'requires_price_zone_trend_retest_layer_before_trade_decision':True,
+              'requires_data_quality_pass':True,
+            },
+            'limitations':[
+              'V8_TOTAL3_EQ and V8_OTHERS_BTC_EQ are CoinGecko equivalents, not yet certified 1:1 with TradingView.',
+              'Broad rotation trend receives zero points until at least 20 persisted daily snapshots exist.',
+              'SOL ETF history is considered immature until at least 20 rows exist.',
+              'This score is market context, not a standalone buy/sell decision.'
+            ]
+          }
+
+          (ROOT/'ALT_ROTATION_SCORE.json').write_text(json.dumps(out,indent=2),encoding='utf-8')
+
+          # Compact history of score
+          row={
+            'date':target,'score':score,'status':status,'confidence_pct':confidence_pct,
+            'btc_regime':parts['BTC_REGIME'],'eth_btc':parts['ETH_BTC'],
+            'etf_flow':parts['ETF_FLOW'],'stablecoin':parts['STABLECOIN_LIQUIDITY'],
+            'alt_breadth':parts['ALT_RS_BREADTH'],'broad_rotation':parts['BROAD_ROTATION_TREND']
+          }
+          score_hist=ROOT/'ALT_ROTATION_HISTORY.csv'
+          new=pd.DataFrame([row])
+          if score_hist.exists():
+              old=pd.read_csv(score_hist)
+              new=pd.concat([old,new],ignore_index=True).drop_duplicates('date',keep='last').sort_values('date')
+          new.to_csv(score_hist,index=False)
+
+          print(json.dumps(out,indent=2))
+          PY
+
+      - name: Commit score and history
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add crypto_data_hub/ALT_ROTATION_SCORE.json crypto_data_hub/ALT_ROTATION_HISTORY.csv
+          if git diff --cached --quiet; then
+            echo 'No changes to commit'
+          else
+            git commit -m 'Update V8 alt rotation score'
+            git push
+          fi
