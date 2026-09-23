@@ -1,0 +1,70 @@
+name: TEST LAB V8 Asset LAB
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '10 */6 * * *'
+  push:
+    paths:
+      - 'config/lab_assets.csv'
+      - 'scripts/v8_asset_lab.py'
+      - '.github/workflows/test-lab-v8-asset-lab.yml'
+      - 'crypto_data_hub/CRYPTO_MARKET_PHASE.json'
+      - 'crypto_data_hub/ONCHAIN_ACTIVITY.json'
+      - 'crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-asset-lab-writes
+  cancel-in-progress: false
+
+jobs:
+  build-asset-lab:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install --quiet pandas numpy yfinance requests
+
+      - name: Run Asset LAB
+        run: python scripts/v8_asset_lab.py
+
+      - name: Validate LAB outputs
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('lab/LAB_STATUS.json')
+          if not p.exists(): raise SystemExit('LAB_STATUS missing')
+          x=json.loads(p.read_text())
+          assert x['fast_mode_ready'] is True
+          assert x['deep_mode_ready'] is True
+          assert x['portfolio_connection'] is False
+          assert x['execution_connection'] is False
+          print(x)
+          PY
+
+      - name: Commit LAB outputs
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add lab/LAB_REPORT.json lab/LAB_COCKPIT.csv lab/LAB_HISTORY.csv lab/LAB_STATUS.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update V8 Asset LAB outputs'
+            for attempt in 1 2 3; do
+              if git pull --rebase origin main && git push; then exit 0; fi
+              sleep $((attempt * 4))
+            done
+            exit 1
+          fi
