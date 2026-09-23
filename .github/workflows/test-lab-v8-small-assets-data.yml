@@ -1,0 +1,149 @@
+name: TEST LAB V8 Small Assets Data
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/test-lab-v8-small-assets-data.yml"
+
+jobs:
+  build-small-assets-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install stock data dependency
+        run: pip install --quiet yfinance pandas
+
+      - name: Fetch crypto from Binance Vision and stocks from Yahoo
+        run: |
+          python - <<'PY'
+          import csv, io, json, urllib.request, urllib.error, zipfile
+          from datetime import date, datetime, timedelta, timezone
+          from pathlib import Path
+          import pandas as pd
+          import yfinance as yf
+
+          OUT=Path('small_assets_data')
+          OUT.mkdir(exist_ok=True)
+
+          CRYPTO_START={
+              'LINKUSDT': date(2019,1,1),
+              'AAVEUSDT': date(2020,10,1),
+              'HBARUSDT': date(2019,9,1),
+              'ONDOUSDT': date(2024,1,1),
+          }
+          STOCKS=['CRDO','CLS','COHR','MOD','AVAV']
+
+          def ts_to_date(raw):
+              x=int(raw)
+              sec=x/1_000_000 if x>10_000_000_000_000 else x/1_000
+              return datetime.fromtimestamp(sec,tz=timezone.utc).date()
+
+          def fetch_zip(url):
+              req=urllib.request.Request(url,headers={'User-Agent':'TEST-LAB-V8-small-assets/1.0'})
+              with urllib.request.urlopen(req,timeout=45) as r:
+                  return r.read()
+
+          def next_month(d):
+              return date(d.year+1,1,1) if d.month==12 else date(d.year,d.month+1,1)
+
+          def parse_archive(blob, expected_symbol):
+              rows=[]
+              with zipfile.ZipFile(io.BytesIO(blob)) as z:
+                  name=z.namelist()[0]
+                  text=z.read(name).decode('utf-8')
+              for rr in csv.reader(io.StringIO(text)):
+                  if not rr or not rr[0].isdigit():
+                      continue
+                  d=ts_to_date(rr[0])
+                  rows.append([d.isoformat(),rr[1],rr[2],rr[3],rr[4],rr[5]])
+              return rows
+
+          crypto_meta={}
+          today=datetime.now(timezone.utc).date()
+          target=today-timedelta(days=1)
+
+          for sym,start in CRYPTO_START.items():
+              all_rows={}
+              month=date(start.year,start.month,1)
+              current_month=date(target.year,target.month,1)
+              monthly_ok=0; monthly_skip=0; daily_ok=0; daily_skip=0
+
+              while month < current_month:
+                  ym=f'{month.year:04d}-{month.month:02d}'
+                  url=f'https://data.binance.vision/data/spot/monthly/klines/{sym}/1d/{sym}-1d-{ym}.zip'
+                  try:
+                      blob=fetch_zip(url)
+                      for row in parse_archive(blob,sym):
+                          all_rows[row[0]]=row
+                      monthly_ok+=1
+                  except Exception as e:
+                      monthly_skip+=1
+                      print('MONTH_SKIP',sym,ym,repr(e))
+                  month=next_month(month)
+
+              d=current_month
+              while d<=target:
+                  url=f'https://data.binance.vision/data/spot/daily/klines/{sym}/1d/{sym}-1d-{d.isoformat()}.zip'
+                  try:
+                      blob=fetch_zip(url)
+                      for row in parse_archive(blob,sym):
+                          all_rows[row[0]]=row
+                      daily_ok+=1
+                  except Exception as e:
+                      daily_skip+=1
+                      print('DAY_SKIP',sym,d.isoformat(),repr(e))
+                  d+=timedelta(days=1)
+
+              rows=[all_rows[k] for k in sorted(all_rows)]
+              with open(OUT/f'{sym}_1D.csv','w',newline='',encoding='utf-8') as f:
+                  w=csv.writer(f); w.writerow(['Date','Open','High','Low','Close','Volume']); w.writerows(rows)
+              crypto_meta[sym]={
+                  'rows':len(rows),'start':rows[0][0] if rows else None,'end':rows[-1][0] if rows else None,
+                  'monthly_ok':monthly_ok,'monthly_skip':monthly_skip,'daily_ok':daily_ok,'daily_skip':daily_skip,
+                  'target':target.isoformat(),
+              }
+              print(sym,crypto_meta[sym])
+
+          stock_meta={}
+          for ticker in STOCKS:
+              df=yf.download(ticker,start='2018-01-01',end=(target+timedelta(days=1)).isoformat(),auto_adjust=True,progress=False,threads=False)
+              if isinstance(df.columns,pd.MultiIndex):
+                  df.columns=[c[0] for c in df.columns]
+              df=df.reset_index()
+              keep=['Date','Open','High','Low','Close','Volume']
+              df=df[keep].dropna(subset=['Close'])
+              df['Date']=pd.to_datetime(df['Date']).dt.date.astype(str)
+              df.to_csv(OUT/f'{ticker}_1D.csv',index=False)
+              stock_meta[ticker]={
+                  'rows':int(len(df)),
+                  'start':df.iloc[0]['Date'] if len(df) else None,
+                  'end':df.iloc[-1]['Date'] if len(df) else None,
+                  'source':'Yahoo Finance via yfinance; auto_adjust=True'
+              }
+              print(ticker,stock_meta[ticker])
+
+          meta={
+              'generated_at':datetime.now(timezone.utc).isoformat(),
+              'crypto_source':'Binance Vision spot 1d archives',
+              'stock_source':'Yahoo Finance via yfinance auto-adjusted',
+              'crypto':crypto_meta,
+              'stocks':stock_meta,
+          }
+          (OUT/'META.json').write_text(json.dumps(meta,indent=2),encoding='utf-8')
+          PY
+
+      - name: Upload small assets data
+        uses: actions/upload-artifact@v4
+        with:
+          name: TEST-LAB-V8-SMALL-ASSETS-DATA
+          path: small_assets_data/
+          if-no-files-found: error
+          retention-days: 7
