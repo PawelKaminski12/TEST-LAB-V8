@@ -1,0 +1,180 @@
+// V8 DUAL ENGINE — TACTICAL RISK CENTER V9
+// Domknięcie tematu: centrum ryzyka Tactical.
+// Łączy: exit risk, FOMO, strefę podaży/popytu, status Tactical,
+// świeże alarmy ekstremów i zgodność wielu interwałów.
+// Nie zmienia logiki LONG/Tactical i nie wykonuje transakcji.
+
+function tacticalRiskAssessment_(asset, alarms) {
+  const t = (asset || {}).timeframes || {};
+  const z = (asset || {}).zone_context || {};
+  const status = String((asset || {}).tactical_status || '');
+  const exitRisk = Number((asset || {}).exit_risk_0_10);
+  const fomoValues = ['1H','4H','1D'].map(tf => Number((t[tf] || {}).fomo_score_0_10)).filter(Number.isFinite);
+  const maxFomo = fomoValues.length ? Math.max.apply(null, fomoValues) : 0;
+  const active = (alarms || []).filter(a => a && a.aktywny && String(a.symbol) === String((asset || {}).symbol));
+  const multiCritical = active.some(a => a.multiTf && a.priority === 'KRYTYCZNY');
+  const critical = active.some(a => a.priority === 'KRYTYCZNY');
+  const strong = active.some(a => a.priority === 'MOCNY');
+  const overheatingMulti = active.some(a => a.multiTf && a.direction === 'PRZEGRZANIE');
+  const washoutMulti = active.some(a => a.multiTf && a.direction === 'WYPRZEDANIE');
+  const inSupply = z.in_supply === true;
+  const inDemand = z.in_demand === true;
+
+  let points = 0;
+  const reasons = [];
+
+  if (Number.isFinite(exitRisk)) {
+    if (exitRisk >= 8) { points += 5; reasons.push('ryzyko wyjścia '+exitRisk+'/10'); }
+    else if (exitRisk >= 6) { points += 3; reasons.push('ryzyko wyjścia '+exitRisk+'/10'); }
+    else if (exitRisk >= 4) { points += 1; reasons.push('ryzyko wyjścia '+exitRisk+'/10'); }
+  }
+
+  if (maxFomo >= 9) { points += 4; reasons.push('FOMO '+maxFomo+'/10'); }
+  else if (maxFomo >= 8) { points += 3; reasons.push('FOMO '+maxFomo+'/10'); }
+  else if (maxFomo >= 7) { points += 1; reasons.push('FOMO '+maxFomo+'/10'); }
+
+  if (inSupply) { points += 2; reasons.push('strefa podaży'); }
+  if (inDemand) { points -= 1; reasons.push('strefa popytu'); }
+
+  if (multiCritical) { points += 4; reasons.push('krytyczna zgodność wielu TF'); }
+  else if (critical) { points += 3; reasons.push('krytyczny alarm'); }
+  else if (strong) { points += 1; reasons.push('mocny alarm'); }
+
+  if (overheatingMulti) { points += 2; reasons.push('przegrzanie wielu TF'); }
+  if (washoutMulti) { points -= 1; reasons.push('wyprzedanie wielu TF'); }
+
+  if (['NO_TRADE','NO_TRADE_FOMO','EXIT_RISK_HIGH'].indexOf(status) >= 0) {
+    points += 3;
+    reasons.push('status '+translateTactical_(status));
+  } else if (['WATCH_SUPPLY','TAKE_PROFIT_WATCH'].indexOf(status) >= 0) {
+    points += 1;
+    reasons.push('status '+translateTactical_(status));
+  }
+
+  points = Math.max(0, Math.min(10, points));
+  let state = 'NORMALNIE';
+  if (points >= 8 || (multiCritical && overheatingMulti) || (Number.isFinite(exitRisk) && exitRisk >= 9)) state = 'OCHRONA KAPITAŁU';
+  else if (points >= 5 || multiCritical || (Number.isFinite(exitRisk) && exitRisk >= 7)) state = 'PODWYŻSZONE RYZYKO';
+  else if (points >= 2 || strong || critical) state = 'UWAGA';
+
+  return {
+    state: state,
+    points: points,
+    reason: reasons.length ? reasons.join(' | ') : 'brak istotnych czynników ryzyka',
+    maxFomo: maxFomo,
+    exitRisk: Number.isFinite(exitRisk) ? exitRisk : '',
+    inSupply: inSupply,
+    inDemand: inDemand
+  };
+}
+
+function tacticalRiskIcon_(state) {
+  if (state === 'OCHRONA KAPITAŁU') return '🛡️';
+  if (state === 'PODWYŻSZONE RYZYKO') return '🔴';
+  if (state === 'UWAGA') return '🟠';
+  return '🟢';
+}
+
+function buildTacticalRiskMap_(tacticalJson, alarms) {
+  const out = {};
+  ((tacticalJson || {}).assets || []).forEach(a => {
+    out[a.symbol] = tacticalRiskAssessment_(a, alarms);
+  });
+  return out;
+}
+
+function applyRiskCenterToTacticalSheet_(sheet, tacticalJson, alarms) {
+  if (!sheet || sheet.getLastRow() < 1) return;
+  const riskMap = buildTacticalRiskMap_(tacticalJson, alarms);
+  const values = sheet.getDataRange().getValues();
+  const head = values[0].map(String);
+  const symIdx = head.indexOf('AKTYWO');
+  if (symIdx < 0) return;
+
+  let stateIdx = head.indexOf('CENTRUM RYZYKA');
+  let reasonIdx = head.indexOf('POWÓD RYZYKA');
+  if (stateIdx < 0) { stateIdx = head.length; head.push('CENTRUM RYZYKA'); }
+  if (reasonIdx < 0) { reasonIdx = head.length; head.push('POWÓD RYZYKA'); }
+
+  const width = head.length;
+  const out = [head];
+  for (let i=1; i<values.length; i++) {
+    const row = values[i].slice();
+    while (row.length < width) row.push('');
+    const sym = String(row[symIdx] || '').trim();
+    const r = riskMap[sym];
+    if (r) {
+      row[stateIdx] = tacticalRiskIcon_(r.state)+' '+r.state+' ('+r.points+'/10)';
+      row[reasonIdx] = r.reason;
+    }
+    out.push(row);
+  }
+
+  sheet.clearContents();
+  sheet.getRange(1,1,out.length,width).setValues(out);
+  sheet.setFrozenRows(1);
+  sheet.getRange(1,1,1,width).setFontWeight('bold');
+  if (out.length > 1) sheet.getRange(2,1,out.length-1,width).setWrap(true).setVerticalAlignment('middle');
+  sheet.setColumnWidth(stateIdx+1,190);
+  sheet.setColumnWidth(reasonIdx+1,390);
+
+  const riskRange = sheet.getRange(2,stateIdx+1,Math.max(1,out.length-1),1);
+  const rules = (sheet.getConditionalFormatRules() || []).filter(r => !r.getRanges().some(x => x.getColumn() === stateIdx+1));
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextContains('OCHRONA KAPITAŁU').setBackground('#f4cccc').setFontColor('#990000').setBold(true).setRanges([riskRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextContains('PODWYŻSZONE RYZYKO').setBackground('#fce5cd').setFontColor('#b45f06').setBold(true).setRanges([riskRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextContains('UWAGA').setBackground('#fff2cc').setFontColor('#7f6000').setRanges([riskRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextContains('NORMALNIE').setBackground('#d9ead3').setFontColor('#274e13').setRanges([riskRange]).build());
+  sheet.setConditionalFormatRules(rules);
+}
+
+function updateMainPanelExtremeSummary_(sheet, alarms) {
+  if (!sheet || sheet.getLastRow() < 2) return;
+  const ss = sheet.getParent();
+  let tacticalJson = {assets:[]};
+  try { tacticalJson = JSON.parse(fetchText_(V8_FILES.tactical)); } catch (e) {}
+  const riskMap = buildTacticalRiskMap_(tacticalJson, alarms);
+
+  applyRiskCenterToTacticalSheet_(ss.getSheetByName(V8_SHEETS.tactical), tacticalJson, alarms);
+
+  const bySymbol = {};
+  (alarms || []).forEach(a => { if (panelEligibleExtreme_(a)) (bySymbol[a.symbol] = bySymbol[a.symbol] || []).push(a); });
+  const values = sheet.getDataRange().getValues();
+  const head = values[0].map(String), symIdx = head.indexOf('AKTYWO'), alertIdx = head.indexOf('ALERT');
+  if (symIdx < 0 || alertIdx < 0) return;
+
+  for (let i=1; i<values.length; i++) {
+    const sym = String(values[i][symIdx] || '').trim();
+    if (!sym) continue;
+    const best = selectMainPanelExtreme_(bySymbol[sym] || []);
+    const risk = riskMap[sym];
+    let base = String(values[i][alertIdx] || '').trim();
+    base = base.replace(/\s*\|\s*[🟡🟠🔴🛡️🟢]\s*(OSTRZEŻENIE|MOCNY|KRYTYCZNY|NORMALNIE|UWAGA|PODWYŻSZONE RYZYKO|OCHRONA KAPITAŁU)[^|]*/g,'').trim();
+
+    const extras = [];
+    if (best) {
+      const icon = best.priority === 'KRYTYCZNY' ? '🔴' : best.priority === 'MOCNY' ? '🟠' : '🟡';
+      const stateSuffix = best.state && best.state !== 'BEZ ZMIAN' ? ' '+best.state : '';
+      extras.push(best.multiTf ? icon+' '+best.priority+' WIELE TF — '+best.direction+' '+best.multiTfList.join('+')+stateSuffix : icon+' '+best.priority+' '+best.tf+' — '+best.signalCount+' sygnał(y)'+stateSuffix);
+    }
+    if (risk && risk.state !== 'NORMALNIE') extras.push(tacticalRiskIcon_(risk.state)+' '+risk.state+' '+risk.points+'/10');
+
+    const cleanBase = (!base || base === 'BRAK') ? '' : base;
+    values[i][alertIdx] = [cleanBase].concat(extras).filter(Boolean).join(' | ') || 'BRAK';
+  }
+
+  sheet.getRange(1,1,values.length,values[0].length).setValues(values);
+  formatPanel_(sheet);
+  formatMainPanelAlertsV9_(sheet);
+}
+
+function formatMainPanelAlertsV9_(sheet) {
+  if (!sheet || sheet.getLastRow() < 2) return;
+  const range = sheet.getRange(2,7,sheet.getLastRow()-1,1);
+  const rules = (sheet.getConditionalFormatRules() || []).filter(r => !r.getRanges().some(x => x.getColumn() === 7 && x.getNumColumns() === 1));
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextContains('OCHRONA KAPITAŁU').setBackground('#f4cccc').setFontColor('#990000').setBold(true).setRanges([range]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextContains('PODWYŻSZONE RYZYKO').setBackground('#fce5cd').setFontColor('#b45f06').setBold(true).setRanges([range]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextContains('🔴 KRYTYCZNY').setBackground('#f4cccc').setFontColor('#990000').setBold(true).setRanges([range]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextContains('🟠 MOCNY').setBackground('#fce5cd').setFontColor('#b45f06').setBold(true).setRanges([range]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextContains('UWAGA').setBackground('#fff2cc').setFontColor('#7f6000').setRanges([range]).build());
+  sheet.setConditionalFormatRules(rules);
+}
