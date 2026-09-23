@@ -1,0 +1,69 @@
+name: TEST LAB V8 Build Full Panel V7
+
+on:
+  push:
+    paths:
+      - 'google_sheets/V8_MULTI_TF_CONFLUENCE_V7.txt'
+      - '.github/workflows/test-lab-v8-build-full-panel-v7.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-test-save:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz projekt
+        uses: actions/checkout@v4
+
+      - name: Zbuduj pełny skrypt V7
+        run: |
+          cat google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V6.txt google_sheets/V8_MULTI_TF_CONFLUENCE_V7.txt > /tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V7.js
+
+      - name: Sprawdź składnię pełnego skryptu
+        run: node --check /tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V7.js
+
+      - name: Sprawdź integralność V7
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('/tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V7.js').read_text(encoding='utf-8')
+          required=['function buildMultiTfConfluence_','function alarmDirection_','WIELE TF','PRZEGRZANIE','WYPRZEDANIE','function panelEligibleExtreme_','function notifyNewExtremeAlarms_','AUTO_EXECUTION','V7_TOUCH']
+          missing=[x for x in required if x not in s]
+          forbidden=['placeOrder(','createOrder(','broker.','AUTO_EXECUTION = ON']
+          bad=[x for x in forbidden if x in s]
+          if missing: raise SystemExit('BRAK: '+', '.join(missing))
+          if bad: raise SystemExit('NIEDOZWOLONE: '+', '.join(bad))
+          print('PASS integralność V7')
+          PY
+
+      - name: Test zgodności międzyinterwałowej
+        run: |
+          python - <<'PY'
+          def direction(signals):
+              hot=sum(('WYKUPIENIE' in s or 'DODATNIE' in s or 'FOMO' in s) for s in signals)
+              cold=sum(('WYPRZEDANIE' in s or 'UJEMNE' in s) for s in signals)
+              if hot and not cold:return 'PRZEGRZANIE'
+              if cold and not hot:return 'WYPRZEDANIE'
+              return 'MIESZANE'
+          def synth(tfs):
+              has41='4H' in tfs and '1D' in tfs
+              return 'KRYTYCZNY' if len(tfs)==3 or has41 else 'MOCNY'
+          assert direction(['RSI WYKUPIENIE','MACD MOCNO DODATNIE'])=='PRZEGRZANIE'
+          assert direction(['RSI WYPRZEDANIE','MACD MOCNO UJEMNE'])=='WYPRZEDANIE'
+          assert direction(['RSI WYKUPIENIE','MACD MOCNO UJEMNE'])=='MIESZANE'
+          assert synth(['1H','4H'])=='MOCNY'
+          assert synth(['4H','1D'])=='KRYTYCZNY'
+          assert synth(['1H','4H','1D'])=='KRYTYCZNY'
+          print('PASS multi-TF: 1H+4H=MOCNY, 4H+1D=KRYTYCZNY, 1H+4H+1D=KRYTYCZNY')
+          PY
+
+      - name: Zapisz pełny skrypt V7
+        run: |
+          cp /tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V7.js google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V7.txt
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V7.txt
+          git diff --cached --quiet || git commit -m 'Zbuduj pełny panel V8 V7 z multi-TF confluence'
+          git push
