@@ -1,0 +1,71 @@
+name: TEST LAB V8 Tactical Validation Framework V2
+
+on:
+  push:
+    paths:
+      - 'scripts/v8_tactical_validation_framework_v2.py'
+      - 'tactical_validation/TACTICAL_WALKFORWARD_OBSERVATIONS.csv'
+      - 'tactical_validation/TACTICAL_THRESHOLD_LAB.json'
+      - '.github/workflows/test-lab-v8-tactical-validation-framework-v2.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  validation-framework-v2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz projekt
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Zapamiętaj produkcję
+        run: |
+          sha256sum tactical_engine/TACTICAL_ENGINE.json > /tmp/prod_before.sha
+          sha256sum google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt >> /tmp/prod_before.sha
+
+      - name: Sprawdź składnię frameworka
+        run: python -m py_compile scripts/v8_tactical_validation_framework_v2.py
+
+      - name: Uruchom Validation Framework 2.0
+        run: python scripts/v8_tactical_validation_framework_v2.py
+
+      - name: Sprawdź kontrakt bezpieczeństwa
+        run: |
+          grep -q 'research_only' tactical_validation/TACTICAL_VALIDATION_FRAMEWORK_V2.json
+          grep -q 'deploy_block' tactical_validation/TACTICAL_VALIDATION_FRAMEWORK_V2.json
+          grep -q 'promotion_allowed_automatically' tactical_validation/TACTICAL_VALIDATION_FRAMEWORK_V2.json
+          grep -q 'AUTO EXECUTION = OFF' audit/V8_TACTICAL_VALIDATION_FRAMEWORK_V2.md
+          grep -q 'brak automatycznej zmiany progów produkcyjnych' audit/V8_TACTICAL_VALIDATION_FRAMEWORK_V2.md
+
+      - name: Potwierdź brak zmian produkcyjnych
+        run: |
+          sha256sum tactical_engine/TACTICAL_ENGINE.json > /tmp/prod_after.sha
+          sha256sum google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt >> /tmp/prod_after.sha
+          diff -u /tmp/prod_before.sha /tmp/prod_after.sha
+
+      - name: Final readiness
+        run: python scripts/v8_final_readiness.py
+
+      - name: Pełny audyt 1 z 2
+        run: python scripts/v8_full_double_audit_v2.py --pass-number 1
+
+      - name: Pełny audyt 2 z 2
+        run: python scripts/v8_full_double_audit_v2.py --pass-number 2
+
+      - name: Zapisz framework i raporty
+        run: |
+          git config user.name 'PawelKaminski12'
+          git config user.email 'pkaminski1@gmail.com'
+          git add tactical_validation/TACTICAL_VALIDATION_FRAMEWORK_V2.json tactical_validation/TACTICAL_VALIDATION_FRAMEWORK_V2_ASSETS.csv tactical_validation/TACTICAL_VALIDATION_FRAMEWORK_V2_REGIMES.csv audit/V8_TACTICAL_VALIDATION_FRAMEWORK_V2.md audit/V8_FINAL_READINESS.json audit/V8_FINAL_READINESS_LATEST.md audit/V8_FULL_AUDIT_PASS_1.json audit/V8_FULL_AUDIT_PASS_1.md audit/V8_FULL_AUDIT_PASS_2.json audit/V8_FULL_AUDIT_PASS_2.md google_sheets/V8_FINAL_READINESS.csv 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo 'Brak zmian do zapisu'
+          else
+            git commit -m 'Zapisz Tactical Validation Framework 2.0'
+            git push
+          fi
