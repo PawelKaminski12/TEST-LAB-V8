@@ -1,0 +1,295 @@
+name: TEST LAB V8 Onchain Activity
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '20 5 * * *'
+  push:
+    paths:
+      - '.github/workflows/test-lab-v8-onchain-activity.yml'
+      - 'config/alt_universe.csv'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-onchain-activity-writes
+  cancel-in-progress: false
+
+jobs:
+  build-onchain-activity:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install --quiet pandas requests
+
+      - name: Build onchain activity layer
+        run: |
+          python - <<'PY'
+          import json, math, time
+          from datetime import datetime, timezone, timedelta
+          from pathlib import Path
+          import pandas as pd
+          import requests
+
+          OUT=Path('crypto_data_hub')
+          OUT.mkdir(exist_ok=True)
+          CFG=Path('config/alt_universe.csv')
+          cfg=pd.read_csv(CFG)
+          cfg=cfg[cfg['enabled'].astype(str).str.lower().eq('true')].copy()
+
+          ASSET_MAP={
+              'ETH': {'cm':'eth','chain':'Ethereum'},
+              'SOL': {'cm':'sol','chain':'Solana'},
+              'LINK': {'cm':'link','chain':None},
+              'ONDO': {'cm':'ondo','chain':None},
+          }
+          METRICS=['AdrActCnt','TxCnt','TxTfrValAdjUSD']
+          CM='https://community-api.coinmetrics.io/v4/timeseries/asset-metrics'
+          LLAMA='https://api.llama.fi'
+          session=requests.Session()
+          session.headers.update({'User-Agent':'TEST-LAB-V8/1.0'})
+          end=datetime.now(timezone.utc)
+          start=end-timedelta(days=45)
+
+          def pct(a,b):
+              if a is None or b in (None,0): return None
+              try: return (float(a)/float(b)-1.0)*100.0
+              except Exception: return None
+
+          def safe_float(v):
+              try:
+                  x=float(v)
+                  return x if math.isfinite(x) else None
+              except Exception: return None
+
+          def trend_label(v7,v30):
+              vals=[v for v in [v7,v30] if v is not None]
+              if not vals: return 'NO_DATA'
+              avg=sum(vals)/len(vals)
+              if avg>=10: return 'STRONG_RISING'
+              if avg>=2: return 'RISING'
+              if avg<=-10: return 'STRONG_FALLING'
+              if avg<=-2: return 'FALLING'
+              return 'FLAT'
+
+          def cm_series(asset):
+              params={
+                  'assets':asset,
+                  'metrics':','.join(METRICS),
+                  'frequency':'1d',
+                  'start_time':start.isoformat().replace('+00:00','Z'),
+                  'end_time':end.isoformat().replace('+00:00','Z'),
+                  'page_size':10000,
+              }
+              try:
+                  r=session.get(CM,params=params,timeout=30)
+                  if r.status_code!=200:
+                      return pd.DataFrame(), f'HTTP_{r.status_code}'
+                  data=r.json().get('data',[])
+                  if not data: return pd.DataFrame(), 'NO_DATA'
+                  df=pd.DataFrame(data)
+                  df['time']=pd.to_datetime(df['time'],utc=True,errors='coerce')
+                  for m in METRICS:
+                      if m in df.columns: df[m]=pd.to_numeric(df[m],errors='coerce')
+                  return df.sort_values('time'), 'OK'
+              except Exception as e:
+                  return pd.DataFrame(), 'ERROR_'+type(e).__name__
+
+          def llama_tvl(chain):
+              if not chain: return pd.DataFrame(), 'NOT_APPLICABLE'
+              try:
+                  r=session.get(f'{LLAMA}/v2/historicalChainTvl/{chain}',timeout=30)
+                  if r.status_code!=200: return pd.DataFrame(), f'HTTP_{r.status_code}'
+                  data=r.json()
+                  if not isinstance(data,list) or not data: return pd.DataFrame(), 'NO_DATA'
+                  df=pd.DataFrame(data)
+                  df['date']=pd.to_datetime(df['date'],unit='s',utc=True,errors='coerce')
+                  df['tvl']=pd.to_numeric(df['tvl'],errors='coerce')
+                  return df.dropna(subset=['date','tvl']).sort_values('date').tail(60), 'OK'
+              except Exception as e:
+                  return pd.DataFrame(), 'ERROR_'+type(e).__name__
+
+          def llama_dex(chain):
+              if not chain: return pd.DataFrame(), 'NOT_APPLICABLE'
+              try:
+                  url=f'{LLAMA}/overview/dexs/{chain}'
+                  params={'excludeTotalDataChart':'false','excludeTotalDataChartBreakdown':'true','dataType':'dailyVolume'}
+                  r=session.get(url,params=params,timeout=30)
+                  if r.status_code!=200: return pd.DataFrame(), f'HTTP_{r.status_code}'
+                  obj=r.json(); chart=obj.get('totalDataChart') or []
+                  rows=[]
+                  for x in chart:
+                      if isinstance(x,list) and len(x)>=2: rows.append({'date':x[0],'volume':x[1]})
+                  if not rows: return pd.DataFrame(), 'NO_DATA'
+                  df=pd.DataFrame(rows)
+                  df['date']=pd.to_datetime(df['date'],unit='s',utc=True,errors='coerce')
+                  df['volume']=pd.to_numeric(df['volume'],errors='coerce')
+                  return df.dropna(subset=['date','volume']).sort_values('date').tail(60), 'OK'
+              except Exception as e:
+                  return pd.DataFrame(), 'ERROR_'+type(e).__name__
+
+          def point_change(s,days):
+              s=s.dropna()
+              if len(s)<2: return None
+              cur=float(s.iloc[-1])
+              idx=max(0,len(s)-1-days)
+              old=float(s.iloc[idx])
+              return pct(cur,old)
+
+          def sum_change(s,days):
+              s=s.dropna()
+              if len(s)<days*2: return None
+              recent=float(s.iloc[-days:].sum())
+              prev=float(s.iloc[-2*days:-days].sum())
+              return pct(recent,prev)
+
+          assets=[]
+          raw_rows=[]
+          for sym in [str(x).upper().strip() for x in cfg['symbol'].tolist() if str(x).upper().strip() in ASSET_MAP]:
+              meta=ASSET_MAP[sym]
+              cm,cm_status=cm_series(meta['cm'])
+              tvl,tvl_status=llama_tvl(meta['chain'])
+              dex,dex_status=llama_dex(meta['chain'])
+
+              metrics={}
+              for m in METRICS:
+                  if m in cm.columns and cm[m].notna().any():
+                      ss=cm[m].dropna()
+                      metrics[m]={
+                          'latest':safe_float(ss.iloc[-1]),
+                          'change_7d_pct':point_change(ss,7),
+                          'change_30d_pct':point_change(ss,30),
+                          'trend':trend_label(point_change(ss,7),point_change(ss,30)),
+                      }
+                  else:
+                      metrics[m]={'latest':None,'change_7d_pct':None,'change_30d_pct':None,'trend':'NO_DATA'}
+
+              tvl_block={'latest_usd':None,'change_7d_pct':None,'change_30d_pct':None,'trend':'NO_DATA'}
+              if not tvl.empty:
+                  s=tvl['tvl'].dropna()
+                  tvl_block={
+                      'latest_usd':safe_float(s.iloc[-1]),
+                      'change_7d_pct':point_change(s,7),
+                      'change_30d_pct':point_change(s,30),
+                      'trend':trend_label(point_change(s,7),point_change(s,30)),
+                  }
+
+              dex_block={'latest_daily_usd':None,'change_7d_vs_prev7_pct':None,'change_30d_vs_prev30_pct':None,'trend':'NO_DATA'}
+              if not dex.empty:
+                  s=dex['volume'].dropna()
+                  c7=sum_change(s,7); c30=sum_change(s,30)
+                  dex_block={
+                      'latest_daily_usd':safe_float(s.iloc[-1]),
+                      'change_7d_vs_prev7_pct':c7,
+                      'change_30d_vs_prev30_pct':c30,
+                      'trend':trend_label(c7,c30),
+                  }
+
+              available=0; possible=0
+              for m in METRICS:
+                  possible+=1; available+=1 if metrics[m]['latest'] is not None else 0
+              if meta['chain']:
+                  possible+=2
+                  available+=1 if tvl_block['latest_usd'] is not None else 0
+                  available+=1 if dex_block['latest_daily_usd'] is not None else 0
+              coverage=round(available/possible*100) if possible else 0
+
+              long_votes=[]; tactical_votes=[]
+              for b in metrics.values():
+                  if b['change_30d_pct'] is not None: long_votes.append(b['change_30d_pct'])
+                  if b['change_7d_pct'] is not None: tactical_votes.append(b['change_7d_pct'])
+              if tvl_block['change_30d_pct'] is not None: long_votes.append(tvl_block['change_30d_pct'])
+              if dex_block['change_30d_vs_prev30_pct'] is not None: long_votes.append(dex_block['change_30d_vs_prev30_pct'])
+              if tvl_block['change_7d_pct'] is not None: tactical_votes.append(tvl_block['change_7d_pct'])
+              if dex_block['change_7d_vs_prev7_pct'] is not None: tactical_votes.append(dex_block['change_7d_vs_prev7_pct'])
+
+              def context(votes):
+                  if not votes: return {'score':None,'label':'NO_DATA'}
+                  pos=sum(v>2 for v in votes); neg=sum(v<-2 for v in votes); n=len(votes)
+                  score=round((pos-neg+n)/(2*n)*10)
+                  score=max(0,min(10,score))
+                  label='STRONG_POSITIVE' if score>=8 else 'POSITIVE' if score>=6 else 'NEUTRAL' if score>=4 else 'NEGATIVE' if score>=2 else 'STRONG_NEGATIVE'
+                  return {'score':score,'label':label}
+
+              lc=context(long_votes); tc=context(tactical_votes)
+              asset={
+                  'symbol':sym,'coinmetrics_asset':meta['cm'],'defillama_chain':meta['chain'],
+                  'source_status':{'coinmetrics':cm_status,'defillama_tvl':tvl_status,'defillama_dex':dex_status},
+                  'coverage_pct':coverage,
+                  'network_metrics':metrics,
+                  'tvl':tvl_block,'dex_volume':dex_block,
+                  'long_onchain_score_0_10':lc['score'],'long_onchain_label':lc['label'],
+                  'tactical_onchain_score_0_10':tc['score'],'tactical_onchain_label':tc['label'],
+                  'role':'context only; never standalone trade signal',
+              }
+              assets.append(asset)
+              raw_rows.append({
+                  'date':end.date().isoformat(),'symbol':sym,'coverage_pct':coverage,
+                  'active_addresses':metrics['AdrActCnt']['latest'],'active_addresses_7d_pct':metrics['AdrActCnt']['change_7d_pct'],'active_addresses_30d_pct':metrics['AdrActCnt']['change_30d_pct'],
+                  'tx_count':metrics['TxCnt']['latest'],'tx_count_7d_pct':metrics['TxCnt']['change_7d_pct'],'tx_count_30d_pct':metrics['TxCnt']['change_30d_pct'],
+                  'transfer_value_adj_usd':metrics['TxTfrValAdjUSD']['latest'],'transfer_value_7d_pct':metrics['TxTfrValAdjUSD']['change_7d_pct'],'transfer_value_30d_pct':metrics['TxTfrValAdjUSD']['change_30d_pct'],
+                  'tvl_usd':tvl_block['latest_usd'],'tvl_7d_pct':tvl_block['change_7d_pct'],'tvl_30d_pct':tvl_block['change_30d_pct'],
+                  'dex_daily_usd':dex_block['latest_daily_usd'],'dex_7d_vs_prev7_pct':dex_block['change_7d_vs_prev7_pct'],'dex_30d_vs_prev30_pct':dex_block['change_30d_vs_prev30_pct'],
+                  'long_onchain_score_0_10':lc['score'],'long_onchain_label':lc['label'],
+                  'tactical_onchain_score_0_10':tc['score'],'tactical_onchain_label':tc['label'],
+              })
+              time.sleep(0.35)
+
+          coverage_assets=sum(a['coverage_pct']>0 for a in assets)
+          payload={
+              'generated_at_utc':end.isoformat(),
+              'engine':'ONCHAIN_ACTIVITY_v0.1',
+              'assets':assets,
+              'summary':{
+                  'assets_requested':len(assets),'assets_with_any_data':coverage_assets,
+                  'coinmetrics_metrics':METRICS,
+                  'defillama_layers':['CHAIN_TVL','DEX_VOLUME'],
+              },
+              'hard_rules':{
+                  'onchain_is_context_not_signal':True,
+                  'missing_data_is_never_imputed':True,
+                  'network_metrics_not_equal_token_fundamentals':True,
+                  'exchange_netflow_not_claimed_without_verified_source':True,
+                  'whale_flow_not_claimed_without_verified_source':True,
+                  'V7_UNTOUCHED':True,
+              },
+              'limitations':[
+                  'Community-source coverage differs by asset and metric; unsupported values remain null.',
+                  'ETH/SOL chain TVL and DEX activity describe the network, not solely the token investment case.',
+                  'Verified exchange netflow and whale-wallet flow are intentionally left pending until a reliable source is connected.',
+                  'ONDO and LINK may have partial Coin Metrics community coverage; missing fields are not guessed.'
+              ]
+          }
+          (OUT/'ONCHAIN_ACTIVITY.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False),encoding='utf-8')
+          df=pd.DataFrame(raw_rows)
+          df.to_csv(OUT/'ONCHAIN_ACTIVITY.csv',index=False)
+
+          hf=OUT/'ONCHAIN_ACTIVITY_HISTORY.csv'
+          if hf.exists() and not df.empty:
+              old=pd.read_csv(hf)
+              df=pd.concat([old,df],ignore_index=True).drop_duplicates(['date','symbol'],keep='last').sort_values(['date','symbol'])
+          df.to_csv(hf,index=False)
+          print(json.dumps(payload,indent=2,ensure_ascii=False))
+          PY
+
+      - name: Commit onchain outputs
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add crypto_data_hub/ONCHAIN_ACTIVITY.json crypto_data_hub/ONCHAIN_ACTIVITY.csv crypto_data_hub/ONCHAIN_ACTIVITY_HISTORY.csv
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update V8 onchain activity layer'
+            git pull --rebase origin main
+            git push
+          fi
