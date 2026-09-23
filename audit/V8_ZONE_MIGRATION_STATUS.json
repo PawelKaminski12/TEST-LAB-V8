@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-23T17:40:44.014094+00:00",
+  "generated_at_utc": "2026-09-23T17:51:15.216958+00:00",
   "numeric_ready_points": 34,
   "total_points": 77,
   "numeric_ready_percent": 44.2,
@@ -45,18 +45,18 @@
     },
     {
       "symbol": "RENDER",
-      "source_found_count": 0,
+      "source_found_count": 2,
       "numeric_ready_count": 0,
-      "source_found_timeframes": "BRAK",
+      "source_found_timeframes": "1D, 1T",
       "numeric_ready_timeframes": "BRAK",
       "missing_numeric_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
       "complete_7_of_7": false
     },
     {
       "symbol": "FLOKI",
-      "source_found_count": 2,
+      "source_found_count": 7,
       "numeric_ready_count": 2,
-      "source_found_timeframes": "1D, 1T",
+      "source_found_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
       "numeric_ready_timeframes": "1D, 1T",
       "missing_numeric_timeframes": "2D, 3D, 4D, 5D, 2T",
       "complete_7_of_7": false
