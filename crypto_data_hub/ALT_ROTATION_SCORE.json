@@ -1,6 +1,6 @@
 {
   "date": "2026-09-22",
-  "engine": "ALT_ROTATION_SCORE_v0.2",
+  "engine": "ALT_ROTATION_SCORE_v0.3",
   "score_0_10": 7,
   "status": "CONFIRMED",
   "confidence": "MEDIUM",
@@ -13,6 +13,30 @@
     "ALT_RS_BREADTH": 1,
     "BROAD_ROTATION_TREND": 0
   },
+  "flow_context": {
+    "eth_btc": {
+      "change_5d_pct": 0.0,
+      "change_20d_pct": 3.279176735238498,
+      "above_sma50": true,
+      "sma50_rising_20d": true
+    },
+    "etf": {
+      "btc_5d_usdm": 2010.3,
+      "eth_5d_usdm": 312.5,
+      "eth_20d_usdm": 1415.3000000000002,
+      "eth_acceleration_5d_usdm": 112.19999999999999,
+      "sol_5d_usdm": 103.30000000000001,
+      "btc_trend": null,
+      "eth_trend": null,
+      "sol_trend": null
+    },
+    "stablecoin": {
+      "change_7d_pct": 0.4542013197231354,
+      "change_14d_pct": 0.0,
+      "change_30d_pct": 1.099864519367677
+    },
+    "broad_rotation": {}
+  },
   "broad_rotation_history_ready": false,
   "broad_rotation_detail": {},
   "selected_alt_breadth_strong": [
@@ -24,37 +48,49 @@
     "SOL": {
       "individual_rs_0_4": 4,
       "label": "LEADER",
+      "vs_btc_5d_pct": null,
       "vs_btc_20d_pct": 5.916882678215174,
+      "vs_eth_5d_pct": null,
       "vs_eth_20d_pct": 2.5539571735148314
     },
     "LINK": {
       "individual_rs_0_4": 4,
       "label": "LEADER",
+      "vs_btc_5d_pct": null,
       "vs_btc_20d_pct": 5.260511723780037,
+      "vs_eth_5d_pct": null,
       "vs_eth_20d_pct": 1.9184263964659332
     },
     "AAVE": {
       "individual_rs_0_4": 4,
       "label": "LEADER",
+      "vs_btc_5d_pct": null,
       "vs_btc_20d_pct": 4.416787009193945,
+      "vs_eth_5d_pct": null,
       "vs_eth_20d_pct": 1.1014904552074212
     },
     "HBAR": {
       "individual_rs_0_4": 2,
       "label": "WATCH",
+      "vs_btc_5d_pct": null,
       "vs_btc_20d_pct": 19.207919522096994,
+      "vs_eth_5d_pct": null,
       "vs_eth_20d_pct": 15.422995506337811
     },
     "ONDO": {
       "individual_rs_0_4": 2,
       "label": "WATCH",
+      "vs_btc_5d_pct": null,
       "vs_btc_20d_pct": 13.634345311328433,
+      "vs_eth_5d_pct": null,
       "vs_eth_20d_pct": 10.026385669819948
     }
   },
   "hard_rules": {
     "score_is_not_buy_signal": true,
     "relative_strength_is_not_hard_gate": true,
+    "etf_flow_is_confirmation_not_oracle": true,
+    "flow_context_is_not_standalone_signal": true,
     "requires_price_zone_trend_retest_layer_before_trade_decision": true,
     "requires_data_quality_pass": true
   },
