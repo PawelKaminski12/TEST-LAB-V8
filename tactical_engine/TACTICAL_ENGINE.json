@@ -1,6 +1,6 @@
 {
   "generated_at_utc": "2026-09-23T13:02:40.890335+00:00",
-  "engine": "V8_TACTICAL_ENGINE_v0.4",
+  "engine": "V8_TACTICAL_ENGINE_v0.5",
   "purpose": "short swing research engine using CLOSED 1H timing, CLOSED 4H decision, CLOSED 1D regime",
   "research_only": true,
   "not_execution_connected": true,
@@ -20,7 +20,20 @@
     "higher_timeframe_zones_are_context_not_standalone_signal": true,
     "in_supply_blocks_tactical_long_labels": true,
     "market_phase_context_not_hard_gate": true,
-    "market_reader_optional_external_second_eye": true
+    "market_reader_optional_external_second_eye": true,
+    "macd_extremes_relative_to_own_history": true,
+    "macd_extreme_lookback_bars": 250,
+    "macd_warning_percentiles": [
+      5.0,
+      95.0
+    ],
+    "macd_extreme_percentiles": [
+      2.5,
+      97.5
+    ],
+    "macd_warning_abs_zscore": 1.75,
+    "macd_extreme_abs_zscore": 2.0,
+    "macd_extreme_is_context_not_standalone_trade_signal": true
   },
   "assets": [
     {
@@ -64,7 +77,14 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T12:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "macd_hist_percentile": 16.400000000000002,
+          "macd_hist_zscore": -1.0751060039636293,
+          "macd_extreme_label": "NORMAL",
+          "macd_extreme_warning": false,
+          "macd_extreme": false,
+          "macd_extreme_direction": "NONE",
+          "macd_extreme_lookback": 250
         },
         "4H": {
           "timeframe": "4H",
@@ -96,7 +116,14 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T11:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "macd_hist_percentile": 20.8,
+          "macd_hist_zscore": -0.6026274172660947,
+          "macd_extreme_label": "NORMAL",
+          "macd_extreme_warning": false,
+          "macd_extreme": false,
+          "macd_extreme_direction": "NONE",
+          "macd_extreme_lookback": 250
         },
         "1D": {
           "timeframe": "1D",
@@ -128,7 +155,14 @@
           "rows_closed": 499,
           "last_close_time_utc": "2026-09-22T23:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "macd_hist_percentile": 69.19999999999999,
+          "macd_hist_zscore": 0.597897023304397,
+          "macd_extreme_label": "NORMAL",
+          "macd_extreme_warning": false,
+          "macd_extreme": false,
+          "macd_extreme_direction": "NONE",
+          "macd_extreme_lookback": 250
         }
       },
       "tactical_score_0_10": 5,
@@ -208,7 +242,14 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T12:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "macd_hist_percentile": 20.0,
+          "macd_hist_zscore": -0.9722812050359735,
+          "macd_extreme_label": "NORMAL",
+          "macd_extreme_warning": false,
+          "macd_extreme": false,
+          "macd_extreme_direction": "NONE",
+          "macd_extreme_lookback": 250
         },
         "4H": {
           "timeframe": "4H",
@@ -240,7 +281,14 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T11:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "macd_hist_percentile": 30.4,
+          "macd_hist_zscore": -0.5883676137129642,
+          "macd_extreme_label": "NORMAL",
+          "macd_extreme_warning": false,
+          "macd_extreme": false,
+          "macd_extreme_direction": "NONE",
+          "macd_extreme_lookback": 250
         },
         "1D": {
           "timeframe": "1D",
@@ -272,7 +320,14 @@
           "rows_closed": 499,
           "last_close_time_utc": "2026-09-22T23:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "macd_hist_percentile": 84.39999999999999,
+          "macd_hist_zscore": 0.9684996841969282,
+          "macd_extreme_label": "NORMAL",
+          "macd_extreme_warning": false,
+          "macd_extreme": false,
+          "macd_extreme_direction": "NONE",
+          "macd_extreme_lookback": 250
         }
       },
       "tactical_score_0_10": 6,
@@ -352,7 +407,14 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T12:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "macd_hist_percentile": 9.6,
+          "macd_hist_zscore": -1.2915341312912607,
+          "macd_extreme_label": "NORMAL",
+          "macd_extreme_warning": false,
+          "macd_extreme": false,
+          "macd_extreme_direction": "NONE",
+          "macd_extreme_lookback": 250
         },
         "4H": {
           "timeframe": "4H",
@@ -384,7 +446,14 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T11:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "macd_hist_percentile": 19.2,
+          "macd_hist_zscore": -0.8466986743633934,
+          "macd_extreme_label": "NORMAL",
+          "macd_extreme_warning": false,
+          "macd_extreme": false,
+          "macd_extreme_direction": "NONE",
+          "macd_extreme_lookback": 250
         },
         "1D": {
           "timeframe": "1D",
@@ -416,7 +485,14 @@
           "rows_closed": 499,
           "last_close_time_utc": "2026-09-22T23:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "macd_hist_percentile": 80.0,
+          "macd_hist_zscore": 0.7759764649978359,
+          "macd_extreme_label": "NORMAL",
+          "macd_extreme_warning": false,
+          "macd_extreme": false,
+          "macd_extreme_direction": "NONE",
+          "macd_extreme_lookback": 250
         }
       },
       "tactical_score_0_10": 6,
@@ -496,7 +572,14 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T12:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "macd_hist_percentile": 30.8,
+          "macd_hist_zscore": -0.4394420323833189,
+          "macd_extreme_label": "NORMAL",
+          "macd_extreme_warning": false,
+          "macd_extreme": false,
+          "macd_extreme_direction": "NONE",
+          "macd_extreme_lookback": 250
         },
         "4H": {
           "timeframe": "4H",
@@ -528,7 +611,14 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T11:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "macd_hist_percentile": 5.2,
+          "macd_hist_zscore": -1.5097135146474507,
+          "macd_extreme_label": "NORMAL",
+          "macd_extreme_warning": false,
+          "macd_extreme": false,
+          "macd_extreme_direction": "NONE",
+          "macd_extreme_lookback": 250
         },
         "1D": {
           "timeframe": "1D",
@@ -556,11 +646,20 @@
           "return_5bars_pct": 18.53344077356971,
           "return_20bars_pct": 26.664753157290487,
           "technical_confirmation_0_10": 10,
-          "extreme_flags": [],
+          "extreme_flags": [
+            "MACD_EXTREME_POSITIVE"
+          ],
           "rows_closed": 499,
           "last_close_time_utc": "2026-09-22T23:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "macd_hist_percentile": 98.0,
+          "macd_hist_zscore": 2.3593914400864415,
+          "macd_extreme_label": "EXTREME_POSITIVE",
+          "macd_extreme_warning": true,
+          "macd_extreme": true,
+          "macd_extreme_direction": "POSITIVE",
+          "macd_extreme_lookback": 250
         }
       },
       "tactical_score_0_10": 5,
@@ -593,7 +692,9 @@
       },
       "exit_risk_0_10": 5,
       "exit_risk_label": "TAKE_PROFIT_WATCH",
-      "extreme_summary": [],
+      "extreme_summary": [
+        "1D:MACD_EXTREME_POSITIVE"
+      ],
       "market_reader_external": {
         "status": "NOT_CONNECTED",
         "role": "optional second-eye confirmation only"
@@ -640,7 +741,14 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T12:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "macd_hist_percentile": 20.0,
+          "macd_hist_zscore": -0.8460709838436059,
+          "macd_extreme_label": "NORMAL",
+          "macd_extreme_warning": false,
+          "macd_extreme": false,
+          "macd_extreme_direction": "NONE",
+          "macd_extreme_lookback": 250
         },
         "4H": {
           "timeframe": "4H",
@@ -672,7 +780,14 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T11:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "macd_hist_percentile": 69.19999999999999,
+          "macd_hist_zscore": 0.3311157524602928,
+          "macd_extreme_label": "NORMAL",
+          "macd_extreme_warning": false,
+          "macd_extreme": false,
+          "macd_extreme_direction": "NONE",
+          "macd_extreme_lookback": 250
         },
         "1D": {
           "timeframe": "1D",
@@ -704,7 +819,14 @@
           "rows_closed": 499,
           "last_close_time_utc": "2026-09-22T23:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "macd_hist_percentile": 82.39999999999999,
+          "macd_hist_zscore": 0.8213743352246436,
+          "macd_extreme_label": "NORMAL",
+          "macd_extreme_warning": false,
+          "macd_extreme": false,
+          "macd_extreme_direction": "NONE",
+          "macd_extreme_lookback": 250
         }
       },
       "tactical_score_0_10": 9,
@@ -764,11 +886,20 @@
           "return_5bars_pct": -3.1170158405723125,
           "return_20bars_pct": -1.4348097317529729,
           "technical_confirmation_0_10": 3,
-          "extreme_flags": [],
+          "extreme_flags": [
+            "MACD_EXTREME_NEGATIVE"
+          ],
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T12:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "macd_hist_percentile": 0.0,
+          "macd_hist_zscore": -4.567263132066564,
+          "macd_extreme_label": "EXTREME_NEGATIVE",
+          "macd_extreme_warning": true,
+          "macd_extreme": true,
+          "macd_extreme_direction": "NEGATIVE",
+          "macd_extreme_lookback": 250
         },
         "4H": {
           "timeframe": "4H",
@@ -802,7 +933,14 @@
           "rows_closed": 999,
           "last_close_time_utc": "2026-09-23T11:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "macd_hist_percentile": 60.0,
+          "macd_hist_zscore": 0.1164739231269903,
+          "macd_extreme_label": "NORMAL",
+          "macd_extreme_warning": false,
+          "macd_extreme": false,
+          "macd_extreme_direction": "NONE",
+          "macd_extreme_lookback": 250
         },
         "1D": {
           "timeframe": "1D",
@@ -832,12 +970,20 @@
           "technical_confirmation_0_10": 8,
           "extreme_flags": [
             "RSI_OVERBOUGHT",
-            "FOMO_HARD_BLOCK"
+            "FOMO_HARD_BLOCK",
+            "MACD_EXTREME_POSITIVE"
           ],
           "rows_closed": 499,
           "last_close_time_utc": "2026-09-22T23:59:59.999000+00:00",
           "closed_bar_only": true,
-          "stale": false
+          "stale": false,
+          "macd_hist_percentile": 98.8,
+          "macd_hist_zscore": 2.8952844346782785,
+          "macd_extreme_label": "EXTREME_POSITIVE",
+          "macd_extreme_warning": true,
+          "macd_extreme": true,
+          "macd_extreme_direction": "POSITIVE",
+          "macd_extreme_lookback": 250
         }
       },
       "tactical_score_0_10": 8,
@@ -855,9 +1001,11 @@
       "exit_risk_0_10": 2,
       "exit_risk_label": "HOLD_TACTICAL_OK",
       "extreme_summary": [
+        "1H:MACD_EXTREME_NEGATIVE",
         "4H:MFI_OVERBOUGHT_WARNING",
         "1D:RSI_OVERBOUGHT",
-        "1D:FOMO_HARD_BLOCK"
+        "1D:FOMO_HARD_BLOCK",
+        "1D:MACD_EXTREME_POSITIVE"
       ],
       "market_reader_external": {
         "status": "NOT_CONNECTED",
