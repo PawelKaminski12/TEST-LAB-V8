@@ -59,8 +59,7 @@ jobs:
               'zones':Path('config/alt_zones.csv'),
           }
           missing=[k for k,p in required.items() if not p.exists()]
-          if missing:
-              raise SystemExit('Missing core modules: '+', '.join(missing))
+          if missing: raise SystemExit('Missing core modules: '+', '.join(missing))
 
           snap=json.loads(required['snapshot'].read_text(encoding='utf-8'))
           rot=json.loads(required['rotation'].read_text(encoding='utf-8'))
@@ -77,6 +76,9 @@ jobs:
           decmap={x.get('symbol'):x for x in dec.get('assets',[])}
           readymap={x.get('symbol'):x for x in ready.get('assets',[])}
           phasemap={x.get('symbol'):x for x in phase.get('asset_context',[])}
+          dual_flow=phase.get('dual_horizon_flow_context',{}) or {}
+          long_flow=dual_flow.get('LONG',{}) or {}
+          tactical_flow=dual_flow.get('TACTICAL',{}) or {}
 
           rows=[]
           for sym in symbols:
@@ -96,6 +98,12 @@ jobs:
                   'fomo_score_0_10':t.get('fomo_score_0_10'),
                   'rotation_label':pc.get('rotation_label'),
                   'market_phase':phase.get('phase'),
+                  'long_flow_score_0_10':d.get('long_flow_score_0_10',pc.get('long_flow_score_0_10')),
+                  'long_flow_label':d.get('long_flow_label'),
+                  'tactical_flow_score_0_5':pc.get('tactical_flow_score_0_5'),
+                  'direct_etf_5d_usdm':(pc.get('direct_etf_context') or {}).get('flow_5d_usdm') if isinstance(pc.get('direct_etf_context'),dict) else None,
+                  'direct_etf_20d_usdm':(pc.get('direct_etf_context') or {}).get('flow_20d_usdm') if isinstance(pc.get('direct_etf_context'),dict) else None,
+                  'direct_etf_30d_usdm':(pc.get('direct_etf_context') or {}).get('flow_30d_usdm') if isinstance(pc.get('direct_etf_context'),dict) else None,
                   'decision':d.get('decision'),
                   'dca1':d.get('zones',{}).get('dca1'),
                   'dca2':d.get('zones',{}).get('dca2'),
@@ -104,13 +112,18 @@ jobs:
               })
 
           df=pd.DataFrame(rows)
-          prod_ready = len(df)>0 and bool(df['readiness_status'].eq('PRODUCTION_DATA_READY').all())
-          full_zones = len(df)>0 and bool(df['full_zones_ready'].fillna(False).all())
-          decisions_present = len(df)>0 and bool(df['decision'].notna().all()) and bool((df['decision']!='DATA_PENDING').all())
-          technical_ready = all(sym in techmap and techmap[sym].get('qa')=='PASS' for sym in symbols)
-          rotation_ready = rot.get('score_0_10') is not None
-          phase_ready = phase.get('phase') is not None
-          snapshot_qa = bool(snap.get('qa',{}).get('PASS'))
+          prod_ready=len(df)>0 and bool(df['readiness_status'].eq('PRODUCTION_DATA_READY').all())
+          full_zones=len(df)>0 and bool(df['full_zones_ready'].fillna(False).all())
+          decisions_present=len(df)>0 and bool(df['decision'].notna().all()) and bool((df['decision']!='DATA_PENDING').all())
+          technical_ready=all(sym in techmap and techmap[sym].get('qa')=='PASS' for sym in symbols)
+          rotation_ready=rot.get('score_0_10') is not None
+          phase_ready=phase.get('phase') is not None
+          snapshot_qa=bool(snap.get('qa',{}).get('PASS'))
+          long_flow_ready=long_flow.get('score_0_10') is not None and long_flow.get('label') is not None
+          tactical_flow_ready=tactical_flow.get('score_0_5') is not None and tactical_flow.get('label') is not None
+          etf_ready=int(snap.get('qa',{}).get('btc_etf_rows',0) or 0)>100 and int(snap.get('qa',{}).get('eth_etf_rows',0) or 0)>100
+          stablecoin_ready=int(snap.get('qa',{}).get('stablecoin_history_rows',0) or 0)>100
+          ethbtc_ready=int(snap.get('qa',{}).get('eth_btc_history_rows',0) or 0)>200
 
           core_modules={
               'PRICE_DATA_QA':snapshot_qa,
@@ -118,6 +131,10 @@ jobs:
               'TECHNICAL_LAYER':technical_ready,
               'ROTATION_LAYER':rotation_ready,
               'MARKET_PHASE_LAYER':phase_ready,
+              'DUAL_HORIZON_FLOW_CONTEXT':long_flow_ready and tactical_flow_ready,
+              'ETF_BTC_ETH_FEED':etf_ready,
+              'STABLECOIN_LIQUIDITY_FEED':stablecoin_ready,
+              'ETH_BTC_RELATIVE_STRENGTH':ethbtc_ready,
               'DECISION_LAYER':decisions_present,
           }
           core_ready=sum(bool(v) for v in core_modules.values())
@@ -131,15 +148,16 @@ jobs:
           }
           ext_ready=sum(bool(v) for v in extended.values())
 
-          if core_ready==len(core_modules):
-              status='CORE_ALT_ENGINE_READY_FOR_VALIDATION'
-          else:
-              status='CORE_ALT_ENGINE_INCOMPLETE'
+          status='CORE_ALT_ENGINE_READY_FOR_VALIDATION' if core_ready==len(core_modules) else 'CORE_ALT_ENGINE_INCOMPLETE'
 
           blockers=[]
           if not prod_ready: blockers.append('PRODUCTION_DATA_NOT_4_OF_4')
           if not full_zones: blockers.append('FULL_ZONE_MAP_NOT_4_OF_4')
           if not decisions_present: blockers.append('DECISION_LAYER_PENDING')
+          if not long_flow_ready or not tactical_flow_ready: blockers.append('DUAL_FLOW_CONTEXT_PENDING')
+          if not etf_ready: blockers.append('BTC_ETH_ETF_FEED_NOT_READY')
+          if not stablecoin_ready: blockers.append('STABLECOIN_FEED_NOT_READY')
+          if not ethbtc_ready: blockers.append('ETH_BTC_HISTORY_NOT_READY')
           if not rot.get('broad_rotation_history_ready'): blockers.append('BROAD_ROTATION_HISTORY_MATURING')
           if int(snap.get('qa',{}).get('sol_etf_rows',0) or 0)<20: blockers.append('SOL_ETF_HISTORY_IMMATURE')
           blockers.append('ETF_SOURCE_CROSSCHECK_PENDING')
@@ -148,7 +166,7 @@ jobs:
 
           out={
               'date':snap.get('target_date'),
-              'engine':'ALT_ENGINE_MASTER_CHECKPOINT_v0.1',
+              'engine':'ALT_ENGINE_MASTER_CHECKPOINT_v0.2',
               'status':status,
               'production_universe':symbols,
               'production_assets_count':len(symbols),
@@ -161,6 +179,8 @@ jobs:
               'market_phase_confidence':phase.get('phase_confidence'),
               'alt_rotation_score_0_10':rot.get('score_0_10'),
               'alt_rotation_status':rot.get('status'),
+              'long_flow_context':long_flow,
+              'tactical_flow_context':tactical_flow,
               'research_only':True,
               'not_strategy_frozen':True,
               'not_execution_connected':True,
@@ -172,6 +192,8 @@ jobs:
                   'PRODUCTION_AND_TEST_UNIVERSES_SEPARATE':True,
                   'DATA_PENDING_NOT_TRADE_SIGNAL':True,
                   'MARKET_PHASE_CONTEXT_NOT_HARD_BUY_GATE':True,
+                  'ETF_FLOW_CONFIRMATION_NOT_ORACLE':True,
+                  'LONG_AND_TACTICAL_USE_SEPARATE_FLOW_HORIZONS':True,
               }
           }
           (R/'ALT_ENGINE_MASTER_CHECKPOINT.json').write_text(json.dumps(out,indent=2,ensure_ascii=False),encoding='utf-8')
