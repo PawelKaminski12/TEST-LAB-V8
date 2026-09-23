@@ -71,8 +71,7 @@ def load_yf(sym,period='2y',interval='1d'):
 
 def resample_4h(hourly):
     if hourly.empty:return hourly
-    try:
-        return hourly.resample('4h').agg({'Open':'first','High':'max','Low':'min','Close':'last','Volume':'sum'}).dropna()
+    try:return hourly.resample('4h').agg({'Open':'first','High':'max','Low':'min','Close':'last','Volume':'sum'}).dropna()
     except Exception:return pd.DataFrame()
 
 def stock_fundamentals(sym):
@@ -107,8 +106,33 @@ def deep_compare(history,sym,current):
     except Exception: pass
     return {'status':'TRACKING','baseline_utc':str(btime),'elapsed_days':elapsed,'price_change_pct':pct(current.get('price'),b.get('price')),'trend_change':delta(current.get('trend_0_4'),b.get('trend_0_4')),'rsi_change':delta(current.get('rsi14'),b.get('rsi14')),'mfi_change':delta(current.get('mfi14'),b.get('mfi14')),'fomo_change':delta(current.get('fomo_0_10'),b.get('fomo_0_10')),'onchain_long_change':delta(current.get('onchain_long'),b.get('onchain_long')),'onchain_tactical_change':delta(current.get('onchain_tactical'),b.get('onchain_tactical')),'baseline_engine_decision':None if pd.isna(b.get('engine_decision')) else str(b.get('engine_decision')),'current_engine_decision':current.get('engine_decision')}
 
-def fast_score(t1,t4,td,typ,oc,phase,mm):
-    if td.get('status')!='OK': return {'score_0_10':None,'label':'INSUFFICIENT_DATA','risk_flags':['NO_DAILY_DATA']}
+def btc_etf_context(inputs):
+    one=sf(inputs.get('btc_etf_1d_usdm')); five=sf(inputs.get('btc_etf_5d_usdm')); twenty=sf(inputs.get('btc_etf_20d_usdm')); thirty=sf(inputs.get('btc_etf_30d_usdm')); accel=sf(inputs.get('btc_etf_accel_5d_usdm'))
+    vals=[one,five,twenty,thirty]
+    if all(v is None for v in vals):
+        return {'status':'NO_DATA','label_pl':'BRAK DANYCH O PRZEPŁYWACH ETF','score_adjustment':0.0}
+    adj=0.0
+    if five is not None and twenty is not None:
+        if five>0 and twenty>0:
+            if accel is not None and accel>0:
+                label='NAPŁYW PRZYSPIESZA'; adj=0.8
+            else:
+                label='NAPŁYW KAPITAŁU'; adj=0.4
+        elif five<0 and twenty<0:
+            if accel is not None and accel<0:
+                label='ODPŁYW PRZYSPIESZA'; adj=-0.8
+            else:
+                label='ODPŁYW KAPITAŁU'; adj=-0.4
+        else:
+            label='PRZEPŁYWY MIESZANE'; adj=0.0
+    elif five is not None:
+        label='NAPŁYW KAPITAŁU' if five>0 else 'ODPŁYW KAPITAŁU' if five<0 else 'NEUTRALNIE'; adj=0.25 if five>0 else -0.25 if five<0 else 0.0
+    else:
+        label='DANE CZĘŚCIOWE'; adj=0.0
+    return {'status':'OK','label_pl':label,'flow_1d_usdm':one,'flow_5d_usdm':five,'flow_20d_usdm':twenty,'flow_30d_usdm':thirty,'acceleration_5d_usdm':accel,'score_adjustment':adj,'explanation_pl':'Dodatnia wartość oznacza napływ kapitału do amerykańskich spot ETF BTC; ujemna oznacza odpływ.'}
+
+def fast_score(t1,t4,td,typ,oc,phase,mm,sym):
+    if td.get('status')!='OK': return {'score_0_10':None,'label':'INSUFFICIENT_DATA','risk_flags':['NO_DAILY_DATA'],'btc_etf_adjustment':0.0}
     score=0.0; flags=[]
     score += (td.get('trend_0_4') or 0)*0.9
     if t4.get('status')=='OK': score += (t4.get('trend_0_4') or 0)*0.55
@@ -126,19 +150,34 @@ def fast_score(t1,t4,td,typ,oc,phase,mm):
         rv=sf(t.get('rsi14')); mv=sf(t.get('mfi14'))
         if rv is not None and rv>=75: flags.append(name+'_RSI_OVERHEAT')
         if mv is not None and mv>=85: flags.append(name+'_MFI_OVERHEAT')
+    btc_adj=0.0
     if typ in ('CRYPTO','MEME'):
         if phase.get('phase') in ('ALT_ROTATION_CANDIDATE','ALT_ROTATION_CONFIRMED'): score+=0.4
         if oc.get('quality_gate')=='TRUSTED':
             os=sf(oc.get('tactical_onchain_score_0_10'))
             if os is not None: score += (os-5)*0.08
         if mm.get('decision') in ('NIE DOKŁADAJ','NO_TRADE'): flags.append('EXISTING_ENGINE_BLOCK')
+        if sym=='BTC':
+            etf=btc_etf_context(phase.get('inputs') or {})
+            btc_adj=sf(etf.get('score_adjustment')) or 0.0
+            score+=btc_adj
+            if btc_adj<=-0.4: flags.append('BTC_ETF_OUTFLOW')
     score=max(0.0,min(10.0,score))
     if 'HIGH_FOMO' in flags: label='HIGH_FOMO_RISK'
     elif score>=8: label='STRONG_CONTEXT'
     elif score>=6.5: label='POSITIVE_CONTEXT'
     elif score>=4.5: label='MIXED_CONTEXT'
     else: label='WEAK_CONTEXT'
-    return {'score_0_10':round(score,2),'label':label,'risk_flags':sorted(set(flags)),'role':'research context only; never standalone buy/sell signal'}
+    return {'score_0_10':round(score,2),'label':label,'risk_flags':sorted(set(flags)),'btc_etf_adjustment':btc_adj,'role':'research context only; never standalone buy/sell signal'}
+
+def pl_data_status(x): return {'DATA_READY':'DANE WYSTARCZAJĄCE DO ANALIZY','PARTIAL':'DANE NIEPEŁNE — WYNIK TRAKTUJ OSTROŻNIE','NO_DATA':'BRAK WYSTARCZAJĄCYCH DANYCH'}.get(x,str(x))
+def pl_fast(x): return {'STRONG_CONTEXT':'MOCNE POTWIERDZENIE','POSITIVE_CONTEXT':'PRZEWAGA SYGNAŁÓW POZYTYWNYCH','MIXED_CONTEXT':'SYGNAŁY MIESZANE','WEAK_CONTEXT':'SŁABE POTWIERDZENIE','HIGH_FOMO_RISK':'RYNEK MOCNO ROZGRZANY — NIE GONIĆ CENY','INSUFFICIENT_DATA':'ZA MAŁO DANYCH DO OCENY'}.get(x,str(x))
+def pl_deep(x): return {'TRACKING':'OBSERWACJA TRWA','BASELINE_CREATED':'UTWORZONO PUNKT STARTOWY'}.get(x,str(x))
+def pl_mode(x): return {'FAST':'SZYBKA ANALIZA','DEEP':'GŁĘBOKA OBSERWACJA','BOTH':'SZYBKA ANALIZA + GŁĘBOKA OBSERWACJA'}.get(x,str(x))
+def pl_type(x): return {'CRYPTO':'KRYPTO','MEME':'MEM / TOKEN SPEKULACYJNY','STOCK':'SPÓŁKA'}.get(x,str(x))
+def pl_risk(flags):
+    m={'HIGH_FOMO':'BARDZO WYSOKIE FOMO','ELEVATED_FOMO':'PODWYŻSZONE FOMO','EXISTING_ENGINE_BLOCK':'GŁÓWNY SILNIK BLOKUJE WEJŚCIE','BTC_ETF_OUTFLOW':'Z ETF BTC ODPŁYWA KAPITAŁ','NO_DAILY_DATA':'BRAK PEŁNYCH DANYCH DZIENNYCH','1H_RSI_OVERHEAT':'1H: RSI WYSOKO — RYNEK ROZGRZANY','4H_RSI_OVERHEAT':'4H: RSI WYSOKO — RYNEK ROZGRZANY','1D_RSI_OVERHEAT':'1D: RSI WYSOKO — RYNEK ROZGRZANY','1H_MFI_OVERHEAT':'1H: MFI WYSOKO — SILNY NAPŁYW KAPITAŁU / RYZYKO PRZEGRZANIA','4H_MFI_OVERHEAT':'4H: MFI WYSOKO — SILNY NAPŁYW KAPITAŁU / RYZYKO PRZEGRZANIA','1D_MFI_OVERHEAT':'1D: MFI WYSOKO — SILNY NAPŁYW KAPITAŁU / RYZYKO PRZEGRZANIA'}
+    return [m.get(x,x) for x in flags]
 
 def main():
     cfg=pd.read_csv(CFG); cfg=cfg[cfg.enabled.astype(str).str.lower().eq('true')].copy()
@@ -157,17 +196,17 @@ def main():
         mtf_ready=sum(t.get('status')=='OK' for t in (t1,t4,td))
         quality=(20 if td.get('status')=='OK' else 0)+(20 if t4.get('status')=='OK' else 0)+(15 if t1.get('status')=='OK' else 0)+(20 if typ=='STOCK' and fundamentals.get('status')=='OK' else 0)+(15 if typ in ('CRYPTO','MEME') and oc.get('quality_gate')=='TRUSTED' else 0)+(10 if typ in ('CRYPTO','MEME') and phase.get('phase') else 0)
         label='DATA_READY' if quality>=65 and mtf_ready>=2 else 'PARTIAL' if quality>0 else 'NO_DATA'
-        fast=fast_score(t1,t4,td,typ,oc,phase,mm)
+        fast=fast_score(t1,t4,td,typ,oc,phase,mm,sym)
         row={'generated_at_utc':NOW.isoformat(),'symbol':sym,'asset_type':typ,'mode':mode,'checkpoint':cp,'price':td.get('price'),'trend_0_4':td.get('trend_0_4'),'rsi14':td.get('rsi14'),'mfi14':td.get('mfi14'),'macd_hist':td.get('macd_hist'),'fomo_0_10':max([v for v in [td.get('fomo_0_10'),t4.get('fomo_0_10'),t1.get('fomo_0_10')] if v is not None] or [None]),'quality_0_100':quality,'status':label,'mtf_ready_0_3':mtf_ready,'fast_score_0_10':fast.get('score_0_10'),'fast_label':fast.get('label'),'onchain_long':oc.get('long_onchain_score_0_10'),'onchain_tactical':oc.get('tactical_onchain_score_0_10'),'engine_decision':mm.get('decision')}
-        deep=deep_compare(prior,sym,row)
-        inputs=phase.get('inputs') or {}
-        market_ctx={'phase':phase.get('phase'),'phase_score_0_10':phase.get('phase_score_0_10'),'confidence':phase.get('phase_confidence'),'rotation_score_0_10':phase.get('rotation_score_0_10'),'rotation_status':phase.get('rotation_status'),'btc_dominance_pct':inputs.get('btc_dominance_pct'),'eth_dominance_pct':inputs.get('eth_dominance_pct'),'eth_btc_5d_pct':inputs.get('eth_btc_5d_pct'),'eth_btc_20d_pct':inputs.get('eth_btc_20d_pct'),'btc_etf_5d_usdm':inputs.get('btc_etf_5d_usdm'),'btc_etf_20d_usdm':inputs.get('btc_etf_20d_usdm'),'eth_etf_5d_usdm':inputs.get('eth_etf_5d_usdm'),'eth_etf_20d_usdm':inputs.get('eth_etf_20d_usdm'),'stablecoin_7d_pct':inputs.get('stablecoin_7d_pct'),'stablecoin_30d_pct':inputs.get('stablecoin_30d_pct')} if typ in ('CRYPTO','MEME') else None
-        report={'generated_at_utc':NOW.isoformat(),'symbol':sym,'source_symbol':src,'asset_type':typ,'mode':mode,'checkpoint':cp,'data_quality_0_100':quality,'data_status':label,'mtf_ready_0_3':mtf_ready,'fast_analysis':fast,'technical':{'1H':t1,'4H':t4,'1D':td,'bar_policy':'LATEST_AVAILABLE_MAY_BE_OPEN','4H_source':'synthetic resample from 1H'},'technical_1D':td,'stock_fundamentals':fundamentals,'crypto_market_context':market_ctx,'onchain_context':{'quality_gate':oc.get('quality_gate'),'coverage_pct':oc.get('coverage_pct'),'long_score':oc.get('long_onchain_score_0_10'),'tactical_score':oc.get('tactical_onchain_score_0_10')} if typ in ('CRYPTO','MEME') else None,'existing_engine_context':{'decision':mm.get('decision'),'long_flow':mm.get('long_flow_score_0_10'),'tactical_flow':mm.get('tactical_flow_score_0_5')} if mm else None,'deep_observation':deep,'rules':{'FAST_is_current_snapshot':True,'DEEP_crypto_checkpoints':['D0','D1','D3','D7','D30'],'DEEP_stock_checkpoints':['D0','D7','D30'],'never_auto_add_to_portfolio':True,'not_trade_execution':True,'fast_score_is_context_not_trade_signal':True}}
+        deep=deep_compare(prior,sym,row); inputs=phase.get('inputs') or {}
+        market_ctx={'phase':phase.get('phase'),'phase_score_0_10':phase.get('phase_score_0_10'),'confidence':phase.get('phase_confidence'),'rotation_score_0_10':phase.get('rotation_score_0_10'),'rotation_status':phase.get('rotation_status'),'btc_dominance_pct':inputs.get('btc_dominance_pct'),'eth_dominance_pct':inputs.get('eth_dominance_pct'),'eth_btc_5d_pct':inputs.get('eth_btc_5d_pct'),'eth_btc_20d_pct':inputs.get('eth_btc_20d_pct'),'btc_etf_1d_usdm':inputs.get('btc_etf_1d_usdm'),'btc_etf_5d_usdm':inputs.get('btc_etf_5d_usdm'),'btc_etf_20d_usdm':inputs.get('btc_etf_20d_usdm'),'btc_etf_30d_usdm':inputs.get('btc_etf_30d_usdm'),'btc_etf_accel_5d_usdm':inputs.get('btc_etf_accel_5d_usdm'),'eth_etf_5d_usdm':inputs.get('eth_etf_5d_usdm'),'eth_etf_20d_usdm':inputs.get('eth_etf_20d_usdm'),'stablecoin_7d_pct':inputs.get('stablecoin_7d_pct'),'stablecoin_30d_pct':inputs.get('stablecoin_30d_pct')} if typ in ('CRYPTO','MEME') else None
+        btc_etf=btc_etf_context(inputs) if sym=='BTC' else None
+        human={'typ_aktywa':pl_type(typ),'tryb':pl_mode(mode),'stan_danych':pl_data_status(label),'wniosek_szybki':pl_fast(fast.get('label')),'ryzyka':pl_risk(fast.get('risk_flags') or []),'stan_obserwacji':pl_deep(deep.get('status')),'wyjasnienie':'Wynik służy do analizy i porównania sygnałów. Nie jest automatycznym poleceniem kupna ani sprzedaży.'}
+        report={'generated_at_utc':NOW.isoformat(),'symbol':sym,'source_symbol':src,'asset_type':typ,'mode':mode,'checkpoint':cp,'data_quality_0_100':quality,'data_status':label,'mtf_ready_0_3':mtf_ready,'fast_analysis':fast,'technical':{'1H':t1,'4H':t4,'1D':td,'bar_policy':'LATEST_AVAILABLE_MAY_BE_OPEN','4H_source':'synthetic resample from 1H'},'technical_1D':td,'stock_fundamentals':fundamentals,'crypto_market_context':market_ctx,'btc_etf_context':btc_etf,'onchain_context':{'quality_gate':oc.get('quality_gate'),'coverage_pct':oc.get('coverage_pct'),'long_score':oc.get('long_onchain_score_0_10'),'tactical_score':oc.get('tactical_onchain_score_0_10')} if typ in ('CRYPTO','MEME') else None,'existing_engine_context':{'decision':mm.get('decision'),'long_flow':mm.get('long_flow_score_0_10'),'tactical_flow':mm.get('tactical_flow_score_0_5')} if mm else None,'deep_observation':deep,'opis_po_polsku':human,'rules':{'FAST_is_current_snapshot':True,'DEEP_crypto_checkpoints':['D0','D1','D3','D7','D30'],'DEEP_stock_checkpoints':['D0','D7','D30'],'never_auto_add_to_portfolio':True,'not_trade_execution':True,'fast_score_is_context_not_trade_signal':True,'btc_etf_has_dedicated_weight':True}}
         reports.append(report); rows.append(row)
-    payload={'generated_at_utc':NOW.isoformat(),'engine':'V8_ASSET_LAB_v0.3','active_assets':len(reports),'reports':reports,'purpose':'FAST multi-timeframe current analysis plus DEEP observation; research only'}
+    payload={'generated_at_utc':NOW.isoformat(),'engine':'V8_ASSET_LAB_v0.4','active_assets':len(reports),'reports':reports,'purpose':'Szybka analiza wielu interwałów oraz głęboka obserwacja; narzędzie badawcze bez automatycznego handlu'}
     (ROOT/'LAB_REPORT.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False)); cur=pd.DataFrame(rows); cur.to_csv(ROOT/'LAB_COCKPIT.csv',index=False)
-    hist=cur if prior.empty else pd.concat([prior,cur],ignore_index=True,sort=False).drop_duplicates(['generated_at_utc','symbol'],keep='last')
-    hist.to_csv(hp,index=False)
-    status={'generated_at_utc':NOW.isoformat(),'engine':'V8_ASSET_LAB_v0.3','active_assets':len(reports),'fast_mode_ready':True,'fast_multitimeframe_enabled':True,'deep_mode_ready':True,'deep_comparison_enabled':True,'crypto_checkpoints':['D0','D1','D3','D7','D30'],'stock_checkpoints':['D0','D7','D30'],'portfolio_connection':False,'execution_connection':False}
-    (ROOT/'LAB_STATUS.json').write_text(json.dumps(status,indent=2)); print(json.dumps(status,indent=2))
+    hist=cur if prior.empty else pd.concat([prior,cur],ignore_index=True,sort=False).drop_duplicates(['generated_at_utc','symbol'],keep='last'); hist.to_csv(hp,index=False)
+    status={'generated_at_utc':NOW.isoformat(),'engine':'V8_ASSET_LAB_v0.4','active_assets':len(reports),'fast_mode_ready':True,'fast_multitimeframe_enabled':True,'deep_mode_ready':True,'deep_comparison_enabled':True,'polish_user_language':True,'btc_dedicated_etf_filter':True,'crypto_checkpoints':['D0','D1','D3','D7','D30'],'stock_checkpoints':['D0','D7','D30'],'portfolio_connection':False,'execution_connection':False}
+    (ROOT/'LAB_STATUS.json').write_text(json.dumps(status,indent=2,ensure_ascii=False)); print(json.dumps(status,indent=2,ensure_ascii=False))
 if __name__=='__main__': main()
