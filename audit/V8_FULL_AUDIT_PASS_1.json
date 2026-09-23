@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-23T20:22:22.491824+00:00",
+  "generated_at_utc": "2026-09-23T20:35:55.369184+00:00",
   "test": "1/2",
   "kontrole": 360,
   "poprawne": 360,
@@ -425,12 +425,12 @@
     {
       "kontrola": "TACTICAL BTC 1H RSI",
       "ok": true,
-      "szczegol": "33.237877059797015"
+      "szczegol": "36.742973383815375"
     },
     {
       "kontrola": "TACTICAL BTC 1H MFI",
       "ok": true,
-      "szczegol": "17.171903972525897"
+      "szczegol": "21.23611271931081"
     },
     {
       "kontrola": "TACTICAL BTC 1H FOMO",
@@ -450,12 +450,12 @@
     {
       "kontrola": "TACTICAL BTC 4H RSI",
       "ok": true,
-      "szczegol": "51.743155691459144"
+      "szczegol": "54.880137031472465"
     },
     {
       "kontrola": "TACTICAL BTC 4H MFI",
       "ok": true,
-      "szczegol": "64.5746126920039"
+      "szczegol": "53.48690675592039"
     },
     {
       "kontrola": "TACTICAL BTC 4H FOMO",
@@ -510,12 +510,12 @@
     {
       "kontrola": "TACTICAL ETH 1H RSI",
       "ok": true,
-      "szczegol": "28.629306677629657"
+      "szczegol": "34.2327925719688"
     },
     {
       "kontrola": "TACTICAL ETH 1H MFI",
       "ok": true,
-      "szczegol": "6.910133021585892"
+      "szczegol": "11.482811755864788"
     },
     {
       "kontrola": "TACTICAL ETH 1H FOMO",
@@ -535,12 +535,12 @@
     {
       "kontrola": "TACTICAL ETH 4H RSI",
       "ok": true,
-      "szczegol": "45.52185931694887"
+      "szczegol": "49.58080960432349"
     },
     {
       "kontrola": "TACTICAL ETH 4H MFI",
       "ok": true,
-      "szczegol": "68.87869318482181"
+      "szczegol": "59.41875799796247"
     },
     {
       "kontrola": "TACTICAL ETH 4H FOMO",
@@ -595,12 +595,12 @@
     {
       "kontrola": "TACTICAL SOL 1H RSI",
       "ok": true,
-      "szczegol": "31.774071487441702"
+      "szczegol": "34.089829933092645"
     },
     {
       "kontrola": "TACTICAL SOL 1H MFI",
       "ok": true,
-      "szczegol": "8.812152287815465"
+      "szczegol": "11.960314458499596"
     },
     {
       "kontrola": "TACTICAL SOL 1H FOMO",
@@ -620,12 +620,12 @@
     {
       "kontrola": "TACTICAL SOL 4H RSI",
       "ok": true,
-      "szczegol": "49.22929955027365"
+      "szczegol": "51.45765382499776"
     },
     {
       "kontrola": "TACTICAL SOL 4H MFI",
       "ok": true,
-      "szczegol": "62.094601128925106"
+      "szczegol": "53.41393514624009"
     },
     {
       "kontrola": "TACTICAL SOL 4H FOMO",
@@ -680,12 +680,12 @@
     {
       "kontrola": "TACTICAL LINK 1H RSI",
       "ok": true,
-      "szczegol": "27.454874216088655"
+      "szczegol": "30.803091387256273"
     },
     {
       "kontrola": "TACTICAL LINK 1H MFI",
       "ok": true,
-      "szczegol": "11.752559057867884"
+      "szczegol": "13.218451012004692"
     },
     {
       "kontrola": "TACTICAL LINK 1H FOMO",
@@ -705,12 +705,12 @@
     {
       "kontrola": "TACTICAL LINK 4H RSI",
       "ok": true,
-      "szczegol": "39.73373954814965"
+      "szczegol": "42.59069679832838"
     },
     {
       "kontrola": "TACTICAL LINK 4H MFI",
       "ok": true,
-      "szczegol": "46.17263676730547"
+      "szczegol": "37.66184694520632"
     },
     {
       "kontrola": "TACTICAL LINK 4H FOMO",
@@ -765,12 +765,12 @@
     {
       "kontrola": "TACTICAL ONDO 1H RSI",
       "ok": true,
-      "szczegol": "31.725798720908756"
+      "szczegol": "31.99320521002018"
     },
     {
       "kontrola": "TACTICAL ONDO 1H MFI",
       "ok": true,
-      "szczegol": "15.018252981413355"
+      "szczegol": "15.514807159874579"
     },
     {
       "kontrola": "TACTICAL ONDO 1H FOMO",
@@ -790,12 +790,12 @@
     {
       "kontrola": "TACTICAL ONDO 4H RSI",
       "ok": true,
-      "szczegol": "43.64919068280038"
+      "szczegol": "43.93003752090261"
     },
     {
       "kontrola": "TACTICAL ONDO 4H MFI",
       "ok": true,
-      "szczegol": "31.451039466333725"
+      "szczegol": "21.907704585474406"
     },
     {
       "kontrola": "TACTICAL ONDO 4H FOMO",
@@ -850,12 +850,12 @@
     {
       "kontrola": "TACTICAL RENDER 1H RSI",
       "ok": true,
-      "szczegol": "33.8531721672186"
+      "szczegol": "34.83709898417253"
     },
     {
       "kontrola": "TACTICAL RENDER 1H MFI",
       "ok": true,
-      "szczegol": "11.064796649816245"
+      "szczegol": "13.42131488272554"
     },
     {
       "kontrola": "TACTICAL RENDER 1H FOMO",
@@ -875,12 +875,12 @@
     {
       "kontrola": "TACTICAL RENDER 4H RSI",
       "ok": true,
-      "szczegol": "48.34586130878248"
+      "szczegol": "50.935799642337685"
     },
     {
       "kontrola": "TACTICAL RENDER 4H MFI",
       "ok": true,
-      "szczegol": "58.72283308698851"
+      "szczegol": "49.70341276632155"
     },
     {
       "kontrola": "TACTICAL RENDER 4H FOMO",
@@ -935,12 +935,12 @@
     {
       "kontrola": "TACTICAL FLOKI 1H RSI",
       "ok": true,
-      "szczegol": "26.478702717033087"
+      "szczegol": "27.71561184232928"
     },
     {
       "kontrola": "TACTICAL FLOKI 1H MFI",
       "ok": true,
-      "szczegol": "12.756045312966307"
+      "szczegol": "12.72071210230213"
     },
     {
       "kontrola": "TACTICAL FLOKI 1H FOMO",
@@ -960,12 +960,12 @@
     {
       "kontrola": "TACTICAL FLOKI 4H RSI",
       "ok": true,
-      "szczegol": "45.29877811639249"
+      "szczegol": "45.01679378175782"
     },
     {
       "kontrola": "TACTICAL FLOKI 4H MFI",
       "ok": true,
-      "szczegol": "65.19904344008009"
+      "szczegol": "60.117466365555984"
     },
     {
       "kontrola": "TACTICAL FLOKI 4H FOMO",
@@ -1020,12 +1020,12 @@
     {
       "kontrola": "TACTICAL PEPE 1H RSI",
       "ok": true,
-      "szczegol": "24.552762078124047"
+      "szczegol": "24.197919027717617"
     },
     {
       "kontrola": "TACTICAL PEPE 1H MFI",
       "ok": true,
-      "szczegol": "1.709269701284171"
+      "szczegol": "1.7529745559457837"
     },
     {
       "kontrola": "TACTICAL PEPE 1H FOMO",
@@ -1045,12 +1045,12 @@
     {
       "kontrola": "TACTICAL PEPE 4H RSI",
       "ok": true,
-      "szczegol": "47.21461838125378"
+      "szczegol": "46.69787854908083"
     },
     {
       "kontrola": "TACTICAL PEPE 4H MFI",
       "ok": true,
-      "szczegol": "62.853342723489035"
+      "szczegol": "59.19287582185365"
     },
     {
       "kontrola": "TACTICAL PEPE 4H FOMO",
@@ -1105,12 +1105,12 @@
     {
       "kontrola": "TACTICAL SPX6900 1H RSI",
       "ok": true,
-      "szczegol": "23.064140597221026"
+      "szczegol": "21.98711151089806"
     },
     {
       "kontrola": "TACTICAL SPX6900 1H MFI",
       "ok": true,
-      "szczegol": "38.598417381065694"
+      "szczegol": "37.17833334576931"
     },
     {
       "kontrola": "TACTICAL SPX6900 1H FOMO",
@@ -1130,12 +1130,12 @@
     {
       "kontrola": "TACTICAL SPX6900 4H RSI",
       "ok": true,
-      "szczegol": "35.71980321185195"
+      "szczegol": "30.447349605012462"
     },
     {
       "kontrola": "TACTICAL SPX6900 4H MFI",
       "ok": true,
-      "szczegol": "39.75357568450944"
+      "szczegol": "28.565014693739784"
     },
     {
       "kontrola": "TACTICAL SPX6900 4H FOMO",
@@ -1190,12 +1190,12 @@
     {
       "kontrola": "TACTICAL XRP 1H RSI",
       "ok": true,
-      "szczegol": "31.920015324646855"
+      "szczegol": "31.46035436266409"
     },
     {
       "kontrola": "TACTICAL XRP 1H MFI",
       "ok": true,
-      "szczegol": "11.534616899609759"
+      "szczegol": "15.39931638035334"
     },
     {
       "kontrola": "TACTICAL XRP 1H FOMO",
@@ -1215,12 +1215,12 @@
     {
       "kontrola": "TACTICAL XRP 4H RSI",
       "ok": true,
-      "szczegol": "52.002129792637554"
+      "szczegol": "49.929203266201995"
     },
     {
       "kontrola": "TACTICAL XRP 4H MFI",
       "ok": true,
-      "szczegol": "68.3444735839962"
+      "szczegol": "61.75969770385164"
     },
     {
       "kontrola": "TACTICAL XRP 4H FOMO",
@@ -1275,12 +1275,12 @@
     {
       "kontrola": "TACTICAL XLM 1H RSI",
       "ok": true,
-      "szczegol": "29.981399441364445"
+      "szczegol": "28.34551811035567"
     },
     {
       "kontrola": "TACTICAL XLM 1H MFI",
       "ok": true,
-      "szczegol": "9.366221406340102"
+      "szczegol": "9.801849385555116"
     },
     {
       "kontrola": "TACTICAL XLM 1H FOMO",
@@ -1300,12 +1300,12 @@
     {
       "kontrola": "TACTICAL XLM 4H RSI",
       "ok": true,
-      "szczegol": "46.35888494721349"
+      "szczegol": "45.238196779032926"
     },
     {
       "kontrola": "TACTICAL XLM 4H MFI",
       "ok": true,
-      "szczegol": "67.17223444867096"
+      "szczegol": "58.88070179073252"
     },
     {
       "kontrola": "TACTICAL XLM 4H FOMO",
@@ -1360,12 +1360,12 @@
     {
       "kontrola": "TACTICAL HBAR 1H RSI",
       "ok": true,
-      "szczegol": "29.07105513442798"
+      "szczegol": "29.389961233800435"
     },
     {
       "kontrola": "TACTICAL HBAR 1H MFI",
       "ok": true,
-      "szczegol": "7.016560961078994"
+      "szczegol": "9.931154367497484"
     },
     {
       "kontrola": "TACTICAL HBAR 1H FOMO",
@@ -1385,12 +1385,12 @@
     {
       "kontrola": "TACTICAL HBAR 4H RSI",
       "ok": true,
-      "szczegol": "49.323047624751354"
+      "szczegol": "50.005031656857305"
     },
     {
       "kontrola": "TACTICAL HBAR 4H MFI",
       "ok": true,
-      "szczegol": "72.66923856369812"
+      "szczegol": "67.77899611257673"
     },
     {
       "kontrola": "TACTICAL HBAR 4H FOMO",
@@ -1445,12 +1445,12 @@
     {
       "kontrola": "TACTICAL AVAX 1H RSI",
       "ok": true,
-      "szczegol": "30.462268964920085"
+      "szczegol": "31.73482719693088"
     },
     {
       "kontrola": "TACTICAL AVAX 1H MFI",
       "ok": true,
-      "szczegol": "21.48315269820057"
+      "szczegol": "21.6465891909332"
     },
     {
       "kontrola": "TACTICAL AVAX 1H FOMO",
@@ -1470,12 +1470,12 @@
     {
       "kontrola": "TACTICAL AVAX 4H RSI",
       "ok": true,
-      "szczegol": "46.82297788280426"
+      "szczegol": "48.37257135065889"
     },
     {
       "kontrola": "TACTICAL AVAX 4H MFI",
       "ok": true,
-      "szczegol": "44.709715689590475"
+      "szczegol": "36.439358735612025"
     },
     {
       "kontrola": "TACTICAL AVAX 4H FOMO",
@@ -1530,12 +1530,12 @@
     {
       "kontrola": "TACTICAL AWE 1H RSI",
       "ok": true,
-      "szczegol": "35.93440120620048"
+      "szczegol": "35.2032083476964"
     },
     {
       "kontrola": "TACTICAL AWE 1H MFI",
       "ok": true,
-      "szczegol": "45.49782394662768"
+      "szczegol": "46.27755816977637"
     },
     {
       "kontrola": "TACTICAL AWE 1H FOMO",
@@ -1555,12 +1555,12 @@
     {
       "kontrola": "TACTICAL AWE 4H RSI",
       "ok": true,
-      "szczegol": "46.59122261906062"
+      "szczegol": "41.62449075980296"
     },
     {
       "kontrola": "TACTICAL AWE 4H MFI",
       "ok": true,
-      "szczegol": "53.17944003503465"
+      "szczegol": "46.519028077314786"
     },
     {
       "kontrola": "TACTICAL AWE 4H FOMO",
