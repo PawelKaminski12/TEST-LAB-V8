@@ -95,8 +95,13 @@ def main():
     (ROOT/'LAB_REPORT.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False))
     cur=pd.DataFrame(rows); cur.to_csv(ROOT/'LAB_COCKPIT.csv',index=False)
     hp=ROOT/'LAB_HISTORY.csv'; hist=cur
-    if hp.exists() and not cur.empty:
-        old=pd.read_csv(hp); hist=pd.concat([old,cur],ignore_index=True,sort=False).drop_duplicates(['generated_at_utc','symbol'],keep='last')
+    if hp.exists() and hp.stat().st_size>0 and not cur.empty:
+        try:
+            old=pd.read_csv(hp)
+            if not old.empty:
+                hist=pd.concat([old,cur],ignore_index=True,sort=False).drop_duplicates(['generated_at_utc','symbol'],keep='last')
+        except pd.errors.EmptyDataError:
+            hist=cur
     hist.to_csv(hp,index=False)
     status={'generated_at_utc':NOW.isoformat(),'engine':'V8_ASSET_LAB_v0.1','active_assets':len(reports),'fast_mode_ready':True,'deep_mode_ready':True,'crypto_checkpoints':['D0','D1','D3','D7','D30'],'stock_checkpoints':['D0','D7','D30'],'portfolio_connection':False,'execution_connection':False}
     (ROOT/'LAB_STATUS.json').write_text(json.dumps(status,indent=2))
