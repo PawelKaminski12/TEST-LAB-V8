@@ -1,0 +1,7 @@
+symbol,binance_pair,role,enabled
+ETH,ETHUSDT,CORE_ALT,true
+SOL,SOLUSDT,ALT,true
+LINK,LINKUSDT,ALT,true
+AAVE,AAVEUSDT,ALT,true
+HBAR,HBARUSDT,ALT,true
+ONDO,ONDOUSDT,ALT,true
