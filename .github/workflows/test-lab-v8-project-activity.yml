@@ -1,0 +1,273 @@
+name: TEST LAB V8 Project Activity
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '35 5 * * *'
+  push:
+    paths:
+      - '.github/workflows/test-lab-v8-project-activity.yml'
+      - 'config/alt_universe.csv'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-project-activity-writes
+  cancel-in-progress: false
+
+jobs:
+  build-project-activity:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install --quiet pandas requests
+
+      - name: Build project activity layer
+        run: |
+          python - <<'PY'
+          import json, math, time
+          from datetime import datetime, timezone
+          from pathlib import Path
+          import pandas as pd
+          import requests
+
+          OUT=Path('crypto_data_hub')
+          OUT.mkdir(exist_ok=True)
+          cfg=pd.read_csv('config/alt_universe.csv')
+          cfg=cfg[(cfg['enabled'].astype(str).str.lower()=='true') & (cfg['target_scope'].astype(str).str.upper()=='PRODUCTION')].copy()
+
+          ASSET_MAP={
+              'ETH': {'profile':'CHAIN_L1','chain':'Ethereum','fees_slug':None},
+              'SOL': {'profile':'CHAIN_L1','chain':'Solana','fees_slug':None},
+              'LINK': {'profile':'INFRA_ORACLE','chain':None,'fees_slug':'chainlink'},
+              'ONDO': {'profile':'DEFI_RWA','chain':None,'fees_slug':'ondo-finance'},
+          }
+          session=requests.Session()
+          session.headers.update({'User-Agent':'TEST-LAB-V8/1.0 project-activity'})
+          now=datetime.now(timezone.utc)
+
+          def safe_float(v):
+              try:
+                  x=float(v)
+                  return x if math.isfinite(x) else None
+              except Exception:
+                  return None
+
+          def pct(a,b):
+              a=safe_float(a); b=safe_float(b)
+              if a is None or b in (None,0): return None
+              return (a/b-1.0)*100.0
+
+          def point_change(s,days):
+              s=pd.Series(s).dropna().astype(float)
+              if len(s)<=days: return None
+              return pct(s.iloc[-1],s.iloc[-1-days])
+
+          def sum_change(s,days):
+              s=pd.Series(s).dropna().astype(float)
+              if len(s)<days*2: return None
+              return pct(s.iloc[-days:].sum(),s.iloc[-2*days:-days].sum())
+
+          def trend_label(v7,v30):
+              vals=[v for v in (v7,v30) if v is not None]
+              if not vals: return 'NO_DATA'
+              avg=sum(vals)/len(vals)
+              if avg>=15: return 'STRONG_RISING'
+              if avg>=3: return 'RISING'
+              if avg<=-15: return 'STRONG_FALLING'
+              if avg<=-3: return 'FALLING'
+              return 'FLAT'
+
+          def retry_get(url,params=None,timeout=25,attempts=3):
+              last='NO_ATTEMPT'
+              for i in range(attempts):
+                  try:
+                      r=session.get(url,params=params,timeout=timeout)
+                      if r.status_code==200:
+                          return r,'OK'
+                      last=f'HTTP_{r.status_code}'
+                  except Exception as e:
+                      last='ERROR_'+type(e).__name__
+                  time.sleep(1.5*(i+1))
+              return None,last
+
+          def extract_stable_total(row):
+              if not isinstance(row,dict): return None
+              obj=row.get('totalCirculatingUSD')
+              if isinstance(obj,(int,float,str)):
+                  return safe_float(obj)
+              if isinstance(obj,dict):
+                  vals=[safe_float(v) for v in obj.values()]
+                  vals=[v for v in vals if v is not None]
+                  return sum(vals) if vals else None
+              obj=row.get('totalCirculating')
+              if isinstance(obj,(int,float,str)):
+                  return safe_float(obj)
+              return None
+
+          def stablecoin_chain(chain):
+              if not chain:
+                  return {'latest_usd':None,'change_7d_pct':None,'change_30d_pct':None,'trend':'NO_DATA','rows':0},'NOT_APPLICABLE'
+              r,status=retry_get(f'https://stablecoins.llama.fi/stablecoincharts/{chain}')
+              if not r:
+                  return {'latest_usd':None,'change_7d_pct':None,'change_30d_pct':None,'trend':'NO_DATA','rows':0},status
+              try:
+                  data=r.json()
+                  if not isinstance(data,list):
+                      return {'latest_usd':None,'change_7d_pct':None,'change_30d_pct':None,'trend':'NO_DATA','rows':0},'BAD_SHAPE'
+                  vals=[]
+                  for row in data:
+                      v=extract_stable_total(row)
+                      if v is not None: vals.append(v)
+                  if not vals:
+                      return {'latest_usd':None,'change_7d_pct':None,'change_30d_pct':None,'trend':'NO_DATA','rows':0},'NO_DATA'
+                  c7=point_change(vals,7); c30=point_change(vals,30)
+                  return {'latest_usd':safe_float(vals[-1]),'change_7d_pct':c7,'change_30d_pct':c30,'trend':trend_label(c7,c30),'rows':len(vals)},'OK'
+              except Exception as e:
+                  return {'latest_usd':None,'change_7d_pct':None,'change_30d_pct':None,'trend':'NO_DATA','rows':0},'ERROR_'+type(e).__name__
+
+          def fee_series(slug,data_type):
+              empty={'latest_daily_usd':None,'sum_7d_usd':None,'sum_30d_usd':None,'change_7d_vs_prev7_pct':None,'change_30d_vs_prev30_pct':None,'trend':'NO_DATA','rows':0}
+              if not slug: return empty,'NOT_APPLICABLE'
+              r,status=retry_get(f'https://api.llama.fi/summary/fees/{slug}',params={'dataType':data_type})
+              if not r: return empty,status
+              try:
+                  obj=r.json(); chart=obj.get('totalDataChart') or []
+                  vals=[]
+                  for x in chart:
+                      if isinstance(x,(list,tuple)) and len(x)>=2:
+                          v=safe_float(x[1])
+                          if v is not None: vals.append(v)
+                  if not vals: return empty,'NO_DATA'
+                  c7=sum_change(vals,7); c30=sum_change(vals,30)
+                  out={
+                      'latest_daily_usd':safe_float(vals[-1]),
+                      'sum_7d_usd':safe_float(sum(vals[-7:])) if len(vals)>=7 else None,
+                      'sum_30d_usd':safe_float(sum(vals[-30:])) if len(vals)>=30 else None,
+                      'change_7d_vs_prev7_pct':c7,
+                      'change_30d_vs_prev30_pct':c30,
+                      'trend':trend_label(c7,c30),
+                      'rows':len(vals),
+                  }
+                  return out,'OK'
+              except Exception as e:
+                  return empty,'ERROR_'+type(e).__name__
+
+          def directional_score(values):
+              vals=[v for v in values if v is not None]
+              if not vals: return None,'NO_DATA'
+              pos=sum(v>3 for v in vals); neg=sum(v<-3 for v in vals); n=len(vals)
+              score=round((pos-neg+n)/(2*n)*10)
+              score=max(0,min(10,score))
+              label='STRONG_POSITIVE' if score>=8 else 'POSITIVE' if score>=6 else 'NEUTRAL' if score>=4 else 'NEGATIVE' if score>=2 else 'STRONG_NEGATIVE'
+              return score,label
+
+          assets=[]; rows=[]
+          for sym in [str(x).upper().strip() for x in cfg['symbol'].tolist() if str(x).upper().strip() in ASSET_MAP]:
+              meta=ASSET_MAP[sym]
+              stables,stables_status=stablecoin_chain(meta['chain'])
+              fees,fees_status=fee_series(meta['fees_slug'],'dailyFees')
+              revenue,revenue_status=fee_series(meta['fees_slug'],'dailyRevenue')
+
+              long_votes=[]; tactical_votes=[]
+              if stables['change_30d_pct'] is not None: long_votes.append(stables['change_30d_pct'])
+              if stables['change_7d_pct'] is not None: tactical_votes.append(stables['change_7d_pct'])
+              if fees['change_30d_vs_prev30_pct'] is not None: long_votes.append(fees['change_30d_vs_prev30_pct'])
+              if fees['change_7d_vs_prev7_pct'] is not None: tactical_votes.append(fees['change_7d_vs_prev7_pct'])
+              if revenue['change_30d_vs_prev30_pct'] is not None: long_votes.append(revenue['change_30d_vs_prev30_pct'])
+              if revenue['change_7d_vs_prev7_pct'] is not None: tactical_votes.append(revenue['change_7d_vs_prev7_pct'])
+
+              long_score,long_label=directional_score(long_votes)
+              tactical_score,tactical_label=directional_score(tactical_votes)
+
+              independent_layers=0
+              if stables_status=='OK' and stables['rows']>=31: independent_layers+=1
+              if fees_status=='OK' and fees['rows']>=30: independent_layers+=1
+              if revenue_status=='OK' and revenue['rows']>=30: independent_layers+=1
+
+              if meta['profile']=='CHAIN_L1':
+                  trusted=independent_layers>=1 and stables_status=='OK' and stables['rows']>=31
+              else:
+                  trusted=independent_layers>=1 and (fees_status=='OK' or revenue_status=='OK')
+
+              quality='TRUSTED' if trusted else 'PARTIAL' if independent_layers>0 else 'NO_DATA'
+              asset={
+                  'symbol':sym,'metric_profile':meta['profile'],'source_status':{
+                      'defillama_stablecoins':stables_status,'defillama_fees':fees_status,'defillama_revenue':revenue_status,
+                  },
+                  'quality_status':quality,'independent_layers_ready':independent_layers,
+                  'stablecoin_supply':stables,'protocol_fees':fees,'protocol_revenue':revenue,
+                  'long_project_activity_score_0_10':long_score if trusted else None,
+                  'long_project_activity_label':long_label if trusted else 'INSUFFICIENT_DATA',
+                  'tactical_project_activity_score_0_10':tactical_score if trusted else None,
+                  'tactical_project_activity_label':tactical_label if trusted else 'INSUFFICIENT_DATA',
+                  'trusted':trusted,
+                  'role':'project/liquidity context only; never standalone buy/sell signal',
+              }
+              assets.append(asset)
+              rows.append({
+                  'date':now.date().isoformat(),'symbol':sym,'metric_profile':meta['profile'],'quality_status':quality,'trusted':trusted,
+                  'stablecoin_supply_usd':stables['latest_usd'],'stablecoin_7d_pct':stables['change_7d_pct'],'stablecoin_30d_pct':stables['change_30d_pct'],
+                  'fees_7d_usd':fees['sum_7d_usd'],'fees_30d_usd':fees['sum_30d_usd'],'fees_7d_vs_prev7_pct':fees['change_7d_vs_prev7_pct'],'fees_30d_vs_prev30_pct':fees['change_30d_vs_prev30_pct'],
+                  'revenue_7d_usd':revenue['sum_7d_usd'],'revenue_30d_usd':revenue['sum_30d_usd'],'revenue_7d_vs_prev7_pct':revenue['change_7d_vs_prev7_pct'],'revenue_30d_vs_prev30_pct':revenue['change_30d_vs_prev30_pct'],
+                  'long_project_activity_score_0_10':asset['long_project_activity_score_0_10'],'long_project_activity_label':asset['long_project_activity_label'],
+                  'tactical_project_activity_score_0_10':asset['tactical_project_activity_score_0_10'],'tactical_project_activity_label':asset['tactical_project_activity_label'],
+              })
+              time.sleep(0.35)
+
+          payload={
+              'generated_at_utc':now.isoformat(),'engine':'PROJECT_ACTIVITY_v0.1','assets':assets,
+              'summary':{
+                  'production_assets':len(assets),'trusted_assets':sum(bool(a['trusted']) for a in assets),
+                  'profiles':{a['symbol']:a['metric_profile'] for a in assets},
+              },
+              'hard_rules':{
+                  'MISSING_DATA_NEVER_IMPUTED':True,'PROJECT_ACTIVITY_NOT_STANDALONE_SIGNAL':True,
+                  'CHAIN_STABLECOIN_SUPPLY_IS_LIQUIDITY_CONTEXT_NOT_TOKEN_FLOW':True,
+                  'PROTOCOL_FEES_REVENUE_ARE_USAGE_CONTEXT_NOT_TOKEN_DEMAND':True,
+                  'V7_UNTOUCHED':True,
+              },
+              'limitations':[
+                  'Exchange netflow and whale-wallet flow are not inferred from protocol fees, revenue or stablecoin supply.',
+                  'Stablecoin supply on Ethereum/Solana is chain liquidity context, not a direct ETH/SOL holder-flow metric.',
+                  'LINK/ONDO protocol fees and revenue measure protocol usage/economics, not token buy pressure.',
+                  'Unsupported or temporarily unavailable source values remain null.'
+              ]
+          }
+          (OUT/'PROJECT_ACTIVITY.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False),encoding='utf-8')
+          df=pd.DataFrame(rows)
+          df.to_csv(OUT/'PROJECT_ACTIVITY.csv',index=False)
+          hf=OUT/'PROJECT_ACTIVITY_HISTORY.csv'
+          if hf.exists() and not df.empty:
+              old=pd.read_csv(hf)
+              df=pd.concat([old,df],ignore_index=True).drop_duplicates(['date','symbol'],keep='last').sort_values(['date','symbol'])
+          df.to_csv(hf,index=False)
+          print(json.dumps(payload,indent=2,ensure_ascii=False))
+          PY
+
+      - name: Commit project activity outputs
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add crypto_data_hub/PROJECT_ACTIVITY.json crypto_data_hub/PROJECT_ACTIVITY.csv crypto_data_hub/PROJECT_ACTIVITY_HISTORY.csv
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update V8 project activity layer'
+            for attempt in 1 2 3; do
+              if git pull --rebase origin main && git push; then exit 0; fi
+              echo "Push attempt $attempt failed; retrying"
+              sleep $((attempt * 4))
+            done
+            echo 'Push failed after 3 attempts'
+            exit 1
+          fi
