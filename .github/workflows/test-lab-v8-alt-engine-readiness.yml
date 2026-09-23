@@ -1,3 +1,4 @@
+# Synchronizacja po finalnym przeliczeniu LONG 11/11
 name: TEST LAB V8 Alt Engine Readiness
 
 on:
@@ -29,73 +30,53 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
       - name: Install dependencies
         run: pip install --quiet pandas
-
       - name: Build readiness for 11 active alts
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
           import pandas as pd
-
           ROOT=Path('crypto_data_hub')
           EXPECTED=['ETH','SOL','LINK','ONDO','RENDER','FLOKI','PEPE','SPX6900','XRP','XLM','HBAR']
           required_full=['1D','2D','3D','4D','5D','1T','2T']
-          cfg=pd.read_csv('config/alt_universe.csv')
-          zones=pd.read_csv('config/alt_zones.csv')
+          cfg=pd.read_csv('config/alt_universe.csv'); zones=pd.read_csv('config/alt_zones.csv')
           tech=json.loads((ROOT/'ALT_TECHNICAL_LAYER.json').read_text(encoding='utf-8'))
           rot=json.loads((ROOT/'ALT_ROTATION_SCORE.json').read_text(encoding='utf-8'))
           dec=json.loads((ROOT/'ALT_DECISION_ENGINE.json').read_text(encoding='utf-8'))
-
           enabled=cfg[(cfg['enabled'].astype(str).str.lower()=='true') & (cfg['symbol'].astype(str).str.upper()!='BTC')].copy()
           active=enabled['symbol'].astype(str).str.upper().tolist()
-          if active!=EXPECTED:
-              raise SystemExit(f'Nieprawidłowa lista aktywnych altów: {active}')
-          tech_by={x.get('symbol'):x for x in tech.get('assets',[])}
-          dec_by={x.get('symbol'):x for x in dec.get('assets',[])}
+          if active!=EXPECTED: raise SystemExit(f'Nieprawidłowa lista aktywnych altów: {active}')
+          tech_by={x.get('symbol'):x for x in tech.get('assets',[])}; dec_by={x.get('symbol'):x for x in dec.get('assets',[])}
           out=[]
           for sym in EXPECTED:
               z=zones[(zones['symbol'].astype(str).str.upper()==sym) & (zones['source_status'].astype(str).str.upper()=='CONFIRMED')].copy()
               z['from_n']=pd.to_numeric(z['from'],errors='coerce'); z['to_n']=pd.to_numeric(z['to'],errors='coerce')
               valid=z[z['from_n'].notna() & z['to_n'].notna() & (z['from_n']>=0) & (z['to_n']>z['from_n'])]
-              tf=set(valid['timeframe'].astype(str).str.upper())
-              missing=[x for x in required_full if x not in tf]
-              t=tech_by.get(sym,{})
-              d=dec_by.get(sym,{})
-              price_ready=bool(t) and t.get('qa')=='PASS'
-              rotation_ready=rot.get('score_0_10') is not None
-              zones_full_ready=not missing
-              decision_ready=bool(d) and d.get('decision') not in [None,'DATA_PENDING','DANE NIEPEŁNE']
+              tf=set(valid['timeframe'].astype(str).str.upper()); missing=[x for x in required_full if x not in tf]
+              t=tech_by.get(sym,{}); d=dec_by.get(sym,{})
+              price_ready=bool(t) and t.get('qa')=='PASS'; rotation_ready=rot.get('score_0_10') is not None
+              zones_full_ready=not missing; decision_ready=bool(d) and d.get('decision') not in [None,'DATA_PENDING','DANE NIEPEŁNE']
               q=(25 if price_ready else 0)+(20 if rotation_ready else 0)+(40 if zones_full_ready else max(0,40-5*len(missing)))+(15 if decision_ready else 0)
               status='PRODUCTION_DATA_READY' if all([price_ready,rotation_ready,zones_full_ready,decision_ready]) else 'PRODUCTION_DATA_GAP'
               out.append({'symbol':sym,'target_scope':'PRODUCTION','price_data_ready':price_ready,'rotation_data_ready':rotation_ready,'zone_rows':int(len(valid)),'zone_timeframes':','.join(tf2 for tf2 in required_full if tf2 in tf),'core_zone_missing':'','full_zone_missing':','.join(missing),'zones_core_ready':zones_full_ready,'zones_full_ready':zones_full_ready,'decision':d.get('decision'),'decision_ready':decision_ready,'data_quality_score_0_100':int(q),'readiness_status':status})
-
           df=pd.DataFrame(out)
           payload={'date':dec.get('date'),'engine':'ALT_ENGINE_READINESS_v1.0','rules':{'btc_is_market_regime_not_alt_row':True,'active_alts_exactly_11':True,'no_zone_guessing':True,'full_zone_timeframes':required_full,'data_pending_is_not_trade_signal':True},'summary':{'production_assets':11,'production_data_ready':int(df['readiness_status'].eq('PRODUCTION_DATA_READY').sum()),'production_with_full_zones':int(df['zones_full_ready'].sum())},'assets':out}
-          (ROOT/'ALT_ENGINE_READINESS.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False),encoding='utf-8')
-          df.to_csv(ROOT/'ALT_ENGINE_READINESS.csv',index=False)
+          (ROOT/'ALT_ENGINE_READINESS.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False),encoding='utf-8'); df.to_csv(ROOT/'ALT_ENGINE_READINESS.csv',index=False)
           df[['symbol','decision','data_quality_score_0_100','readiness_status','full_zone_missing']].to_csv(ROOT/'ALT_PRODUCTION_COCKPIT.csv',index=False)
-          if payload['summary']['production_data_ready']!=11 or payload['summary']['production_with_full_zones']!=11:
-              raise SystemExit(json.dumps(payload['summary'],ensure_ascii=False))
+          if payload['summary']['production_data_ready']!=11 or payload['summary']['production_with_full_zones']!=11: raise SystemExit(json.dumps(payload['summary'],ensure_ascii=False))
           print(json.dumps(payload['summary'],ensure_ascii=False,indent=2))
           PY
-
       - name: Commit readiness outputs
         run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git config user.name 'github-actions[bot]'; git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add crypto_data_hub/ALT_ENGINE_READINESS.json crypto_data_hub/ALT_ENGINE_READINESS.csv crypto_data_hub/ALT_PRODUCTION_COCKPIT.csv
           if git diff --cached --quiet; then exit 0; fi
           git commit -m 'Update V8 readiness for all 11 alts'
-          for attempt in 1 2 3; do
-            git pull --rebase origin main && git push && exit 0
-            sleep $((attempt * 4))
-          done
+          for attempt in 1 2 3; do git pull --rebase origin main && git push && exit 0; sleep $((attempt * 4)); done
           exit 1
