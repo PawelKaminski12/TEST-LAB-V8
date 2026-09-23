@@ -27,6 +27,7 @@ TACTICAL,SHADOW MONITOR,GOTOWE — DEPLOY HOLD,Kandydat score>=6 / FOMO<=7 / tre
 TACTICAL,VALIDATION FRAMEWORK 2.0,GOTOWE — HOLD RESEARCH,325 historycznych obserwacji kandydata; stabilność per aktywo / reżim / kwartyl czasu; bramka PROMOTE-HOLD-REJECT; obecnie HOLD_RESEARCH
 TACTICAL,CHALLENGER FRAMEWORK V3,GOTOWE — WATCH STRONG,Macierz 5 stałych challengerów + reżimy + kwartały czasu + 3-fold expanding walk-forward; BALANCED_LOW_FOMO wygrał 7/8 bramek; brak wdrożenia produkcyjnego
 TACTICAL,REGIME GATE V4,GOTOWE — WATCH REGIME GATE,Breadth 1D/4H + udział FOMO>=8 + bieżące potwierdzenie BTC 1D/4H; ACTIVE/CAUTION/BLOCK; challenger przepuszczany wyłącznie w warstwie badawczej; 5/7 bramek historycznych PASS
+TACTICAL,META GATE V5,GOTOWE — WATCH META GATE,Łączy Challenger V3 + Regime Gate V4 + risk proxy historycznie oraz exit_risk/FOMO/strefy/extreme_confluence bieżąco; decyzje ALLOW/CAUTION/BLOCK/HOLD_CHALLENGER; 6/8 bramek PASS
 PANEL,GOOGLE SHEETS,GOTOWE,Polskie etykiety; 7 kolumn bez rozbudowy układu; ALERT zawiera najważniejsze ekstrema i centrum ryzyka
 PANEL,SILNIK_TACTICAL,GOTOWE,Dodatkowe kolumny CENTRUM RYZYKA i POWÓD RYZYKA w maszynowni Tactical
 ARCHIWUM,AAVE,NIEAKTYWNE,Nie wchodzi do aktywnego zakresu V8
@@ -40,3 +41,4 @@ BEZPIECZEŃSTWO,SHADOW,GOTOWE,Shadow monitor zapisuje wyniki osobno; produkcyjny
 BEZPIECZEŃSTWO,VALIDATION V2,GOTOWE,Framework 2.0 ma deploy_block i promotion_allowed_automatically=false; nawet PROMOTE wymaga ręcznego przeglądu i ponownego audytu
 BEZPIECZEŃSTWO,CHALLENGER V3,GOTOWE,Challenger V3 jest research-only i deploy-block; nie modyfikuje TACTICAL_ENGINE ani Apps Script V9; promocja tylko ręczna po pełnym audycie
 BEZPIECZEŃSTWO,REGIME GATE V4,GOTOWE,Gate V4 jest research-only i deploy-block; nie zmienia produkcyjnych progów ani panelu; status ACTIVE/CAUTION/BLOCK steruje wyłącznie gated shadow
+BEZPIECZEŃSTWO,META GATE V5,GOTOWE,Meta Gate V5 jest research-only i deploy-block; historyczne risk proxy jest jawnie oznaczone; pełne ryzyko bieżące nie wpływa automatycznie na produkcję
