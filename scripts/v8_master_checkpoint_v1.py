@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 import pandas as pd
 
 R=Path('crypto_data_hub')
-EXPECTED=['ETH','SOL','LINK','ONDO','RENDER','FLOKI','PEPE','SPX6900','XRP','XLM','HBAR']
+EXPECTED=['ETH','SOL','LINK','ONDO','RENDER','FLOKI','PEPE','SPX6900','XRP','XLM','HBAR','AVAX','AWE']
 TF=['1D','2D','3D','4D','5D','1T','2T']
 
 def load(p): return json.loads(Path(p).read_text(encoding='utf-8'))
@@ -20,8 +20,8 @@ onchain=load(R/'ONCHAIN_ACTIVITY.json')
 
 active=cfg[(cfg['enabled'].astype(str).str.lower()=='true') & (cfg['symbol'].astype(str).str.upper()!='BTC')]['symbol'].astype(str).str.upper().tolist()
 if active!=EXPECTED: raise SystemExit(f'Lista altów niezgodna: {active}')
-if dec.get('engine')!='ALT_DECISION_ENGINE_v1.0' or dec.get('universe')!=EXPECTED: raise SystemExit('LONG nie jest aktualny v1.0 / 11 altów')
-if ready.get('engine')!='ALT_ENGINE_READINESS_v1.0': raise SystemExit('Readiness nie jest v1.0')
+if dec.get('engine')!='ALT_DECISION_ENGINE_v1.0' or dec.get('universe')!=EXPECTED: raise SystemExit('LONG nie jest aktualny v1.0 / 13 altów')
+if ready.get('engine')!='ALT_ENGINE_READINESS_v1.0': raise SystemExit('Gotowość nie jest v1.0')
 
 D={x.get('symbol'):x for x in dec.get('assets',[])}
 Q={x.get('symbol'):x for x in ready.get('assets',[])}
@@ -37,7 +37,7 @@ for s in EXPECTED:
     got=set(z['timeframe'].astype(str).str.upper())
     missing=[x for x in TF if x not in got]
     if missing: raise SystemExit(f'{s}: brakuje stref {missing}')
-    if q.get('readiness_status')!='PRODUCTION_DATA_READY': raise SystemExit(f'{s}: readiness {q.get("readiness_status")}')
+    if q.get('readiness_status')!='PRODUCTION_DATA_READY': raise SystemExit(f'{s}: gotowość {q.get("readiness_status")}')
     if not (d.get('zones') or {}).get('complete_7_of_7'): raise SystemExit(f'{s}: LONG nie ma 7/7')
     rows.append({
       'symbol':s,'data_quality':q.get('data_quality_score_0_100'),'readiness_status':q.get('readiness_status'),
@@ -56,12 +56,12 @@ out={
  'date':datetime.now(timezone.utc).date().isoformat(),
  'engine':'ALT_ENGINE_MASTER_CHECKPOINT_v1.0',
  'status':'CORE_ALT_ENGINE_READY_FOR_VALIDATION',
- 'status_pl':'11 ALTÓW — DANE WYSTARCZAJĄCE DO ANALIZY',
+ 'status_pl':'13 ALTÓW — DANE WYSTARCZAJĄCE DO ANALIZY',
  'btc_role':'REŻIM RYNKU — poza wierszami altów',
  'production_universe':EXPECTED,
- 'production_assets_count':11,
- 'production_assets_ready':11,
- 'full_zone_map':'77/77',
+ 'production_assets_count':13,
+ 'production_assets_ready':13,
+ 'full_zone_map':'91/91',
  'core_modules_ready':'10/10',
  'core_modules':{
    'FULL_ZONES_1D_TO_2T':True,'TECHNICAL_LAYER':True,'ROTATION_LAYER':rot.get('score_0_10') is not None,
@@ -75,8 +75,8 @@ out={
  'research_only':True,'not_strategy_frozen':True,'not_execution_connected':True,
  'blockers_or_maturity_gaps':[],
  'assets':rows,
- 'rules':{'V7_UNTOUCHED':True,'NO_ZONE_GUESSING':True,'BTC_IS_MARKET_REGIME':True,'ACTIVE_ALTS_EXACTLY_11':True,'FULL_ZONE_MAP_77_OF_77':True,'NO_AUTOMATIC_EXECUTION':True}
+ 'rules':{'V7_UNTOUCHED':True,'NO_ZONE_GUESSING':True,'BTC_IS_MARKET_REGIME':True,'ACTIVE_ALTS_EXACTLY_13':True,'FULL_ZONE_MAP_91_OF_91':True,'NO_AUTOMATIC_EXECUTION':True}
 }
 (R/'ALT_ENGINE_MASTER_CHECKPOINT.json').write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8')
 df.to_csv(R/'ALT_ENGINE_MASTER_COCKPIT.csv',index=False)
-print(json.dumps({'status_pl':out['status_pl'],'production_assets_ready':11,'full_zone_map':'77/77'},ensure_ascii=False,indent=2))
+print(json.dumps({'status_pl':out['status_pl'],'production_assets_ready':13,'full_zone_map':'91/91'},ensure_ascii=False,indent=2))
