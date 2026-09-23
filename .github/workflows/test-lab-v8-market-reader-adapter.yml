@@ -1,0 +1,204 @@
+name: TEST LAB V8 Market Reader Adapter
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'market_reader/inbox.csv'
+      - 'tactical_engine/TACTICAL_ENGINE.json'
+      - 'config/tactical_universe.csv'
+      - '.github/workflows/test-lab-v8-market-reader-adapter.yml'
+  schedule:
+    - cron: '25 */4 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-market-reader-adapter-writes
+  cancel-in-progress: false
+
+jobs:
+  build-market-reader-confluence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install --quiet pandas
+
+      - name: Normalize Market Reader and build confluence
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from datetime import datetime, timezone
+          import pandas as pd
+
+          INBOX=Path('market_reader/inbox.csv')
+          TACT=Path('tactical_engine/TACTICAL_ENGINE.json')
+          UNI=Path('config/tactical_universe.csv')
+          OUT=Path('market_reader')
+          OUT.mkdir(exist_ok=True)
+
+          if not TACT.exists():
+              raise SystemExit('Missing tactical_engine/TACTICAL_ENGINE.json')
+          if not UNI.exists():
+              raise SystemExit('Missing config/tactical_universe.csv')
+
+          tact=json.loads(TACT.read_text(encoding='utf-8'))
+          uni=pd.read_csv(UNI)
+          enabled=set(uni[uni['enabled'].astype(str).str.lower().eq('true')]['symbol'].astype(str).str.upper())
+          now=pd.Timestamp.now(tz='UTC')
+
+          accepted={'GREEN_DOT':1,'LONG':1,'BUY':1,'RED_DOT':-1,'SHORT':-1,'SELL':-1,'NEUTRAL':0,'WAIT':0}
+          max_age_hours={'1H':2,'4H':8,'1D':48}
+          normalized=[]
+          rejected=[]
+
+          if INBOX.exists():
+              raw=pd.read_csv(INBOX)
+          else:
+              raw=pd.DataFrame(columns=['symbol','timeframe','signal','strength','source_timestamp_utc','received_timestamp_utc','source_note'])
+
+          required=['symbol','timeframe','signal','strength','source_timestamp_utc','received_timestamp_utc','source_note']
+          for c in required:
+              if c not in raw.columns:
+                  raw[c]=''
+
+          for idx,r in raw.iterrows():
+              sym=str(r.get('symbol','')).upper().strip()
+              tf=str(r.get('timeframe','')).upper().strip()
+              sig=str(r.get('signal','')).upper().strip()
+              reasons=[]
+              if not sym or sym not in enabled: reasons.append('UNKNOWN_OR_DISABLED_SYMBOL')
+              if tf not in max_age_hours: reasons.append('UNSUPPORTED_TIMEFRAME')
+              if sig not in accepted: reasons.append('UNSUPPORTED_SIGNAL')
+              ts=pd.to_datetime(r.get('source_timestamp_utc'),utc=True,errors='coerce')
+              if pd.isna(ts): reasons.append('INVALID_SOURCE_TIMESTAMP')
+              strength=pd.to_numeric(r.get('strength'),errors='coerce')
+              if pd.isna(strength): strength=None
+              elif strength<0 or strength>10: reasons.append('STRENGTH_OUT_OF_RANGE')
+
+              if reasons:
+                  rejected.append({'row':int(idx)+2,'symbol':sym,'timeframe':tf,'signal':sig,'reasons':'|'.join(reasons)})
+                  continue
+
+              age_h=max(0.0,(now-ts).total_seconds()/3600)
+              fresh=age_h <= max_age_hours[tf]
+              direction=accepted[sig]
+              normalized.append({
+                  'symbol':sym,'timeframe':tf,'signal':sig,'direction':int(direction),
+                  'strength_0_10':float(strength) if strength is not None else None,
+                  'source_timestamp_utc':ts.isoformat(),'age_hours':age_h,
+                  'fresh':bool(fresh),'active_for_scoring':bool(fresh),
+                  'source_note':str(r.get('source_note',''))
+              })
+
+          ndf=pd.DataFrame(normalized)
+          rdf=pd.DataFrame(rejected)
+          if ndf.empty:
+              ndf=pd.DataFrame(columns=['symbol','timeframe','signal','direction','strength_0_10','source_timestamp_utc','age_hours','fresh','active_for_scoring','source_note'])
+          if rdf.empty:
+              rdf=pd.DataFrame(columns=['row','symbol','timeframe','signal','reasons'])
+          ndf.to_csv(OUT/'MARKET_READER_NORMALIZED.csv',index=False)
+          rdf.to_csv(OUT/'MARKET_READER_REJECTED.csv',index=False)
+
+          # Latest fresh external signal per symbol/timeframe.
+          active=ndf[ndf['active_for_scoring'].astype(str).str.lower().eq('true')].copy() if len(ndf) else ndf.copy()
+          if len(active):
+              active['source_timestamp_utc']=pd.to_datetime(active['source_timestamp_utc'],utc=True)
+              active=active.sort_values('source_timestamp_utc').drop_duplicates(['symbol','timeframe'],keep='last')
+
+          weights={'1H':0.5,'4H':1.0,'1D':0.5}
+          tf_map={}
+          for _,r in active.iterrows():
+              tf_map[(r['symbol'],r['timeframe'])]=r.to_dict()
+
+          confluence=[]
+          for a in tact.get('assets',[]):
+              if a.get('qa')!='PASS':
+                  confluence.append({'symbol':a.get('symbol'),'qa':'FAIL','combined_status':'DATA_PENDING'})
+                  continue
+              sym=a['symbol']
+              internal=int(a.get('tactical_score_0_10') or 0)
+              internal_status=a.get('tactical_status')
+              ext_points=0.0; used=[]
+              for tf,w in weights.items():
+                  rec=tf_map.get((sym,tf))
+                  if rec:
+                      ext_points += float(rec['direction'])*w
+                      used.append({'timeframe':tf,'signal':rec['signal'],'direction':int(rec['direction']),'age_hours':float(rec['age_hours']),'strength_0_10':rec['strength_0_10']})
+              # External layer is confirmation only and capped at +/-2.
+              ext_points=max(-2.0,min(2.0,ext_points))
+              combined=max(0.0,min(10.0,internal+ext_points))
+
+              if internal_status in ['NO_TRADE','NO_TRADE_FOMO']:
+                  combined_status=internal_status
+                  guard='INTERNAL_HARD_GUARD'
+              elif not used:
+                  combined_status=internal_status
+                  guard='NO_EXTERNAL_DATA_INTERNAL_ONLY'
+              elif ext_points>=1.0:
+                  combined_status='EXTERNAL_CONFIRMATION_POSITIVE'
+                  guard='CONFIRMATION_ONLY'
+              elif ext_points<=-1.0:
+                  combined_status='EXTERNAL_CONFLICT'
+                  guard='CONFIRMATION_ONLY'
+              else:
+                  combined_status='EXTERNAL_MIXED'
+                  guard='CONFIRMATION_ONLY'
+
+              confluence.append({
+                  'symbol':sym,'qa':'PASS','internal_tactical_score_0_10':internal,
+                  'internal_status':internal_status,'market_reader_points':ext_points,
+                  'combined_research_score_0_10':combined,'combined_status':combined_status,
+                  'guard':guard,'market_reader_signals_used':used,
+                  'research_only':True,'execution_connected':False
+              })
+
+          adapter_status='ACTIVE' if len(active) else 'WAITING_FOR_SOURCE'
+          payload={
+              'generated_at_utc':datetime.now(timezone.utc).isoformat(),
+              'engine':'MARKET_READER_ADAPTER_v0.1',
+              'adapter_status':adapter_status,
+              'source_rows':int(len(raw)),
+              'normalized_rows':int(len(ndf)),
+              'active_fresh_rows':int(len(active)),
+              'rejected_rows':int(len(rdf)),
+              'hard_rules':{
+                  'external_is_second_eye_only':True,
+                  'external_max_contribution_points':2,
+                  'external_cannot_override_internal_no_trade':True,
+                  'stale_external_signals_ignored':True,
+                  'research_only':True,
+                  'not_execution_connected':True
+              },
+              'freshness_hours':max_age_hours,
+              'confluence':confluence
+          }
+          (OUT/'MARKET_READER_ADAPTER.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False),encoding='utf-8')
+
+          flat=[]
+          for x in confluence:
+              flat.append({
+                  'symbol':x.get('symbol'),'qa':x.get('qa'),'internal_score':x.get('internal_tactical_score_0_10'),
+                  'internal_status':x.get('internal_status'),'market_reader_points':x.get('market_reader_points'),
+                  'combined_score':x.get('combined_research_score_0_10'),'combined_status':x.get('combined_status'),'guard':x.get('guard')
+              })
+          pd.DataFrame(flat).to_csv(OUT/'TACTICAL_CONFLUENCE.csv',index=False)
+          print(json.dumps(payload,indent=2,ensure_ascii=False))
+          PY
+
+      - name: Commit adapter outputs
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add market_reader/MARKET_READER_NORMALIZED.csv market_reader/MARKET_READER_REJECTED.csv market_reader/MARKET_READER_ADAPTER.json market_reader/TACTICAL_CONFLUENCE.csv
+          if git diff --cached --quiet; then
+            echo 'No changes to commit'
+          else
+            git commit -m 'Update V8 Market Reader adapter outputs'
+            git push
+          fi
