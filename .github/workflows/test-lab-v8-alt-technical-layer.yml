@@ -7,232 +7,170 @@ on:
   push:
     paths:
       - 'config/alt_universe.csv'
+      - 'tactical_engine/TACTICAL_ENGINE.json'
       - '.github/workflows/test-lab-v8-alt-technical-layer.yml'
 
 permissions:
   contents: write
 
+concurrency:
+  group: v8-alt-technical-writes
+  cancel-in-progress: false
+
 jobs:
   build-alt-technical-layer:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Pobierz najnowszy projekt
         uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
 
-      - name: Set up Python
+      - name: Przygotuj Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Install dependency
+      - name: Zainstaluj biblioteki
         run: pip install --quiet pandas
 
-      - name: Build dynamic technical layer
+      - name: Zbuduj technikę LONG dla 11 altów
         run: |
           python - <<'PY'
-          import csv, io, json, math, urllib.request, zipfile
-          from datetime import date, datetime, timedelta, timezone
+          import json
+          from datetime import datetime, timezone
           from pathlib import Path
           import pandas as pd
 
           ROOT=Path('crypto_data_hub')
           CFG=Path('config/alt_universe.csv')
+          TACT=Path('tactical_engine/TACTICAL_ENGINE.json')
           OUT=ROOT/'ALT_TECHNICAL_LAYER.json'
           HIST=ROOT/'ALT_TECHNICAL_HISTORY.csv'
-          UA={'User-Agent':'TEST-LAB-V8-ALT-TECHNICAL/7D2'}
-          now=datetime.now(timezone.utc)
-          target=now.date()-timedelta(days=1)
+          expected=['ETH','SOL','LINK','ONDO','RENDER','FLOKI','PEPE','SPX6900','XRP','XLM','HBAR']
 
-          if not CFG.exists():
-              raise SystemExit('Missing config/alt_universe.csv')
+          if not CFG.exists() or not TACT.exists():
+              raise SystemExit('Brak config/alt_universe.csv lub tactical_engine/TACTICAL_ENGINE.json')
 
           cfg=pd.read_csv(CFG)
           cfg=cfg[cfg['enabled'].astype(str).str.lower().eq('true')].copy()
+          active=[x for x in cfg['symbol'].astype(str).str.upper().tolist() if x!='BTC']
+          if active != expected:
+              raise SystemExit(f'Nieprawidłowa lista LONG altów: {active}')
 
-          def get_bytes(url, timeout=60):
-              req=urllib.request.Request(url, headers=UA)
-              with urllib.request.urlopen(req, timeout=timeout) as r:
-                  return r.read()
-
-          def ts_to_date(raw):
-              x=int(raw)
-              sec=x/1_000_000 if x>10_000_000_000_000 else x/1_000
-              return datetime.fromtimestamp(sec,tz=timezone.utc).date()
-
-          def parse_zip(blob):
-              rows=[]
-              with zipfile.ZipFile(io.BytesIO(blob)) as z:
-                  text=z.read(z.namelist()[0]).decode('utf-8')
-              for rr in csv.reader(io.StringIO(text)):
-                  if not rr or not rr[0].isdigit():
-                      continue
-                  d=ts_to_date(rr[0])
-                  rows.append([d.isoformat(),float(rr[1]),float(rr[2]),float(rr[3]),float(rr[4]),float(rr[5])])
-              return rows
-
-          def next_month(d):
-              return date(d.year+1,1,1) if d.month==12 else date(d.year,d.month+1,1)
-
-          def fetch_symbol(sym, months_back=18):
-              start=(target.replace(day=1)-timedelta(days=months_back*31)).replace(day=1)
-              cur=start
-              current_month=target.replace(day=1)
-              rows={}
-              while cur<current_month:
-                  ym=f'{cur.year:04d}-{cur.month:02d}'
-                  url=f'https://data.binance.vision/data/spot/monthly/klines/{sym}/1d/{sym}-1d-{ym}.zip'
-                  try:
-                      for r in parse_zip(get_bytes(url)):
-                          rows[r[0]]=r
-                  except Exception:
-                      pass
-                  cur=next_month(cur)
-              d=current_month
-              while d<=target:
-                  url=f'https://data.binance.vision/data/spot/daily/klines/{sym}/1d/{sym}-1d-{d.isoformat()}.zip'
-                  try:
-                      for r in parse_zip(get_bytes(url)):
-                          rows[r[0]]=r
-                  except Exception:
-                      pass
-                  d+=timedelta(days=1)
-              df=pd.DataFrame([rows[k] for k in sorted(rows)],columns=['Date','Open','High','Low','Close','Volume'])
-              return df
-
-          def atr(df,n=14):
-              pc=df['Close'].shift(1)
-              tr=pd.concat([(df['High']-df['Low']).abs(),(df['High']-pc).abs(),(df['Low']-pc).abs()],axis=1).max(axis=1)
-              return tr.rolling(n).mean()
-
-          def technical(df):
-              c=df['Close']; v=df['Volume']
-              s50=c.rolling(50).mean(); s200=c.rolling(200).mean(); a14=atr(df,14)
-              h20=df['High'].rolling(20).max(); h50=df['High'].rolling(50).max()
-              vol20=v.rolling(20).mean()
-
-              # Trend score 0-4
-              trend=0
-              trend += 1 if c.iloc[-1] > s50.iloc[-1] else 0
-              trend += 1 if c.iloc[-1] > s200.iloc[-1] else 0
-              trend += 1 if s50.iloc[-1] > s50.iloc[-21] else 0
-              trend += 1 if s50.iloc[-1] > s200.iloc[-1] else 0
-
-              # Fresh breakout from prior 20-day high; use only information available before current bar.
-              prev20=float(df['High'].iloc[-21:-1].max()) if len(df)>=22 else None
-              breakout=bool(prev20 and c.iloc[-1] > prev20)
-
-              # Retest: breakout occurred during last 10 completed bars, then price revisited breakout level
-              # within 1 ATR and currently closes back above it.
-              retest=False; retest_level=None; breakout_age=None
-              if len(df)>=80:
-                  for age in range(1,11):
-                      idx=len(df)-1-age
-                      if idx<21: break
-                      lvl=float(df['High'].iloc[idx-20:idx].max())
-                      close_i=float(c.iloc[idx])
-                      if close_i>lvl:
-                          recent=df.iloc[idx+1:]
-                          atr_now=float(a14.iloc[-1]) if pd.notna(a14.iloc[-1]) else 0.0
-                          touched=bool((recent['Low'] <= lvl + atr_now).any())
-                          held=bool(float(c.iloc[-1]) >= lvl)
-                          if touched and held:
-                              retest=True; retest_level=lvl; breakout_age=age
-                              break
-
-              # FOMO score 0-10. This is a risk/context score, not a sell signal.
-              fomo=0
-              r20=(c.iloc[-1]/c.iloc[-21]-1)*100 if len(c)>21 else 0
-              r60=(c.iloc[-1]/c.iloc[-61]-1)*100 if len(c)>61 else 0
-              dist50=((c.iloc[-1]/s50.iloc[-1]-1)*100) if pd.notna(s50.iloc[-1]) else 0
-              atr_ext=((c.iloc[-1]-s50.iloc[-1])/a14.iloc[-1]) if pd.notna(a14.iloc[-1]) and a14.iloc[-1]>0 else 0
-              vr=(v.iloc[-1]/vol20.iloc[-1]) if pd.notna(vol20.iloc[-1]) and vol20.iloc[-1]>0 else 1
-              if r20>=20: fomo+=2
-              if r20>=40: fomo+=2
-              if r60>=60: fomo+=2
-              if dist50>=15: fomo+=1
-              if atr_ext>=3: fomo+=1
-              if vr>=1.8 and r20>0: fomo+=1
-              if c.iloc[-1] >= float(h50.iloc[-1])*0.995 and r20>=20: fomo+=1
-              fomo=min(10,fomo)
-
-              if fomo>=8: fomo_label='HARD_BLOCK'
-              elif fomo>=6: fomo_label='RISK'
-              elif fomo>=4: fomo_label='WATCH'
-              else: fomo_label='NORMAL'
-
-              return {
-                'close':float(c.iloc[-1]),
-                'trend_score_0_4':int(trend),
-                'above_sma50':bool(c.iloc[-1]>s50.iloc[-1]),
-                'above_sma200':bool(c.iloc[-1]>s200.iloc[-1]),
-                'sma50_rising_20d':bool(s50.iloc[-1]>s50.iloc[-21]),
-                'sma50_above_sma200':bool(s50.iloc[-1]>s200.iloc[-1]),
-                'return_20d_pct':float(r20),
-                'return_60d_pct':float(r60),
-                'volume_ratio_vs_20d':float(vr),
-                'fresh_breakout_20d':breakout,
-                'retest_confirmed_10d':retest,
-                'retest_level':retest_level,
-                'breakout_age_bars':breakout_age,
-                'fomo_score_0_10':int(fomo),
-                'fomo_label':fomo_label,
-              }
+          tactical=json.loads(TACT.read_text(encoding='utf-8'))
+          if tactical.get('engine')!='V8_TACTICAL_ENGINE_v1.0':
+              raise SystemExit('LONG czeka na zwalidowany TACTICAL v1.0')
+          tmap={a.get('symbol'):a for a in tactical.get('assets',[]) if a.get('qa')=='PASS'}
 
           assets=[]
-          for _,r in cfg.iterrows():
-              sym=str(r['symbol']).upper().strip()
-              if sym=='BTC':
+          for sym in expected:
+              a=tmap.get(sym)
+              if not a:
+                  assets.append({'symbol':sym,'qa':'FAIL','reason':'brak zwalidowanych danych 1D'})
                   continue
-              pair=f'{sym}USDT'
-              df=fetch_symbol(pair)
-              if len(df)<220:
-                  assets.append({'symbol':sym,'pair':pair,'qa':'FAIL','rows':len(df),'reason':'insufficient price history'})
+              d1=(a.get('timeframes') or {}).get('1D') or {}
+              required=['close','trend_score_0_4','fomo_score_0_10','volume_ratio_vs_20','fresh_breakout_20d','retest_confirmed_10d','return_20bars_pct']
+              missing=[k for k in required if d1.get(k) is None]
+              if missing:
+                  assets.append({'symbol':sym,'qa':'FAIL','reason':'brak: '+','.join(missing)})
                   continue
-              t=technical(df)
-              t.update({'symbol':sym,'pair':pair,'qa':'PASS','rows':len(df),'start':df.iloc[0]['Date'],'end':df.iloc[-1]['Date']})
-              assets.append(t)
+              assets.append({
+                  'symbol':sym,
+                  'pair':a.get('pair'),
+                  'qa':'PASS',
+                  'source':'TACTICAL 1D — zamknięta świeca',
+                  'source_type':(a.get('source_types') or {}).get('1D'),
+                  'close':d1.get('close'),
+                  'trend_score_0_4':d1.get('trend_score_0_4'),
+                  'above_sma50':None,
+                  'above_sma200':None,
+                  'sma50_rising_20d':None,
+                  'sma50_above_sma200':None,
+                  'return_20d_pct':d1.get('return_20bars_pct'),
+                  'return_60d_pct':None,
+                  'volume_ratio_vs_20d':d1.get('volume_ratio_vs_20'),
+                  'fresh_breakout_20d':d1.get('breakout_20'),
+                  'retest_confirmed_10d':d1.get('retest_10'),
+                  'retest_level':d1.get('retest_level'),
+                  'breakout_age_bars':None,
+                  'fomo_score_0_10':d1.get('fomo_score_0_10'),
+                  'fomo_label':d1.get('fomo_label'),
+                  'rsi14':d1.get('rsi14'),
+                  'mfi14':d1.get('mfi14'),
+                  'macd_hist':d1.get('macd_hist'),
+                  'closed_bar_only':d1.get('closed_bar_only'),
+                  'last_close_time_utc':d1.get('last_close_time_utc'),
+              })
+
+          if any(a.get('qa')!='PASS' for a in assets):
+              print(json.dumps(assets,ensure_ascii=False,indent=2))
+              raise SystemExit('Nie wszystkie 11 altów mają kompletną warstwę LONG')
 
           payload={
-            'date':target.isoformat(),
-            'engine':'ALT_TECHNICAL_LAYER_v0.1',
-            'universe_source':'config/alt_universe.csv',
-            'rules':{
-              'dynamic_universe':True,
-              'no_lookahead_current_snapshot':True,
-              'breakout_retest_is_price_action_only_not_zone_confirmation':True,
-              'fomo_is_context_not_standalone_sell_signal':True,
-              'zones_are_separate_and_still_required_for_final_trade_decision':True,
-            },
-            'assets':assets,
+              'date':datetime.now(timezone.utc).date().isoformat(),
+              'generated_at_utc':datetime.now(timezone.utc).isoformat(),
+              'engine':'ALT_TECHNICAL_LAYER_v1.0',
+              'universe_source':'config/alt_universe.csv',
+              'data_source':'tactical_engine/TACTICAL_ENGINE.json — interwał 1D',
+              'asset_count':len(assets),
+              'rules':{
+                  'dynamic_universe':True,
+                  'btc_is_market_regime_not_alt_decision_row':True,
+                  'closed_1d_only':True,
+                  'no_zone_guessing':True,
+                  'zones_are_separate_and_required_for_final_long_decision':True,
+                  'fomo_is_context_not_standalone_sell_signal':True,
+                  'stocks_remain_separate_long_engine_component':True,
+                  'execution_connected':False,
+              },
+              'assets':assets,
           }
-          OUT.write_text(json.dumps(payload,indent=2),encoding='utf-8')
+          OUT.write_text(json.dumps(payload,ensure_ascii=False,indent=2),encoding='utf-8')
 
-          hist=[]
-          for x in assets:
-              hist.append({
-                'date':payload['date'],'symbol':x['symbol'],'qa':x['qa'],
-                'trend_score_0_4':x.get('trend_score_0_4'),
-                'fresh_breakout_20d':x.get('fresh_breakout_20d'),
-                'retest_confirmed_10d':x.get('retest_confirmed_10d'),
-                'fomo_score_0_10':x.get('fomo_score_0_10'),
-                'fomo_label':x.get('fomo_label')
-              })
-          new=pd.DataFrame(hist)
+          new=pd.DataFrame([{
+              'date':payload['date'],'symbol':x['symbol'],'qa':x['qa'],
+              'trend_score_0_4':x.get('trend_score_0_4'),
+              'fresh_breakout_20d':x.get('fresh_breakout_20d'),
+              'retest_confirmed_10d':x.get('retest_confirmed_10d'),
+              'fomo_score_0_10':x.get('fomo_score_0_10'),'fomo_label':x.get('fomo_label')
+          } for x in assets])
           if HIST.exists():
               old=pd.read_csv(HIST)
               new=pd.concat([old,new],ignore_index=True).drop_duplicates(['date','symbol'],keep='last').sort_values(['date','symbol'])
           new.to_csv(HIST,index=False)
-          print(json.dumps(payload,indent=2))
+          print('LONG: 11/11 altów ma zwalidowane dane techniczne 1D.')
           PY
 
-      - name: Commit technical layer
+      - name: Sprawdź komplet LONG
+        run: |
+          python - <<'PY'
+          import json
+          x=json.load(open('crypto_data_hub/ALT_TECHNICAL_LAYER.json'))
+          expected=['ETH','SOL','LINK','ONDO','RENDER','FLOKI','PEPE','SPX6900','XRP','XLM','HBAR']
+          assert x['engine']=='ALT_TECHNICAL_LAYER_v1.0'
+          assert x['asset_count']==11
+          assert [a['symbol'] for a in x['assets']]==expected
+          assert all(a['qa']=='PASS' and a['closed_bar_only'] is True for a in x['assets'])
+          assert x['rules']['execution_connected'] is False
+          print('LONG: technika wszystkich 11 altów sprawdzona poprawnie.')
+          PY
+
+      - name: Zapisz wynik bez konfliktu
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add crypto_data_hub/ALT_TECHNICAL_LAYER.json crypto_data_hub/ALT_TECHNICAL_HISTORY.csv
-          if git diff --cached --quiet; then
-            echo 'No changes to commit'
-          else
-            git commit -m 'Update V8 dynamic alt technical layer'
-            git push
-          fi
+          mkdir -p /tmp/longtech
+          cp crypto_data_hub/ALT_TECHNICAL_LAYER.json crypto_data_hub/ALT_TECHNICAL_HISTORY.csv /tmp/longtech/
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/longtech/ALT_TECHNICAL_LAYER.json /tmp/longtech/ALT_TECHNICAL_HISTORY.csv crypto_data_hub/
+            git add crypto_data_hub/ALT_TECHNICAL_LAYER.json crypto_data_hub/ALT_TECHNICAL_HISTORY.csv
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Update V8 LONG technical layer 11 alts'
+            if git push origin main; then exit 0; fi
+            sleep $((attempt*3))
+          done
+          exit 1
