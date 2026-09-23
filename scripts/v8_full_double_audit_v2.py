@@ -4,7 +4,7 @@ from pathlib import Path
 from datetime import datetime,timezone
 
 P=Path('.')
-ALTS=['ETH','SOL','LINK','ONDO','RENDER','FLOKI','PEPE','SPX6900','XRP','XLM','HBAR']
+ALTS=['ETH','SOL','LINK','ONDO','RENDER','FLOKI','PEPE','SPX6900','XRP','XLM','HBAR','AVAX','AWE']
 ALL=['BTC']+ALTS
 ZT=['1D','2D','3D','4D','5D','1T','2T']
 TT=['1H','4H','1D']
@@ -24,9 +24,9 @@ def fin(x):
 
 # Uniwersum
 u=rows('config/alt_universe.csv'); m={r['symbol'].upper():r for r in u}; act=[r['symbol'].upper() for r in u if r['enabled'].lower()=='true']
-ck('AKTYWNE BTC + 11 ALTÓW',act==ALL,act); ck('BTC = REŻIM RYNKU',m.get('BTC',{}).get('role')=='MARKET_REGIME'); ck('AAVE = ARCHIWUM',m.get('AAVE',{}).get('enabled')=='false' and m.get('AAVE',{}).get('target_scope')=='ARCHIVE')
+ck('AKTYWNE BTC + 13 ALTÓW',act==ALL,act); ck('BTC = REŻIM RYNKU',m.get('BTC',{}).get('role')=='MARKET_REGIME'); ck('AAVE = ARCHIWUM',m.get('AAVE',{}).get('enabled')=='false' and m.get('AAVE',{}).get('target_scope')=='ARCHIVE')
 
-# Strefy — zero jest dozwolone jako dolna granica historycznej strefy widocznej na wykresie; wartości ujemne nie są.
+# Strefy
 z=rows('config/alt_zones.csv'); cov={s:set() for s in ALTS}; bad=[]
 for r in z:
  s=r.get('symbol','').upper(); tf=r.get('timeframe','').upper()
@@ -37,10 +37,10 @@ for r in z:
  else: bad.append((s,tf,r.get('from'),r.get('to')))
 for s in ALTS: ck('STREFY '+s+' 7/7',cov[s]==set(ZT),sorted(cov[s]))
 ck('STREFY — ZAKRESY LICZBOWE POPRAWNE',not bad,bad[:10])
-za=J('audit/V8_ZONE_FINAL_77_OF_77.json'); ck('AUDYT STREF 77/77',za.get('ready_points')==77 and za.get('total_points')==77 and za.get('assets_complete')==11 and za.get('percent')==100.0)
+za=J('audit/V8_ZONE_FINAL_91_OF_91.json'); ck('AUDYT STREF 91/91',za.get('ready_points')==91 and za.get('total_points')==91 and za.get('assets_complete')==13 and za.get('percent')==100.0)
 
 # LONG
-L=J('crypto_data_hub/ALT_DECISION_ENGINE.json'); ck('LONG v1.0',L.get('engine')=='ALT_DECISION_ENGINE_v1.0'); ck('LONG = 11 ALTÓW',L.get('asset_count')==11 and L.get('universe')==ALTS,L.get('universe')); ck('LONG — BRAK AUTOMATYCZNEJ REALIZACJI',(L.get('rules') or {}).get('execution_connected') is False); ck('LONG — NIE ZGADUJE STREF',(L.get('rules') or {}).get('no_zone_guessing') is True)
+L=J('crypto_data_hub/ALT_DECISION_ENGINE.json'); ck('LONG v1.0',L.get('engine')=='ALT_DECISION_ENGINE_v1.0'); ck('LONG = 13 ALTÓW',L.get('asset_count')==13 and L.get('universe')==ALTS,L.get('universe')); ck('LONG — BRAK AUTOMATYCZNEJ REALIZACJI',(L.get('rules') or {}).get('execution_connected') is False); ck('LONG — NIE ZGADUJE STREF',(L.get('rules') or {}).get('no_zone_guessing') is True)
 LM={x.get('symbol'):x for x in L.get('assets',[])}
 for s in ALTS:
  x=LM.get(s,{}); zz=x.get('zones') or {}; ck('LONG '+s+' TECHNIKA',x.get('technical_ready') is True); ck('LONG '+s+' STREFY 7/7',zz.get('complete_7_of_7') is True and zz.get('missing_timeframes')==[],zz.get('missing_timeframes'))
@@ -48,19 +48,19 @@ for s in ALTS:
 
 # Readiness + master
 R=J('crypto_data_hub/ALT_ENGINE_READINESS.json'); RM={x.get('symbol'):x for x in R.get('assets',[])}
-ck('GOTOWOŚĆ v1.0',R.get('engine')=='ALT_ENGINE_READINESS_v1.0'); ck('GOTOWOŚĆ 11/11',R.get('summary',{}).get('production_data_ready')==11 and R.get('summary',{}).get('production_with_full_zones')==11,R.get('summary')); ck('GOTOWOŚĆ BEZ AAVE/BTC W WIERSZACH',set(RM)==set(ALTS),sorted(RM))
+ck('GOTOWOŚĆ v1.0',R.get('engine')=='ALT_ENGINE_READINESS_v1.0'); ck('GOTOWOŚĆ 13/13',R.get('summary',{}).get('production_data_ready')==13 and R.get('summary',{}).get('production_with_full_zones')==13,R.get('summary')); ck('GOTOWOŚĆ BEZ AAVE/BTC W WIERSZACH',set(RM)==set(ALTS),sorted(RM))
 for s in ALTS: ck('GOTOWOŚĆ '+s,RM.get(s,{}).get('readiness_status')=='PRODUCTION_DATA_READY' and RM.get(s,{}).get('zones_full_ready') is True)
-M=J('crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json'); ck('MASTER v1.0',M.get('engine')=='ALT_ENGINE_MASTER_CHECKPOINT_v1.0'); ck('MASTER 11/11',M.get('production_assets_count')==11 and M.get('production_assets_ready')==11); ck('MASTER 77/77',M.get('full_zone_map')=='77/77'); ck('MASTER BEZ AUTOMATYCZNEJ REALIZACJI',M.get('not_execution_connected') is True)
+M=J('crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json'); ck('MASTER v1.0',M.get('engine')=='ALT_ENGINE_MASTER_CHECKPOINT_v1.0'); ck('MASTER 13/13',M.get('production_assets_count')==13 and M.get('production_assets_ready')==13); ck('MASTER 91/91',M.get('full_zone_map')=='91/91'); ck('MASTER BEZ AUTOMATYCZNEJ REALIZACJI',M.get('not_execution_connected') is True)
 
 # Tactical
-T=J('tactical_engine/TACTICAL_ENGINE.json'); ck('TACTICAL v1.0',T.get('engine')=='V8_TACTICAL_ENGINE_v1.0'); ck('TACTICAL BTC + 11',T.get('asset_count')==12 and T.get('universe')==ALL,T.get('universe')); ck('TACTICAL BEZ SPÓŁEK',T.get('stocks_included') is False); ck('TACTICAL BEZ AUTOMATYCZNEJ REALIZACJI',T.get('not_execution_connected') is True)
+T=J('tactical_engine/TACTICAL_ENGINE.json'); ck('TACTICAL v1.0',T.get('engine')=='V8_TACTICAL_ENGINE_v1.0'); ck('TACTICAL BTC + 13',T.get('asset_count')==14 and T.get('universe')==ALL,T.get('universe')); ck('TACTICAL BEZ SPÓŁEK',T.get('stocks_included') is False); ck('TACTICAL BEZ AUTOMATYCZNEJ REALIZACJI',T.get('not_execution_connected') is True)
 TM={x.get('symbol'):x for x in T.get('assets',[])}
 for s in ALL:
  x=TM.get(s,{}); ck('TACTICAL '+s+' QA',x.get('qa')=='PASS'); t=x.get('timeframes') or {}; ck('TACTICAL '+s+' 1H/4H/1D',all(k in t for k in TT),list(t))
  for tf in TT:
   y=t.get(tf,{}); ck('TACTICAL '+s+' '+tf+' ZAMKNIĘTA ŚWIECA',y.get('closed_bar_only') is True); ck('TACTICAL '+s+' '+tf+' ŚWIEŻE DANE',y.get('stale') is False)
   ck('TACTICAL '+s+' '+tf+' RSI',fin(y.get('rsi14')) and 0<=float(y.get('rsi14'))<=100,y.get('rsi14')); ck('TACTICAL '+s+' '+tf+' MFI',fin(y.get('mfi14')) and 0<=float(y.get('mfi14'))<=100,y.get('mfi14')); ck('TACTICAL '+s+' '+tf+' FOMO',fin(y.get('fomo_score_0_10')) and 0<=float(y.get('fomo_score_0_10'))<=10,y.get('fomo_score_0_10'))
-TR=J('tactical_engine/TACTICAL_READINESS.json'); ck('TACTICAL GOTOWOŚĆ 12/12',TR.get('asset_count')==12 and TR.get('all_assets_ready') is True); ck('TRADINGVIEW ŚWIADOMIE ODŁOŻONE',TR.get('tradingview_connected') is False); ck('EXECUTION OFF',TR.get('execution_connected') is False)
+TR=J('tactical_engine/TACTICAL_READINESS.json'); ck('TACTICAL GOTOWOŚĆ 14/14',TR.get('asset_count')==14 and TR.get('all_assets_ready') is True); ck('TRADINGVIEW ŚWIADOMIE ODŁOŻONE',TR.get('tradingview_connected') is False); ck('EXECUTION OFF',TR.get('execution_connected') is False)
 
 # ETF
 E=J('institutional_data_hub/ETF_BTC_ETH_STATUS.json'); EA=E.get('assets') or {}; ck('ETF BTC + ETH',set(EA)=={'BTC','ETH'},list(EA))
