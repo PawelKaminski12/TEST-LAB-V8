@@ -1,0 +1,137 @@
+name: TEST LAB V8 Google Sheets Bridge Audit
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL.txt'
+      - 'google_sheets/DUAL_PANEL.csv'
+      - 'google_sheets/DUAL_ENGINE_MACHINE_ROOM.csv'
+      - 'crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json'
+      - 'tactical_engine/TACTICAL_ENGINE.json'
+      - 'tactical_engine/TACTICAL_READINESS.json'
+      - 'market_reader/TACTICAL_CONFLUENCE.csv'
+      - '.github/workflows/test-lab-v8-google-sheets-bridge-audit.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-google-sheets-bridge-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install --quiet pandas
+
+      - name: Audit script and data contracts twice
+        run: |
+          python - <<'PY'
+          import json, re
+          from pathlib import Path
+          import pandas as pd
+
+          out=Path('google_sheets')
+          script_path=out/'DUAL_ENGINE_APPS_SCRIPT_FULL.txt'
+          panel_path=out/'DUAL_PANEL.csv'
+          machine_path=out/'DUAL_ENGINE_MACHINE_ROOM.csv'
+          long_path=Path('crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json')
+          tactical_path=Path('tactical_engine/TACTICAL_ENGINE.json')
+          ready_path=Path('tactical_engine/TACTICAL_READINESS.json')
+          mr_path=Path('market_reader/TACTICAL_CONFLUENCE.csv')
+
+          results=[]
+          def check(name, ok, detail=''):
+              results.append({'check':name,'pass':bool(ok),'detail':detail})
+
+          # PASS 1: static Apps Script contract audit
+          text=script_path.read_text(encoding='utf-8')
+          funcs=['onOpen','V8_SETUP','ODSWIEZ_WSZYSTKO','fetchText_','writeCsvSheet_','writeLongEngine_','writeTacticalEngine_','setupPortfolioLong_','setupPortfolioTactical_','readPanelState_','appendHistoryOnChanges_','formatPanel_']
+          for fn in funcs:
+              check('SCRIPT_FUNC_'+fn, bool(re.search(r'function\s+'+re.escape(fn)+r'\s*\(', text)), 'required function')
+          check('SCRIPT_LOCK', 'LockService.getDocumentLock()' in text, 'prevents concurrent refresh')
+          check('SCRIPT_NO_BROKER_EXECUTION', not any(x in text for x in ['placeOrder(', 'submitOrder(', 'brokerApi', 'XTB_API']), 'no execution connector')
+          check('SCRIPT_V7_NOT_REFERENCED_FOR_WRITE', 'V7_TOUCH' in text and "['V7_TOUCH','OFF']" in text, 'V7 safety setting')
+          check('SCRIPT_DUAL_PORTFOLIOS', "'PORTFEL_LONG'" in text and "'PORTFEL_TACTICAL'" in text, 'separate portfolios')
+          check('SCRIPT_COMPACT_PANEL', 'const maxCols = 7' in text, 'panel capped at 7 visible columns')
+
+          # PASS 2: source/data schema audit
+          required_files=[script_path,panel_path,machine_path,long_path,tactical_path,ready_path,mr_path]
+          for p in required_files: check('FILE_'+p.as_posix(), p.exists(), 'required source')
+
+          panel=pd.read_csv(panel_path)
+          panel_req=['AKTYWO','CENA','LONG','TACTICAL','RYZYKO_0_10','ZGODNOSC','ALERT']
+          check('PANEL_SCHEMA', list(panel.columns)==panel_req, '|'.join(panel.columns))
+          check('PANEL_WIDTH_7', panel.shape[1]==7, str(panel.shape))
+          check('PANEL_SYMBOL_UNIQUE', panel['AKTYWO'].is_unique, 'unique asset rows')
+
+          machine=pd.read_csv(machine_path)
+          check('MACHINE_NONEMPTY', len(machine)>0 and machine.shape[1]>=7, str(machine.shape))
+
+          long=json.loads(long_path.read_text(encoding='utf-8'))
+          tactical=json.loads(tactical_path.read_text(encoding='utf-8'))
+          ready=json.loads(ready_path.read_text(encoding='utf-8'))
+          mr=pd.read_csv(mr_path)
+
+          long_assets={a.get('symbol'):a for a in long.get('assets',[])}
+          tactical_assets={a.get('symbol'):a for a in tactical.get('assets',[])}
+          ready_assets={a.get('symbol'):a for a in ready.get('assets',[])}
+          panel_symbols=set(panel['AKTYWO'].astype(str))
+          production=set(long.get('production_universe',[]))
+
+          check('LONG_STATUS_READY', long.get('status')=='CORE_ALT_ENGINE_READY_FOR_VALIDATION', str(long.get('status')))
+          check('TACTICAL_QA_PASS', tactical.get('qa_pass') is True, str(tactical.get('qa_pass')))
+          check('TACTICAL_READINESS_READY', ready.get('status')=='TACTICAL_CORE_READY_FOR_VALIDATION', str(ready.get('status')))
+          check('PRODUCTION_4', len(production)==4, ','.join(sorted(production)))
+          check('PANEL_EQUALS_PRODUCTION', panel_symbols==production, f'panel={sorted(panel_symbols)} production={sorted(production)}')
+          check('LONG_HAS_ALL_PANEL', panel_symbols.issubset(long_assets), '')
+          check('TACTICAL_HAS_ALL_PANEL', panel_symbols.issubset(tactical_assets), '')
+          check('READINESS_HAS_ALL_PANEL', panel_symbols.issubset(ready_assets), '')
+          check('MR_SCHEMA', {'symbol','qa','internal_score','internal_status','market_reader_points','combined_score','combined_status','guard'}.issubset(mr.columns), '|'.join(mr.columns))
+
+          # Cross-check panel values against source engines.
+          mismatches=[]
+          for _,r in panel.iterrows():
+              s=str(r['AKTYWO'])
+              la=long_assets[s]; ta=tactical_assets[s]
+              if str(r['LONG']) != str(la.get('decision')): mismatches.append(f'{s}:LONG')
+              if str(r['TACTICAL']) != str(ta.get('tactical_status')): mismatches.append(f'{s}:TACTICAL')
+              if float(r['RYZYKO_0_10']) != float(ta.get('exit_risk_0_10')): mismatches.append(f'{s}:RISK')
+          check('PANEL_SOURCE_PARITY', not mismatches, ','.join(mismatches))
+
+          failed=[r for r in results if not r['pass']]
+          summary={
+            'engine':'V8_GOOGLE_SHEETS_BRIDGE_AUDIT_v0.1',
+            'audit_rounds':2,
+            'round_1':'STATIC_APPS_SCRIPT_CONTRACT',
+            'round_2':'SOURCE_DATA_SCHEMA_AND_PARITY',
+            'checks_total':len(results),
+            'checks_passed':len(results)-len(failed),
+            'checks_failed':len(failed),
+            'status':'PASS' if not failed else 'FAIL',
+            'important_limit':'This validates code/contracts/data twice but is not a Google Apps Script runtime execution inside an actual spreadsheet.',
+            'results':results
+          }
+          (out/'DUAL_ENGINE_BRIDGE_AUDIT.json').write_text(json.dumps(summary,indent=2,ensure_ascii=False),encoding='utf-8')
+          pd.DataFrame(results).to_csv(out/'DUAL_ENGINE_BRIDGE_AUDIT.csv',index=False)
+          print(json.dumps(summary,indent=2,ensure_ascii=False))
+          if failed:
+              raise SystemExit('BRIDGE AUDIT FAIL')
+          PY
+
+      - name: Commit audit outputs
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add google_sheets/DUAL_ENGINE_BRIDGE_AUDIT.json google_sheets/DUAL_ENGINE_BRIDGE_AUDIT.csv
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update dual-engine Google Sheets bridge audit'
+            git pull --rebase origin main
+            git push
+          fi
