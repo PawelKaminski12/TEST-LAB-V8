@@ -1,0 +1,191 @@
+name: TEST LAB V8 Alt Engine Master Checkpoint
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '55 6 * * *'
+  push:
+    paths:
+      - '.github/workflows/test-lab-v8-alt-engine-master-checkpoint.yml'
+      - 'config/alt_universe.csv'
+      - 'config/alt_zones.csv'
+      - 'crypto_data_hub/LATEST_SNAPSHOT.json'
+      - 'crypto_data_hub/ALT_ROTATION_SCORE.json'
+      - 'crypto_data_hub/ALT_TECHNICAL_LAYER.json'
+      - 'crypto_data_hub/ALT_DECISION_ENGINE.json'
+      - 'crypto_data_hub/ALT_ENGINE_READINESS.json'
+      - 'crypto_data_hub/CRYPTO_MARKET_PHASE.json'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-alt-engine-writes
+  cancel-in-progress: false
+
+jobs:
+  build-master-checkpoint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependency
+        run: pip install --quiet pandas
+
+      - name: Build master checkpoint
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import pandas as pd
+
+          R=Path('crypto_data_hub')
+          required={
+              'snapshot':R/'LATEST_SNAPSHOT.json',
+              'rotation':R/'ALT_ROTATION_SCORE.json',
+              'technical':R/'ALT_TECHNICAL_LAYER.json',
+              'decision':R/'ALT_DECISION_ENGINE.json',
+              'readiness':R/'ALT_ENGINE_READINESS.json',
+              'phase':R/'CRYPTO_MARKET_PHASE.json',
+              'universe':Path('config/alt_universe.csv'),
+              'zones':Path('config/alt_zones.csv'),
+          }
+          missing=[k for k,p in required.items() if not p.exists()]
+          if missing:
+              raise SystemExit('Missing core modules: '+', '.join(missing))
+
+          snap=json.loads(required['snapshot'].read_text(encoding='utf-8'))
+          rot=json.loads(required['rotation'].read_text(encoding='utf-8'))
+          tech=json.loads(required['technical'].read_text(encoding='utf-8'))
+          dec=json.loads(required['decision'].read_text(encoding='utf-8'))
+          ready=json.loads(required['readiness'].read_text(encoding='utf-8'))
+          phase=json.loads(required['phase'].read_text(encoding='utf-8'))
+          cfg=pd.read_csv(required['universe'])
+          cfg=cfg[(cfg['enabled'].astype(str).str.lower()=='true') & (cfg['target_scope'].astype(str).str.upper()=='PRODUCTION')].copy()
+          zones=pd.read_csv(required['zones'])
+
+          symbols=[str(x).upper().strip() for x in cfg['symbol'].tolist()]
+          techmap={x.get('symbol'):x for x in tech.get('assets',[])}
+          decmap={x.get('symbol'):x for x in dec.get('assets',[])}
+          readymap={x.get('symbol'):x for x in ready.get('assets',[])}
+          phasemap={x.get('symbol'):x for x in phase.get('asset_context',[])}
+
+          rows=[]
+          for sym in symbols:
+              t=techmap.get(sym,{})
+              d=decmap.get(sym,{})
+              rr=readymap.get(sym,{})
+              pc=phasemap.get(sym,{})
+              z=zones[zones['symbol'].astype(str).str.upper().eq(sym)]
+              tfs=sorted(set(z['timeframe'].astype(str).str.upper())) if not z.empty else []
+              rows.append({
+                  'symbol':sym,
+                  'data_quality':rr.get('data_quality_score_0_100'),
+                  'readiness_status':rr.get('readiness_status'),
+                  'full_zones_ready':rr.get('zones_full_ready'),
+                  'zone_timeframes':','.join(tfs),
+                  'trend_score_0_4':t.get('trend_score_0_4'),
+                  'fomo_score_0_10':t.get('fomo_score_0_10'),
+                  'rotation_label':pc.get('rotation_label'),
+                  'market_phase':phase.get('phase'),
+                  'decision':d.get('decision'),
+                  'dca1':d.get('zones',{}).get('dca1'),
+                  'dca2':d.get('zones',{}).get('dca2'),
+                  'dca3':d.get('zones',{}).get('dca3'),
+                  'blockers':'|'.join(d.get('blockers',[])),
+              })
+
+          df=pd.DataFrame(rows)
+          prod_ready = len(df)>0 and bool(df['readiness_status'].eq('PRODUCTION_DATA_READY').all())
+          full_zones = len(df)>0 and bool(df['full_zones_ready'].fillna(False).all())
+          decisions_present = len(df)>0 and bool(df['decision'].notna().all()) and bool((df['decision']!='DATA_PENDING').all())
+          technical_ready = all(sym in techmap and techmap[sym].get('qa')=='PASS' for sym in symbols)
+          rotation_ready = rot.get('score_0_10') is not None
+          phase_ready = phase.get('phase') is not None
+          snapshot_qa = bool(snap.get('qa',{}).get('PASS'))
+
+          core_modules={
+              'PRICE_DATA_QA':snapshot_qa,
+              'FULL_ZONES_1D_TO_2T':full_zones,
+              'TECHNICAL_LAYER':technical_ready,
+              'ROTATION_LAYER':rotation_ready,
+              'MARKET_PHASE_LAYER':phase_ready,
+              'DECISION_LAYER':decisions_present,
+          }
+          core_ready=sum(bool(v) for v in core_modules.values())
+
+          extended={
+              'BROAD_ROTATION_20D_HISTORY':bool(rot.get('broad_rotation_history_ready')),
+              'SOL_ETF_MATURE_20_ROWS':int(snap.get('qa',{}).get('sol_etf_rows',0) or 0)>=20,
+              'ETF_INDEPENDENT_SOURCE_CROSSCHECK':False,
+              'DEDICATED_ONCHAIN_LAYER':False,
+              'PORTFOLIO_EXECUTION_CONNECTION':False,
+          }
+          ext_ready=sum(bool(v) for v in extended.values())
+
+          if core_ready==len(core_modules):
+              status='CORE_ALT_ENGINE_READY_FOR_VALIDATION'
+          else:
+              status='CORE_ALT_ENGINE_INCOMPLETE'
+
+          blockers=[]
+          if not prod_ready: blockers.append('PRODUCTION_DATA_NOT_4_OF_4')
+          if not full_zones: blockers.append('FULL_ZONE_MAP_NOT_4_OF_4')
+          if not decisions_present: blockers.append('DECISION_LAYER_PENDING')
+          if not rot.get('broad_rotation_history_ready'): blockers.append('BROAD_ROTATION_HISTORY_MATURING')
+          if int(snap.get('qa',{}).get('sol_etf_rows',0) or 0)<20: blockers.append('SOL_ETF_HISTORY_IMMATURE')
+          blockers.append('ETF_SOURCE_CROSSCHECK_PENDING')
+          blockers.append('DEDICATED_ONCHAIN_LAYER_PENDING')
+          blockers.append('NOT_CONNECTED_TO_PORTFOLIO_EXECUTION')
+
+          out={
+              'date':snap.get('target_date'),
+              'engine':'ALT_ENGINE_MASTER_CHECKPOINT_v0.1',
+              'status':status,
+              'production_universe':symbols,
+              'production_assets_count':len(symbols),
+              'production_assets_ready':int(df['readiness_status'].eq('PRODUCTION_DATA_READY').sum()),
+              'core_modules_ready':f'{core_ready}/{len(core_modules)}',
+              'core_modules':core_modules,
+              'extended_modules_ready':f'{ext_ready}/{len(extended)}',
+              'extended_modules':extended,
+              'crypto_market_phase':phase.get('phase'),
+              'market_phase_confidence':phase.get('phase_confidence'),
+              'alt_rotation_score_0_10':rot.get('score_0_10'),
+              'alt_rotation_status':rot.get('status'),
+              'research_only':True,
+              'not_strategy_frozen':True,
+              'not_execution_connected':True,
+              'blockers_or_maturity_gaps':blockers,
+              'assets':rows,
+              'rules':{
+                  'V7_UNTOUCHED':True,
+                  'NO_ZONE_GUESSING':True,
+                  'PRODUCTION_AND_TEST_UNIVERSES_SEPARATE':True,
+                  'DATA_PENDING_NOT_TRADE_SIGNAL':True,
+                  'MARKET_PHASE_CONTEXT_NOT_HARD_BUY_GATE':True,
+              }
+          }
+          (R/'ALT_ENGINE_MASTER_CHECKPOINT.json').write_text(json.dumps(out,indent=2,ensure_ascii=False),encoding='utf-8')
+          df.to_csv(R/'ALT_ENGINE_MASTER_COCKPIT.csv',index=False)
+          print(json.dumps(out,indent=2,ensure_ascii=False))
+          PY
+
+      - name: Commit master checkpoint
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json crypto_data_hub/ALT_ENGINE_MASTER_COCKPIT.csv
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update V8 alt engine master checkpoint'
+            git pull --rebase origin main
+            git push
+          fi
