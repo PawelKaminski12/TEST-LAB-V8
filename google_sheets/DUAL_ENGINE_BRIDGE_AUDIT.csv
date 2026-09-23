@@ -1,0 +1,39 @@
+check,pass,detail
+SCRIPT_FUNC_onOpen,True,required function
+SCRIPT_FUNC_V8_SETUP,True,required function
+SCRIPT_FUNC_ODSWIEZ_WSZYSTKO,True,required function
+SCRIPT_FUNC_fetchText_,True,required function
+SCRIPT_FUNC_writeCsvSheet_,True,required function
+SCRIPT_FUNC_writeLongEngine_,True,required function
+SCRIPT_FUNC_writeTacticalEngine_,True,required function
+SCRIPT_FUNC_setupPortfolioLong_,True,required function
+SCRIPT_FUNC_setupPortfolioTactical_,True,required function
+SCRIPT_FUNC_readPanelState_,True,required function
+SCRIPT_FUNC_appendHistoryOnChanges_,True,required function
+SCRIPT_FUNC_formatPanel_,True,required function
+SCRIPT_LOCK,True,prevents concurrent refresh
+SCRIPT_NO_BROKER_EXECUTION,True,no execution connector
+SCRIPT_V7_NOT_REFERENCED_FOR_WRITE,True,V7 safety setting
+SCRIPT_DUAL_PORTFOLIOS,True,separate portfolios
+SCRIPT_COMPACT_PANEL,True,panel capped at 7 visible columns
+FILE_google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL.txt,True,required source
+FILE_google_sheets/DUAL_PANEL.csv,True,required source
+FILE_google_sheets/DUAL_ENGINE_MACHINE_ROOM.csv,True,required source
+FILE_crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json,True,required source
+FILE_tactical_engine/TACTICAL_ENGINE.json,True,required source
+FILE_tactical_engine/TACTICAL_READINESS.json,True,required source
+FILE_market_reader/TACTICAL_CONFLUENCE.csv,True,required source
+PANEL_SCHEMA,True,AKTYWO|CENA|LONG|TACTICAL|RYZYKO_0_10|ZGODNOSC|ALERT
+PANEL_WIDTH_7,True,"(4, 7)"
+PANEL_SYMBOL_UNIQUE,True,unique asset rows
+MACHINE_NONEMPTY,True,"(4, 19)"
+LONG_STATUS_READY,True,CORE_ALT_ENGINE_READY_FOR_VALIDATION
+TACTICAL_QA_PASS,True,True
+TACTICAL_READINESS_READY,True,TACTICAL_CORE_READY_FOR_VALIDATION
+PRODUCTION_4,True,"ETH,LINK,ONDO,SOL"
+PANEL_EQUALS_PRODUCTION,True,"panel=['ETH', 'LINK', 'ONDO', 'SOL'] production=['ETH', 'LINK', 'ONDO', 'SOL']"
+LONG_HAS_ALL_PANEL,True,
+TACTICAL_HAS_ALL_PANEL,True,
+READINESS_HAS_ALL_PANEL,True,
+MR_SCHEMA,True,symbol|qa|internal_score|internal_status|market_reader_points|combined_score|combined_status|guard
+PANEL_SOURCE_PARITY,True,

@@ -1,0 +1,203 @@
+{
+  "engine": "V8_GOOGLE_SHEETS_BRIDGE_AUDIT_v0.1",
+  "audit_rounds": 2,
+  "round_1": "STATIC_APPS_SCRIPT_CONTRACT",
+  "round_2": "SOURCE_DATA_SCHEMA_AND_PARITY",
+  "checks_total": 38,
+  "checks_passed": 38,
+  "checks_failed": 0,
+  "status": "PASS",
+  "important_limit": "This validates code/contracts/data twice but is not a Google Apps Script runtime execution inside an actual spreadsheet.",
+  "results": [
+    {
+      "check": "SCRIPT_FUNC_onOpen",
+      "pass": true,
+      "detail": "required function"
+    },
+    {
+      "check": "SCRIPT_FUNC_V8_SETUP",
+      "pass": true,
+      "detail": "required function"
+    },
+    {
+      "check": "SCRIPT_FUNC_ODSWIEZ_WSZYSTKO",
+      "pass": true,
+      "detail": "required function"
+    },
+    {
+      "check": "SCRIPT_FUNC_fetchText_",
+      "pass": true,
+      "detail": "required function"
+    },
+    {
+      "check": "SCRIPT_FUNC_writeCsvSheet_",
+      "pass": true,
+      "detail": "required function"
+    },
+    {
+      "check": "SCRIPT_FUNC_writeLongEngine_",
+      "pass": true,
+      "detail": "required function"
+    },
+    {
+      "check": "SCRIPT_FUNC_writeTacticalEngine_",
+      "pass": true,
+      "detail": "required function"
+    },
+    {
+      "check": "SCRIPT_FUNC_setupPortfolioLong_",
+      "pass": true,
+      "detail": "required function"
+    },
+    {
+      "check": "SCRIPT_FUNC_setupPortfolioTactical_",
+      "pass": true,
+      "detail": "required function"
+    },
+    {
+      "check": "SCRIPT_FUNC_readPanelState_",
+      "pass": true,
+      "detail": "required function"
+    },
+    {
+      "check": "SCRIPT_FUNC_appendHistoryOnChanges_",
+      "pass": true,
+      "detail": "required function"
+    },
+    {
+      "check": "SCRIPT_FUNC_formatPanel_",
+      "pass": true,
+      "detail": "required function"
+    },
+    {
+      "check": "SCRIPT_LOCK",
+      "pass": true,
+      "detail": "prevents concurrent refresh"
+    },
+    {
+      "check": "SCRIPT_NO_BROKER_EXECUTION",
+      "pass": true,
+      "detail": "no execution connector"
+    },
+    {
+      "check": "SCRIPT_V7_NOT_REFERENCED_FOR_WRITE",
+      "pass": true,
+      "detail": "V7 safety setting"
+    },
+    {
+      "check": "SCRIPT_DUAL_PORTFOLIOS",
+      "pass": true,
+      "detail": "separate portfolios"
+    },
+    {
+      "check": "SCRIPT_COMPACT_PANEL",
+      "pass": true,
+      "detail": "panel capped at 7 visible columns"
+    },
+    {
+      "check": "FILE_google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL.txt",
+      "pass": true,
+      "detail": "required source"
+    },
+    {
+      "check": "FILE_google_sheets/DUAL_PANEL.csv",
+      "pass": true,
+      "detail": "required source"
+    },
+    {
+      "check": "FILE_google_sheets/DUAL_ENGINE_MACHINE_ROOM.csv",
+      "pass": true,
+      "detail": "required source"
+    },
+    {
+      "check": "FILE_crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json",
+      "pass": true,
+      "detail": "required source"
+    },
+    {
+      "check": "FILE_tactical_engine/TACTICAL_ENGINE.json",
+      "pass": true,
+      "detail": "required source"
+    },
+    {
+      "check": "FILE_tactical_engine/TACTICAL_READINESS.json",
+      "pass": true,
+      "detail": "required source"
+    },
+    {
+      "check": "FILE_market_reader/TACTICAL_CONFLUENCE.csv",
+      "pass": true,
+      "detail": "required source"
+    },
+    {
+      "check": "PANEL_SCHEMA",
+      "pass": true,
+      "detail": "AKTYWO|CENA|LONG|TACTICAL|RYZYKO_0_10|ZGODNOSC|ALERT"
+    },
+    {
+      "check": "PANEL_WIDTH_7",
+      "pass": true,
+      "detail": "(4, 7)"
+    },
+    {
+      "check": "PANEL_SYMBOL_UNIQUE",
+      "pass": true,
+      "detail": "unique asset rows"
+    },
+    {
+      "check": "MACHINE_NONEMPTY",
+      "pass": true,
+      "detail": "(4, 19)"
+    },
+    {
+      "check": "LONG_STATUS_READY",
+      "pass": true,
+      "detail": "CORE_ALT_ENGINE_READY_FOR_VALIDATION"
+    },
+    {
+      "check": "TACTICAL_QA_PASS",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_READINESS_READY",
+      "pass": true,
+      "detail": "TACTICAL_CORE_READY_FOR_VALIDATION"
+    },
+    {
+      "check": "PRODUCTION_4",
+      "pass": true,
+      "detail": "ETH,LINK,ONDO,SOL"
+    },
+    {
+      "check": "PANEL_EQUALS_PRODUCTION",
+      "pass": true,
+      "detail": "panel=['ETH', 'LINK', 'ONDO', 'SOL'] production=['ETH', 'LINK', 'ONDO', 'SOL']"
+    },
+    {
+      "check": "LONG_HAS_ALL_PANEL",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "TACTICAL_HAS_ALL_PANEL",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "READINESS_HAS_ALL_PANEL",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "MR_SCHEMA",
+      "pass": true,
+      "detail": "symbol|qa|internal_score|internal_status|market_reader_points|combined_score|combined_status|guard"
+    },
+    {
+      "check": "PANEL_SOURCE_PARITY",
+      "pass": true,
+      "detail": ""
+    }
+  ]
+}
