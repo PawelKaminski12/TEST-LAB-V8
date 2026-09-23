@@ -1,0 +1,55 @@
+name: TEST LAB V8 Extreme Confluence
+
+on:
+  push:
+    paths:
+      - 'google_sheets/V8_EXTREME_CONFLUENCE_V2.txt'
+      - '.github/workflows/test-lab-v8-extreme-confluence.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-extreme-confluence:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz projekt
+        uses: actions/checkout@v4
+
+      - name: Sprawdź składnię JavaScript
+        run: node --check google_sheets/V8_EXTREME_CONFLUENCE_V2.txt
+
+      - name: Sprawdź wymagane funkcje i zabezpieczenia
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('google_sheets/V8_EXTREME_CONFLUENCE_V2.txt')
+          s = p.read_text(encoding='utf-8')
+          required = [
+              'function setupExtremes_',
+              'function buildExtremeAlarms_',
+              'function confluencePriority_',
+              'function timeframeWeight_',
+              'function makeConfluenceAlarm_',
+              'function writeExtremeAlarms_',
+              'function readActiveExtremeKeys_',
+              'function appendExtremeHistory_',
+              'function notifyNewExtremeAlarms_',
+              "['1H','4H','1D']",
+              "return 'KRYTYCZNY'",
+              "return 'MOCNY'",
+              "return 'OSTRZEŻENIE'",
+              "if (!signals.length) return;",
+              'execution',
+          ]
+          missing = [x for x in required if x not in s]
+          # Moduł alarmowy nie może wykonywać zleceń ani modyfikować LONG/TACTICAL.
+          forbidden = ['placeOrder(', 'createOrder(', 'broker.', 'AUTO_EXECUTION = ON']
+          found_forbidden = [x for x in forbidden if x in s]
+          if missing:
+              raise SystemExit('BRAK WYMAGANYCH ELEMENTÓW: ' + ', '.join(missing))
+          if found_forbidden:
+              raise SystemExit('NIEDOZWOLONA LOGIKA WYKONAWCZA: ' + ', '.join(found_forbidden))
+          print('PASS — składnia logiczna i zabezpieczenia warstwy zbieżności są poprawne')
+          PY
