@@ -25,6 +25,7 @@ TACTICAL,CENTRUM RYZYKA,GOTOWE,NORMALNIE / UWAGA / PODWYŻSZONE RYZYKO / OCHRONA
 TACTICAL,KALIBRACJA,BADANIA ZAMKNIĘTE — DEPLOY HOLD,QA PASS i obserwacje PASS; TRAIN FAIL przy HOLDOUT PASS; spójność między aktywami FAIL; produkcyjnych progów nie zmieniono
 TACTICAL,SHADOW MONITOR,GOTOWE — DEPLOY HOLD,Kandydat score>=6 / FOMO<=7 / trend4>=3 / RSI4 50–70 jest liczony równolegle dla 13 altów; historia oddzielna; brak wpływu na produkcję
 TACTICAL,VALIDATION FRAMEWORK 2.0,GOTOWE — HOLD RESEARCH,325 historycznych obserwacji kandydata; stabilność per aktywo / reżim / kwartyl czasu; bramka PROMOTE-HOLD-REJECT; obecnie HOLD_RESEARCH
+TACTICAL,CHALLENGER FRAMEWORK V3,GOTOWE — WATCH STRONG,Macierz 5 stałych challengerów + reżimy + kwartały czasu + 3-fold expanding walk-forward; BALANCED_LOW_FOMO wygrał 7/8 bramek; brak wdrożenia produkcyjnego
 PANEL,GOOGLE SHEETS,GOTOWE,Polskie etykiety; 7 kolumn bez rozbudowy układu; ALERT zawiera najważniejsze ekstrema i centrum ryzyka
 PANEL,SILNIK_TACTICAL,GOTOWE,Dodatkowe kolumny CENTRUM RYZYKA i POWÓD RYZYKA w maszynowni Tactical
 ARCHIWUM,AAVE,NIEAKTYWNE,Nie wchodzi do aktywnego zakresu V8
@@ -36,3 +37,4 @@ BEZPIECZEŃSTWO,ALARMY,GOTOWE,Alarmy i centrum ryzyka są warstwą informacyjną
 BEZPIECZEŃSTWO,KALIBRACJA,GOTOWE,Bramka badawcza nie może automatycznie zmienić progów produkcyjnych ani połączyć wykonania transakcji
 BEZPIECZEŃSTWO,SHADOW,GOTOWE,Shadow monitor zapisuje wyniki osobno; produkcyjny TACTICAL_ENGINE i Apps Script V9 są chronione sumami kontrolnymi przed modyfikacją
 BEZPIECZEŃSTWO,VALIDATION V2,GOTOWE,Framework 2.0 ma deploy_block i promotion_allowed_automatically=false; nawet PROMOTE wymaga ręcznego przeglądu i ponownego audytu
+BEZPIECZEŃSTWO,CHALLENGER V3,GOTOWE,Challenger V3 jest research-only i deploy-block; nie modyfikuje TACTICAL_ENGINE ani Apps Script V9; promocja tylko ręczna po pełnym audycie
