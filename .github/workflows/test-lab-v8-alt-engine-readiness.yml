@@ -1,4 +1,4 @@
-# Synchronizacja po finalnym przeliczeniu LONG 11/11
+# Synchronizacja po finalnym przeliczeniu LONG 13/13
 name: TEST LAB V8 Alt Engine Readiness
 
 on:
@@ -36,14 +36,14 @@ jobs:
           python-version: '3.12'
       - name: Install dependencies
         run: pip install --quiet pandas
-      - name: Build readiness for 11 active alts
+      - name: Build readiness for 13 active alts
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
           import pandas as pd
           ROOT=Path('crypto_data_hub')
-          EXPECTED=['ETH','SOL','LINK','ONDO','RENDER','FLOKI','PEPE','SPX6900','XRP','XLM','HBAR']
+          EXPECTED=['ETH','SOL','LINK','ONDO','RENDER','FLOKI','PEPE','SPX6900','XRP','XLM','HBAR','AVAX','AWE']
           required_full=['1D','2D','3D','4D','5D','1T','2T']
           cfg=pd.read_csv('config/alt_universe.csv'); zones=pd.read_csv('config/alt_zones.csv')
           tech=json.loads((ROOT/'ALT_TECHNICAL_LAYER.json').read_text(encoding='utf-8'))
@@ -66,10 +66,10 @@ jobs:
               status='PRODUCTION_DATA_READY' if all([price_ready,rotation_ready,zones_full_ready,decision_ready]) else 'PRODUCTION_DATA_GAP'
               out.append({'symbol':sym,'target_scope':'PRODUCTION','price_data_ready':price_ready,'rotation_data_ready':rotation_ready,'zone_rows':int(len(valid)),'zone_timeframes':','.join(tf2 for tf2 in required_full if tf2 in tf),'core_zone_missing':'','full_zone_missing':','.join(missing),'zones_core_ready':zones_full_ready,'zones_full_ready':zones_full_ready,'decision':d.get('decision'),'decision_ready':decision_ready,'data_quality_score_0_100':int(q),'readiness_status':status})
           df=pd.DataFrame(out)
-          payload={'date':dec.get('date'),'engine':'ALT_ENGINE_READINESS_v1.0','rules':{'btc_is_market_regime_not_alt_row':True,'active_alts_exactly_11':True,'no_zone_guessing':True,'full_zone_timeframes':required_full,'data_pending_is_not_trade_signal':True},'summary':{'production_assets':11,'production_data_ready':int(df['readiness_status'].eq('PRODUCTION_DATA_READY').sum()),'production_with_full_zones':int(df['zones_full_ready'].sum())},'assets':out}
+          payload={'date':dec.get('date'),'engine':'ALT_ENGINE_READINESS_v1.0','rules':{'btc_is_market_regime_not_alt_row':True,'active_alts_exactly_13':True,'no_zone_guessing':True,'full_zone_timeframes':required_full,'data_pending_is_not_trade_signal':True},'summary':{'production_assets':13,'production_data_ready':int(df['readiness_status'].eq('PRODUCTION_DATA_READY').sum()),'production_with_full_zones':int(df['zones_full_ready'].sum())},'assets':out}
           (ROOT/'ALT_ENGINE_READINESS.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False),encoding='utf-8'); df.to_csv(ROOT/'ALT_ENGINE_READINESS.csv',index=False)
           df[['symbol','decision','data_quality_score_0_100','readiness_status','full_zone_missing']].to_csv(ROOT/'ALT_PRODUCTION_COCKPIT.csv',index=False)
-          if payload['summary']['production_data_ready']!=11 or payload['summary']['production_with_full_zones']!=11: raise SystemExit(json.dumps(payload['summary'],ensure_ascii=False))
+          if payload['summary']['production_data_ready']!=13 or payload['summary']['production_with_full_zones']!=13: raise SystemExit(json.dumps(payload['summary'],ensure_ascii=False))
           print(json.dumps(payload['summary'],ensure_ascii=False,indent=2))
           PY
       - name: Commit readiness outputs
@@ -77,6 +77,6 @@ jobs:
           git config user.name 'github-actions[bot]'; git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add crypto_data_hub/ALT_ENGINE_READINESS.json crypto_data_hub/ALT_ENGINE_READINESS.csv crypto_data_hub/ALT_PRODUCTION_COCKPIT.csv
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m 'Update V8 readiness for all 11 alts'
+          git commit -m 'Update V8 readiness for all 13 alts'
           for attempt in 1 2 3; do git pull --rebase origin main && git push && exit 0; sleep $((attempt * 4)); done
           exit 1
