@@ -17,8 +17,16 @@ ALTY,HBAR,GOTOWE,TECHNIKA + STREFY 7/7 + LONG + TACTICAL
 ALTY,AVAX,GOTOWE,TECHNIKA + STREFY 7/7 + LONG + TACTICAL
 ALTY,AWE,GOTOWE,TECHNIKA + STREFY 7/7 + LONG + TACTICAL
 ALARMY,EKSTREMA,GOTOWE,1H / 4H / 1D — RSI + MFI + MACD + FOMO
-PANEL,GOOGLE SHEETS,GOTOWE,Polskie etykiety LONG / TACTICAL / ryzyko / zgodność / alert
+ALARMY,ZBIEŻNOŚĆ,GOTOWE,Jeden alarm zbiorczy na aktywo + interwał; hierarchia 1H / 4H / 1D
+ALARMY,ŚWIEŻOŚĆ,GOTOWE,Wygaszanie starych danych; 1H 3h / 4H 10h / 1D 36h; brak czasu blokuje alarm aktywny
+ALARMY,WIELE TF,GOTOWE,Zgodność 1H+4H / 4H+1D / 1H+4H+1D z kierunkiem PRZEGRZANIE lub WYPRZEDANIE
+ALARMY,DYNAMIKA,GOTOWE,NOWY / NASILA SIĘ / BEZ ZMIAN / SŁABNIE / WYGASŁ; powiadomienia bez duplikowania stanu bez zmian
+TACTICAL,CENTRUM RYZYKA,GOTOWE,NORMALNIE / UWAGA / PODWYŻSZONE RYZYKO / OCHRONA KAPITAŁU; exit risk + FOMO + strefy + status + ekstrema + wiele TF
+PANEL,GOOGLE SHEETS,GOTOWE,Polskie etykiety; 7 kolumn bez rozbudowy układu; ALERT zawiera najważniejsze ekstrema i centrum ryzyka
+PANEL,SILNIK_TACTICAL,GOTOWE,Dodatkowe kolumny CENTRUM RYZYKA i POWÓD RYZYKA w maszynowni Tactical
 ARCHIWUM,AAVE,NIEAKTYWNE,Nie wchodzi do aktywnego zakresu V8
 ZAKRES,SUI,POZA ZAKRESEM,Nie wchodzi do ustalonego zakresu V8
 BEZPIECZEŃSTWO,AUTO EXECUTION,OFF,Brak automatycznego wykonywania transakcji
+BEZPIECZEŃSTWO,V7 TOUCH,OFF,V7 produkcyjny pozostaje nietknięty
 BEZPIECZEŃSTWO,STREFY,GOTOWE,System nie zgaduje stref użytkownika
+BEZPIECZEŃSTWO,ALARMY,GOTOWE,Alarmy i centrum ryzyka są warstwą informacyjną; nie wykonują zleceń
