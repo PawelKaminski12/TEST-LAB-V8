@@ -1,9 +1,9 @@
 {
-  "date": null,
+  "date": "2026-09-23",
   "engine": "ALT_ENGINE_READINESS_v1.0",
   "rules": {
     "btc_is_market_regime_not_alt_row": true,
-    "active_alts_exactly_11": true,
+    "active_alts_exactly_13": true,
     "no_zone_guessing": true,
     "full_zone_timeframes": [
       "1D",
@@ -17,9 +17,9 @@
     "data_pending_is_not_trade_signal": true
   },
   "summary": {
-    "production_assets": 11,
-    "production_data_ready": 11,
-    "production_with_full_zones": 11
+    "production_assets": 13,
+    "production_data_ready": 13,
+    "production_with_full_zones": 13
   },
   "assets": [
     {
@@ -33,7 +33,7 @@
       "full_zone_missing": "",
       "zones_core_ready": true,
       "zones_full_ready": true,
-      "decision": "SPRAWDŹ",
+      "decision": "CZEKAJ",
       "decision_ready": true,
       "data_quality_score_0_100": 100,
       "readiness_status": "PRODUCTION_DATA_READY"
@@ -49,7 +49,7 @@
       "full_zone_missing": "",
       "zones_core_ready": true,
       "zones_full_ready": true,
-      "decision": "SPRAWDŹ",
+      "decision": "CZEKAJ",
       "decision_ready": true,
       "data_quality_score_0_100": 100,
       "readiness_status": "PRODUCTION_DATA_READY"
@@ -65,7 +65,7 @@
       "full_zone_missing": "",
       "zones_core_ready": true,
       "zones_full_ready": true,
-      "decision": "SPRAWDŹ",
+      "decision": "CZEKAJ",
       "decision_ready": true,
       "data_quality_score_0_100": 100,
       "readiness_status": "PRODUCTION_DATA_READY"
@@ -81,7 +81,7 @@
       "full_zone_missing": "",
       "zones_core_ready": true,
       "zones_full_ready": true,
-      "decision": "SPRAWDŹ",
+      "decision": "CZEKAJ",
       "decision_ready": true,
       "data_quality_score_0_100": 100,
       "readiness_status": "PRODUCTION_DATA_READY"
@@ -97,7 +97,7 @@
       "full_zone_missing": "",
       "zones_core_ready": true,
       "zones_full_ready": true,
-      "decision": "SPRAWDŹ",
+      "decision": "CZEKAJ",
       "decision_ready": true,
       "data_quality_score_0_100": 100,
       "readiness_status": "PRODUCTION_DATA_READY"
@@ -113,7 +113,7 @@
       "full_zone_missing": "",
       "zones_core_ready": true,
       "zones_full_ready": true,
-      "decision": "SPRAWDŹ",
+      "decision": "CZEKAJ",
       "decision_ready": true,
       "data_quality_score_0_100": 100,
       "readiness_status": "PRODUCTION_DATA_READY"
@@ -129,7 +129,7 @@
       "full_zone_missing": "",
       "zones_core_ready": true,
       "zones_full_ready": true,
-      "decision": "CZEKAJ",
+      "decision": "CZEKAJ — FOMO",
       "decision_ready": true,
       "data_quality_score_0_100": 100,
       "readiness_status": "PRODUCTION_DATA_READY"
@@ -145,7 +145,7 @@
       "full_zone_missing": "",
       "zones_core_ready": true,
       "zones_full_ready": true,
-      "decision": "SPRAWDŹ",
+      "decision": "CZEKAJ",
       "decision_ready": true,
       "data_quality_score_0_100": 100,
       "readiness_status": "PRODUCTION_DATA_READY"
@@ -161,7 +161,7 @@
       "full_zone_missing": "",
       "zones_core_ready": true,
       "zones_full_ready": true,
-      "decision": "SPRAWDŹ",
+      "decision": "CZEKAJ",
       "decision_ready": true,
       "data_quality_score_0_100": 100,
       "readiness_status": "PRODUCTION_DATA_READY"
@@ -177,7 +177,7 @@
       "full_zone_missing": "",
       "zones_core_ready": true,
       "zones_full_ready": true,
-      "decision": "SPRAWDŹ",
+      "decision": "CZEKAJ",
       "decision_ready": true,
       "data_quality_score_0_100": 100,
       "readiness_status": "PRODUCTION_DATA_READY"
@@ -188,6 +188,38 @@
       "price_data_ready": true,
       "rotation_data_ready": true,
       "zone_rows": 29,
+      "zone_timeframes": "1D,2D,3D,4D,5D,1T,2T",
+      "core_zone_missing": "",
+      "full_zone_missing": "",
+      "zones_core_ready": true,
+      "zones_full_ready": true,
+      "decision": "CZEKAJ — FOMO",
+      "decision_ready": true,
+      "data_quality_score_0_100": 100,
+      "readiness_status": "PRODUCTION_DATA_READY"
+    },
+    {
+      "symbol": "AVAX",
+      "target_scope": "PRODUCTION",
+      "price_data_ready": true,
+      "rotation_data_ready": true,
+      "zone_rows": 28,
+      "zone_timeframes": "1D,2D,3D,4D,5D,1T,2T",
+      "core_zone_missing": "",
+      "full_zone_missing": "",
+      "zones_core_ready": true,
+      "zones_full_ready": true,
+      "decision": "CZEKAJ — FOMO",
+      "decision_ready": true,
+      "data_quality_score_0_100": 100,
+      "readiness_status": "PRODUCTION_DATA_READY"
+    },
+    {
+      "symbol": "AWE",
+      "target_scope": "PRODUCTION",
+      "price_data_ready": true,
+      "rotation_data_ready": true,
+      "zone_rows": 20,
       "zone_timeframes": "1D,2D,3D,4D,5D,1T,2T",
       "core_zone_missing": "",
       "full_zone_missing": "",

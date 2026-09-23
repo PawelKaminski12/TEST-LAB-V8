@@ -1,0 +1,1811 @@
+{
+  "generated_at_utc": "2026-09-23T20:22:22.491824+00:00",
+  "test": "1/2",
+  "kontrole": 360,
+  "poprawne": 360,
+  "bledy": 0,
+  "status_pl": "ZAKOŃCZONE POPRAWNIE",
+  "problemy": [],
+  "szczegoly": [
+    {
+      "kontrola": "PLIK config/alt_universe.csv",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "AKTYWNE BTC + 13 ALTÓW",
+      "ok": true,
+      "szczegol": "['BTC', 'ETH', 'SOL', 'LINK', 'ONDO', 'RENDER', 'FLOKI', 'PEPE', 'SPX6900', 'XRP', 'XLM', 'HBAR', 'AVAX', 'AWE']"
+    },
+    {
+      "kontrola": "BTC = REŻIM RYNKU",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "AAVE = ARCHIWUM",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "PLIK config/alt_zones.csv",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "STREFY ETH 7/7",
+      "ok": true,
+      "szczegol": "['1D', '1T', '2D', '2T', '3D', '4D', '5D']"
+    },
+    {
+      "kontrola": "STREFY SOL 7/7",
+      "ok": true,
+      "szczegol": "['1D', '1T', '2D', '2T', '3D', '4D', '5D']"
+    },
+    {
+      "kontrola": "STREFY LINK 7/7",
+      "ok": true,
+      "szczegol": "['1D', '1T', '2D', '2T', '3D', '4D', '5D']"
+    },
+    {
+      "kontrola": "STREFY ONDO 7/7",
+      "ok": true,
+      "szczegol": "['1D', '1T', '2D', '2T', '3D', '4D', '5D']"
+    },
+    {
+      "kontrola": "STREFY RENDER 7/7",
+      "ok": true,
+      "szczegol": "['1D', '1T', '2D', '2T', '3D', '4D', '5D']"
+    },
+    {
+      "kontrola": "STREFY FLOKI 7/7",
+      "ok": true,
+      "szczegol": "['1D', '1T', '2D', '2T', '3D', '4D', '5D']"
+    },
+    {
+      "kontrola": "STREFY PEPE 7/7",
+      "ok": true,
+      "szczegol": "['1D', '1T', '2D', '2T', '3D', '4D', '5D']"
+    },
+    {
+      "kontrola": "STREFY SPX6900 7/7",
+      "ok": true,
+      "szczegol": "['1D', '1T', '2D', '2T', '3D', '4D', '5D']"
+    },
+    {
+      "kontrola": "STREFY XRP 7/7",
+      "ok": true,
+      "szczegol": "['1D', '1T', '2D', '2T', '3D', '4D', '5D']"
+    },
+    {
+      "kontrola": "STREFY XLM 7/7",
+      "ok": true,
+      "szczegol": "['1D', '1T', '2D', '2T', '3D', '4D', '5D']"
+    },
+    {
+      "kontrola": "STREFY HBAR 7/7",
+      "ok": true,
+      "szczegol": "['1D', '1T', '2D', '2T', '3D', '4D', '5D']"
+    },
+    {
+      "kontrola": "STREFY AVAX 7/7",
+      "ok": true,
+      "szczegol": "['1D', '1T', '2D', '2T', '3D', '4D', '5D']"
+    },
+    {
+      "kontrola": "STREFY AWE 7/7",
+      "ok": true,
+      "szczegol": "['1D', '1T', '2D', '2T', '3D', '4D', '5D']"
+    },
+    {
+      "kontrola": "STREFY — ZAKRESY LICZBOWE POPRAWNE",
+      "ok": true,
+      "szczegol": "[]"
+    },
+    {
+      "kontrola": "PLIK audit/V8_ZONE_FINAL_91_OF_91.json",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "AUDYT STREF 91/91",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "PLIK crypto_data_hub/ALT_DECISION_ENGINE.json",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LONG v1.0",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LONG = 13 ALTÓW",
+      "ok": true,
+      "szczegol": "['ETH', 'SOL', 'LINK', 'ONDO', 'RENDER', 'FLOKI', 'PEPE', 'SPX6900', 'XRP', 'XLM', 'HBAR', 'AVAX', 'AWE']"
+    },
+    {
+      "kontrola": "LONG — BRAK AUTOMATYCZNEJ REALIZACJI",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LONG — NIE ZGADUJE STREF",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LONG ETH TECHNIKA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LONG ETH STREFY 7/7",
+      "ok": true,
+      "szczegol": "[]"
+    },
+    {
+      "kontrola": "LONG SOL TECHNIKA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LONG SOL STREFY 7/7",
+      "ok": true,
+      "szczegol": "[]"
+    },
+    {
+      "kontrola": "LONG LINK TECHNIKA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LONG LINK STREFY 7/7",
+      "ok": true,
+      "szczegol": "[]"
+    },
+    {
+      "kontrola": "LONG ONDO TECHNIKA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LONG ONDO STREFY 7/7",
+      "ok": true,
+      "szczegol": "[]"
+    },
+    {
+      "kontrola": "LONG RENDER TECHNIKA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LONG RENDER STREFY 7/7",
+      "ok": true,
+      "szczegol": "[]"
+    },
+    {
+      "kontrola": "LONG FLOKI TECHNIKA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LONG FLOKI STREFY 7/7",
+      "ok": true,
+      "szczegol": "[]"
+    },
+    {
+      "kontrola": "LONG PEPE TECHNIKA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LONG PEPE STREFY 7/7",
+      "ok": true,
+      "szczegol": "[]"
+    },
+    {
+      "kontrola": "LONG SPX6900 TECHNIKA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LONG SPX6900 STREFY 7/7",
+      "ok": true,
+      "szczegol": "[]"
+    },
+    {
+      "kontrola": "LONG XRP TECHNIKA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LONG XRP STREFY 7/7",
+      "ok": true,
+      "szczegol": "[]"
+    },
+    {
+      "kontrola": "LONG XLM TECHNIKA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LONG XLM STREFY 7/7",
+      "ok": true,
+      "szczegol": "[]"
+    },
+    {
+      "kontrola": "LONG HBAR TECHNIKA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LONG HBAR STREFY 7/7",
+      "ok": true,
+      "szczegol": "[]"
+    },
+    {
+      "kontrola": "LONG AVAX TECHNIKA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LONG AVAX STREFY 7/7",
+      "ok": true,
+      "szczegol": "[]"
+    },
+    {
+      "kontrola": "LONG AWE TECHNIKA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LONG AWE STREFY 7/7",
+      "ok": true,
+      "szczegol": "[]"
+    },
+    {
+      "kontrola": "PLIK crypto_data_hub/ALT_ENGINE_READINESS.json",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "GOTOWOŚĆ v1.0",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "GOTOWOŚĆ 13/13",
+      "ok": true,
+      "szczegol": "{'production_assets': 13, 'production_data_ready': 13, 'production_with_full_zones': 13}"
+    },
+    {
+      "kontrola": "GOTOWOŚĆ BEZ AAVE/BTC W WIERSZACH",
+      "ok": true,
+      "szczegol": "['AVAX', 'AWE', 'ETH', 'FLOKI', 'HBAR', 'LINK', 'ONDO', 'PEPE', 'RENDER', 'SOL', 'SPX6900', 'XLM', 'XRP']"
+    },
+    {
+      "kontrola": "GOTOWOŚĆ ETH",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "GOTOWOŚĆ SOL",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "GOTOWOŚĆ LINK",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "GOTOWOŚĆ ONDO",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "GOTOWOŚĆ RENDER",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "GOTOWOŚĆ FLOKI",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "GOTOWOŚĆ PEPE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "GOTOWOŚĆ SPX6900",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "GOTOWOŚĆ XRP",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "GOTOWOŚĆ XLM",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "GOTOWOŚĆ HBAR",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "GOTOWOŚĆ AVAX",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "GOTOWOŚĆ AWE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "PLIK crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MASTER v1.0",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MASTER 13/13",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MASTER 91/91",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MASTER BEZ AUTOMATYCZNEJ REALIZACJI",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "PLIK tactical_engine/TACTICAL_ENGINE.json",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL v1.0",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL BTC + 13",
+      "ok": true,
+      "szczegol": "['BTC', 'ETH', 'SOL', 'LINK', 'ONDO', 'RENDER', 'FLOKI', 'PEPE', 'SPX6900', 'XRP', 'XLM', 'HBAR', 'AVAX', 'AWE']"
+    },
+    {
+      "kontrola": "TACTICAL BEZ SPÓŁEK",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL BEZ AUTOMATYCZNEJ REALIZACJI",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL BTC QA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL BTC 1H/4H/1D",
+      "ok": true,
+      "szczegol": "['1H', '4H', '1D']"
+    },
+    {
+      "kontrola": "TACTICAL BTC 1H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL BTC 1H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL BTC 1H RSI",
+      "ok": true,
+      "szczegol": "33.237877059797015"
+    },
+    {
+      "kontrola": "TACTICAL BTC 1H MFI",
+      "ok": true,
+      "szczegol": "17.171903972525897"
+    },
+    {
+      "kontrola": "TACTICAL BTC 1H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL BTC 4H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL BTC 4H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL BTC 4H RSI",
+      "ok": true,
+      "szczegol": "51.743155691459144"
+    },
+    {
+      "kontrola": "TACTICAL BTC 4H MFI",
+      "ok": true,
+      "szczegol": "64.5746126920039"
+    },
+    {
+      "kontrola": "TACTICAL BTC 4H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL BTC 1D ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL BTC 1D ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL BTC 1D RSI",
+      "ok": true,
+      "szczegol": "72.28280867200854"
+    },
+    {
+      "kontrola": "TACTICAL BTC 1D MFI",
+      "ok": true,
+      "szczegol": "66.61075744355446"
+    },
+    {
+      "kontrola": "TACTICAL BTC 1D FOMO",
+      "ok": true,
+      "szczegol": "6"
+    },
+    {
+      "kontrola": "TACTICAL ETH QA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL ETH 1H/4H/1D",
+      "ok": true,
+      "szczegol": "['1H', '4H', '1D']"
+    },
+    {
+      "kontrola": "TACTICAL ETH 1H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL ETH 1H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL ETH 1H RSI",
+      "ok": true,
+      "szczegol": "28.629306677629657"
+    },
+    {
+      "kontrola": "TACTICAL ETH 1H MFI",
+      "ok": true,
+      "szczegol": "6.910133021585892"
+    },
+    {
+      "kontrola": "TACTICAL ETH 1H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL ETH 4H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL ETH 4H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL ETH 4H RSI",
+      "ok": true,
+      "szczegol": "45.52185931694887"
+    },
+    {
+      "kontrola": "TACTICAL ETH 4H MFI",
+      "ok": true,
+      "szczegol": "68.87869318482181"
+    },
+    {
+      "kontrola": "TACTICAL ETH 4H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL ETH 1D ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL ETH 1D ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL ETH 1D RSI",
+      "ok": true,
+      "szczegol": "69.78959283195714"
+    },
+    {
+      "kontrola": "TACTICAL ETH 1D MFI",
+      "ok": true,
+      "szczegol": "59.47351469746227"
+    },
+    {
+      "kontrola": "TACTICAL ETH 1D FOMO",
+      "ok": true,
+      "szczegol": "4"
+    },
+    {
+      "kontrola": "TACTICAL SOL QA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL SOL 1H/4H/1D",
+      "ok": true,
+      "szczegol": "['1H', '4H', '1D']"
+    },
+    {
+      "kontrola": "TACTICAL SOL 1H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL SOL 1H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL SOL 1H RSI",
+      "ok": true,
+      "szczegol": "31.774071487441702"
+    },
+    {
+      "kontrola": "TACTICAL SOL 1H MFI",
+      "ok": true,
+      "szczegol": "8.812152287815465"
+    },
+    {
+      "kontrola": "TACTICAL SOL 1H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL SOL 4H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL SOL 4H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL SOL 4H RSI",
+      "ok": true,
+      "szczegol": "49.22929955027365"
+    },
+    {
+      "kontrola": "TACTICAL SOL 4H MFI",
+      "ok": true,
+      "szczegol": "62.094601128925106"
+    },
+    {
+      "kontrola": "TACTICAL SOL 4H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL SOL 1D ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL SOL 1D ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL SOL 1D RSI",
+      "ok": true,
+      "szczegol": "69.44587335600242"
+    },
+    {
+      "kontrola": "TACTICAL SOL 1D MFI",
+      "ok": true,
+      "szczegol": "62.49032941710636"
+    },
+    {
+      "kontrola": "TACTICAL SOL 1D FOMO",
+      "ok": true,
+      "szczegol": "5"
+    },
+    {
+      "kontrola": "TACTICAL LINK QA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL LINK 1H/4H/1D",
+      "ok": true,
+      "szczegol": "['1H', '4H', '1D']"
+    },
+    {
+      "kontrola": "TACTICAL LINK 1H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL LINK 1H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL LINK 1H RSI",
+      "ok": true,
+      "szczegol": "27.454874216088655"
+    },
+    {
+      "kontrola": "TACTICAL LINK 1H MFI",
+      "ok": true,
+      "szczegol": "11.752559057867884"
+    },
+    {
+      "kontrola": "TACTICAL LINK 1H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL LINK 4H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL LINK 4H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL LINK 4H RSI",
+      "ok": true,
+      "szczegol": "39.73373954814965"
+    },
+    {
+      "kontrola": "TACTICAL LINK 4H MFI",
+      "ok": true,
+      "szczegol": "46.17263676730547"
+    },
+    {
+      "kontrola": "TACTICAL LINK 4H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL LINK 1D ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL LINK 1D ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL LINK 1D RSI",
+      "ok": true,
+      "szczegol": "64.81991543568897"
+    },
+    {
+      "kontrola": "TACTICAL LINK 1D MFI",
+      "ok": true,
+      "szczegol": "61.03802545369146"
+    },
+    {
+      "kontrola": "TACTICAL LINK 1D FOMO",
+      "ok": true,
+      "szczegol": "3"
+    },
+    {
+      "kontrola": "TACTICAL ONDO QA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL ONDO 1H/4H/1D",
+      "ok": true,
+      "szczegol": "['1H', '4H', '1D']"
+    },
+    {
+      "kontrola": "TACTICAL ONDO 1H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL ONDO 1H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL ONDO 1H RSI",
+      "ok": true,
+      "szczegol": "31.725798720908756"
+    },
+    {
+      "kontrola": "TACTICAL ONDO 1H MFI",
+      "ok": true,
+      "szczegol": "15.018252981413355"
+    },
+    {
+      "kontrola": "TACTICAL ONDO 1H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL ONDO 4H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL ONDO 4H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL ONDO 4H RSI",
+      "ok": true,
+      "szczegol": "43.64919068280038"
+    },
+    {
+      "kontrola": "TACTICAL ONDO 4H MFI",
+      "ok": true,
+      "szczegol": "31.451039466333725"
+    },
+    {
+      "kontrola": "TACTICAL ONDO 4H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL ONDO 1D ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL ONDO 1D ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL ONDO 1D RSI",
+      "ok": true,
+      "szczegol": "65.65855107613669"
+    },
+    {
+      "kontrola": "TACTICAL ONDO 1D MFI",
+      "ok": true,
+      "szczegol": "68.64325123498635"
+    },
+    {
+      "kontrola": "TACTICAL ONDO 1D FOMO",
+      "ok": true,
+      "szczegol": "4"
+    },
+    {
+      "kontrola": "TACTICAL RENDER QA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL RENDER 1H/4H/1D",
+      "ok": true,
+      "szczegol": "['1H', '4H', '1D']"
+    },
+    {
+      "kontrola": "TACTICAL RENDER 1H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL RENDER 1H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL RENDER 1H RSI",
+      "ok": true,
+      "szczegol": "33.8531721672186"
+    },
+    {
+      "kontrola": "TACTICAL RENDER 1H MFI",
+      "ok": true,
+      "szczegol": "11.064796649816245"
+    },
+    {
+      "kontrola": "TACTICAL RENDER 1H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL RENDER 4H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL RENDER 4H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL RENDER 4H RSI",
+      "ok": true,
+      "szczegol": "48.34586130878248"
+    },
+    {
+      "kontrola": "TACTICAL RENDER 4H MFI",
+      "ok": true,
+      "szczegol": "58.72283308698851"
+    },
+    {
+      "kontrola": "TACTICAL RENDER 4H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL RENDER 1D ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL RENDER 1D ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL RENDER 1D RSI",
+      "ok": true,
+      "szczegol": "73.88060947303839"
+    },
+    {
+      "kontrola": "TACTICAL RENDER 1D MFI",
+      "ok": true,
+      "szczegol": "74.39078520815771"
+    },
+    {
+      "kontrola": "TACTICAL RENDER 1D FOMO",
+      "ok": true,
+      "szczegol": "7"
+    },
+    {
+      "kontrola": "TACTICAL FLOKI QA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL FLOKI 1H/4H/1D",
+      "ok": true,
+      "szczegol": "['1H', '4H', '1D']"
+    },
+    {
+      "kontrola": "TACTICAL FLOKI 1H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL FLOKI 1H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL FLOKI 1H RSI",
+      "ok": true,
+      "szczegol": "26.478702717033087"
+    },
+    {
+      "kontrola": "TACTICAL FLOKI 1H MFI",
+      "ok": true,
+      "szczegol": "12.756045312966307"
+    },
+    {
+      "kontrola": "TACTICAL FLOKI 1H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL FLOKI 4H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL FLOKI 4H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL FLOKI 4H RSI",
+      "ok": true,
+      "szczegol": "45.29877811639249"
+    },
+    {
+      "kontrola": "TACTICAL FLOKI 4H MFI",
+      "ok": true,
+      "szczegol": "65.19904344008009"
+    },
+    {
+      "kontrola": "TACTICAL FLOKI 4H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL FLOKI 1D ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL FLOKI 1D ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL FLOKI 1D RSI",
+      "ok": true,
+      "szczegol": "70.85638947170206"
+    },
+    {
+      "kontrola": "TACTICAL FLOKI 1D MFI",
+      "ok": true,
+      "szczegol": "74.09671504286351"
+    },
+    {
+      "kontrola": "TACTICAL FLOKI 1D FOMO",
+      "ok": true,
+      "szczegol": "7"
+    },
+    {
+      "kontrola": "TACTICAL PEPE QA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL PEPE 1H/4H/1D",
+      "ok": true,
+      "szczegol": "['1H', '4H', '1D']"
+    },
+    {
+      "kontrola": "TACTICAL PEPE 1H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL PEPE 1H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL PEPE 1H RSI",
+      "ok": true,
+      "szczegol": "24.552762078124047"
+    },
+    {
+      "kontrola": "TACTICAL PEPE 1H MFI",
+      "ok": true,
+      "szczegol": "1.709269701284171"
+    },
+    {
+      "kontrola": "TACTICAL PEPE 1H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL PEPE 4H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL PEPE 4H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL PEPE 4H RSI",
+      "ok": true,
+      "szczegol": "47.21461838125378"
+    },
+    {
+      "kontrola": "TACTICAL PEPE 4H MFI",
+      "ok": true,
+      "szczegol": "62.853342723489035"
+    },
+    {
+      "kontrola": "TACTICAL PEPE 4H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL PEPE 1D ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL PEPE 1D ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL PEPE 1D RSI",
+      "ok": true,
+      "szczegol": "77.13771506061468"
+    },
+    {
+      "kontrola": "TACTICAL PEPE 1D MFI",
+      "ok": true,
+      "szczegol": "76.80215791410615"
+    },
+    {
+      "kontrola": "TACTICAL PEPE 1D FOMO",
+      "ok": true,
+      "szczegol": "9"
+    },
+    {
+      "kontrola": "TACTICAL SPX6900 QA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL SPX6900 1H/4H/1D",
+      "ok": true,
+      "szczegol": "['1H', '4H', '1D']"
+    },
+    {
+      "kontrola": "TACTICAL SPX6900 1H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL SPX6900 1H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL SPX6900 1H RSI",
+      "ok": true,
+      "szczegol": "23.064140597221026"
+    },
+    {
+      "kontrola": "TACTICAL SPX6900 1H MFI",
+      "ok": true,
+      "szczegol": "38.598417381065694"
+    },
+    {
+      "kontrola": "TACTICAL SPX6900 1H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL SPX6900 4H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL SPX6900 4H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL SPX6900 4H RSI",
+      "ok": true,
+      "szczegol": "35.71980321185195"
+    },
+    {
+      "kontrola": "TACTICAL SPX6900 4H MFI",
+      "ok": true,
+      "szczegol": "39.75357568450944"
+    },
+    {
+      "kontrola": "TACTICAL SPX6900 4H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL SPX6900 1D ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL SPX6900 1D ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL SPX6900 1D RSI",
+      "ok": true,
+      "szczegol": "55.08563004613999"
+    },
+    {
+      "kontrola": "TACTICAL SPX6900 1D MFI",
+      "ok": true,
+      "szczegol": "50.00230435459922"
+    },
+    {
+      "kontrola": "TACTICAL SPX6900 1D FOMO",
+      "ok": true,
+      "szczegol": "2"
+    },
+    {
+      "kontrola": "TACTICAL XRP QA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL XRP 1H/4H/1D",
+      "ok": true,
+      "szczegol": "['1H', '4H', '1D']"
+    },
+    {
+      "kontrola": "TACTICAL XRP 1H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL XRP 1H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL XRP 1H RSI",
+      "ok": true,
+      "szczegol": "31.920015324646855"
+    },
+    {
+      "kontrola": "TACTICAL XRP 1H MFI",
+      "ok": true,
+      "szczegol": "11.534616899609759"
+    },
+    {
+      "kontrola": "TACTICAL XRP 1H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL XRP 4H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL XRP 4H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL XRP 4H RSI",
+      "ok": true,
+      "szczegol": "52.002129792637554"
+    },
+    {
+      "kontrola": "TACTICAL XRP 4H MFI",
+      "ok": true,
+      "szczegol": "68.3444735839962"
+    },
+    {
+      "kontrola": "TACTICAL XRP 4H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL XRP 1D ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL XRP 1D ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL XRP 1D RSI",
+      "ok": true,
+      "szczegol": "67.45270161695541"
+    },
+    {
+      "kontrola": "TACTICAL XRP 1D MFI",
+      "ok": true,
+      "szczegol": "62.129001118319295"
+    },
+    {
+      "kontrola": "TACTICAL XRP 1D FOMO",
+      "ok": true,
+      "szczegol": "4"
+    },
+    {
+      "kontrola": "TACTICAL XLM QA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL XLM 1H/4H/1D",
+      "ok": true,
+      "szczegol": "['1H', '4H', '1D']"
+    },
+    {
+      "kontrola": "TACTICAL XLM 1H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL XLM 1H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL XLM 1H RSI",
+      "ok": true,
+      "szczegol": "29.981399441364445"
+    },
+    {
+      "kontrola": "TACTICAL XLM 1H MFI",
+      "ok": true,
+      "szczegol": "9.366221406340102"
+    },
+    {
+      "kontrola": "TACTICAL XLM 1H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL XLM 4H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL XLM 4H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL XLM 4H RSI",
+      "ok": true,
+      "szczegol": "46.35888494721349"
+    },
+    {
+      "kontrola": "TACTICAL XLM 4H MFI",
+      "ok": true,
+      "szczegol": "67.17223444867096"
+    },
+    {
+      "kontrola": "TACTICAL XLM 4H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL XLM 1D ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL XLM 1D ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL XLM 1D RSI",
+      "ok": true,
+      "szczegol": "68.08724296195061"
+    },
+    {
+      "kontrola": "TACTICAL XLM 1D MFI",
+      "ok": true,
+      "szczegol": "61.90182478743351"
+    },
+    {
+      "kontrola": "TACTICAL XLM 1D FOMO",
+      "ok": true,
+      "szczegol": "5"
+    },
+    {
+      "kontrola": "TACTICAL HBAR QA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL HBAR 1H/4H/1D",
+      "ok": true,
+      "szczegol": "['1H', '4H', '1D']"
+    },
+    {
+      "kontrola": "TACTICAL HBAR 1H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL HBAR 1H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL HBAR 1H RSI",
+      "ok": true,
+      "szczegol": "29.07105513442798"
+    },
+    {
+      "kontrola": "TACTICAL HBAR 1H MFI",
+      "ok": true,
+      "szczegol": "7.016560961078994"
+    },
+    {
+      "kontrola": "TACTICAL HBAR 1H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL HBAR 4H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL HBAR 4H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL HBAR 4H RSI",
+      "ok": true,
+      "szczegol": "49.323047624751354"
+    },
+    {
+      "kontrola": "TACTICAL HBAR 4H MFI",
+      "ok": true,
+      "szczegol": "72.66923856369812"
+    },
+    {
+      "kontrola": "TACTICAL HBAR 4H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL HBAR 1D ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL HBAR 1D ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL HBAR 1D RSI",
+      "ok": true,
+      "szczegol": "79.6945984620717"
+    },
+    {
+      "kontrola": "TACTICAL HBAR 1D MFI",
+      "ok": true,
+      "szczegol": "75.3207408407051"
+    },
+    {
+      "kontrola": "TACTICAL HBAR 1D FOMO",
+      "ok": true,
+      "szczegol": "9"
+    },
+    {
+      "kontrola": "TACTICAL AVAX QA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL AVAX 1H/4H/1D",
+      "ok": true,
+      "szczegol": "['1H', '4H', '1D']"
+    },
+    {
+      "kontrola": "TACTICAL AVAX 1H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL AVAX 1H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL AVAX 1H RSI",
+      "ok": true,
+      "szczegol": "30.462268964920085"
+    },
+    {
+      "kontrola": "TACTICAL AVAX 1H MFI",
+      "ok": true,
+      "szczegol": "21.48315269820057"
+    },
+    {
+      "kontrola": "TACTICAL AVAX 1H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL AVAX 4H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL AVAX 4H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL AVAX 4H RSI",
+      "ok": true,
+      "szczegol": "46.82297788280426"
+    },
+    {
+      "kontrola": "TACTICAL AVAX 4H MFI",
+      "ok": true,
+      "szczegol": "44.709715689590475"
+    },
+    {
+      "kontrola": "TACTICAL AVAX 4H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL AVAX 1D ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL AVAX 1D ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL AVAX 1D RSI",
+      "ok": true,
+      "szczegol": "82.80210713900756"
+    },
+    {
+      "kontrola": "TACTICAL AVAX 1D MFI",
+      "ok": true,
+      "szczegol": "73.3156075113433"
+    },
+    {
+      "kontrola": "TACTICAL AVAX 1D FOMO",
+      "ok": true,
+      "szczegol": "10"
+    },
+    {
+      "kontrola": "TACTICAL AWE QA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL AWE 1H/4H/1D",
+      "ok": true,
+      "szczegol": "['1H', '4H', '1D']"
+    },
+    {
+      "kontrola": "TACTICAL AWE 1H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL AWE 1H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL AWE 1H RSI",
+      "ok": true,
+      "szczegol": "35.93440120620048"
+    },
+    {
+      "kontrola": "TACTICAL AWE 1H MFI",
+      "ok": true,
+      "szczegol": "45.49782394662768"
+    },
+    {
+      "kontrola": "TACTICAL AWE 1H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL AWE 4H ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL AWE 4H ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL AWE 4H RSI",
+      "ok": true,
+      "szczegol": "46.59122261906062"
+    },
+    {
+      "kontrola": "TACTICAL AWE 4H MFI",
+      "ok": true,
+      "szczegol": "53.17944003503465"
+    },
+    {
+      "kontrola": "TACTICAL AWE 4H FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "TACTICAL AWE 1D ZAMKNIĘTA ŚWIECA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL AWE 1D ŚWIEŻE DANE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL AWE 1D RSI",
+      "ok": true,
+      "szczegol": "55.68794762375726"
+    },
+    {
+      "kontrola": "TACTICAL AWE 1D MFI",
+      "ok": true,
+      "szczegol": "62.8476390247833"
+    },
+    {
+      "kontrola": "TACTICAL AWE 1D FOMO",
+      "ok": true,
+      "szczegol": "0"
+    },
+    {
+      "kontrola": "PLIK tactical_engine/TACTICAL_READINESS.json",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TACTICAL GOTOWOŚĆ 14/14",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TRADINGVIEW ŚWIADOMIE ODŁOŻONE",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "EXECUTION OFF",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "PLIK institutional_data_hub/ETF_BTC_ETH_STATUS.json",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "ETF BTC + ETH",
+      "ok": true,
+      "szczegol": "['BTC', 'ETH']"
+    },
+    {
+      "kontrola": "ETF BTC DZIEŃ NIEFINALNY",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "ETF BTC TREND BEZ DZISIAJ",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "ETF BTC ZERO NIE = FINALNE ZERO",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "ETF ETH DZIEŃ NIEFINALNY",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "ETF ETH TREND BEZ DZISIAJ",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "ETF ETH ZERO NIE = FINALNE ZERO",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "PLIK institutional_data_hub/ETF_BTC_ETH_CONFIRMATION.json",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "ETF POTWIERDZENIE 2/2",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "PLIK lab/LAB_STATUS.json",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LAB SZYBKA ANALIZA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LAB GŁĘBOKA OBSERWACJA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LAB PO POLSKU",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LAB BEZ REALIZACJI",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LAB CHECKPOINTY KRYPTO",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "LAB CHECKPOINTY SPÓŁKI",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "PLIK crypto_data_hub/ONCHAIN_ACTIVITY.json",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "ONCHAIN DZIAŁA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MODUŁ tactical_validation/TACTICAL_THRESHOLD_LAB.json",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MODUŁ tactical_validation/TACTICAL_VALIDATION.json",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MODUŁ tactical_validation/TACTICAL_VALIDATION_SUMMARY.csv",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MODUŁ tactical_engine/TACTICAL_MACD_EXTREMES.csv",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MODUŁ tactical_engine/TACTICAL_EXTREME_CONFLUENCE.csv",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MODUŁ market_reader/TACTICAL_CONFLUENCE.csv",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MODUŁ google_sheets/DUAL_PANEL.csv",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MODUŁ google_sheets/DUAL_ENGINE_MACHINE_ROOM.csv",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MODUŁ google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL.txt",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MODUŁ lab/LAB_REPORT.json",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MODUŁ lab/LAB_DEEP_REPORT.json",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MODUŁ lab/LAB_CHECKPOINTS.csv",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MODUŁ institutional_data_hub/ETF_BTC_ETH_HISTORY.csv",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MODUŁ institutional_data_hub/ETF_PRICE_DIVERGENCE_LATEST.md",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MOST SHEETS — LONG",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MOST SHEETS — TACTICAL",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MOST SHEETS — ETF",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "MOST SHEETS — BEZ BROKERA",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "STATUS PROJEKTU 100%",
+      "ok": true,
+      "szczegol": ""
+    },
+    {
+      "kontrola": "TRADINGVIEW NIE WLICZONY",
+      "ok": true,
+      "szczegol": ""
+    }
+  ]
+}

@@ -1,14 +1,12 @@
 OBSZAR,WAGA_PKT,STATUS,OPIS
-SILNIK LONG,10,GOTOWE,Silnik długoterminowy działa i pozostaje oddzielony od TACTICAL.
-SILNIK TACTICAL,10,GOTOWE,Silnik taktyczny działa na osobnym horyzoncie i kapitale.
-PRODUKCYJNE ALTY,15,GOTOWE,"ETH, SOL, LINK i ONDO: technika + pełne strefy 1D/2D/3D/4D/5D/1T/2T."
-ETF BTC + ETH,10,GOTOWE,"Monitor, historia, rozdzielenie danych wstępnych i zamkniętych oraz zgodność cena/ETF."
-LAB + PUNKTY KONTROLNE,10,GOTOWE,"Szybka analiza, głęboka obserwacja, historia i trwałe punkty kontrolne."
-ON-CHAIN / FLOW,10,GOTOWE,Warstwa przepływów i aktywności sieciowej jako kontekst.
-PANEL GOOGLE SHEETS,10,GOTOWE,Pełny most panelu i dane maszynowni są obecne.
-ALARMY EKSTREMÓW,5,GOTOWE,RSI/MFI/MACD/FOMO oraz warstwa zbieżności ekstremów.
-BEZPIECZEŃSTWO,10,GOTOWE,Brak automatycznego wykonywania transakcji; V7 pozostaje poza zmianami V8.
+SILNIK LONG — 13 ALTÓW,15,GOTOWE,"13 altów ma technikę, decyzję i pełne strefy 7/7."
+STREFY LONG — 91/91,15,GOTOWE,13 altów × 7 interwałów: 1D/2D/3D/4D/5D/1T/2T.
+SILNIK TACTICAL — BTC + 13 ALTÓW,15,GOTOWE,"14 aktywów na 1H/4H/1D, bez spółek."
+ETF BTC + ETH,10,GOTOWE,Dane zamknięte oddzielone od danych bieżącego dnia.
+LAB + PUNKTY KONTROLNE,10,GOTOWE,Szybka analiza i głęboka obserwacja.
+ON-CHAIN / FLOW,10,GOTOWE,Warstwa kontekstowa; brak danych dla pojedynczego alta nie blokuje silnika.
+PANEL GOOGLE SHEETS,10,GOTOWE,Most i pliki panelu są obecne.
+ALARMY EKSTREMÓW,5,GOTOWE,RSI/MFI/MACD/FOMO i zbieżność ekstremów.
+BEZPIECZEŃSTWO,5,GOTOWE,Brak automatycznego wykonywania transakcji; brak zgadywania stref.
 WALIDACJA / QA,5,GOTOWE,Walidacja TACTICAL i laboratorium progów są obecne.
-AAVE/HBAR — DANE AUTOMATYCZNE,3,GOTOWE,Technika 1H/4H/1D i automatyczne warstwy.
-AAVE/HBAR — STREFY UŻYTKOWNIKA,2,BRAK DANYCH UŻYTKOWNIKA,Wymagane 1D/2D/3D/4D/5D/1T/2T.
-CAŁOŚĆ,100,98%,RDZEŃ DOPIĘTY — ZOSTAŁY TYLKO DANE UŻYTKOWNIKA
+CAŁOŚĆ,100,100%,WSZYSTKIE USTALONE ELEMENTY DOPIĘTE
