@@ -1,0 +1,39 @@
+{
+  "generated_at_utc": "2026-09-23T21:37:58.738839+00:00",
+  "checkpoint": "V8_DUAL_ENGINE_FINAL_CHECKPOINT_2026-09-23",
+  "production_readiness_percent": 100,
+  "production_status": "CLOSED_STABLE",
+  "research_status": "HOLD_RESEARCH",
+  "missing_required_status_rows": [],
+  "production_scope": {
+    "long_alts": 13,
+    "tactical_assets": 14,
+    "zones": "91/91",
+    "panel_columns": 7
+  },
+  "research_scope": {
+    "calibration": "DEPLOY HOLD",
+    "shadow": "DEPLOY HOLD",
+    "validation_v2": "HOLD RESEARCH",
+    "challenger_v3": "WATCH STRONG",
+    "regime_gate_v4": "WATCH REGIME GATE",
+    "meta_gate_v5": "WATCH META GATE",
+    "stability_v6": "HOLD RESEARCH"
+  },
+  "safety": {
+    "auto_execution": false,
+    "v7_touch": false,
+    "invent_user_zones": false,
+    "research_auto_promotion": false
+  },
+  "protected_sha256": {
+    "tactical_engine": "974988f3231e852a05a3fab8f3dfba15e2abd6e5806f2a26623b0b935788083e",
+    "apps_script_v9": "b7774ec322c189485b5de882799515d3b2cd3797ea2e0eec15853dcdceed7307"
+  },
+  "explicitly_deferred": [
+    "External Market Reader source",
+    "TradingView integration",
+    "research promotion until stability gates improve"
+  ],
+  "final_decision": "FREEZE_PRODUCTION_CONTINUE_OBSERVATION_ONLY"
+}
