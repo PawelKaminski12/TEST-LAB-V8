@@ -1,10 +1,11 @@
 name: TEST LAB V8 Tactical Extreme Confluence
 
+# Pipeline stage: MACD v0.5 -> confluence v0.6
 on:
   workflow_dispatch:
   push:
     paths:
-      - 'tactical_engine/TACTICAL_ENGINE.json'
+      - 'tactical_engine/TACTICAL_MACD_EXTREMES.csv'
       - '.github/workflows/test-lab-v8-tactical-extreme-confluence.yml'
 
 permissions:
@@ -42,122 +43,84 @@ jobs:
               raise SystemExit('TACTICAL_ENGINE.json missing')
 
           data=json.loads(ENGINE.read_text(encoding='utf-8'))
+          source_engine=str(data.get('engine',''))
+          if source_engine != 'V8_TACTICAL_ENGINE_v0.5':
+              raise SystemExit(f'EXPECTED MACD V0.5, GOT {source_engine}')
+
           TF_WEIGHT={'1H':1,'4H':2,'1D':3}
 
           def tf_confluence(st):
-              heat=0
-              cold=0
-              reasons_heat=[]
-              reasons_cold=[]
+              if st.get('mfi14') is None or st.get('macd_extreme_label') is None:
+                  raise RuntimeError('missing MFI or MACD extreme metadata')
+              heat=0; cold=0; reasons_heat=[]; reasons_cold=[]
 
               rsi=st.get('rsi14')
               if rsi is not None:
-                  if rsi>=80:
-                      heat+=2; reasons_heat.append('RSI>=80')
-                  elif rsi>=75:
-                      heat+=1; reasons_heat.append('RSI>=75')
-                  if rsi<=20:
-                      cold+=2; reasons_cold.append('RSI<=20')
-                  elif rsi<=25:
-                      cold+=1; reasons_cold.append('RSI<=25')
+                  if rsi>=80: heat+=2; reasons_heat.append('RSI>=80')
+                  elif rsi>=75: heat+=1; reasons_heat.append('RSI>=75')
+                  if rsi<=20: cold+=2; reasons_cold.append('RSI<=20')
+                  elif rsi<=25: cold+=1; reasons_cold.append('RSI<=25')
 
               mfi=st.get('mfi14')
-              if mfi is not None:
-                  if mfi>=90:
-                      heat+=2; reasons_heat.append('MFI>=90')
-                  elif mfi>=80:
-                      heat+=1; reasons_heat.append('MFI>=80')
-                  if mfi<=10:
-                      cold+=2; reasons_cold.append('MFI<=10')
-                  elif mfi<=20:
-                      cold+=1; reasons_cold.append('MFI<=20')
+              if mfi>=90: heat+=2; reasons_heat.append('MFI>=90')
+              elif mfi>=80: heat+=1; reasons_heat.append('MFI>=80')
+              if mfi<=10: cold+=2; reasons_cold.append('MFI<=10')
+              elif mfi<=20: cold+=1; reasons_cold.append('MFI<=20')
 
               ml=str(st.get('macd_extreme_label') or 'NORMAL')
-              if ml=='EXTREME_POSITIVE':
-                  heat+=2; reasons_heat.append('MACD_EXTREME_POSITIVE')
-              elif ml=='WARNING_POSITIVE':
-                  heat+=1; reasons_heat.append('MACD_WARNING_POSITIVE')
-              elif ml=='EXTREME_NEGATIVE':
-                  cold+=2; reasons_cold.append('MACD_EXTREME_NEGATIVE')
-              elif ml=='WARNING_NEGATIVE':
-                  cold+=1; reasons_cold.append('MACD_WARNING_NEGATIVE')
+              if ml=='EXTREME_POSITIVE': heat+=2; reasons_heat.append('MACD_EXTREME_POSITIVE')
+              elif ml=='WARNING_POSITIVE': heat+=1; reasons_heat.append('MACD_WARNING_POSITIVE')
+              elif ml=='EXTREME_NEGATIVE': cold+=2; reasons_cold.append('MACD_EXTREME_NEGATIVE')
+              elif ml=='WARNING_NEGATIVE': cold+=1; reasons_cold.append('MACD_WARNING_NEGATIVE')
 
               fomo=st.get('fomo_score_0_10')
-              if fomo is not None and fomo>=8:
-                  heat+=1; reasons_heat.append('FOMO>=8')
+              if fomo is not None and fomo>=8: heat+=1; reasons_heat.append('FOMO>=8')
 
-              if heat>=4 and heat>cold:
-                  label='EXTREME_OVERHEAT'; direction='HEAT'
-              elif cold>=4 and cold>heat:
-                  label='EXTREME_OVERSOLD'; direction='COLD'
-              elif heat>=2 and heat>cold:
-                  label='WARNING_OVERHEAT'; direction='HEAT'
-              elif cold>=2 and cold>heat:
-                  label='WARNING_OVERSOLD'; direction='COLD'
-              elif heat>0 or cold>0:
-                  label='MIXED_EXTREME_CONTEXT'; direction='MIXED'
-              else:
-                  label='NORMAL'; direction='NONE'
+              if heat>=4 and heat>cold: label='EXTREME_OVERHEAT'; direction='HEAT'
+              elif cold>=4 and cold>heat: label='EXTREME_OVERSOLD'; direction='COLD'
+              elif heat>=2 and heat>cold: label='WARNING_OVERHEAT'; direction='HEAT'
+              elif cold>=2 and cold>heat: label='WARNING_OVERSOLD'; direction='COLD'
+              elif heat>0 or cold>0: label='MIXED_EXTREME_CONTEXT'; direction='MIXED'
+              else: label='NORMAL'; direction='NONE'
 
               return {
-                  'extreme_heat_score':int(heat),
-                  'extreme_cold_score':int(cold),
-                  'extreme_confluence_label':label,
-                  'extreme_confluence_direction':direction,
-                  'extreme_heat_reasons':reasons_heat,
-                  'extreme_cold_reasons':reasons_cold
+                  'extreme_heat_score':int(heat), 'extreme_cold_score':int(cold),
+                  'extreme_confluence_label':label, 'extreme_confluence_direction':direction,
+                  'extreme_heat_reasons':reasons_heat, 'extreme_cold_reasons':reasons_cold
               }
 
           out_rows=[]
           for asset in data.get('assets',[]):
-              if asset.get('qa')!='PASS':
-                  continue
+              if asset.get('qa')!='PASS': continue
               tfs=asset.get('timeframes') or {}
-              weighted_heat=0
-              weighted_cold=0
-              aligned=[]
+              weighted_heat=0; weighted_cold=0; aligned=[]
               for tf in ['1H','4H','1D']:
                   st=tfs.get(tf)
-                  if not st:
-                      continue
-                  c=tf_confluence(st)
-                  st.update(c)
+                  if not st: raise RuntimeError(f'{asset.get("symbol")} missing {tf}')
+                  c=tf_confluence(st); st.update(c)
                   weighted_heat += c['extreme_heat_score']*TF_WEIGHT[tf]
                   weighted_cold += c['extreme_cold_score']*TF_WEIGHT[tf]
                   if c['extreme_confluence_direction'] in ['HEAT','COLD']:
                       aligned.append((tf,c['extreme_confluence_direction'],c['extreme_confluence_label']))
                   out_rows.append({
-                      'symbol':asset.get('symbol'),
-                      'timeframe':tf,
-                      'weight':TF_WEIGHT[tf],
-                      'heat_score':c['extreme_heat_score'],
-                      'cold_score':c['extreme_cold_score'],
-                      'label':c['extreme_confluence_label'],
-                      'direction':c['extreme_confluence_direction'],
+                      'symbol':asset.get('symbol'),'timeframe':tf,'weight':TF_WEIGHT[tf],
+                      'heat_score':c['extreme_heat_score'],'cold_score':c['extreme_cold_score'],
+                      'label':c['extreme_confluence_label'],'direction':c['extreme_confluence_direction'],
                       'heat_reasons':' | '.join(c['extreme_heat_reasons']),
                       'cold_reasons':' | '.join(c['extreme_cold_reasons'])
                   })
 
-              heat_tfs=[tf for tf,d,_ in aligned if d=='HEAT']
-              cold_tfs=[tf for tf,d,_ in aligned if d=='COLD']
-              if '1D' in heat_tfs and '4H' in heat_tfs:
-                  overall='HIGH_PRIORITY_OVERHEAT'
-              elif '1D' in cold_tfs and '4H' in cold_tfs:
-                  overall='HIGH_PRIORITY_OVERSOLD'
-              elif weighted_heat>=8 and weighted_heat>weighted_cold:
-                  overall='OVERHEAT_CONFLUENCE'
-              elif weighted_cold>=8 and weighted_cold>weighted_heat:
-                  overall='OVERSOLD_CONFLUENCE'
-              elif weighted_heat>0 or weighted_cold>0:
-                  overall='WATCH_EXTREMES'
-              else:
-                  overall='NORMAL'
+              heat_tfs=[tf for tf,d,_ in aligned if d=='HEAT']; cold_tfs=[tf for tf,d,_ in aligned if d=='COLD']
+              if '1D' in heat_tfs and '4H' in heat_tfs: overall='HIGH_PRIORITY_OVERHEAT'
+              elif '1D' in cold_tfs and '4H' in cold_tfs: overall='HIGH_PRIORITY_OVERSOLD'
+              elif weighted_heat>=8 and weighted_heat>weighted_cold: overall='OVERHEAT_CONFLUENCE'
+              elif weighted_cold>=8 and weighted_cold>weighted_heat: overall='OVERSOLD_CONFLUENCE'
+              elif weighted_heat>0 or weighted_cold>0: overall='WATCH_EXTREMES'
+              else: overall='NORMAL'
 
               asset['extreme_confluence']={
-                  'weighted_heat_score':int(weighted_heat),
-                  'weighted_cold_score':int(weighted_cold),
-                  'overall_label':overall,
-                  'timeframe_weights':TF_WEIGHT,
+                  'weighted_heat_score':int(weighted_heat),'weighted_cold_score':int(weighted_cold),
+                  'overall_label':overall,'timeframe_weights':TF_WEIGHT,
                   'role':'ALARM_CONTEXT_NOT_STANDALONE_TRADE_SIGNAL'
               }
 
