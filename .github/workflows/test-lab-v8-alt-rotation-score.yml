@@ -13,11 +13,17 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: v8-alt-engine-writes
+  cancel-in-progress: false
+
 jobs:
   build-alt-rotation-score:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -73,4 +79,8 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add crypto_data_hub/ALT_ROTATION_SCORE.json crypto_data_hub/ALT_ROTATION_HISTORY.csv
-          if ! git diff --cached --quiet; then git commit -m 'Update V8 alt rotation score'; git push; fi
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update V8 alt rotation score'
+            git pull --rebase origin main
+            git push
+          fi
