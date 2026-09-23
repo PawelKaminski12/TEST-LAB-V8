@@ -51,8 +51,8 @@
     },
     {
       "symbol": "SOL",
-      "decision": "KUP PO RETE\u015aCIE",
-      "reason": "Rotacja >=6, trend >=3, retest potwierdzony, brak FOMO hard block",
+      "decision": "CZEKAJ",
+      "reason": "Brak pe\u0142nego zestawu warunk\u00f3w wej\u015bcia",
       "price": 118.57,
       "rotation_score_0_10": 7,
       "rotation_status": "CONFIRMED",
@@ -65,23 +65,23 @@
       "volume_ratio_vs_20d": 1.231005468853846,
       "zones": {
         "zone_ready": true,
-        "zone_count": 8,
+        "zone_count": 33,
         "in_demand": false,
-        "in_supply": false,
+        "in_supply": true,
         "dca1": 97.0,
-        "dca2": 78.5,
-        "dca3": 60.0,
+        "dca2": 66.0,
+        "dca3": 35.0,
         "nearest_demand": {
-          "timeframe": "1D",
-          "from": 87.0,
-          "to": 97.0,
-          "distance_pct": 18.191785443198107
+          "timeframe": "3D",
+          "from": 88.0,
+          "to": 98.0,
+          "distance_pct": 17.348401787973344
         },
         "nearest_supply": {
-          "timeframe": "1D",
-          "from": 119.0,
-          "to": 125.0,
-          "distance_pct": 0.36265497174665334
+          "timeframe": "2D",
+          "from": 116.0,
+          "to": 124.0,
+          "distance_pct": 0.0
         }
       },
       "blockers": []
@@ -118,6 +118,43 @@
           "timeframe": "1D",
           "from": 13.0,
           "to": 13.5,
+          "distance_pct": 0.0
+        }
+      },
+      "blockers": []
+    },
+    {
+      "symbol": "ONDO",
+      "decision": "CZEKAJ",
+      "reason": "Brak pe\u0142nego zestawu warunk\u00f3w wej\u015bcia",
+      "price": 0.4413,
+      "rotation_score_0_10": 7,
+      "rotation_status": "CONFIRMED",
+      "rotation_confidence": "MEDIUM",
+      "trend_score_0_4": 3,
+      "fomo_score_0_10": 3,
+      "fomo_label": "NORMAL",
+      "fresh_breakout_20d": false,
+      "retest_confirmed_10d": true,
+      "volume_ratio_vs_20d": 1.6100255898987441,
+      "zones": {
+        "zone_ready": true,
+        "zone_count": 28,
+        "in_demand": false,
+        "in_supply": true,
+        "dca1": 0.348,
+        "dca2": 0.274,
+        "dca3": 0.2,
+        "nearest_demand": {
+          "timeframe": "4D",
+          "from": 0.34,
+          "to": 0.38,
+          "distance_pct": 13.89077724903694
+        },
+        "nearest_supply": {
+          "timeframe": "2D",
+          "from": 0.42,
+          "to": 0.45,
           "distance_pct": 0.0
         }
       },
@@ -166,43 +203,6 @@
       "blockers": [
         "STREFY_MISSING"
       ]
-    },
-    {
-      "symbol": "ONDO",
-      "decision": "CZEKAJ",
-      "reason": "Brak pe\u0142nego zestawu warunk\u00f3w wej\u015bcia",
-      "price": 0.4413,
-      "rotation_score_0_10": 7,
-      "rotation_status": "CONFIRMED",
-      "rotation_confidence": "MEDIUM",
-      "trend_score_0_4": 3,
-      "fomo_score_0_10": 3,
-      "fomo_label": "NORMAL",
-      "fresh_breakout_20d": false,
-      "retest_confirmed_10d": true,
-      "volume_ratio_vs_20d": 1.6100255898987441,
-      "zones": {
-        "zone_ready": true,
-        "zone_count": 28,
-        "in_demand": false,
-        "in_supply": true,
-        "dca1": 0.348,
-        "dca2": 0.274,
-        "dca3": 0.2,
-        "nearest_demand": {
-          "timeframe": "4D",
-          "from": 0.34,
-          "to": 0.38,
-          "distance_pct": 13.89077724903694
-        },
-        "nearest_supply": {
-          "timeframe": "2D",
-          "from": 0.42,
-          "to": 0.45,
-          "distance_pct": 0.0
-        }
-      },
-      "blockers": []
     }
   ]
 }
