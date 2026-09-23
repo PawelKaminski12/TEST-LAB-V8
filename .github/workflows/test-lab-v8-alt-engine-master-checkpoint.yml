@@ -15,6 +15,7 @@ on:
       - 'crypto_data_hub/ALT_DECISION_ENGINE.json'
       - 'crypto_data_hub/ALT_ENGINE_READINESS.json'
       - 'crypto_data_hub/CRYPTO_MARKET_PHASE.json'
+      - 'crypto_data_hub/ONCHAIN_ACTIVITY.json'
 
 permissions:
   contents: write
@@ -55,6 +56,7 @@ jobs:
               'decision':R/'ALT_DECISION_ENGINE.json',
               'readiness':R/'ALT_ENGINE_READINESS.json',
               'phase':R/'CRYPTO_MARKET_PHASE.json',
+              'onchain':R/'ONCHAIN_ACTIVITY.json',
               'universe':Path('config/alt_universe.csv'),
               'zones':Path('config/alt_zones.csv'),
           }
@@ -67,6 +69,7 @@ jobs:
           dec=json.loads(required['decision'].read_text(encoding='utf-8'))
           ready=json.loads(required['readiness'].read_text(encoding='utf-8'))
           phase=json.loads(required['phase'].read_text(encoding='utf-8'))
+          onchain=json.loads(required['onchain'].read_text(encoding='utf-8'))
           cfg=pd.read_csv(required['universe'])
           cfg=cfg[(cfg['enabled'].astype(str).str.lower()=='true') & (cfg['target_scope'].astype(str).str.upper()=='PRODUCTION')].copy()
           zones=pd.read_csv(required['zones'])
@@ -76,6 +79,7 @@ jobs:
           decmap={x.get('symbol'):x for x in dec.get('assets',[])}
           readymap={x.get('symbol'):x for x in ready.get('assets',[])}
           phasemap={x.get('symbol'):x for x in phase.get('asset_context',[])}
+          onchainmap={x.get('symbol'):x for x in onchain.get('assets',[])}
           dual_flow=phase.get('dual_horizon_flow_context',{}) or {}
           long_flow=dual_flow.get('LONG',{}) or {}
           tactical_flow=dual_flow.get('TACTICAL',{}) or {}
@@ -86,8 +90,12 @@ jobs:
               d=decmap.get(sym,{})
               rr=readymap.get(sym,{})
               pc=phasemap.get(sym,{})
+              oc=onchainmap.get(sym,{})
               z=zones[zones['symbol'].astype(str).str.upper().eq(sym)]
               tfs=sorted(set(z['timeframe'].astype(str).str.upper())) if not z.empty else []
+              chain_tvl=oc.get('chain_tvl',{}) or {}
+              protocol_tvl=oc.get('protocol_tvl',{}) or {}
+              dex=oc.get('dex_volume',{}) or {}
               rows.append({
                   'symbol':sym,
                   'data_quality':rr.get('data_quality_score_0_100'),
@@ -104,6 +112,17 @@ jobs:
                   'direct_etf_5d_usdm':(pc.get('direct_etf_context') or {}).get('flow_5d_usdm') if isinstance(pc.get('direct_etf_context'),dict) else None,
                   'direct_etf_20d_usdm':(pc.get('direct_etf_context') or {}).get('flow_20d_usdm') if isinstance(pc.get('direct_etf_context'),dict) else None,
                   'direct_etf_30d_usdm':(pc.get('direct_etf_context') or {}).get('flow_30d_usdm') if isinstance(pc.get('direct_etf_context'),dict) else None,
+                  'onchain_coverage_pct':oc.get('coverage_pct'),
+                  'long_onchain_score_0_10':oc.get('long_onchain_score_0_10'),
+                  'long_onchain_label':oc.get('long_onchain_label'),
+                  'tactical_onchain_score_0_10':oc.get('tactical_onchain_score_0_10'),
+                  'tactical_onchain_label':oc.get('tactical_onchain_label'),
+                  'chain_tvl_usd':chain_tvl.get('latest_usd'),
+                  'chain_tvl_30d_pct':chain_tvl.get('change_30d_pct'),
+                  'protocol_tvl_usd':protocol_tvl.get('latest_usd'),
+                  'protocol_tvl_30d_pct':protocol_tvl.get('change_30d_pct'),
+                  'dex_daily_usd':dex.get('latest_daily_usd'),
+                  'dex_30d_vs_prev30_pct':dex.get('change_30d_vs_prev30_pct'),
                   'decision':d.get('decision'),
                   'dca1':d.get('zones',{}).get('dca1'),
                   'dca2':d.get('zones',{}).get('dca2'),
@@ -124,6 +143,10 @@ jobs:
           etf_ready=int(snap.get('qa',{}).get('btc_etf_rows',0) or 0)>100 and int(snap.get('qa',{}).get('eth_etf_rows',0) or 0)>100
           stablecoin_ready=int(snap.get('qa',{}).get('stablecoin_history_rows',0) or 0)>100
           ethbtc_ready=int(snap.get('qa',{}).get('eth_btc_history_rows',0) or 0)>200
+          onchain_any=sum(1 for s in symbols if (onchainmap.get(s,{}) or {}).get('coverage_pct',0)>0)
+          onchain_defi_ready=onchain_any>=2
+          onchain_network_ready=sum(1 for s in symbols if ((onchainmap.get(s,{}) or {}).get('source_status',{}) or {}).get('coinmetrics')=='OK')>=2
+          onchain_exchange_whale_ready=False
 
           core_modules={
               'PRICE_DATA_QA':snapshot_qa,
@@ -142,8 +165,10 @@ jobs:
           extended={
               'BROAD_ROTATION_20D_HISTORY':bool(rot.get('broad_rotation_history_ready')),
               'SOL_ETF_MATURE_20_ROWS':int(snap.get('qa',{}).get('sol_etf_rows',0) or 0)>=20,
+              'ONCHAIN_TVL_DEX_LAYER':onchain_defi_ready,
+              'ONCHAIN_NETWORK_ACTIVITY_FEED':onchain_network_ready,
+              'EXCHANGE_WHALE_FLOW_FEED':onchain_exchange_whale_ready,
               'ETF_INDEPENDENT_SOURCE_CROSSCHECK':False,
-              'DEDICATED_ONCHAIN_LAYER':False,
               'PORTFOLIO_EXECUTION_CONNECTION':False,
           }
           ext_ready=sum(bool(v) for v in extended.values())
@@ -160,13 +185,15 @@ jobs:
           if not ethbtc_ready: blockers.append('ETH_BTC_HISTORY_NOT_READY')
           if not rot.get('broad_rotation_history_ready'): blockers.append('BROAD_ROTATION_HISTORY_MATURING')
           if int(snap.get('qa',{}).get('sol_etf_rows',0) or 0)<20: blockers.append('SOL_ETF_HISTORY_IMMATURE')
+          if not onchain_defi_ready: blockers.append('ONCHAIN_TVL_DEX_LAYER_PENDING')
+          if not onchain_network_ready: blockers.append('ONCHAIN_NETWORK_ACTIVITY_SOURCE_PENDING')
+          if not onchain_exchange_whale_ready: blockers.append('EXCHANGE_WHALE_FLOW_SOURCE_PENDING')
           blockers.append('ETF_SOURCE_CROSSCHECK_PENDING')
-          blockers.append('DEDICATED_ONCHAIN_LAYER_PENDING')
           blockers.append('NOT_CONNECTED_TO_PORTFOLIO_EXECUTION')
 
           out={
               'date':snap.get('target_date'),
-              'engine':'ALT_ENGINE_MASTER_CHECKPOINT_v0.2',
+              'engine':'ALT_ENGINE_MASTER_CHECKPOINT_v0.3',
               'status':status,
               'production_universe':symbols,
               'production_assets_count':len(symbols),
@@ -181,6 +208,13 @@ jobs:
               'alt_rotation_status':rot.get('status'),
               'long_flow_context':long_flow,
               'tactical_flow_context':tactical_flow,
+              'onchain_context':{
+                  'engine':onchain.get('engine'),
+                  'generated_at_utc':onchain.get('generated_at_utc'),
+                  'assets_with_any_data':(onchain.get('summary',{}) or {}).get('assets_with_any_data'),
+                  'source_health':(onchain.get('summary',{}) or {}).get('source_health'),
+                  'role':'context only; never standalone buy/sell signal'
+              },
               'research_only':True,
               'not_strategy_frozen':True,
               'not_execution_connected':True,
@@ -193,6 +227,8 @@ jobs:
                   'DATA_PENDING_NOT_TRADE_SIGNAL':True,
                   'MARKET_PHASE_CONTEXT_NOT_HARD_BUY_GATE':True,
                   'ETF_FLOW_CONFIRMATION_NOT_ORACLE':True,
+                  'ONCHAIN_CONTEXT_NOT_STANDALONE_SIGNAL':True,
+                  'MISSING_ONCHAIN_DATA_NOT_IMPUTED':True,
                   'LONG_AND_TACTICAL_USE_SEPARATE_FLOW_HORIZONS':True,
               }
           }
