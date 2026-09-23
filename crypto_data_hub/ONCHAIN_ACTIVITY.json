@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-09-23T14:28:44.300621+00:00",
-  "engine": "ONCHAIN_ACTIVITY_v0.4",
+  "generated_at_utc": "2026-09-23T14:32:06.903229+00:00",
+  "engine": "ONCHAIN_ACTIVITY_v0.5",
   "assets": [
     {
       "symbol": "ETH",
@@ -352,7 +352,7 @@
     "network_metrics_not_equal_token_fundamentals": true,
     "score_requires_min_40pct_coverage": true,
     "score_requires_min_2_directional_votes": true,
-    "protocol_matching_prefers_exact_slug_or_exact_name": true,
+    "ondo_protocol_tvl_requires_exact_or_rwa_match_and_min_10m_usd": true,
     "exchange_netflow_not_claimed_without_verified_source": true,
     "whale_flow_not_claimed_without_verified_source": true,
     "V7_UNTOUCHED": true
@@ -360,7 +360,7 @@
   "limitations": [
     "Coin Metrics community time-series may be unavailable from GitHub runners; source errors remain visible.",
     "Stablecoin liquidity and chain fees are network-level context for ETH/SOL, not token-specific order flow.",
-    "ONDO project metrics use exact DefiLlama protocol matching; ambiguous broad-name matches are rejected.",
+    "ONDO project metrics reject tiny ambiguous protocol matches and require a quality gate.",
     "LINK project-specific directional history remains pending; no proxy is fabricated.",
     "Verified exchange netflow and whale-wallet flow remain pending until a reliable source is connected."
   ]
