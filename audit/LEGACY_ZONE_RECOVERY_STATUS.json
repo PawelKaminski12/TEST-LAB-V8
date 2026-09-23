@@ -24,8 +24,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "STARE_STREFY_POTWIERDZONE_W_MASTERZE_LICZBY_DO_ODZYSKANIA",
-          "source_note": "V273.5 potwierdza udany import RENDER oraz aktywną DEMAND 1D potrzebną do wyliczenia DCA1"
+          "status_pl": "STARE_ZRODLO_POTWIERDZONE_LICZBY_NIEODZYSKANE",
+          "source_note": "V273.5 potwierdza udany import RENDER oraz aktywną DEMAND 1D potrzebną do DCA1"
         },
         {
           "timeframe": "2D",
@@ -33,8 +33,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "SZUKAM_STAREGO_ZRODLA",
-          "source_note": "Brak jeszcze twardego rekordu liczbowego 2D"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano bibliotekę V7 także pod RNDR/Render; brak liczbowego rekordu 2D"
         },
         {
           "timeframe": "3D",
@@ -42,8 +42,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "SZUKAM_STAREGO_ZRODLA",
-          "source_note": "Brak jeszcze twardego rekordu liczbowego 3D"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano bibliotekę V7 także pod RNDR/Render; brak liczbowego rekordu 3D"
         },
         {
           "timeframe": "4D",
@@ -51,8 +51,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "SZUKAM_STAREGO_ZRODLA",
-          "source_note": "Brak jeszcze twardego rekordu liczbowego 4D"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano bibliotekę V7 także pod RNDR/Render; brak liczbowego rekordu 4D"
         },
         {
           "timeframe": "5D",
@@ -60,8 +60,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "SZUKAM_STAREGO_ZRODLA",
-          "source_note": "Brak jeszcze twardego rekordu liczbowego 5D"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano bibliotekę V7 także pod RNDR/Render; brak liczbowego rekordu 5D"
         },
         {
           "timeframe": "1T",
@@ -69,8 +69,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "STARE_STREFY_POTWIERDZONE_W_MASTERZE_LICZBY_DO_ODZYSKANIA",
-          "source_note": "V273.5 potwierdza udany import RENDER oraz aktywną DEMAND 1T potrzebną do wyliczenia DCA3"
+          "status_pl": "STARE_ZRODLO_POTWIERDZONE_LICZBY_NIEODZYSKANE",
+          "source_note": "V273.5 potwierdza udany import RENDER oraz aktywną DEMAND 1T potrzebną do DCA3"
         },
         {
           "timeframe": "2T",
@@ -78,8 +78,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "SZUKAM_STAREGO_ZRODLA",
-          "source_note": "Brak jeszcze twardego rekordu liczbowego 2T"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano bibliotekę V7 także pod RNDR/Render; brak liczbowego rekordu 2T"
         }
       ]
     },
@@ -105,8 +105,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "STARY_PAKIET_7_7_POTWIERDZONY_WARTOSCI_DO_ODZYSKANIA",
-          "source_note": "FLOKI był importowany z pakietem stref obejmującym pełne 7 interwałów; liczby 2D nieodzyskane"
+          "status_pl": "STARY_PAKIET_7_7_POTWIERDZONY_LICZBY_NIEODZYSKANE",
+          "source_note": "FLOKI importowany z pełnym pakietem; brak liczbowego zapisu 2D w dostępnych plikach"
         },
         {
           "timeframe": "3D",
@@ -114,8 +114,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "STARY_PAKIET_7_7_POTWIERDZONY_WARTOSCI_DO_ODZYSKANIA",
-          "source_note": "FLOKI był importowany z pakietem stref obejmującym pełne 7 interwałów; liczby 3D nieodzyskane"
+          "status_pl": "STARY_PAKIET_7_7_POTWIERDZONY_LICZBY_NIEODZYSKANE",
+          "source_note": "FLOKI importowany z pełnym pakietem; brak liczbowego zapisu 3D w dostępnych plikach"
         },
         {
           "timeframe": "4D",
@@ -123,8 +123,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "STARY_PAKIET_7_7_POTWIERDZONY_WARTOSCI_DO_ODZYSKANIA",
-          "source_note": "FLOKI był importowany z pakietem stref obejmującym pełne 7 interwałów; liczby 4D nieodzyskane"
+          "status_pl": "STARY_PAKIET_7_7_POTWIERDZONY_LICZBY_NIEODZYSKANE",
+          "source_note": "FLOKI importowany z pełnym pakietem; brak liczbowego zapisu 4D w dostępnych plikach"
         },
         {
           "timeframe": "5D",
@@ -132,8 +132,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "STARY_PAKIET_7_7_POTWIERDZONY_WARTOSCI_DO_ODZYSKANIA",
-          "source_note": "FLOKI był importowany z pakietem stref obejmującym pełne 7 interwałów; liczby 5D nieodzyskane"
+          "status_pl": "STARY_PAKIET_7_7_POTWIERDZONY_LICZBY_NIEODZYSKANE",
+          "source_note": "FLOKI importowany z pełnym pakietem; brak liczbowego zapisu 5D w dostępnych plikach"
         },
         {
           "timeframe": "1T",
@@ -150,8 +150,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "STARY_PAKIET_7_7_POTWIERDZONY_WARTOSCI_DO_ODZYSKANIA",
-          "source_note": "FLOKI był importowany z pakietem stref obejmującym pełne 7 interwałów; liczby 2T nieodzyskane"
+          "status_pl": "STARY_PAKIET_7_7_POTWIERDZONY_LICZBY_NIEODZYSKANE",
+          "source_note": "FLOKI importowany z pełnym pakietem; brak liczbowego zapisu 2T w dostępnych plikach"
         }
       ]
     },
@@ -177,8 +177,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "NOWY_SCREEN_POTRZEBNY",
-          "source_note": "Legacy dla PEPE zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 2D"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano V7 i odbudowy MASTER; brak liczbowego źródła 2D"
         },
         {
           "timeframe": "3D",
@@ -186,8 +186,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "NOWY_SCREEN_POTRZEBNY",
-          "source_note": "Legacy dla PEPE zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 3D"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano V7 i odbudowy MASTER; brak liczbowego źródła 3D"
         },
         {
           "timeframe": "4D",
@@ -195,8 +195,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "NOWY_SCREEN_POTRZEBNY",
-          "source_note": "Legacy dla PEPE zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 4D"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano V7 i odbudowy MASTER; brak liczbowego źródła 4D"
         },
         {
           "timeframe": "5D",
@@ -204,8 +204,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "NOWY_SCREEN_POTRZEBNY",
-          "source_note": "Legacy dla PEPE zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 5D"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano V7 i odbudowy MASTER; brak liczbowego źródła 5D"
         },
         {
           "timeframe": "1T",
@@ -222,8 +222,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "NOWY_SCREEN_POTRZEBNY",
-          "source_note": "Legacy dla PEPE zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 2T"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano V7 i odbudowy MASTER; brak liczbowego źródła 2T"
         }
       ]
     },
@@ -249,8 +249,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "NOWY_SCREEN_POTRZEBNY",
-          "source_note": "Legacy dla SPX6900 zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 2D"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano V7 i odbudowy MASTER; brak liczbowego źródła 2D"
         },
         {
           "timeframe": "3D",
@@ -258,8 +258,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "NOWY_SCREEN_POTRZEBNY",
-          "source_note": "Legacy dla SPX6900 zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 3D"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano V7 i odbudowy MASTER; brak liczbowego źródła 3D"
         },
         {
           "timeframe": "4D",
@@ -267,8 +267,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "NOWY_SCREEN_POTRZEBNY",
-          "source_note": "Legacy dla SPX6900 zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 4D"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano V7 i odbudowy MASTER; brak liczbowego źródła 4D"
         },
         {
           "timeframe": "5D",
@@ -276,8 +276,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "NOWY_SCREEN_POTRZEBNY",
-          "source_note": "Legacy dla SPX6900 zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 5D"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano V7 i odbudowy MASTER; brak liczbowego źródła 5D"
         },
         {
           "timeframe": "1T",
@@ -294,8 +294,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "NOWY_SCREEN_POTRZEBNY",
-          "source_note": "Legacy dla SPX6900 zachował liczbowo 1D i 1T; brak potwierdzonego rekordu 2T"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano V7 i odbudowy MASTER; brak liczbowego źródła 2T"
         }
       ]
     },
@@ -312,8 +312,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "STARE_ZRODLO_BYLO_ALE_LICZBY_NIEODZYSKANE",
-          "source_note": "V7 miał XRP w aktywnym silniku; nie wpisuję liczb bez źródła"
+          "status_pl": "STARE_ZRODLO_POTWIERDZONE_LICZBY_NIEODZYSKANE",
+          "source_note": "V7 miał XRP w aktywnym silniku; brak odzyskanych granic liczbowych"
         },
         {
           "timeframe": "2D",
@@ -321,8 +321,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "NOWY_SCREEN_POTRZEBNY",
-          "source_note": "Brak potwierdzonego liczbowego źródła 2D"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano V7/Ripple/XRP; brak liczbowego źródła 2D"
         },
         {
           "timeframe": "3D",
@@ -330,8 +330,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "NOWY_SCREEN_POTRZEBNY",
-          "source_note": "Brak potwierdzonego liczbowego źródła 3D"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano V7/Ripple/XRP; brak liczbowego źródła 3D"
         },
         {
           "timeframe": "4D",
@@ -339,8 +339,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "NOWY_SCREEN_POTRZEBNY",
-          "source_note": "Brak potwierdzonego liczbowego źródła 4D"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano V7/Ripple/XRP; brak liczbowego źródła 4D"
         },
         {
           "timeframe": "5D",
@@ -348,8 +348,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "NOWY_SCREEN_POTRZEBNY",
-          "source_note": "Brak potwierdzonego liczbowego źródła 5D"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano V7/Ripple/XRP; brak liczbowego źródła 5D"
         },
         {
           "timeframe": "1T",
@@ -357,8 +357,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "STARE_ZRODLO_BYLO_ALE_LICZBY_NIEODZYSKANE",
-          "source_note": "V7 miał XRP w aktywnym silniku; nie wpisuję liczb bez źródła"
+          "status_pl": "STARE_ZRODLO_POTWIERDZONE_LICZBY_NIEODZYSKANE",
+          "source_note": "V7 miał XRP w aktywnym silniku; brak odzyskanych granic liczbowych"
         },
         {
           "timeframe": "2T",
@@ -366,8 +366,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "NOWY_SCREEN_POTRZEBNY",
-          "source_note": "Brak potwierdzonego liczbowego źródła 2T"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano V7/Ripple/XRP; brak liczbowego źródła 2T"
         }
       ]
     },
@@ -384,7 +384,7 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "STARE_ZRODLO_BYLO_ALE_LICZBY_NIEODZYSKANE",
+          "status_pl": "STARE_ZRODLO_POTWIERDZONE_LICZBY_NIEODZYSKANE",
           "source_note": "V275.38 potwierdza aktywną DEMAND 1D w MASTER_STREFY"
         },
         {
@@ -393,8 +393,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "NOWY_SCREEN_POTRZEBNY",
-          "source_note": "Brak twardego rekordu 2D w odzyskanych danych"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano V7/Stellar/XLM; brak liczbowego źródła 2D"
         },
         {
           "timeframe": "3D",
@@ -402,8 +402,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "NOWY_SCREEN_POTRZEBNY",
-          "source_note": "Brak twardego rekordu 3D w odzyskanych danych"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano V7/Stellar/XLM; brak liczbowego źródła 3D"
         },
         {
           "timeframe": "4D",
@@ -411,8 +411,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "NOWY_SCREEN_POTRZEBNY",
-          "source_note": "Brak twardego rekordu 4D w odzyskanych danych"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano V7/Stellar/XLM; brak liczbowego źródła 4D"
         },
         {
           "timeframe": "5D",
@@ -420,8 +420,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "NOWY_SCREEN_POTRZEBNY",
-          "source_note": "Brak twardego rekordu 5D w odzyskanych danych"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano V7/Stellar/XLM; brak liczbowego źródła 5D"
         },
         {
           "timeframe": "1T",
@@ -429,7 +429,7 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "STARE_ZRODLO_BYLO_ALE_LICZBY_NIEODZYSKANE",
+          "status_pl": "STARE_ZRODLO_POTWIERDZONE_LICZBY_NIEODZYSKANE",
           "source_note": "V275.38 potwierdza aktywną DEMAND 1T/1W w MASTER_STREFY"
         },
         {
@@ -438,8 +438,8 @@
           "numeric_ready_declared": false,
           "confirmed_rows_in_alt_zones": 0,
           "numeric_ready_effective": false,
-          "status_pl": "NOWY_SCREEN_POTRZEBNY",
-          "source_note": "Brak twardego rekordu 2T w odzyskanych danych"
+          "status_pl": "BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU",
+          "source_note": "Przeszukano V7/Stellar/XLM; brak liczbowego źródła 2T"
         }
       ]
     },
