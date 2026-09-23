@@ -1,0 +1,129 @@
+{
+  "date": "2026-09-22",
+  "engine": "ALT_ENGINE_READINESS_v0.1",
+  "rules": {
+    "production_and_test_universes_are_separate": true,
+    "no_zone_guessing": true,
+    "core_zone_timeframes": [
+      "1D",
+      "3D",
+      "1T",
+      "2T"
+    ],
+    "full_zone_timeframes": [
+      "1D",
+      "2D",
+      "3D",
+      "4D",
+      "5D",
+      "1T",
+      "2T"
+    ],
+    "data_pending_is_not_trade_signal": true
+  },
+  "summary": {
+    "production_assets": 4,
+    "production_data_ready": 3,
+    "production_with_core_zones": 3,
+    "test_validation_assets": 2,
+    "test_ready_for_non_zone_validation": 2
+  },
+  "assets": [
+    {
+      "symbol": "ETH",
+      "target_scope": "PRODUCTION",
+      "price_data_ready": true,
+      "rotation_data_ready": true,
+      "zone_rows": 30,
+      "zone_timeframes": "1D,1T,2D,2T,3D,4D,5D",
+      "core_zone_missing": "",
+      "full_zone_missing": "",
+      "zones_core_ready": true,
+      "zones_full_ready": true,
+      "decision": "CZEKAJ",
+      "decision_ready": true,
+      "data_quality_score_0_100": 100,
+      "readiness_status": "PRODUCTION_DATA_READY"
+    },
+    {
+      "symbol": "SOL",
+      "target_scope": "PRODUCTION",
+      "price_data_ready": true,
+      "rotation_data_ready": true,
+      "zone_rows": 8,
+      "zone_timeframes": "1D,1T",
+      "core_zone_missing": "3D,2T",
+      "full_zone_missing": "2D,3D,4D,5D,2T",
+      "zones_core_ready": false,
+      "zones_full_ready": false,
+      "decision": "KUP PO RETEŚCIE",
+      "decision_ready": true,
+      "data_quality_score_0_100": 78,
+      "readiness_status": "PRODUCTION_DATA_GAP"
+    },
+    {
+      "symbol": "LINK",
+      "target_scope": "PRODUCTION",
+      "price_data_ready": true,
+      "rotation_data_ready": true,
+      "zone_rows": 27,
+      "zone_timeframes": "1D,1T,2D,2T,3D,4D,5D",
+      "core_zone_missing": "",
+      "full_zone_missing": "",
+      "zones_core_ready": true,
+      "zones_full_ready": true,
+      "decision": "SPRAWDŹ",
+      "decision_ready": true,
+      "data_quality_score_0_100": 100,
+      "readiness_status": "PRODUCTION_DATA_READY"
+    },
+    {
+      "symbol": "ONDO",
+      "target_scope": "PRODUCTION",
+      "price_data_ready": true,
+      "rotation_data_ready": true,
+      "zone_rows": 28,
+      "zone_timeframes": "1D,1T,2D,2T,3D,4D,5D",
+      "core_zone_missing": "",
+      "full_zone_missing": "",
+      "zones_core_ready": true,
+      "zones_full_ready": true,
+      "decision": "CZEKAJ",
+      "decision_ready": true,
+      "data_quality_score_0_100": 100,
+      "readiness_status": "PRODUCTION_DATA_READY"
+    },
+    {
+      "symbol": "AAVE",
+      "target_scope": "TEST_VALIDATION",
+      "price_data_ready": true,
+      "rotation_data_ready": true,
+      "zone_rows": 0,
+      "zone_timeframes": "",
+      "core_zone_missing": "1D,3D,1T,2T",
+      "full_zone_missing": "1D,2D,3D,4D,5D,1T,2T",
+      "zones_core_ready": false,
+      "zones_full_ready": false,
+      "decision": "DATA_PENDING",
+      "decision_ready": false,
+      "data_quality_score_0_100": 47,
+      "readiness_status": "TEST_READY"
+    },
+    {
+      "symbol": "HBAR",
+      "target_scope": "TEST_VALIDATION",
+      "price_data_ready": true,
+      "rotation_data_ready": true,
+      "zone_rows": 0,
+      "zone_timeframes": "",
+      "core_zone_missing": "1D,3D,1T,2T",
+      "full_zone_missing": "1D,2D,3D,4D,5D,1T,2T",
+      "zones_core_ready": false,
+      "zones_full_ready": false,
+      "decision": "DATA_PENDING",
+      "decision_ready": false,
+      "data_quality_score_0_100": 47,
+      "readiness_status": "TEST_READY"
+    }
+  ]
+}
