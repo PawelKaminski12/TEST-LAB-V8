@@ -1,0 +1,65 @@
+// V8 MAIN PANEL ALERT SUMMARY V4
+// Nie zmienia liczby kolumn PANELU. Używa istniejącej kolumny ALERT.
+// Pokazuje najwyższy aktywny alarm ekstremum dla danego aktywa.
+
+function updateMainPanelExtremeSummary_(sheet, alarms) {
+  if (!sheet || sheet.getLastRow() < 2) return;
+  const values = sheet.getDataRange().getValues();
+  const head = values[0].map(String);
+  const symCol = head.indexOf('AKTYWO');
+  const alertCol = head.indexOf('ALERT');
+  if (symCol < 0 || alertCol < 0) return;
+
+  const best = {};
+  const priorityRank = {KRYTYCZNY:3, MOCNY:2, OSTRZEŻENIE:1};
+  const tfRank = {'1D':3, '4H':2, '1H':1};
+
+  (alarms || []).forEach(a => {
+    const sym = String(a.symbol || '').trim();
+    if (!sym) return;
+    const candidate = {
+      priority: a.priority || a.severity || 'OSTRZEŻENIE',
+      tf: a.tf || '',
+      count: Number(a.signalCount || 1),
+      type: a.type || ''
+    };
+    const old = best[sym];
+    if (!old ||
+        (priorityRank[candidate.priority] || 0) > (priorityRank[old.priority] || 0) ||
+        ((priorityRank[candidate.priority] || 0) === (priorityRank[old.priority] || 0) && (tfRank[candidate.tf] || 0) > (tfRank[old.tf] || 0))) {
+      best[sym] = candidate;
+    }
+  });
+
+  const out = [];
+  for (let i = 1; i < values.length; i++) {
+    const sym = String(values[i][symCol] || '').trim();
+    const current = String(values[i][alertCol] || '').trim();
+    const a = best[sym];
+    if (!a) {
+      out.push([current || 'BRAK']);
+      continue;
+    }
+    const prefix = a.priority === 'KRYTYCZNY' ? '🔴' : a.priority === 'MOCNY' ? '🟠' : '🟡';
+    const extreme = prefix + ' ' + a.priority + ' ' + a.tf + ' — ' + a.count + (a.count === 1 ? ' sygnał' : a.count < 5 ? ' sygnały' : ' sygnałów');
+    out.push([current && current !== 'BRAK' ? current + ' | ' + extreme : extreme]);
+  }
+
+  sheet.getRange(2, alertCol + 1, out.length, 1).setValues(out);
+  formatMainPanelAlertColumn_(sheet, alertCol + 1);
+}
+
+function formatMainPanelAlertColumn_(sheet, alertCol1Based) {
+  if (!sheet || sheet.getLastRow() < 2) return;
+  const range = sheet.getRange(2, alertCol1Based, sheet.getLastRow() - 1, 1);
+  const vals = range.getDisplayValues();
+  range.setFontWeight('normal');
+  for (let i = 0; i < vals.length; i++) {
+    const v = String(vals[i][0] || '');
+    const cell = sheet.getRange(i + 2, alertCol1Based);
+    if (v.indexOf('🔴 KRYTYCZNY') >= 0) cell.setFontWeight('bold').setBackground('#f4cccc');
+    else if (v.indexOf('🟠 MOCNY') >= 0) cell.setFontWeight('bold').setBackground('#fce5cd');
+    else if (v.indexOf('🟡 OSTRZEŻENIE') >= 0) cell.setBackground('#fff2cc');
+    else cell.setBackground(null);
+  }
+}
