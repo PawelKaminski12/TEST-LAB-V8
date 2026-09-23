@@ -1,0 +1,472 @@
+{
+  "generated_at_utc": "2026-09-23T16:17:48.605655+00:00",
+  "engine": "V8_ALT_COMPLETION_AUDIT_v1.0",
+  "assets": [
+    {
+      "symbol": "ETH",
+      "pair": "ETHUSDT",
+      "scope": "PRODUCTION",
+      "role": "CORE_ALT",
+      "technical": {
+        "1H": {
+          "rows": 499,
+          "price": 2656.21,
+          "trend_0_4": 2,
+          "rsi14": 21.296168263920933,
+          "mfi14": 11.45625967939057,
+          "macd_hist": -10.467585308668426,
+          "ret5_pct": -2.9989080936191015,
+          "ret20_pct": -3.4716215921562266,
+          "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
+          "age_hours": 0.297,
+          "closed_candles_only": true
+        },
+        "4H": {
+          "rows": 499,
+          "price": 2656.21,
+          "trend_0_4": 3,
+          "rsi14": 45.521859316948884,
+          "mfi14": 68.87869318482181,
+          "macd_hist": -11.915441123723753,
+          "ret5_pct": -3.4716215921562266,
+          "ret20_pct": 3.083329452490724,
+          "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
+          "age_hours": 0.297,
+          "closed_candles_only": true
+        },
+        "1D": {
+          "rows": 499,
+          "price": 2753.63,
+          "trend_0_4": 4,
+          "rsi14": 69.78959283195714,
+          "mfi14": 59.47351469746227,
+          "macd_hist": 16.887999587925634,
+          "ret5_pct": 12.517979144192726,
+          "ret20_pct": 15.122161276296865,
+          "last_closed_utc": "2026-09-22T23:59:59.999000+00:00",
+          "age_hours": 16.297,
+          "closed_candles_only": true
+        }
+      },
+      "technical_sources": {
+        "1H": "https://data-api.binance.vision/api/v3/klines",
+        "4H": "https://data-api.binance.vision/api/v3/klines",
+        "1D": "https://data-api.binance.vision/api/v3/klines"
+      },
+      "technical_complete": true,
+      "freshness_ok": true,
+      "zones": {
+        "confirmed_timeframes": [
+          "1D",
+          "2D",
+          "3D",
+          "4D",
+          "5D",
+          "1T",
+          "2T"
+        ],
+        "count": 30,
+        "complete_7_of_7": true,
+        "missing_timeframes": []
+      },
+      "auto_layers_ready": true,
+      "full_ready": true,
+      "production_asset": true,
+      "status_pl": "DANE KOMPLETNE — TECHNIKA I STREFY GOTOWE",
+      "errors": []
+    },
+    {
+      "symbol": "SOL",
+      "pair": "SOLUSDT",
+      "scope": "PRODUCTION",
+      "role": "ALT",
+      "technical": {
+        "1H": {
+          "rows": 499,
+          "price": 113.86,
+          "trend_0_4": 2,
+          "rsi14": 26.3691455383874,
+          "mfi14": 15.334267623849627,
+          "macd_hist": -0.4992328308956269,
+          "ret5_pct": -3.2049647198843845,
+          "ret20_pct": -3.7206155927617113,
+          "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
+          "age_hours": 0.297,
+          "closed_candles_only": true
+        },
+        "4H": {
+          "rows": 499,
+          "price": 113.86,
+          "trend_0_4": 3,
+          "rsi14": 49.22929955027363,
+          "mfi14": 62.094601128925106,
+          "macd_hist": -0.5321914011271023,
+          "ret5_pct": -3.7206155927617113,
+          "ret20_pct": 4.9691158845763805,
+          "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
+          "age_hours": 0.297,
+          "closed_candles_only": true
+        },
+        "1D": {
+          "rows": 499,
+          "price": 118.57,
+          "trend_0_4": 4,
+          "rsi14": 69.44587335600242,
+          "mfi14": 62.49032941710636,
+          "macd_hist": 1.2136760822438957,
+          "ret5_pct": 16.656828020464374,
+          "ret20_pct": 18.062331972518166,
+          "last_closed_utc": "2026-09-22T23:59:59.999000+00:00",
+          "age_hours": 16.297,
+          "closed_candles_only": true
+        }
+      },
+      "technical_sources": {
+        "1H": "https://data-api.binance.vision/api/v3/klines",
+        "4H": "https://data-api.binance.vision/api/v3/klines",
+        "1D": "https://data-api.binance.vision/api/v3/klines"
+      },
+      "technical_complete": true,
+      "freshness_ok": true,
+      "zones": {
+        "confirmed_timeframes": [
+          "1D",
+          "2D",
+          "3D",
+          "4D",
+          "5D",
+          "1T",
+          "2T"
+        ],
+        "count": 33,
+        "complete_7_of_7": true,
+        "missing_timeframes": []
+      },
+      "auto_layers_ready": true,
+      "full_ready": true,
+      "production_asset": true,
+      "status_pl": "DANE KOMPLETNE — TECHNIKA I STREFY GOTOWE",
+      "errors": []
+    },
+    {
+      "symbol": "LINK",
+      "pair": "LINKUSDT",
+      "scope": "PRODUCTION",
+      "role": "ALT",
+      "technical": {
+        "1H": {
+          "rows": 499,
+          "price": 12.187,
+          "trend_0_4": 0,
+          "rsi14": 22.197894104109153,
+          "mfi14": 19.85853186227665,
+          "macd_hist": -0.08408633161552757,
+          "ret5_pct": -5.680674870366076,
+          "ret20_pct": -6.31150061500615,
+          "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
+          "age_hours": 0.297,
+          "closed_candles_only": true
+        },
+        "4H": {
+          "rows": 499,
+          "price": 12.187,
+          "trend_0_4": 2,
+          "rsi14": 39.73373954814965,
+          "mfi14": 46.17263676730547,
+          "macd_hist": -0.09843944774007074,
+          "ret5_pct": -6.31150061500615,
+          "ret20_pct": 1.7788541840654704,
+          "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
+          "age_hours": 0.297,
+          "closed_candles_only": true
+        },
+        "1D": {
+          "rows": 499,
+          "price": 13.046,
+          "trend_0_4": 4,
+          "rsi14": 64.81991543568897,
+          "mfi14": 61.03802545369146,
+          "macd_hist": 0.09173399058374487,
+          "ret5_pct": 14.569245630982696,
+          "ret20_pct": 17.330695206403448,
+          "last_closed_utc": "2026-09-22T23:59:59.999000+00:00",
+          "age_hours": 16.297,
+          "closed_candles_only": true
+        }
+      },
+      "technical_sources": {
+        "1H": "https://data-api.binance.vision/api/v3/klines",
+        "4H": "https://data-api.binance.vision/api/v3/klines",
+        "1D": "https://data-api.binance.vision/api/v3/klines"
+      },
+      "technical_complete": true,
+      "freshness_ok": true,
+      "zones": {
+        "confirmed_timeframes": [
+          "1D",
+          "2D",
+          "3D",
+          "4D",
+          "5D",
+          "1T",
+          "2T"
+        ],
+        "count": 27,
+        "complete_7_of_7": true,
+        "missing_timeframes": []
+      },
+      "auto_layers_ready": true,
+      "full_ready": true,
+      "production_asset": true,
+      "status_pl": "DANE KOMPLETNE — TECHNIKA I STREFY GOTOWE",
+      "errors": []
+    },
+    {
+      "symbol": "ONDO",
+      "pair": "ONDOUSDT",
+      "scope": "PRODUCTION",
+      "role": "ALT",
+      "technical": {
+        "1H": {
+          "rows": 499,
+          "price": 0.411,
+          "trend_0_4": 2,
+          "rsi14": 27.946107385677152,
+          "mfi14": 22.719352691728687,
+          "macd_hist": -0.002604417571009459,
+          "ret5_pct": -6.84496826835902,
+          "ret20_pct": -5.9281300068665725,
+          "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
+          "age_hours": 0.297,
+          "closed_candles_only": true
+        },
+        "4H": {
+          "rows": 499,
+          "price": 0.411,
+          "trend_0_4": 3,
+          "rsi14": 43.64919068280038,
+          "mfi14": 31.451039466333725,
+          "macd_hist": -0.004426166224792263,
+          "ret5_pct": -5.9281300068665725,
+          "ret20_pct": 0.8094186902133815,
+          "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
+          "age_hours": 0.297,
+          "closed_candles_only": true
+        },
+        "1D": {
+          "rows": 499,
+          "price": 0.4413,
+          "trend_0_4": 4,
+          "rsi14": 65.65855107613669,
+          "mfi14": 68.64325123498635,
+          "macd_hist": 0.010894891793565236,
+          "ret5_pct": 18.53344077356971,
+          "ret20_pct": 26.664753157290487,
+          "last_closed_utc": "2026-09-22T23:59:59.999000+00:00",
+          "age_hours": 16.297,
+          "closed_candles_only": true
+        }
+      },
+      "technical_sources": {
+        "1H": "https://data-api.binance.vision/api/v3/klines",
+        "4H": "https://data-api.binance.vision/api/v3/klines",
+        "1D": "https://data-api.binance.vision/api/v3/klines"
+      },
+      "technical_complete": true,
+      "freshness_ok": true,
+      "zones": {
+        "confirmed_timeframes": [
+          "1D",
+          "2D",
+          "3D",
+          "4D",
+          "5D",
+          "1T",
+          "2T"
+        ],
+        "count": 28,
+        "complete_7_of_7": true,
+        "missing_timeframes": []
+      },
+      "auto_layers_ready": true,
+      "full_ready": true,
+      "production_asset": true,
+      "status_pl": "DANE KOMPLETNE — TECHNIKA I STREFY GOTOWE",
+      "errors": []
+    },
+    {
+      "symbol": "AAVE",
+      "pair": "AAVEUSDT",
+      "scope": "TEST_VALIDATION",
+      "role": "ALT",
+      "technical": {
+        "1H": {
+          "rows": 499,
+          "price": 138.91,
+          "trend_0_4": 2,
+          "rsi14": 32.55008189387935,
+          "mfi14": 29.884269280130212,
+          "macd_hist": -1.2702671391875615,
+          "ret5_pct": -7.37480829499233,
+          "ret20_pct": -3.7486141906873605,
+          "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
+          "age_hours": 0.297,
+          "closed_candles_only": true
+        },
+        "4H": {
+          "rows": 499,
+          "price": 138.91,
+          "trend_0_4": 3,
+          "rsi14": 45.61790150447421,
+          "mfi14": 63.74483158103728,
+          "macd_hist": -0.3762483270667638,
+          "ret5_pct": -3.7486141906873605,
+          "ret20_pct": 1.6315481416447009,
+          "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
+          "age_hours": 0.297,
+          "closed_candles_only": true
+        },
+        "1D": {
+          "rows": 499,
+          "price": 148.06,
+          "trend_0_4": 4,
+          "rsi14": 67.09314952544511,
+          "mfi14": 65.24573203679208,
+          "macd_hist": 1.3618273415414652,
+          "ret5_pct": 15.12324080553611,
+          "ret20_pct": 16.390220894583774,
+          "last_closed_utc": "2026-09-22T23:59:59.999000+00:00",
+          "age_hours": 16.297,
+          "closed_candles_only": true
+        }
+      },
+      "technical_sources": {
+        "1H": "https://data-api.binance.vision/api/v3/klines",
+        "4H": "https://data-api.binance.vision/api/v3/klines",
+        "1D": "https://data-api.binance.vision/api/v3/klines"
+      },
+      "technical_complete": true,
+      "freshness_ok": true,
+      "zones": {
+        "confirmed_timeframes": [],
+        "count": 0,
+        "complete_7_of_7": false,
+        "missing_timeframes": [
+          "1D",
+          "2D",
+          "3D",
+          "4D",
+          "5D",
+          "1T",
+          "2T"
+        ]
+      },
+      "auto_layers_ready": true,
+      "full_ready": false,
+      "production_asset": false,
+      "status_pl": "DANE RYNKOWE KOMPLETNE — BRAKUJE POTWIERDZONYCH STREF UŻYTKOWNIKA",
+      "errors": []
+    },
+    {
+      "symbol": "HBAR",
+      "pair": "HBARUSDT",
+      "scope": "TEST_VALIDATION",
+      "role": "ALT",
+      "technical": {
+        "1H": {
+          "rows": 499,
+          "price": 0.08998,
+          "trend_0_4": 2,
+          "rsi14": 27.150611714016677,
+          "mfi14": 9.963167997959928,
+          "macd_hist": -0.0011751902739455286,
+          "ret5_pct": -7.42798353909464,
+          "ret20_pct": -8.927125506072864,
+          "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
+          "age_hours": 0.297,
+          "closed_candles_only": true
+        },
+        "4H": {
+          "rows": 499,
+          "price": 0.08998,
+          "trend_0_4": 3,
+          "rsi14": 49.323047624751354,
+          "mfi14": 72.66923856369812,
+          "macd_hist": -0.0005108296378859099,
+          "ret5_pct": -8.927125506072864,
+          "ret20_pct": 10.418456252300889,
+          "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
+          "age_hours": 0.297,
+          "closed_candles_only": true
+        },
+        "1D": {
+          "rows": 499,
+          "price": 0.0991,
+          "trend_0_4": 4,
+          "rsi14": 79.6945984620717,
+          "mfi14": 75.3207408407051,
+          "macd_hist": 0.002081154937168786,
+          "ret5_pct": 32.84182305630026,
+          "ret20_pct": 32.87744703673907,
+          "last_closed_utc": "2026-09-22T23:59:59.999000+00:00",
+          "age_hours": 16.297,
+          "closed_candles_only": true
+        }
+      },
+      "technical_sources": {
+        "1H": "https://data-api.binance.vision/api/v3/klines",
+        "4H": "https://data-api.binance.vision/api/v3/klines",
+        "1D": "https://data-api.binance.vision/api/v3/klines"
+      },
+      "technical_complete": true,
+      "freshness_ok": true,
+      "zones": {
+        "confirmed_timeframes": [],
+        "count": 0,
+        "complete_7_of_7": false,
+        "missing_timeframes": [
+          "1D",
+          "2D",
+          "3D",
+          "4D",
+          "5D",
+          "1T",
+          "2T"
+        ]
+      },
+      "auto_layers_ready": true,
+      "full_ready": false,
+      "production_asset": false,
+      "status_pl": "DANE RYNKOWE KOMPLETNE — BRAKUJE POTWIERDZONYCH STREF UŻYTKOWNIKA",
+      "errors": []
+    }
+  ],
+  "etf": {
+    "ready": true,
+    "status_pl": "ETF BTC I ETH DOPIĘTE",
+    "generated_at_utc": "2026-09-23T16:05:22.621998+00:00",
+    "global": {
+      "score_0_10": 9.5,
+      "label_pl": "SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE ROŚNIE",
+      "btc_closed_5d_usdm": 2010.3,
+      "eth_closed_5d_usdm": 312.5,
+      "btc_acceleration_5d_usdm": 2716.8999999999996,
+      "eth_acceleration_5d_usdm": 112.19999999999999,
+      "role": "kontekst instytucjonalny, nie samodzielny sygnał kupna lub sprzedaży"
+    }
+  },
+  "summary": {
+    "enabled_assets": 6,
+    "auto_layers_ready": 6,
+    "full_ready": 4,
+    "production_full_ready": 4,
+    "production_count": 4,
+    "test_validation_count": 2
+  },
+  "rules": {
+    "no_fabricated_zones": true,
+    "zones_must_come_from_confirmed_user_master": true,
+    "technical_uses_closed_candles_only": true,
+    "no_execution": true
+  }
+}
