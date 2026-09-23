@@ -3,6 +3,8 @@ import requests
 
 import v8_tactical_engine_v1 as base
 
+base.EXPECTED = ['BTC','ETH','SOL','LINK','ONDO','RENDER','FLOKI','PEPE','SPX6900','XRP','XLM','HBAR','AVAX','AWE']
+
 ORIGINAL_FETCH = base.fetch_klines
 KRAKEN_INTERVALS = {'1h': 60, '4h': 240, '1d': 1440}
 
