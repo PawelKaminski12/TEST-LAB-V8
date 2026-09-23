@@ -1,0 +1,66 @@
+{
+  "date": "2026-09-22",
+  "engine": "ALT_ROTATION_SCORE_v0.2",
+  "score_0_10": 7,
+  "status": "CONFIRMED",
+  "confidence": "MEDIUM",
+  "confidence_pct": 60,
+  "parts": {
+    "BTC_REGIME": 1,
+    "ETH_BTC": 2,
+    "ETF_FLOW": 2,
+    "STABLECOIN_LIQUIDITY": 1,
+    "ALT_RS_BREADTH": 1,
+    "BROAD_ROTATION_TREND": 0
+  },
+  "broad_rotation_history_ready": false,
+  "broad_rotation_detail": {},
+  "selected_alt_breadth_strong": [
+    "SOL_BTC",
+    "LINK_BTC",
+    "AAVE_BTC"
+  ],
+  "alt_readiness": {
+    "SOL": {
+      "individual_rs_0_4": 4,
+      "label": "LEADER",
+      "vs_btc_20d_pct": 5.916882678215174,
+      "vs_eth_20d_pct": 2.5539571735148314
+    },
+    "LINK": {
+      "individual_rs_0_4": 4,
+      "label": "LEADER",
+      "vs_btc_20d_pct": 5.260511723780037,
+      "vs_eth_20d_pct": 1.9184263964659332
+    },
+    "AAVE": {
+      "individual_rs_0_4": 4,
+      "label": "LEADER",
+      "vs_btc_20d_pct": 4.416787009193945,
+      "vs_eth_20d_pct": 1.1014904552074212
+    },
+    "HBAR": {
+      "individual_rs_0_4": 2,
+      "label": "WATCH",
+      "vs_btc_20d_pct": 19.207919522096994,
+      "vs_eth_20d_pct": 15.422995506337811
+    },
+    "ONDO": {
+      "individual_rs_0_4": 2,
+      "label": "WATCH",
+      "vs_btc_20d_pct": 13.634345311328433,
+      "vs_eth_20d_pct": 10.026385669819948
+    }
+  },
+  "hard_rules": {
+    "score_is_not_buy_signal": true,
+    "relative_strength_is_not_hard_gate": true,
+    "requires_price_zone_trend_retest_layer_before_trade_decision": true,
+    "requires_data_quality_pass": true
+  },
+  "limitations": [
+    "V8_TOTAL3_EQ and V8_OTHERS_BTC_EQ are CoinGecko equivalents, not yet certified 1:1 with TradingView.",
+    "Broad rotation trend scores only after 20 persisted daily snapshots.",
+    "SOL ETF is immature below 20 rows."
+  ]
+}
