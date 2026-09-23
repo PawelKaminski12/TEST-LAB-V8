@@ -454,7 +454,7 @@
           "timeframe": "1D",
           "source_found": true,
           "numeric_ready_declared": false,
-          "confirmed_rows_in_alt_zones": 0,
+          "confirmed_rows_in_alt_zones": 5,
           "numeric_ready_effective": false,
           "status_pl": "SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT",
           "source_note": "Screen użytkownika 2026-09-23"
@@ -463,7 +463,7 @@
           "timeframe": "2D",
           "source_found": true,
           "numeric_ready_declared": false,
-          "confirmed_rows_in_alt_zones": 0,
+          "confirmed_rows_in_alt_zones": 5,
           "numeric_ready_effective": false,
           "status_pl": "SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT",
           "source_note": "Screen użytkownika 2026-09-23"
@@ -472,7 +472,7 @@
           "timeframe": "3D",
           "source_found": true,
           "numeric_ready_declared": false,
-          "confirmed_rows_in_alt_zones": 0,
+          "confirmed_rows_in_alt_zones": 3,
           "numeric_ready_effective": false,
           "status_pl": "SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT",
           "source_note": "Screen użytkownika 2026-09-23"
@@ -481,7 +481,7 @@
           "timeframe": "4D",
           "source_found": true,
           "numeric_ready_declared": false,
-          "confirmed_rows_in_alt_zones": 0,
+          "confirmed_rows_in_alt_zones": 4,
           "numeric_ready_effective": false,
           "status_pl": "SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT",
           "source_note": "Screen użytkownika 2026-09-23"
@@ -490,7 +490,7 @@
           "timeframe": "5D",
           "source_found": true,
           "numeric_ready_declared": false,
-          "confirmed_rows_in_alt_zones": 0,
+          "confirmed_rows_in_alt_zones": 5,
           "numeric_ready_effective": false,
           "status_pl": "SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT",
           "source_note": "Screen użytkownika 2026-09-23"
@@ -499,7 +499,7 @@
           "timeframe": "1T",
           "source_found": true,
           "numeric_ready_declared": false,
-          "confirmed_rows_in_alt_zones": 0,
+          "confirmed_rows_in_alt_zones": 4,
           "numeric_ready_effective": false,
           "status_pl": "SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT",
           "source_note": "Screen użytkownika 2026-09-23"
@@ -508,7 +508,7 @@
           "timeframe": "2T",
           "source_found": true,
           "numeric_ready_declared": false,
-          "confirmed_rows_in_alt_zones": 0,
+          "confirmed_rows_in_alt_zones": 3,
           "numeric_ready_effective": false,
           "status_pl": "SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT",
           "source_note": "Screen użytkownika 2026-09-23"
