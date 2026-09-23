@@ -1,0 +1,117 @@
+{
+  "date": "2026-09-22",
+  "engine": "ALT_ENGINE_MASTER_CHECKPOINT_v0.1",
+  "status": "CORE_ALT_ENGINE_READY_FOR_VALIDATION",
+  "production_universe": [
+    "ETH",
+    "SOL",
+    "LINK",
+    "ONDO"
+  ],
+  "production_assets_count": 4,
+  "production_assets_ready": 4,
+  "core_modules_ready": "6/6",
+  "core_modules": {
+    "PRICE_DATA_QA": true,
+    "FULL_ZONES_1D_TO_2T": true,
+    "TECHNICAL_LAYER": true,
+    "ROTATION_LAYER": true,
+    "MARKET_PHASE_LAYER": true,
+    "DECISION_LAYER": true
+  },
+  "extended_modules_ready": "0/5",
+  "extended_modules": {
+    "BROAD_ROTATION_20D_HISTORY": false,
+    "SOL_ETF_MATURE_20_ROWS": false,
+    "ETF_INDEPENDENT_SOURCE_CROSSCHECK": false,
+    "DEDICATED_ONCHAIN_LAYER": false,
+    "PORTFOLIO_EXECUTION_CONNECTION": false
+  },
+  "crypto_market_phase": "ALT_ROTATION_CANDIDATE",
+  "market_phase_confidence": "MEDIUM",
+  "alt_rotation_score_0_10": 7,
+  "alt_rotation_status": "CONFIRMED",
+  "research_only": true,
+  "not_strategy_frozen": true,
+  "not_execution_connected": true,
+  "blockers_or_maturity_gaps": [
+    "BROAD_ROTATION_HISTORY_MATURING",
+    "SOL_ETF_HISTORY_IMMATURE",
+    "ETF_SOURCE_CROSSCHECK_PENDING",
+    "DEDICATED_ONCHAIN_LAYER_PENDING",
+    "NOT_CONNECTED_TO_PORTFOLIO_EXECUTION"
+  ],
+  "assets": [
+    {
+      "symbol": "ETH",
+      "data_quality": 100,
+      "readiness_status": "PRODUCTION_DATA_READY",
+      "full_zones_ready": true,
+      "zone_timeframes": "1D,1T,2D,2T,3D,4D,5D",
+      "trend_score_0_4": 4,
+      "fomo_score_0_10": 2,
+      "rotation_label": "CORE_ALT",
+      "market_phase": "ALT_ROTATION_CANDIDATE",
+      "decision": "CZEKAJ",
+      "dca1": 2450.0,
+      "dca2": 1975.0,
+      "dca3": 1500.0,
+      "blockers": ""
+    },
+    {
+      "symbol": "SOL",
+      "data_quality": 100,
+      "readiness_status": "PRODUCTION_DATA_READY",
+      "full_zones_ready": true,
+      "zone_timeframes": "1D,1T,2D,2T,3D,4D,5D",
+      "trend_score_0_4": 4,
+      "fomo_score_0_10": 4,
+      "rotation_label": "LEADER",
+      "market_phase": "ALT_ROTATION_CANDIDATE",
+      "decision": "CZEKAJ",
+      "dca1": 97.0,
+      "dca2": 78.5,
+      "dca3": 60.0,
+      "blockers": ""
+    },
+    {
+      "symbol": "LINK",
+      "data_quality": 100,
+      "readiness_status": "PRODUCTION_DATA_READY",
+      "full_zones_ready": true,
+      "zone_timeframes": "1D,1T,2D,2T,3D,4D,5D",
+      "trend_score_0_4": 4,
+      "fomo_score_0_10": 2,
+      "rotation_label": "LEADER",
+      "market_phase": "ALT_ROTATION_CANDIDATE",
+      "decision": "SPRAWDŹ",
+      "dca1": 8.5,
+      "dca2": 7.35,
+      "dca3": 6.2,
+      "blockers": ""
+    },
+    {
+      "symbol": "ONDO",
+      "data_quality": 100,
+      "readiness_status": "PRODUCTION_DATA_READY",
+      "full_zones_ready": true,
+      "zone_timeframes": "1D,1T,2D,2T,3D,4D,5D",
+      "trend_score_0_4": 3,
+      "fomo_score_0_10": 3,
+      "rotation_label": "WATCH",
+      "market_phase": "ALT_ROTATION_CANDIDATE",
+      "decision": "CZEKAJ",
+      "dca1": 0.348,
+      "dca2": 0.274,
+      "dca3": 0.2,
+      "blockers": ""
+    }
+  ],
+  "rules": {
+    "V7_UNTOUCHED": true,
+    "NO_ZONE_GUESSING": true,
+    "PRODUCTION_AND_TEST_UNIVERSES_SEPARATE": true,
+    "DATA_PENDING_NOT_TRADE_SIGNAL": true,
+    "MARKET_PHASE_CONTEXT_NOT_HARD_BUY_GATE": true
+  }
+}
