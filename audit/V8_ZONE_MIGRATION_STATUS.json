@@ -1,9 +1,9 @@
 {
-  "generated_at_utc": "2026-09-23T18:09:30.046357+00:00",
-  "numeric_ready_points": 34,
+  "generated_at_utc": "2026-09-23T18:10:07.430690+00:00",
+  "numeric_ready_points": 41,
   "total_points": 77,
-  "numeric_ready_percent": 44.2,
-  "assets_complete_7_of_7": 4,
+  "numeric_ready_percent": 53.2,
+  "assets_complete_7_of_7": 5,
   "asset_count": 11,
   "no_guessing": true,
   "rows": [
@@ -100,11 +100,11 @@
     {
       "symbol": "HBAR",
       "source_found_count": 7,
-      "numeric_ready_count": 0,
+      "numeric_ready_count": 7,
       "source_found_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
-      "numeric_ready_timeframes": "BRAK",
-      "missing_numeric_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
-      "complete_7_of_7": false
+      "numeric_ready_timeframes": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
+      "missing_numeric_timeframes": "BRAK",
+      "complete_7_of_7": true
     }
   ]
 }
