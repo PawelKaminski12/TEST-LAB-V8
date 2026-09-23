@@ -1,0 +1,130 @@
+{
+  "generated_at_utc": "2026-09-23T21:28:37.533508+00:00",
+  "engine": "V8_TACTICAL_REGIME_GATE_v4.0",
+  "research_only": true,
+  "deploy_block": true,
+  "auto_execution": false,
+  "production_modified": false,
+  "source_rows": 768,
+  "challenger": "BALANCED_LOW_FOMO",
+  "rule": {
+    "score_min": 6,
+    "fomo_max": 6,
+    "trend4_min": 3,
+    "rsi_lo": 45,
+    "rsi_hi": 68
+  },
+  "gate_definition": {
+    "active": {
+      "breadth_1d_min": 0.6,
+      "breadth_4h_min": 0.55,
+      "fomo8_share_max": 0.35
+    },
+    "block": {
+      "breadth_1d_below": 0.4,
+      "breadth_4h_below": 0.35,
+      "fomo8_share_above": 0.5
+    },
+    "current_btc_active_trend_min": 3,
+    "current_btc_block_trend_max": 2
+  },
+  "historical_ungated": {
+    "n": 342,
+    "mean12": 0.14327810962489945,
+    "median12": 0.014789959633676464,
+    "win12": 50.292397660818715,
+    "mean24": 0.22422813631040484,
+    "lcb12": 0.026271251091914236
+  },
+  "historical_by_gate": {
+    "ACTIVE": {
+      "n": 307,
+      "mean12": 0.139987473409499,
+      "median12": 0.054642613202626755,
+      "win12": 51.79153094462541,
+      "mean24": 0.2666117291252596,
+      "lcb12": 0.014052707183833862
+    },
+    "CAUTION": {
+      "n": 17,
+      "mean12": 0.6658063596358794,
+      "median12": -0.3288201160541626,
+      "win12": 41.1764705882353,
+      "mean24": 0.370494969071377,
+      "lcb12": 0.1648275478418798
+    },
+    "BLOCK": {
+      "n": 18,
+      "mean12": -0.29409716437836275,
+      "median12": -0.32702743610458773,
+      "win12": 33.333333333333336,
+      "mean24": -0.6367884831949808,
+      "lcb12": -0.6092465947362914
+    }
+  },
+  "active_quarters": {
+    "Q1": {
+      "n": 85,
+      "mean12": -0.02669857596426168,
+      "median12": -0.23258222020439145,
+      "win12": 44.705882352941174,
+      "mean24": -0.22735091656173478,
+      "lcb12": -0.27475490238387507
+    },
+    "Q2": {
+      "n": 84,
+      "mean12": -0.7388083872406728,
+      "median12": -0.5111130859710433,
+      "win12": 38.095238095238095,
+      "mean24": -0.91869504519142,
+      "lcb12": -0.9091174893558858
+    },
+    "Q3": {
+      "n": 89,
+      "mean12": 0.044479388769664424,
+      "median12": 0.09684292078249168,
+      "win12": 53.93258426966292,
+      "mean24": -0.04161175076294787,
+      "lcb12": -0.14253272824088392
+    },
+    "Q4": {
+      "n": 49,
+      "mean12": 2.109117800436629,
+      "median12": 2.488486709218707,
+      "win12": 83.6734693877551,
+      "mean24": 3.715274660473139,
+      "lcb12": 1.742364428638947
+    }
+  },
+  "validation_gates": {
+    "active_n_ge_100": true,
+    "active_mean12_beats_ungated": false,
+    "active_win12_not_worse": true,
+    "active_mean24_positive": true,
+    "active_lcb12_positive": true,
+    "block_underperforms_active": true,
+    "active_temporal_no_deep_failure": false
+  },
+  "gate_pass_count": 5,
+  "verdict": "WATCH_REGIME_GATE",
+  "current": {
+    "engine_snapshot_utc": "2026-09-23T20:28:22.554038+00:00",
+    "status": "ACTIVE",
+    "breadth": {
+      "status": "ACTIVE",
+      "n": 13,
+      "breadth_1d": 1.0,
+      "breadth_4h": 0.7692307692307693,
+      "fomo8_share": 0.0,
+      "avg_score": 5.461538461538462
+    },
+    "btc_trend_1d": 4.0,
+    "btc_trend_4h": 4.0,
+    "reasons": [
+      "breadth=ACTIVE",
+      "BTC potwierdza 1D+4H"
+    ]
+  },
+  "manual_promotion_only": true,
+  "note": "Regime Gate steruje wyłącznie warstwą badawczą challengera; nie zmienia produkcyjnego Tactical."
+}
