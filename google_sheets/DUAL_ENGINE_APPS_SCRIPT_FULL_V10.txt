@@ -2109,3 +2109,10 @@ function applyTacticalColorsV10_(sheet,startRow,endRow) {
     else sheet.getRange(r,4).setBackground('#dcfce7');
   }
 }
+
+
+// ===== V10 COMPATIBILITY FIX — ALARM DIRECTION =====
+// Alias wymagany przez warstwę dynamiki alarmów V8.
+function classifyAlarmDirection_(a) {
+  return alarmDirection_(a);
+}
