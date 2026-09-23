@@ -1,0 +1,65 @@
+name: TEST LAB V8 Tactical Calibration Gate
+
+on:
+  push:
+    paths:
+      - 'scripts/v8_tactical_calibration_gate.py'
+      - 'tactical_validation/TACTICAL_THRESHOLD_LAB.json'
+      - 'tactical_validation/TACTICAL_VALIDATION_SUMMARY.csv'
+      - 'tactical_validation/TACTICAL_VALIDATION_QA.csv'
+      - '.github/workflows/test-lab-v8-tactical-calibration-gate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  calibration-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz projekt
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Sprawdź składnię bramki
+        run: python -m py_compile scripts/v8_tactical_calibration_gate.py
+
+      - name: Uruchom bramkę kalibracji
+        run: python scripts/v8_tactical_calibration_gate.py
+
+      - name: Sprawdź zabezpieczenia badawcze
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('audit/V8_TACTICAL_CALIBRATION_GATE.json',encoding='utf-8'))
+          assert r['research_only'] is True
+          assert r['production_thresholds_changed'] is False
+          assert r['auto_execution_changed'] is False
+          assert r['status'] in ['PASS_DO_BADAN_DALSZYCH__DEPLOY_HOLD','DEPLOY_CANDIDATE_REQUIRES_MANUAL_APPROVAL']
+          print('CALIBRATION SAFETY PASS')
+          PY
+
+      - name: Sprawdź final readiness
+        run: python scripts/v8_final_readiness.py
+
+      - name: Pełny audyt 1 z 2
+        run: python scripts/v8_full_double_audit_v2.py --pass-number 1
+
+      - name: Pełny audyt 2 z 2
+        run: python scripts/v8_full_double_audit_v2.py --pass-number 2
+
+      - name: Zapisz raport kalibracji
+        run: |
+          git config user.name "PawelKaminski12"
+          git config user.email "pkaminski1@gmail.com"
+          git add audit/V8_TACTICAL_CALIBRATION_GATE.json audit/V8_TACTICAL_CALIBRATION_GATE.md audit/V8_FINAL_READINESS.json audit/V8_FINAL_READINESS_LATEST.md audit/V8_FULL_AUDIT_PASS_1.json audit/V8_FULL_AUDIT_PASS_1.md audit/V8_FULL_AUDIT_PASS_2.json audit/V8_FULL_AUDIT_PASS_2.md google_sheets/V8_FINAL_READINESS.csv 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "Brak zmian do zapisu"
+          else
+            git commit -m "Zamknij badawczą bramkę kalibracji Tactical V8"
+            git push
+          fi
