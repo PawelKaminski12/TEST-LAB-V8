@@ -1,78 +1,78 @@
 symbol,timeframe,source_found,numeric_ready,status_pl,source_note
-ETH,1D,true,true,GOTOWE,V7 MASTER / V8 MASTER
-ETH,2D,true,true,GOTOWE,V7 MASTER / V8 MASTER
-ETH,3D,true,true,GOTOWE,V7 MASTER / V8 MASTER
-ETH,4D,true,true,GOTOWE,V7 MASTER / V8 MASTER
-ETH,5D,true,true,GOTOWE,V7 MASTER / V8 MASTER
-ETH,1T,true,true,GOTOWE,V7 MASTER / V8 MASTER
-ETH,2T,true,true,GOTOWE,V7 MASTER / V8 MASTER
-SOL,1D,true,true,GOTOWE,MASTER FINAL 17/17
-SOL,2D,true,true,GOTOWE,MASTER FINAL 17/17
-SOL,3D,true,true,GOTOWE,MASTER FINAL 17/17
-SOL,4D,true,true,GOTOWE,MASTER FINAL 17/17
-SOL,5D,true,true,GOTOWE,MASTER FINAL 17/17
-SOL,1T,true,true,GOTOWE,MASTER FINAL 17/17
-SOL,2T,true,true,GOTOWE,MASTER FINAL 17/17
-LINK,1D,true,true,GOTOWE,MASTER FINAL 17/17
-LINK,2D,true,true,GOTOWE,MASTER FINAL 17/17
-LINK,3D,true,true,GOTOWE,MASTER FINAL 17/17
-LINK,4D,true,true,GOTOWE,MASTER FINAL 17/17
-LINK,5D,true,true,GOTOWE,MASTER FINAL 17/17
-LINK,1T,true,true,GOTOWE,MASTER FINAL 17/17
-LINK,2T,true,true,GOTOWE,MASTER FINAL 17/17
-ONDO,1D,true,true,GOTOWE,MASTER FINAL 17/17
-ONDO,2D,true,true,GOTOWE,MASTER FINAL 17/17
-ONDO,3D,true,true,GOTOWE,MASTER FINAL 17/17
-ONDO,4D,true,true,GOTOWE,MASTER FINAL 17/17
-ONDO,5D,true,true,GOTOWE,MASTER FINAL 17/17
-ONDO,1T,true,true,GOTOWE,MASTER FINAL 17/17
-ONDO,2T,true,true,GOTOWE,MASTER FINAL 17/17
-RENDER,1D,true,false,STARE_ZRODLO_POTWIERDZONE_LICZBY_NIEODZYSKANE,V273.5 potwierdza udany import RENDER oraz aktywną DEMAND 1D potrzebną do DCA1
-RENDER,2D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano bibliotekę V7 także pod RNDR/Render; brak liczbowego rekordu 2D
-RENDER,3D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano bibliotekę V7 także pod RNDR/Render; brak liczbowego rekordu 3D
-RENDER,4D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano bibliotekę V7 także pod RNDR/Render; brak liczbowego rekordu 4D
-RENDER,5D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano bibliotekę V7 także pod RNDR/Render; brak liczbowego rekordu 5D
-RENDER,1T,true,false,STARE_ZRODLO_POTWIERDZONE_LICZBY_NIEODZYSKANE,V273.5 potwierdza udany import RENDER oraz aktywną DEMAND 1T potrzebną do DCA3
-RENDER,2T,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano bibliotekę V7 także pod RNDR/Render; brak liczbowego rekordu 2T
-FLOKI,1D,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
-FLOKI,2D,true,false,STARY_PAKIET_7_7_POTWIERDZONY_LICZBY_NIEODZYSKANE,FLOKI importowany z pełnym pakietem; brak liczbowego zapisu 2D w dostępnych plikach
-FLOKI,3D,true,false,STARY_PAKIET_7_7_POTWIERDZONY_LICZBY_NIEODZYSKANE,FLOKI importowany z pełnym pakietem; brak liczbowego zapisu 3D w dostępnych plikach
-FLOKI,4D,true,false,STARY_PAKIET_7_7_POTWIERDZONY_LICZBY_NIEODZYSKANE,FLOKI importowany z pełnym pakietem; brak liczbowego zapisu 4D w dostępnych plikach
-FLOKI,5D,true,false,STARY_PAKIET_7_7_POTWIERDZONY_LICZBY_NIEODZYSKANE,FLOKI importowany z pełnym pakietem; brak liczbowego zapisu 5D w dostępnych plikach
-FLOKI,1T,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
-FLOKI,2T,true,false,STARY_PAKIET_7_7_POTWIERDZONY_LICZBY_NIEODZYSKANE,FLOKI importowany z pełnym pakietem; brak liczbowego zapisu 2T w dostępnych plikach
-PEPE,1D,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
-PEPE,2D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7 i odbudowy MASTER; brak liczbowego źródła 2D
-PEPE,3D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7 i odbudowy MASTER; brak liczbowego źródła 3D
-PEPE,4D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7 i odbudowy MASTER; brak liczbowego źródła 4D
-PEPE,5D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7 i odbudowy MASTER; brak liczbowego źródła 5D
-PEPE,1T,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
-PEPE,2T,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7 i odbudowy MASTER; brak liczbowego źródła 2T
-SPX6900,1D,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
-SPX6900,2D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7 i odbudowy MASTER; brak liczbowego źródła 2D
-SPX6900,3D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7 i odbudowy MASTER; brak liczbowego źródła 3D
-SPX6900,4D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7 i odbudowy MASTER; brak liczbowego źródła 4D
-SPX6900,5D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7 i odbudowy MASTER; brak liczbowego źródła 5D
-SPX6900,1T,true,true,GOTOWE,V7 LEGACY — wykres użytkownika
-SPX6900,2T,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7 i odbudowy MASTER; brak liczbowego źródła 2T
-XRP,1D,true,false,STARE_ZRODLO_POTWIERDZONE_LICZBY_NIEODZYSKANE,V7 miał XRP w aktywnym silniku; brak odzyskanych granic liczbowych
-XRP,2D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7/Ripple/XRP; brak liczbowego źródła 2D
-XRP,3D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7/Ripple/XRP; brak liczbowego źródła 3D
-XRP,4D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7/Ripple/XRP; brak liczbowego źródła 4D
-XRP,5D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7/Ripple/XRP; brak liczbowego źródła 5D
-XRP,1T,true,false,STARE_ZRODLO_POTWIERDZONE_LICZBY_NIEODZYSKANE,V7 miał XRP w aktywnym silniku; brak odzyskanych granic liczbowych
-XRP,2T,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7/Ripple/XRP; brak liczbowego źródła 2T
-XLM,1D,true,false,STARE_ZRODLO_POTWIERDZONE_LICZBY_NIEODZYSKANE,V275.38 potwierdza aktywną DEMAND 1D w MASTER_STREFY
-XLM,2D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7/Stellar/XLM; brak liczbowego źródła 2D
-XLM,3D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7/Stellar/XLM; brak liczbowego źródła 3D
-XLM,4D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7/Stellar/XLM; brak liczbowego źródła 4D
-XLM,5D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7/Stellar/XLM; brak liczbowego źródła 5D
-XLM,1T,true,false,STARE_ZRODLO_POTWIERDZONE_LICZBY_NIEODZYSKANE,V275.38 potwierdza aktywną DEMAND 1T/1W w MASTER_STREFY
-XLM,2T,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7/Stellar/XLM; brak liczbowego źródła 2T
-HBAR,1D,true,true,GOTOWE,Screen użytkownika 2026-09-23 18.37.17 — liczby zapisane w V8
-HBAR,2D,true,true,GOTOWE,Screen użytkownika 2026-09-23 18.40.58 — liczby zapisane w V8
-HBAR,3D,true,true,GOTOWE,Screen użytkownika 2026-09-23 18.37.26 — liczby zapisane w V8
-HBAR,4D,true,true,GOTOWE,Screen użytkownika 2026-09-23 18.37.31 — liczby zapisane w V8
-HBAR,5D,true,true,GOTOWE,Screen użytkownika 2026-09-23 18.37.37 — liczby zapisane w V8
-HBAR,1T,true,true,GOTOWE,Screen użytkownika 2026-09-23 18.37.44 — liczby zapisane w V8
-HBAR,2T,true,true,GOTOWE,Screen użytkownika 2026-09-23 18.41.17 — liczby zapisane w V8
+ETH,1D,True,True,GOTOWE,V7 MASTER / V8 MASTER
+ETH,2D,True,True,GOTOWE,V7 MASTER / V8 MASTER
+ETH,3D,True,True,GOTOWE,V7 MASTER / V8 MASTER
+ETH,4D,True,True,GOTOWE,V7 MASTER / V8 MASTER
+ETH,5D,True,True,GOTOWE,V7 MASTER / V8 MASTER
+ETH,1T,True,True,GOTOWE,V7 MASTER / V8 MASTER
+ETH,2T,True,True,GOTOWE,V7 MASTER / V8 MASTER
+SOL,1D,True,True,GOTOWE,MASTER FINAL 17/17
+SOL,2D,True,True,GOTOWE,MASTER FINAL 17/17
+SOL,3D,True,True,GOTOWE,MASTER FINAL 17/17
+SOL,4D,True,True,GOTOWE,MASTER FINAL 17/17
+SOL,5D,True,True,GOTOWE,MASTER FINAL 17/17
+SOL,1T,True,True,GOTOWE,MASTER FINAL 17/17
+SOL,2T,True,True,GOTOWE,MASTER FINAL 17/17
+LINK,1D,True,True,GOTOWE,MASTER FINAL 17/17
+LINK,2D,True,True,GOTOWE,MASTER FINAL 17/17
+LINK,3D,True,True,GOTOWE,MASTER FINAL 17/17
+LINK,4D,True,True,GOTOWE,MASTER FINAL 17/17
+LINK,5D,True,True,GOTOWE,MASTER FINAL 17/17
+LINK,1T,True,True,GOTOWE,MASTER FINAL 17/17
+LINK,2T,True,True,GOTOWE,MASTER FINAL 17/17
+ONDO,1D,True,True,GOTOWE,MASTER FINAL 17/17
+ONDO,2D,True,True,GOTOWE,MASTER FINAL 17/17
+ONDO,3D,True,True,GOTOWE,MASTER FINAL 17/17
+ONDO,4D,True,True,GOTOWE,MASTER FINAL 17/17
+ONDO,5D,True,True,GOTOWE,MASTER FINAL 17/17
+ONDO,1T,True,True,GOTOWE,MASTER FINAL 17/17
+ONDO,2T,True,True,GOTOWE,MASTER FINAL 17/17
+RENDER,1D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+RENDER,2D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+RENDER,3D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+RENDER,4D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+RENDER,5D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+RENDER,1T,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+RENDER,2T,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+FLOKI,1D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+FLOKI,2D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+FLOKI,3D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+FLOKI,4D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+FLOKI,5D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+FLOKI,1T,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+FLOKI,2T,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+PEPE,1D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+PEPE,2D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+PEPE,3D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+PEPE,4D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+PEPE,5D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+PEPE,1T,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+PEPE,2T,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+SPX6900,1D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+SPX6900,2D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+SPX6900,3D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+SPX6900,4D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+SPX6900,5D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+SPX6900,1T,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+SPX6900,2T,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+XRP,1D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+XRP,2D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+XRP,3D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+XRP,4D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+XRP,5D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+XRP,1T,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+XRP,2T,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+XLM,1D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+XLM,2D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+XLM,3D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+XLM,4D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+XLM,5D,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+XLM,1T,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+XLM,2T,True,True,GOTOWE,Screen użytkownika 2026-09-23 — komplet 7/7 zapisany liczbowo w V8
+HBAR,1D,True,True,GOTOWE,Screen użytkownika 2026-09-23 18.37.17 — liczby zapisane w V8
+HBAR,2D,True,True,GOTOWE,Screen użytkownika 2026-09-23 18.40.58 — liczby zapisane w V8
+HBAR,3D,True,True,GOTOWE,Screen użytkownika 2026-09-23 18.37.26 — liczby zapisane w V8
+HBAR,4D,True,True,GOTOWE,Screen użytkownika 2026-09-23 18.37.31 — liczby zapisane w V8
+HBAR,5D,True,True,GOTOWE,Screen użytkownika 2026-09-23 18.37.37 — liczby zapisane w V8
+HBAR,1T,True,True,GOTOWE,Screen użytkownika 2026-09-23 18.37.44 — liczby zapisane w V8
+HBAR,2T,True,True,GOTOWE,Screen użytkownika 2026-09-23 18.41.17 — liczby zapisane w V8
