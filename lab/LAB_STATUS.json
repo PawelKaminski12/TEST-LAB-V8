@@ -1,9 +1,10 @@
 {
-  "generated_at_utc": "2026-09-23T14:58:35.497460+00:00",
-  "engine": "V8_ASSET_LAB_v0.1",
+  "generated_at_utc": "2026-09-23T15:00:34.610572+00:00",
+  "engine": "V8_ASSET_LAB_v0.2",
   "active_assets": 2,
   "fast_mode_ready": true,
   "deep_mode_ready": true,
+  "deep_comparison_enabled": true,
   "crypto_checkpoints": [
     "D0",
     "D1",

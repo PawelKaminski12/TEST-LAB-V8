@@ -1,10 +1,10 @@
 {
-  "generated_at_utc": "2026-09-23T14:58:35.497460+00:00",
-  "engine": "V8_ASSET_LAB_v0.1",
+  "generated_at_utc": "2026-09-23T15:00:34.610572+00:00",
+  "engine": "V8_ASSET_LAB_v0.2",
   "active_assets": 2,
   "reports": [
     {
-      "generated_at_utc": "2026-09-23T14:58:35.497460+00:00",
+      "generated_at_utc": "2026-09-23T15:00:34.610572+00:00",
       "symbol": "ETH",
       "source_symbol": "ETH-USD",
       "asset_type": "CRYPTO",
@@ -14,13 +14,14 @@
       "data_status": "DATA_READY",
       "technical_1D": {
         "status": "OK",
-        "price": 2677.72998046875,
+        "rows": 731,
+        "price": 2673.2099609375,
         "trend_0_4": 4,
-        "rsi14": 62.72323441088971,
-        "mfi14": 57.72724826916502,
-        "macd_hist": 13.08597078096912,
-        "ret5_pct": 2.5420906616425265,
-        "ret20_pct": 6.766659661147689,
+        "rsi14": 62.342862682618815,
+        "mfi14": 57.72984253955503,
+        "macd_hist": 12.79751369407471,
+        "ret5_pct": 2.368999178951392,
+        "ret20_pct": 6.586437088119523,
         "fomo_0_10": 0
       },
       "stock_fundamentals": {
@@ -28,8 +29,14 @@
       },
       "crypto_market_context": {
         "phase": "ALT_ROTATION_CANDIDATE",
+        "phase_score_0_10": 9,
         "confidence": "MEDIUM",
-        "rotation_score": null
+        "rotation_score_0_10": 7,
+        "rotation_status": "CONFIRMED",
+        "btc_dominance_pct": 58.72003957091988,
+        "eth_dominance_pct": 11.325673395922939,
+        "eth_btc_5d_pct": -0.2617891141950768,
+        "eth_btc_20d_pct": 3.279176735238498
       },
       "onchain_context": {
         "quality_gate": "TRUSTED",
@@ -41,6 +48,20 @@
         "decision": "CZEKAJ",
         "long_flow": 7,
         "tactical_flow": 3
+      },
+      "deep_observation": {
+        "status": "TRACKING",
+        "baseline_utc": "2026-09-23 14:57:27.012214+00:00",
+        "elapsed_days": 0.0021712772916666666,
+        "price_change_pct": -0.059446981516309005,
+        "trend_change": 0.0,
+        "rsi_change": -0.13328302239289513,
+        "mfi_change": -0.0812848948928604,
+        "fomo_change": 0.0,
+        "onchain_long_change": 0.0,
+        "onchain_tactical_change": 0.0,
+        "baseline_engine_decision": "CZEKAJ",
+        "current_engine_decision": "CZEKAJ"
       },
       "rules": {
         "FAST_is_current_snapshot": true,
@@ -61,7 +82,7 @@
       }
     },
     {
-      "generated_at_utc": "2026-09-23T14:58:35.497460+00:00",
+      "generated_at_utc": "2026-09-23T15:00:34.610572+00:00",
       "symbol": "ANET",
       "source_symbol": "ANET",
       "asset_type": "STOCK",
@@ -71,21 +92,22 @@
       "data_status": "DATA_READY",
       "technical_1D": {
         "status": "OK",
-        "price": 202.6199951171875,
+        "rows": 501,
+        "price": 202.39999389648438,
         "trend_0_4": 4,
-        "rsi14": 57.22604034370605,
-        "mfi14": 74.8952956238085,
-        "macd_hist": 0.7142419543473828,
-        "ret5_pct": 5.071561379912359,
-        "ret20_pct": 7.690673234177292,
+        "rsi14": 57.029697178829565,
+        "mfi14": 74.87730313007455,
+        "macd_hist": 0.7002019904050734,
+        "ret5_pct": 4.957476529839222,
+        "ret20_pct": 7.573744598599363,
         "fomo_0_10": 0
       },
       "stock_fundamentals": {
         "status": "OK",
-        "market_cap": 255549341696.0,
-        "trailing_pe": 64.12025,
-        "forward_pe": 39.05988,
-        "price_to_sales": 24.243828,
+        "market_cap": 255271878656.0,
+        "trailing_pe": 64.05063,
+        "forward_pe": 39.017467,
+        "price_to_sales": 24.217505,
         "revenue_growth": 0.377,
         "earnings_growth": 0.357,
         "debt_to_equity": null,
@@ -94,6 +116,20 @@
       "crypto_market_context": null,
       "onchain_context": null,
       "existing_engine_context": null,
+      "deep_observation": {
+        "status": "TRACKING",
+        "baseline_utc": "2026-09-23 14:57:27.012214+00:00",
+        "elapsed_days": 0.0021712772916666666,
+        "price_change_pct": -0.3397520576337465,
+        "trend_change": 0.0,
+        "rsi_change": -0.6203651728267374,
+        "mfi_change": -0.025079681759990535,
+        "fomo_change": 0.0,
+        "onchain_long_change": null,
+        "onchain_tactical_change": null,
+        "baseline_engine_decision": null,
+        "current_engine_decision": null
+      },
       "rules": {
         "FAST_is_current_snapshot": true,
         "DEEP_crypto_checkpoints": [
