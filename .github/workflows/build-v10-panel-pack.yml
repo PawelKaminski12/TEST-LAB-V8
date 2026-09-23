@@ -20,6 +20,32 @@ jobs:
       - name: Build V10
         run: python scripts/build_v10_panel_pack.py
 
+      - name: Apply V10 compatibility fixes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt')
+          s = p.read_text(encoding='utf-8')
+          marker = '// ===== V10 COMPATIBILITY FIX — ALARM DIRECTION ====='
+          if marker not in s:
+              s += '''\n\n// ===== V10 COMPATIBILITY FIX — ALARM DIRECTION =====\n// Alias wymagany przez warstwę dynamiki alarmów V8.\nfunction classifyAlarmDirection_(a) {\n  return alarmDirection_(a);\n}\n'''
+          p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Validate required functions
+        run: |
+          grep -q "function alarmDirection_(" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
+          grep -q "function classifyAlarmDirection_(" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
+          grep -q "function ODSWIEZ_WSZYSTKO(" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
+          grep -q "function ODSWIEZ_PORANNY_BRIEF(" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
+          grep -q "function writeLongDashboard_(" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
+          grep -q "function writeTacticalDashboard_(" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
+
+      - name: Syntax check
+        run: |
+          cp google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt /tmp/v10.js
+          node --check /tmp/v10.js
+
       - name: Commit V10 if changed
         run: |
           if [ -z "$(git status --porcelain -- google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt)" ]; then
@@ -29,5 +55,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
-          git commit -m "Build V10 accepted panels pack"
+          git commit -m "Fix V10 alarm direction compatibility"
           git push
