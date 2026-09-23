@@ -1,0 +1,112 @@
+name: TEST LAB V8 Tactical Publish
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/test-lab-v8-tactical-engine.yml'
+      - '.github/workflows/test-lab-v8-tactical-publish.yml'
+      - 'config/tactical_universe.csv'
+      - 'config/alt_zones.csv'
+      - 'crypto_data_hub/CRYPTO_MARKET_PHASE.json'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-tactical-publish-writes
+  cancel-in-progress: false
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz najnowszy main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Przygotuj Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Zainstaluj biblioteki
+        run: pip install --quiet pandas requests numpy
+
+      - name: Wyciągnij dokładny silnik ze źródłowego workflow
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import textwrap
+          src=Path('.github/workflows/test-lab-v8-tactical-engine.yml').read_text(encoding='utf-8')
+          marker="          python - <<'PY'\n"
+          start=src.find(marker)
+          assert start>=0, 'Nie znaleziono początku kodu silnika'
+          start += len(marker)
+          end=src.find("\n          PY\n", start)
+          assert end>start, 'Nie znaleziono końca kodu silnika'
+          code=src[start:end]
+          code=textwrap.dedent(code)
+          Path('/tmp/v8_tactical_engine.py').write_text(code,encoding='utf-8')
+          compile(code,'v8_tactical_engine.py','exec')
+          print('Kod silnika wyciągnięty i składniowo poprawny')
+          PY
+
+      - name: Uruchom poprawiony silnik
+        run: python /tmp/v8_tactical_engine.py
+
+      - name: Sprawdź MFI i bezpieczeństwo wyników
+        run: |
+          python - <<'PY'
+          import json, math
+          from pathlib import Path
+          x=json.loads(Path('tactical_engine/TACTICAL_ENGINE.json').read_text(encoding='utf-8'))
+          assert x.get('engine')=='V8_TACTICAL_ENGINE_v0.5'
+          assert (x.get('rules') or {}).get('mfi_edge_cases_fixed') is True
+          assert x.get('not_execution_connected') is True
+          prod=[a for a in x.get('assets',[]) if str(a.get('target_scope','')).upper()=='PRODUCTION']
+          assert len(prod)>=4
+          assert all(a.get('qa')=='PASS' for a in prod)
+          checked=0
+          for a in x.get('assets',[]):
+              if a.get('qa')!='PASS': continue
+              for tf in ('1H','4H','1D'):
+                  t=(a.get('timeframes') or {}).get(tf) or {}
+                  v=float(t['mfi14'])
+                  assert math.isfinite(v) and 0<=v<=100
+                  assert t.get('closed_bar_only') is True
+                  assert t.get('stale') is False
+                  checked+=1
+          assert checked>=12
+          print('Poprawny MFI i świeże zamknięte świece:',checked)
+          PY
+
+      - name: Zapisz wyniki bez konfliktu wyścigu
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          mkdir -p /tmp/tacticalout
+          cp tactical_engine/TACTICAL_ENGINE.json tactical_engine/TACTICAL_COCKPIT.csv tactical_engine/TACTICAL_QA.csv /tmp/tacticalout/
+          cp tactical_engine/*USDT_1H.csv tactical_engine/*USDT_4H.csv tactical_engine/*USDT_1D.csv /tmp/tacticalout/
+
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/tacticalout/* tactical_engine/
+            git add tactical_engine/TACTICAL_ENGINE.json tactical_engine/TACTICAL_COCKPIT.csv tactical_engine/TACTICAL_QA.csv tactical_engine/*USDT_1H.csv tactical_engine/*USDT_4H.csv tactical_engine/*USDT_1D.csv
+            if git diff --cached --quiet; then
+              echo 'Wyniki są już zapisane w main'
+              exit 0
+            fi
+            git commit -m 'Update V8 tactical engine outputs after MFI fix'
+            if git push origin main; then
+              echo 'Wyniki Tactical Engine zapisane poprawnie'
+              exit 0
+            fi
+            echo "Konflikt zapisu — próba ${attempt}/4"
+            sleep $((attempt * 3))
+          done
+          echo 'Nie udało się zapisać wyników po 4 próbach'
+          exit 1
