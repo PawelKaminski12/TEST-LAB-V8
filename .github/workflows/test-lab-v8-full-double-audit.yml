@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'scripts/v8_full_double_audit.py'
+      - 'scripts/v8_full_double_audit_v2.py'
       - '.github/workflows/test-lab-v8-full-double-audit.yml'
 
 permissions:
@@ -25,7 +25,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Uruchom pełny test 1 z 2
-        run: python scripts/v8_full_double_audit.py --pass-number 1
+        run: python scripts/v8_full_double_audit_v2.py --pass-number 1
 
   test-2:
     name: TEST 2 z 2
@@ -41,4 +41,4 @@ jobs:
         with:
           python-version: '3.12'
       - name: Uruchom pełny test 2 z 2
-        run: python scripts/v8_full_double_audit.py --pass-number 2
+        run: python scripts/v8_full_double_audit_v2.py --pass-number 2
