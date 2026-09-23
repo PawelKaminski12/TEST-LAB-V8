@@ -1,0 +1,92 @@
+name: TEST LAB V8 Consolidate 13 Alts
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/v8_long_consolidate_13.py'
+      - 'scripts/v8_final_readiness.py'
+      - 'scripts/v8_full_double_audit_v2.py'
+      - 'config/alt_universe.csv'
+      - 'config/alt_zones.csv'
+      - 'tactical_engine/TACTICAL_ENGINE.json'
+      - 'tactical_engine/TACTICAL_READINESS.json'
+      - '.github/workflows/test-lab-v8-consolidate-13.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-consolidate-13
+  cancel-in-progress: false
+
+jobs:
+  consolidate-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz najnowszy projekt
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Przygotuj Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Scal LONG dla 13 altów
+        run: python scripts/v8_long_consolidate_13.py
+
+      - name: Sprawdź końcową gotowość
+        run: python scripts/v8_final_readiness.py
+
+      - name: Pełny test 1 z 2
+        run: python scripts/v8_full_double_audit_v2.py --pass-number 1
+
+      - name: Pełny test 2 z 2
+        run: python scripts/v8_full_double_audit_v2.py --pass-number 2
+
+      - name: Zapisz wszystkie wyniki
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          mkdir -p /tmp/v8final
+          cp crypto_data_hub/ALT_TECHNICAL_LAYER.json /tmp/v8final/
+          cp crypto_data_hub/ALT_DECISION_ENGINE.json /tmp/v8final/
+          cp crypto_data_hub/ALT_ENGINE_READINESS.json /tmp/v8final/
+          cp crypto_data_hub/ALT_ENGINE_READINESS.csv /tmp/v8final/
+          cp crypto_data_hub/ALT_PRODUCTION_COCKPIT.csv /tmp/v8final/
+          cp crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json /tmp/v8final/
+          cp crypto_data_hub/ALT_ENGINE_MASTER_COCKPIT.csv /tmp/v8final/
+          cp audit/V8_FINAL_READINESS.json /tmp/v8final/
+          cp audit/V8_FINAL_READINESS_LATEST.md /tmp/v8final/
+          cp google_sheets/V8_FINAL_READINESS.csv /tmp/v8final/
+          cp audit/V8_FULL_AUDIT_PASS_1.json /tmp/v8final/
+          cp audit/V8_FULL_AUDIT_PASS_1.md /tmp/v8final/
+          cp audit/V8_FULL_AUDIT_PASS_2.json /tmp/v8final/
+          cp audit/V8_FULL_AUDIT_PASS_2.md /tmp/v8final/
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/v8final/ALT_TECHNICAL_LAYER.json crypto_data_hub/
+            cp /tmp/v8final/ALT_DECISION_ENGINE.json crypto_data_hub/
+            cp /tmp/v8final/ALT_ENGINE_READINESS.json crypto_data_hub/
+            cp /tmp/v8final/ALT_ENGINE_READINESS.csv crypto_data_hub/
+            cp /tmp/v8final/ALT_PRODUCTION_COCKPIT.csv crypto_data_hub/
+            cp /tmp/v8final/ALT_ENGINE_MASTER_CHECKPOINT.json crypto_data_hub/
+            cp /tmp/v8final/ALT_ENGINE_MASTER_COCKPIT.csv crypto_data_hub/
+            cp /tmp/v8final/V8_FINAL_READINESS.json audit/
+            cp /tmp/v8final/V8_FINAL_READINESS_LATEST.md audit/
+            cp /tmp/v8final/V8_FINAL_READINESS.csv google_sheets/
+            cp /tmp/v8final/V8_FULL_AUDIT_PASS_1.json audit/
+            cp /tmp/v8final/V8_FULL_AUDIT_PASS_1.md audit/
+            cp /tmp/v8final/V8_FULL_AUDIT_PASS_2.json audit/
+            cp /tmp/v8final/V8_FULL_AUDIT_PASS_2.md audit/
+            git add crypto_data_hub audit google_sheets/V8_FINAL_READINESS.csv
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Finalize V8 with AVAX and AWE in both engines'
+            if git push origin main; then exit 0; fi
+            sleep $((attempt*4))
+          done
+          exit 1
