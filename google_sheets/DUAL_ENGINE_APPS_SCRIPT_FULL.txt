@@ -15,7 +15,9 @@ const V8_FILES = {
   marketPhase: V8_REPO_RAW + 'crypto_data_hub/CRYPTO_MARKET_PHASE.json',
   snapshot: V8_REPO_RAW + 'crypto_data_hub/LATEST_SNAPSHOT.json',
   marketReader: V8_REPO_RAW + 'market_reader/TACTICAL_CONFLUENCE.csv',
-  labReport: V8_REPO_RAW + 'lab/LAB_REPORT.json'
+  labReport: V8_REPO_RAW + 'lab/LAB_REPORT.json',
+  etfStatus: V8_REPO_RAW + 'institutional_data_hub/ETF_BTC_ETH_STATUS.json',
+  etfHistoryCsv: V8_REPO_RAW + 'institutional_data_hub/ETF_BTC_ETH_HISTORY.csv'
 };
 
 const V8_SHEETS = {
@@ -26,6 +28,7 @@ const V8_SHEETS = {
   tactical: 'SILNIK_TACTICAL',
   flow: 'PRZEPLYWY',
   etf: 'ETF_BTC_ETH',
+  etfHistory: 'ETF_HISTORIA',
   lab: 'LAB_ANALIZA_AKTYWA',
   marketReader: 'MARKET_READER',
   extremes: 'ALARMY_EKSTREMOW',
@@ -74,13 +77,16 @@ function ODSWIEZ_WSZYSTKO() {
     const phaseJson = JSON.parse(fetchText_(V8_FILES.marketPhase));
     const snapshotJson = JSON.parse(fetchText_(V8_FILES.snapshot));
     const labJson = JSON.parse(fetchText_(V8_FILES.labReport));
+    const etfStatusJson = JSON.parse(fetchText_(V8_FILES.etfStatus));
+    const etfHistoryCsv = fetchText_(V8_FILES.etfHistoryCsv);
     const mrCsv = fetchText_(V8_FILES.marketReader);
 
     writePolishPanel_(ss.getSheetByName(V8_SHEETS.panel), panelCsv);
     writeLongEngine_(ss.getSheetByName(V8_SHEETS.long), longJson);
     writeTacticalEngine_(ss.getSheetByName(V8_SHEETS.tactical), tacticalJson, readinessJson, phaseJson);
     writeFlowEngine_(ss.getSheetByName(V8_SHEETS.flow), phaseJson, snapshotJson);
-    writeEtfPanel_(ss.getSheetByName(V8_SHEETS.etf), phaseJson, snapshotJson);
+    writeEtfPanel_(ss.getSheetByName(V8_SHEETS.etf), etfStatusJson);
+    writeEtfHistory_(ss.getSheetByName(V8_SHEETS.etfHistory), etfHistoryCsv);
     writeLabPanel_(ss.getSheetByName(V8_SHEETS.lab), labJson);
     writeCsvSheet_(ss.getSheetByName(V8_SHEETS.marketReader), mrCsv, false);
 
@@ -107,10 +113,11 @@ function ODSWIEZ_WSZYSTKO() {
 function ODSWIEZ_ETF_BTC_ETH() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   V8_SETUP();
-  const phaseJson = JSON.parse(fetchText_(V8_FILES.marketPhase));
-  const snapshotJson = JSON.parse(fetchText_(V8_FILES.snapshot));
-  writeEtfPanel_(ss.getSheetByName(V8_SHEETS.etf), phaseJson, snapshotJson);
-  ss.toast('ETF BTC / ETH odświeżone', 'V8', 4);
+  const etfStatusJson = JSON.parse(fetchText_(V8_FILES.etfStatus));
+  const etfHistoryCsv = fetchText_(V8_FILES.etfHistoryCsv);
+  writeEtfPanel_(ss.getSheetByName(V8_SHEETS.etf), etfStatusJson);
+  writeEtfHistory_(ss.getSheetByName(V8_SHEETS.etfHistory), etfHistoryCsv);
+  ss.toast('ETF BTC / ETH oraz historia odświeżone', 'V8', 4);
 }
 
 function ODSWIEZ_LAB() {
@@ -246,25 +253,59 @@ function writeFlowEngine_(sheet, phase, snap) {
   sheet.autoResizeColumns(1,rows[0].length);
 }
 
-function writeEtfPanel_(sheet, phase, snap) {
-  const i = (phase || {}).inputs || {};
-  const e = (snap || {}).etf_flows || {};
+function writeEtfPanel_(sheet, status) {
+  const assets = (status || {}).assets || {};
+  const globalCtx = (status || {}).global_institutional_interest || {};
   const rows = [
-    ['ETF — PRZEPŁYWY KAPITAŁU BTC / ETH','','','','',''],
-    ['AKTYWO','DZIŚ / 1D mln USD','5 DNI mln USD','20 DNI mln USD','30 DNI mln USD','CO TO ZNACZY'],
-    ['BTC',valueOrBlank_(i.btc_etf_1d_usdm),valueOrBlank_(i.btc_etf_5d_usdm),valueOrBlank_(i.btc_etf_20d_usdm),valueOrBlank_(i.btc_etf_30d_usdm),etfMeaning_(i.btc_etf_5d_usdm,i.btc_etf_20d_usdm,i.btc_etf_accel_5d_usdm,(e.BTC||{}).trend_label)],
-    ['ETH',valueOrBlank_(i.eth_etf_1d_usdm),valueOrBlank_(i.eth_etf_5d_usdm),valueOrBlank_(i.eth_etf_20d_usdm),valueOrBlank_(i.eth_etf_30d_usdm),etfMeaning_(i.eth_etf_5d_usdm,i.eth_etf_20d_usdm,i.eth_etf_accel_5d_usdm,(e.ETH||{}).trend_label)],
-    ['', '', '', '', '', ''],
-    ['WSPÓLNY OBRAZ','', '', '', '', globalEtfMeaning_(i)]
+    ['ETF BTC / ETH — KAPITAŁ INSTYTUCJONALNY','','','','','','',''],
+    ['AKTYWO','OSTATNI ZAKOŃCZONY DZIEŃ','PRZEPŁYW mln USD','5 DNI mln USD','20 DNI mln USD','30 DNI mln USD','DZISIAJ','OCENA']
   ];
+  ['BTC','ETH'].forEach(sym => {
+    const x = assets[sym] || {};
+    const preview = x.today_flow_preview_usdm;
+    const complete = Number(x.today_fund_completeness_pct || 0);
+    let todayText = x.today_status_pl || 'BRAK DANYCH';
+    if (preview !== null && preview !== undefined && complete > 0) {
+      todayText += ' | podgląd ' + fmtCell_(preview) + ' mln USD | kompletność ' + fmtCell_(complete) + '%';
+    } else {
+      todayText += ' | nie traktuj 0 jako wyniku końcowego';
+    }
+    rows.push([
+      sym,
+      x.last_closed_date || 'brak danych',
+      valueOrBlank_(x.last_closed_flow_usdm),
+      valueOrBlank_(x.closed_5d_usdm),
+      valueOrBlank_(x.closed_20d_usdm),
+      valueOrBlank_(x.closed_30d_usdm),
+      todayText,
+      ((x.closed_trend || {}).label_pl || 'BRAK OCENY')
+    ]);
+  });
+  rows.push(['','','','','','','','']);
+  rows.push(['WSPÓLNY OBRAZ','','','','','','', (globalCtx.label_pl || 'BRAK OCENY') + ' | ' + fmtCell_(globalCtx.score_0_10) + '/10']);
+  rows.push(['ZASADA','','','','','','','Dzisiejsze dane są wstępne. Trend liczymy wyłącznie z zakończonych dni ETF.']);
+
   sheet.clearContents();
-  sheet.getRange(1,1,rows.length,6).setValues(rows);
+  sheet.getRange(1,1,rows.length,8).setValues(rows);
+  sheet.getRange(1,1,1,8).merge().setFontWeight('bold').setHorizontalAlignment('center');
+  sheet.getRange(2,1,1,8).setFontWeight('bold');
   sheet.setFrozenRows(2);
-  sheet.getRange(1,1,1,6).merge().setFontWeight('bold').setHorizontalAlignment('center');
-  sheet.getRange(2,1,1,6).setFontWeight('bold');
-  sheet.getRange(3,2,2,4).setNumberFormat('0.00');
-  sheet.getRange(1,1,rows.length,6).setWrap(true).setVerticalAlignment('middle');
-  [90,130,130,130,130,360].forEach((w,idx)=>sheet.setColumnWidth(idx+1,w));
+  sheet.getRange(3,3,2,4).setNumberFormat('0.00');
+  sheet.getRange(1,1,rows.length,8).setWrap(true).setVerticalAlignment('middle');
+  [90,145,125,120,120,120,360,330].forEach((w,idx)=>sheet.setColumnWidth(idx+1,w));
+}
+
+function writeEtfHistory_(sheet, csvText) {
+  const rows = Utilities.parseCsv(csvText);
+  sheet.clearContents();
+  if (!rows.length) return;
+  const keep = rows.length > 121 ? [rows[0]].concat(rows.slice(-120)) : rows;
+  sheet.getRange(1,1,keep.length,keep[0].length).setValues(keep);
+  sheet.setFrozenRows(1);
+  sheet.getRange(1,1,1,keep[0].length).setFontWeight('bold');
+  if (keep.length > 1) sheet.getRange(2,2,keep.length-1,3).setNumberFormat('0.00');
+  sheet.getRange(1,1,keep.length,keep[0].length).setWrap(true);
+  sheet.autoResizeColumns(1,keep[0].length);
 }
 
 function writeLabPanel_(sheet, lab) {
