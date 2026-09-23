@@ -1,0 +1,24 @@
+{
+  "engine": "V8_STATUS_MASTER_v1.0",
+  "readiness_percent": 98,
+  "production_assets_ready": true,
+  "etf_btc_eth_ready": true,
+  "aave_hbar_auto_data_ready": true,
+  "aave_hbar_user_zones_ready": false,
+  "remaining_user_input": [
+    {
+      "AKTYWO": "AAVE",
+      "BRAKUJACE_INTERWALY": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
+      "STATUS": "CZEKA NA STREFY UŻYTKOWNIKA"
+    },
+    {
+      "AKTYWO": "HBAR",
+      "BRAKUJACE_INTERWALY": "1D, 2D, 3D, 4D, 5D, 1T, 2T",
+      "STATUS": "CZEKA NA STREFY UŻYTKOWNIKA"
+    }
+  ],
+  "rules": {
+    "never_invent_user_zones": true,
+    "no_execution": true
+  }
+}

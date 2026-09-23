@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-23T16:17:48.605655+00:00",
+  "generated_at_utc": "2026-09-23T16:29:18.014639+00:00",
   "engine": "V8_ALT_COMPLETION_AUDIT_v1.0",
   "assets": [
     {
@@ -18,7 +18,7 @@
           "ret5_pct": -2.9989080936191015,
           "ret20_pct": -3.4716215921562266,
           "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
-          "age_hours": 0.297,
+          "age_hours": 0.488,
           "closed_candles_only": true
         },
         "4H": {
@@ -31,7 +31,7 @@
           "ret5_pct": -3.4716215921562266,
           "ret20_pct": 3.083329452490724,
           "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
-          "age_hours": 0.297,
+          "age_hours": 0.488,
           "closed_candles_only": true
         },
         "1D": {
@@ -44,7 +44,7 @@
           "ret5_pct": 12.517979144192726,
           "ret20_pct": 15.122161276296865,
           "last_closed_utc": "2026-09-22T23:59:59.999000+00:00",
-          "age_hours": 16.297,
+          "age_hours": 16.488,
           "closed_candles_only": true
         }
       },
@@ -91,7 +91,7 @@
           "ret5_pct": -3.2049647198843845,
           "ret20_pct": -3.7206155927617113,
           "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
-          "age_hours": 0.297,
+          "age_hours": 0.488,
           "closed_candles_only": true
         },
         "4H": {
@@ -104,7 +104,7 @@
           "ret5_pct": -3.7206155927617113,
           "ret20_pct": 4.9691158845763805,
           "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
-          "age_hours": 0.297,
+          "age_hours": 0.488,
           "closed_candles_only": true
         },
         "1D": {
@@ -117,7 +117,7 @@
           "ret5_pct": 16.656828020464374,
           "ret20_pct": 18.062331972518166,
           "last_closed_utc": "2026-09-22T23:59:59.999000+00:00",
-          "age_hours": 16.297,
+          "age_hours": 16.488,
           "closed_candles_only": true
         }
       },
@@ -164,7 +164,7 @@
           "ret5_pct": -5.680674870366076,
           "ret20_pct": -6.31150061500615,
           "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
-          "age_hours": 0.297,
+          "age_hours": 0.488,
           "closed_candles_only": true
         },
         "4H": {
@@ -177,7 +177,7 @@
           "ret5_pct": -6.31150061500615,
           "ret20_pct": 1.7788541840654704,
           "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
-          "age_hours": 0.297,
+          "age_hours": 0.488,
           "closed_candles_only": true
         },
         "1D": {
@@ -190,7 +190,7 @@
           "ret5_pct": 14.569245630982696,
           "ret20_pct": 17.330695206403448,
           "last_closed_utc": "2026-09-22T23:59:59.999000+00:00",
-          "age_hours": 16.297,
+          "age_hours": 16.488,
           "closed_candles_only": true
         }
       },
@@ -237,7 +237,7 @@
           "ret5_pct": -6.84496826835902,
           "ret20_pct": -5.9281300068665725,
           "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
-          "age_hours": 0.297,
+          "age_hours": 0.488,
           "closed_candles_only": true
         },
         "4H": {
@@ -250,7 +250,7 @@
           "ret5_pct": -5.9281300068665725,
           "ret20_pct": 0.8094186902133815,
           "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
-          "age_hours": 0.297,
+          "age_hours": 0.488,
           "closed_candles_only": true
         },
         "1D": {
@@ -263,7 +263,7 @@
           "ret5_pct": 18.53344077356971,
           "ret20_pct": 26.664753157290487,
           "last_closed_utc": "2026-09-22T23:59:59.999000+00:00",
-          "age_hours": 16.297,
+          "age_hours": 16.488,
           "closed_candles_only": true
         }
       },
@@ -310,7 +310,7 @@
           "ret5_pct": -7.37480829499233,
           "ret20_pct": -3.7486141906873605,
           "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
-          "age_hours": 0.297,
+          "age_hours": 0.488,
           "closed_candles_only": true
         },
         "4H": {
@@ -323,7 +323,7 @@
           "ret5_pct": -3.7486141906873605,
           "ret20_pct": 1.6315481416447009,
           "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
-          "age_hours": 0.297,
+          "age_hours": 0.488,
           "closed_candles_only": true
         },
         "1D": {
@@ -336,7 +336,7 @@
           "ret5_pct": 15.12324080553611,
           "ret20_pct": 16.390220894583774,
           "last_closed_utc": "2026-09-22T23:59:59.999000+00:00",
-          "age_hours": 16.297,
+          "age_hours": 16.488,
           "closed_candles_only": true
         }
       },
@@ -383,7 +383,7 @@
           "ret5_pct": -7.42798353909464,
           "ret20_pct": -8.927125506072864,
           "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
-          "age_hours": 0.297,
+          "age_hours": 0.488,
           "closed_candles_only": true
         },
         "4H": {
@@ -396,7 +396,7 @@
           "ret5_pct": -8.927125506072864,
           "ret20_pct": 10.418456252300889,
           "last_closed_utc": "2026-09-23T15:59:59.999000+00:00",
-          "age_hours": 0.297,
+          "age_hours": 0.488,
           "closed_candles_only": true
         },
         "1D": {
@@ -409,7 +409,7 @@
           "ret5_pct": 32.84182305630026,
           "ret20_pct": 32.87744703673907,
           "last_closed_utc": "2026-09-22T23:59:59.999000+00:00",
-          "age_hours": 16.297,
+          "age_hours": 16.488,
           "closed_candles_only": true
         }
       },
