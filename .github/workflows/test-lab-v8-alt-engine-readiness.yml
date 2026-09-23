@@ -1,0 +1,153 @@
+name: TEST LAB V8 Alt Engine Readiness
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '40 6 * * *'
+  push:
+    paths:
+      - 'config/alt_universe.csv'
+      - 'config/alt_zones.csv'
+      - 'crypto_data_hub/ALT_TECHNICAL_LAYER.json'
+      - 'crypto_data_hub/ALT_ROTATION_SCORE.json'
+      - 'crypto_data_hub/ALT_DECISION_ENGINE.json'
+      - '.github/workflows/test-lab-v8-alt-engine-readiness.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-alt-readiness:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install --quiet pandas
+
+      - name: Build production/test readiness audit
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import pandas as pd
+
+          ROOT=Path('crypto_data_hub')
+          cfg=pd.read_csv('config/alt_universe.csv')
+          zones=pd.read_csv('config/alt_zones.csv')
+          tech=json.loads((ROOT/'ALT_TECHNICAL_LAYER.json').read_text(encoding='utf-8'))
+          rot=json.loads((ROOT/'ALT_ROTATION_SCORE.json').read_text(encoding='utf-8'))
+          dec=json.loads((ROOT/'ALT_DECISION_ENGINE.json').read_text(encoding='utf-8'))
+
+          enabled=cfg[cfg['enabled'].astype(str).str.lower().eq('true')].copy()
+          if 'target_scope' not in enabled.columns:
+              enabled['target_scope']='UNCLASSIFIED'
+
+          tech_by={x['symbol']:x for x in tech.get('assets',[])}
+          dec_by={x['symbol']:x for x in dec.get('assets',[])}
+          required_core=['1D','3D','1T','2T']
+          required_full=['1D','2D','3D','4D','5D','1T','2T']
+
+          out=[]
+          for _,r in enabled.iterrows():
+              sym=str(r['symbol']).upper().strip()
+              scope=str(r.get('target_scope','UNCLASSIFIED')).upper().strip()
+              z=zones[zones['symbol'].astype(str).str.upper().eq(sym)].copy()
+              valid=z[(pd.to_numeric(z['from'],errors='coerce')>0)&(pd.to_numeric(z['to'],errors='coerce')>0)].copy()
+              valid=valid[pd.to_numeric(valid['to'],errors='coerce')>=pd.to_numeric(valid['from'],errors='coerce')]
+              tf=set(valid['timeframe'].astype(str).str.upper())
+              core_missing=[x for x in required_core if x not in tf]
+              full_missing=[x for x in required_full if x not in tf]
+              t=tech_by.get(sym,{})
+              d=dec_by.get(sym,{})
+
+              price_ready=bool(t) and t.get('qa')=='PASS'
+              rotation_ready=rot.get('score_0_10') is not None
+              zones_core_ready=len(core_missing)==0
+              zones_full_ready=len(full_missing)==0
+              decision_ready=bool(d) and d.get('decision') not in [None,'DATA_PENDING']
+
+              q=0
+              q += 25 if price_ready else 0
+              q += 20 if rotation_ready else 0
+              q += 25 if zones_core_ready else max(0,25-6*len(core_missing))
+              q += 15 if zones_full_ready else max(0,15-2*len(full_missing))
+              q += 15 if decision_ready else 0
+
+              if scope=='PRODUCTION':
+                  if price_ready and rotation_ready and zones_core_ready and decision_ready:
+                      status='PRODUCTION_DATA_READY'
+                  elif price_ready and rotation_ready and zones_core_ready:
+                      status='PRODUCTION_LOGIC_PENDING'
+                  else:
+                      status='PRODUCTION_DATA_GAP'
+              elif scope=='TEST_VALIDATION':
+                  status='TEST_READY' if price_ready and rotation_ready else 'TEST_DATA_GAP'
+              else:
+                  status='UNCLASSIFIED'
+
+              out.append({
+                  'symbol':sym,
+                  'target_scope':scope,
+                  'price_data_ready':price_ready,
+                  'rotation_data_ready':rotation_ready,
+                  'zone_rows':int(len(valid)),
+                  'zone_timeframes':','.join(sorted(tf)),
+                  'core_zone_missing':','.join(core_missing),
+                  'full_zone_missing':','.join(full_missing),
+                  'zones_core_ready':zones_core_ready,
+                  'zones_full_ready':zones_full_ready,
+                  'decision':d.get('decision'),
+                  'decision_ready':decision_ready,
+                  'data_quality_score_0_100':int(q),
+                  'readiness_status':status,
+              })
+
+          df=pd.DataFrame(out)
+          production=df[df['target_scope'].eq('PRODUCTION')]
+          tests=df[df['target_scope'].eq('TEST_VALIDATION')]
+          payload={
+              'date':dec.get('date'),
+              'engine':'ALT_ENGINE_READINESS_v0.1',
+              'rules':{
+                  'production_and_test_universes_are_separate':True,
+                  'no_zone_guessing':True,
+                  'core_zone_timeframes':required_core,
+                  'full_zone_timeframes':required_full,
+                  'data_pending_is_not_trade_signal':True,
+              },
+              'summary':{
+                  'production_assets':int(len(production)),
+                  'production_data_ready':int(production['readiness_status'].eq('PRODUCTION_DATA_READY').sum()),
+                  'production_with_core_zones':int(production['zones_core_ready'].sum()),
+                  'test_validation_assets':int(len(tests)),
+                  'test_ready_for_non_zone_validation':int(tests['readiness_status'].eq('TEST_READY').sum()),
+              },
+              'assets':out,
+          }
+          (ROOT/'ALT_ENGINE_READINESS.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False),encoding='utf-8')
+          df.to_csv(ROOT/'ALT_ENGINE_READINESS.csv',index=False)
+
+          # compact production cockpit; no execution command, only research status
+          prod_cols=['symbol','decision','data_quality_score_0_100','readiness_status','core_zone_missing','full_zone_missing']
+          production[prod_cols].to_csv(ROOT/'ALT_PRODUCTION_COCKPIT.csv',index=False)
+          print(json.dumps(payload,indent=2,ensure_ascii=False))
+          PY
+
+      - name: Commit readiness outputs
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add crypto_data_hub/ALT_ENGINE_READINESS.json crypto_data_hub/ALT_ENGINE_READINESS.csv crypto_data_hub/ALT_PRODUCTION_COCKPIT.csv
+          if git diff --cached --quiet; then
+            echo 'No changes to commit'
+          else
+            git commit -m 'Update V8 alt engine readiness audit'
+            git push
+          fi
