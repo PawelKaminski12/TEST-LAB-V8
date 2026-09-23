@@ -3,7 +3,7 @@ SILNIK LONG,10,GOTOWE,Silnik długoterminowy działa i pozostaje oddzielony od T
 SILNIK TACTICAL,10,GOTOWE,Silnik taktyczny działa na osobnym horyzoncie i kapitale.
 PRODUKCYJNE ALTY,15,GOTOWE,"ETH, SOL, LINK i ONDO: technika + pełne strefy 1D/2D/3D/4D/5D/1T/2T."
 ETF BTC + ETH,10,GOTOWE,"Monitor, historia, rozdzielenie danych wstępnych i zamkniętych oraz zgodność cena/ETF."
-LAB + PUNKTY KONTROLNE,10,WYMAGA POPRAWY,"Szybka analiza, głęboka obserwacja i trwałe punkty kontrolne."
+LAB + PUNKTY KONTROLNE,10,GOTOWE,"Szybka analiza, głęboka obserwacja, historia i trwałe punkty kontrolne."
 ON-CHAIN / FLOW,10,GOTOWE,Warstwa przepływów i aktywności sieciowej jako kontekst.
 PANEL GOOGLE SHEETS,10,GOTOWE,Pełny most panelu i dane maszynowni są obecne.
 ALARMY EKSTREMÓW,5,GOTOWE,RSI/MFI/MACD/FOMO oraz warstwa zbieżności ekstremów.
@@ -11,4 +11,4 @@ BEZPIECZEŃSTWO,10,GOTOWE,Brak automatycznego wykonywania transakcji; V7 pozosta
 WALIDACJA / QA,5,GOTOWE,Walidacja TACTICAL i laboratorium progów są obecne.
 AAVE/HBAR — DANE AUTOMATYCZNE,3,GOTOWE,Technika 1H/4H/1D i automatyczne warstwy.
 AAVE/HBAR — STREFY UŻYTKOWNIKA,2,BRAK DANYCH UŻYTKOWNIKA,Wymagane 1D/2D/3D/4D/5D/1T/2T.
-CAŁOŚĆ,100,88%,SYSTEM WYMAGA JESZCZE PRACY
+CAŁOŚĆ,100,98%,RDZEŃ DOPIĘTY — ZOSTAŁY TYLKO DANE UŻYTKOWNIKA

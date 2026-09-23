@@ -1,9 +1,9 @@
 {
-  "generated_at_utc": "2026-09-23T16:22:16.606599+00:00",
-  "engine": "V8_FINAL_READINESS_v1.0",
-  "readiness_percent": 88,
-  "status_pl": "SYSTEM WYMAGA JESZCZE PRACY",
-  "core_production_ready": false,
+  "generated_at_utc": "2026-09-23T16:23:51.007683+00:00",
+  "engine": "V8_FINAL_READINESS_v1.1",
+  "readiness_percent": 98,
+  "status_pl": "RDZEŃ DOPIĘTY — ZOSTAŁY TYLKO DANE UŻYTKOWNIKA",
+  "core_production_ready": true,
   "production_assets_ready": true,
   "extended_assets_auto_data_ready": true,
   "extended_assets_user_zones_ready": false,
@@ -35,8 +35,8 @@
     {
       "obszar": "LAB + PUNKTY KONTROLNE",
       "waga_pkt": 10,
-      "gotowe": false,
-      "opis": "Szybka analiza, głęboka obserwacja i trwałe punkty kontrolne."
+      "gotowe": true,
+      "opis": "Szybka analiza, głęboka obserwacja, historia i trwałe punkty kontrolne."
     },
     {
       "obszar": "ON-CHAIN / FLOW",
