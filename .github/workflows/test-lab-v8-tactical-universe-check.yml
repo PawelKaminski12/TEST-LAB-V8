@@ -1,0 +1,107 @@
+name: TEST LAB V8 Tactical Universe Check
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'config/tactical_universe.csv'
+      - '.github/workflows/test-lab-v8-tactical-universe-check.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-tactical-universe-check
+  cancel-in-progress: false
+
+jobs:
+  check-universe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz projekt
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Przygotuj Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Zainstaluj biblioteki
+        run: pip install --quiet pandas requests
+
+      - name: Sprawdź wszystkie pary i interwały
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from datetime import datetime, timezone
+          import pandas as pd
+          import requests
+
+          cfg=pd.read_csv('config/tactical_universe.csv')
+          cfg=cfg[cfg['enabled'].astype(str).str.lower().eq('true')].copy()
+          expected=['BTC','ETH','SOL','LINK','ONDO','RENDER','FLOKI','PEPE','SPX6900','XRP','XLM','HBAR']
+          got=list(cfg['symbol'].astype(str).str.upper())
+          if got != expected:
+              raise SystemExit(f'Nieprawidłowa lista aktywów: {got}')
+
+          bases=['https://data-api.binance.vision/api/v3/klines','https://api.binance.com/api/v3/klines']
+          intervals={'1H':'1h','4H':'4h','1D':'1d'}
+          rows=[]
+          all_ok=True
+          for _,r in cfg.iterrows():
+              sym=str(r['symbol']).upper().strip(); pair=str(r['pair']).upper().strip()
+              for tf,iv in intervals.items():
+                  ok=False; count=0; err=''; src=''
+                  for base in bases:
+                      try:
+                          rr=requests.get(base,params={'symbol':pair,'interval':iv,'limit':500},timeout=25)
+                          rr.raise_for_status(); data=rr.json()
+                          count=len(data) if isinstance(data,list) else 0
+                          if count < 220:
+                              raise RuntimeError(f'za mało świec: {count}')
+                          ok=True; src=base; err=''; break
+                      except Exception as e:
+                          err=str(e)
+                  rows.append({'AKTYWO':sym,'PARA':pair,'INTERWAŁ':tf,'STATUS':'OK' if ok else 'BŁĄD','LICZBA_ŚWIEC':count,'ŹRÓDŁO':src,'BŁĄD':err})
+                  all_ok = all_ok and ok
+
+          out=Path('audit'); out.mkdir(exist_ok=True)
+          df=pd.DataFrame(rows)
+          df.to_csv(out/'TACTICAL_UNIVERSE_CHECK.csv',index=False)
+          summary={
+              'generated_at_utc':datetime.now(timezone.utc).isoformat(),
+              'engine':'V8_TACTICAL_UNIVERSE_CHECK_v1.0',
+              'expected_assets':expected,
+              'asset_count':len(expected),
+              'timeframes':['1H','4H','1D'],
+              'all_pairs_and_timeframes_ready':bool(all_ok),
+              'results':rows,
+              'tradingview_connected':False,
+              'execution_connected':False,
+          }
+          (out/'TACTICAL_UNIVERSE_CHECK.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2),encoding='utf-8')
+          print(df.to_string(index=False))
+          if not all_ok:
+              bad=df[df.STATUS!='OK']
+              print('\nBŁĘDY:\n'+bad.to_string(index=False))
+              raise SystemExit('Nie wszystkie pary mają wymagane dane 1H/4H/1D')
+          print('\nWszystkie 12 aktywów mają dane 1H/4H/1D.')
+          PY
+
+      - name: Zapisz raport testu
+        if: always()
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if [ -f audit/TACTICAL_UNIVERSE_CHECK.json ]; then
+            git add audit/TACTICAL_UNIVERSE_CHECK.json audit/TACTICAL_UNIVERSE_CHECK.csv
+            if ! git diff --cached --quiet; then
+              git commit -m 'Update V8 tactical universe check'
+              git pull --rebase origin main
+              git push
+            fi
+          fi
