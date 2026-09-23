@@ -22,7 +22,7 @@ jobs:
 
       - name: Commit V10 if changed
         run: |
-          if git diff --quiet -- google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt; then
+          if [ -z "$(git status --porcelain -- google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt)" ]; then
             echo "No changes"
             exit 0
           fi
