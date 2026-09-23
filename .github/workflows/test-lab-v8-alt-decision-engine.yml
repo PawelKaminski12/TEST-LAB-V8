@@ -10,6 +10,7 @@ on:
       - 'config/alt_zones.csv'
       - 'crypto_data_hub/ALT_ROTATION_SCORE.json'
       - 'crypto_data_hub/ALT_TECHNICAL_LAYER.json'
+      - 'crypto_data_hub/CRYPTO_MARKET_PHASE.json'
       - '.github/workflows/test-lab-v8-alt-decision-engine.yml'
 
 permissions:
@@ -44,14 +45,16 @@ jobs:
           ROOT=Path('crypto_data_hub')
           CFG=Path('config/alt_universe.csv')
           ZONES=Path('config/alt_zones.csv')
+          PHASE=ROOT/'CRYPTO_MARKET_PHASE.json'
 
-          required=[ROOT/'LATEST_SNAPSHOT.json',ROOT/'ALT_ROTATION_SCORE.json',ROOT/'ALT_TECHNICAL_LAYER.json',CFG,ZONES]
+          required=[ROOT/'LATEST_SNAPSHOT.json',ROOT/'ALT_ROTATION_SCORE.json',ROOT/'ALT_TECHNICAL_LAYER.json',PHASE,CFG,ZONES]
           missing=[str(p) for p in required if not p.exists()]
           if missing: raise SystemExit('Missing: '+', '.join(missing))
 
           snap=json.loads((ROOT/'LATEST_SNAPSHOT.json').read_text())
           rot=json.loads((ROOT/'ALT_ROTATION_SCORE.json').read_text())
           tech=json.loads((ROOT/'ALT_TECHNICAL_LAYER.json').read_text())
+          phase=json.loads(PHASE.read_text(encoding='utf-8'))
           cfg=pd.read_csv(CFG)
           cfg=cfg[cfg['enabled'].astype(str).str.lower().eq('true')].copy()
           zones=pd.read_csv(ZONES)
@@ -62,10 +65,15 @@ jobs:
           zones['source_note']=zones['source_note'].fillna('').astype(str)
 
           techmap={x['symbol']:x for x in tech.get('assets',[])}
+          phasemap={x.get('symbol'):x for x in phase.get('asset_context',[])}
           global_score=int(rot.get('score_0_10',0))
           global_status=rot.get('status','OFF')
           global_conf=rot.get('confidence','LOW')
           qa_pass=bool(snap.get('qa',{}).get('PASS'))
+          dual_flow=phase.get('dual_horizon_flow_context',{}) or {}
+          long_flow=dual_flow.get('LONG',{}) or {}
+          long_flow_score=long_flow.get('score_0_10')
+          long_flow_label=long_flow.get('label')
 
           def zone_state(sym,price):
               z=zones[zones.symbol.eq(sym)].copy()
@@ -115,6 +123,7 @@ jobs:
               sym=str(row['symbol']).upper().strip()
               if sym=='BTC': continue
               t=techmap.get(sym)
+              pc=phasemap.get(sym,{})
               if not t:
                   assets.append({'symbol':sym,'decision':'DATA_PENDING','reason':'No technical layer','blockers':['TECHNICAL_LAYER_MISSING'],'entry_blockers':['TECHNICAL_LAYER_MISSING']})
                   continue
@@ -151,21 +160,51 @@ jobs:
               else:
                   decision='CZEKAJ'; reason.append('Brak pełnego zestawu warunków wejścia')
 
-              assets.append({'symbol':sym,'decision':decision,'reason':' | '.join(reason),'price':price,'rotation_score_0_10':global_score,'rotation_status':global_status,'rotation_confidence':global_conf,'trend_score_0_4':trend,'fomo_score_0_10':fomo,'fomo_label':t.get('fomo_label'),'fresh_breakout_20d':breakout,'retest_confirmed_10d':retest,'volume_ratio_vs_20d':vr,'zones':zs,'blockers':blockers,'entry_blockers':entry_blockers})
+              flow_note=None
+              if long_flow_score is not None:
+                  flow_note=f'LONG FLOW {long_flow_score}/10 {long_flow_label}'
 
-          out={'date':snap.get('target_date'),'engine':'ALT_DECISION_ENGINE_v0.3','universe_source':'config/alt_universe.csv','zones_source':'config/alt_zones.csv','important_rules':{'dynamic_universe':True,'no_zone_guessing':True,'relative_strength_not_hard_gate':True,'rotation_score_not_standalone_buy_signal':True,'fomo_hard_block_at_8':True,'dca3_prefers_explicit_canon_and_excludes_archival_reserve_rows':True,'in_supply_never_emits_buy_status_without_true_zone_breakout_retest':True,'price_action_retest_is_not_zone_retest':True,'current_output_is_research_engine_status_not_execution':True},'assets':assets}
+              assets.append({
+                  'symbol':sym,'decision':decision,'reason':' | '.join(reason),'price':price,
+                  'rotation_score_0_10':global_score,'rotation_status':global_status,'rotation_confidence':global_conf,
+                  'market_phase':phase.get('phase'),'market_phase_confidence':phase.get('phase_confidence'),
+                  'long_flow_score_0_10':long_flow_score,'long_flow_label':long_flow_label,'long_flow_note':flow_note,
+                  'asset_rotation_label':pc.get('rotation_label'),'asset_vs_btc_20d_pct':pc.get('vs_btc_20d_pct'),'asset_vs_eth_20d_pct':pc.get('vs_eth_20d_pct'),
+                  'direct_etf_context':pc.get('direct_etf_context'),
+                  'trend_score_0_4':trend,'fomo_score_0_10':fomo,'fomo_label':t.get('fomo_label'),
+                  'fresh_breakout_20d':breakout,'retest_confirmed_10d':retest,'volume_ratio_vs_20d':vr,
+                  'zones':zs,'blockers':blockers,'entry_blockers':entry_blockers
+              })
+
+          out={
+              'date':snap.get('target_date'),'engine':'ALT_DECISION_ENGINE_v0.4','universe_source':'config/alt_universe.csv','zones_source':'config/alt_zones.csv',
+              'market_phase_source':'crypto_data_hub/CRYPTO_MARKET_PHASE.json',
+              'long_flow_context':long_flow,
+              'important_rules':{
+                  'dynamic_universe':True,'no_zone_guessing':True,'relative_strength_not_hard_gate':True,
+                  'rotation_score_not_standalone_buy_signal':True,'long_flow_context_not_standalone_buy_signal':True,
+                  'fomo_hard_block_at_8':True,'dca3_prefers_explicit_canon_and_excludes_archival_reserve_rows':True,
+                  'in_supply_never_emits_buy_status_without_true_zone_breakout_retest':True,
+                  'price_action_retest_is_not_zone_retest':True,'current_output_is_research_engine_status_not_execution':True
+              },
+              'assets':assets
+          }
           (ROOT/'ALT_DECISION_ENGINE.json').write_text(json.dumps(out,indent=2,ensure_ascii=False),encoding='utf-8')
 
           hist=ROOT/'ALT_DECISION_HISTORY.csv'; rows=[]
           for x in assets:
-              rows.append({'date':out['date'],'symbol':x['symbol'],'decision':x['decision'],'price':x.get('price'),'rotation_score':x.get('rotation_score_0_10'),'trend_score':x.get('trend_score_0_4'),'fomo_score':x.get('fomo_score_0_10'),'blockers':'|'.join(x.get('blockers',[])),'entry_blockers':'|'.join(x.get('entry_blockers',[]))})
+              rows.append({
+                  'date':out['date'],'symbol':x['symbol'],'decision':x['decision'],'price':x.get('price'),
+                  'rotation_score':x.get('rotation_score_0_10'),'long_flow_score':x.get('long_flow_score_0_10'),
+                  'trend_score':x.get('trend_score_0_4'),'fomo_score':x.get('fomo_score_0_10'),
+                  'blockers':'|'.join(x.get('blockers',[])),'entry_blockers':'|'.join(x.get('entry_blockers',[]))
+              })
           new=pd.DataFrame(rows)
           if hist.exists():
               old=pd.read_csv(hist); new=pd.concat([old,new],ignore_index=True)
               new=new.drop_duplicates(['date','symbol'],keep='last').sort_values(['date','symbol'])
           new.to_csv(hist,index=False)
 
-          # Safety assertions: current supply/FOMO/missing-data states cannot emit buy labels.
           buy_labels={'KUP DCA','KUP PO RETEŚCIE','KUP TRENDOWO'}
           for x in assets:
               if x.get('decision') in buy_labels:
