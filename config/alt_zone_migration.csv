@@ -69,10 +69,10 @@ XLM,4D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7/Ste
 XLM,5D,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7/Stellar/XLM; brak liczbowego źródła 5D
 XLM,1T,true,false,STARE_ZRODLO_POTWIERDZONE_LICZBY_NIEODZYSKANE,V275.38 potwierdza aktywną DEMAND 1T/1W w MASTER_STREFY
 XLM,2T,false,false,BRAK_STAREGO_ZRODLA_PO_PELNYM_PRZESZUKANIU,Przeszukano V7/Stellar/XLM; brak liczbowego źródła 2T
-HBAR,1D,true,false,SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT,Screen użytkownika 2026-09-23
-HBAR,2D,true,false,SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT,Screen użytkownika 2026-09-23
-HBAR,3D,true,false,SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT,Screen użytkownika 2026-09-23
-HBAR,4D,true,false,SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT,Screen użytkownika 2026-09-23
-HBAR,5D,true,false,SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT,Screen użytkownika 2026-09-23
-HBAR,1T,true,false,SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT,Screen użytkownika 2026-09-23
-HBAR,2T,true,false,SCREEN_ODEBRANY_CZEKA_NA_LICZBOWY_ODCZYT,Screen użytkownika 2026-09-23
+HBAR,1D,true,true,GOTOWE,Screen użytkownika 2026-09-23 18.37.17 — liczby zapisane w V8
+HBAR,2D,true,true,GOTOWE,Screen użytkownika 2026-09-23 18.40.58 — liczby zapisane w V8
+HBAR,3D,true,true,GOTOWE,Screen użytkownika 2026-09-23 18.37.26 — liczby zapisane w V8
+HBAR,4D,true,true,GOTOWE,Screen użytkownika 2026-09-23 18.37.31 — liczby zapisane w V8
+HBAR,5D,true,true,GOTOWE,Screen użytkownika 2026-09-23 18.37.37 — liczby zapisane w V8
+HBAR,1T,true,true,GOTOWE,Screen użytkownika 2026-09-23 18.37.44 — liczby zapisane w V8
+HBAR,2T,true,true,GOTOWE,Screen użytkownika 2026-09-23 18.41.17 — liczby zapisane w V8
