@@ -22,6 +22,7 @@ ALARMY,ŚWIEŻOŚĆ,GOTOWE,Wygaszanie starych danych; 1H 3h / 4H 10h / 1D 36h; b
 ALARMY,WIELE TF,GOTOWE,Zgodność 1H+4H / 4H+1D / 1H+4H+1D z kierunkiem PRZEGRZANIE lub WYPRZEDANIE
 ALARMY,DYNAMIKA,GOTOWE,NOWY / NASILA SIĘ / BEZ ZMIAN / SŁABNIE / WYGASŁ; powiadomienia bez duplikowania stanu bez zmian
 TACTICAL,CENTRUM RYZYKA,GOTOWE,NORMALNIE / UWAGA / PODWYŻSZONE RYZYKO / OCHRONA KAPITAŁU; exit risk + FOMO + strefy + status + ekstrema + wiele TF
+TACTICAL,KALIBRACJA,BADANIA ZAMKNIĘTE — DEPLOY HOLD,QA PASS i obserwacje PASS; TRAIN FAIL przy HOLDOUT PASS; spójność między aktywami FAIL; produkcyjnych progów nie zmieniono
 PANEL,GOOGLE SHEETS,GOTOWE,Polskie etykiety; 7 kolumn bez rozbudowy układu; ALERT zawiera najważniejsze ekstrema i centrum ryzyka
 PANEL,SILNIK_TACTICAL,GOTOWE,Dodatkowe kolumny CENTRUM RYZYKA i POWÓD RYZYKA w maszynowni Tactical
 ARCHIWUM,AAVE,NIEAKTYWNE,Nie wchodzi do aktywnego zakresu V8
@@ -30,3 +31,4 @@ BEZPIECZEŃSTWO,AUTO EXECUTION,OFF,Brak automatycznego wykonywania transakcji
 BEZPIECZEŃSTWO,V7 TOUCH,OFF,V7 produkcyjny pozostaje nietknięty
 BEZPIECZEŃSTWO,STREFY,GOTOWE,System nie zgaduje stref użytkownika
 BEZPIECZEŃSTWO,ALARMY,GOTOWE,Alarmy i centrum ryzyka są warstwą informacyjną; nie wykonują zleceń
+BEZPIECZEŃSTWO,KALIBRACJA,GOTOWE,Bramka badawcza nie może automatycznie zmienić progów produkcyjnych ani połączyć wykonania transakcji
