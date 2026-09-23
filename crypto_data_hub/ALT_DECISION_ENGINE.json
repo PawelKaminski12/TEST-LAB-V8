@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-23T18:09:25.204661+00:00",
+  "generated_at_utc": "2026-09-23T19:10:02.953839+00:00",
   "engine": "ALT_DECISION_ENGINE_v1.0",
   "asset_count": 11,
   "universe": [
@@ -248,28 +248,38 @@
     {
       "symbol": "RENDER",
       "price": 1.852,
-      "decision": "DANE NIEPEŁNE",
-      "reason_pl": "Technika działa, ale pełna decyzja LONG czeka na potwierdzone strefy 7/7.",
+      "decision": "SPRAWDŹ",
+      "reason_pl": "Cena znajduje się w potwierdzonej strefie podaży.",
       "technical_ready": true,
       "zones": {
-        "complete_7_of_7": false,
-        "confirmed_timeframes": [],
-        "missing_timeframes": [
+        "complete_7_of_7": true,
+        "confirmed_timeframes": [
           "1D",
+          "1T",
           "2D",
+          "2T",
           "3D",
           "4D",
-          "5D",
-          "1T",
-          "2T"
+          "5D"
         ],
+        "missing_timeframes": [],
         "in_demand": false,
-        "in_supply": false,
-        "nearest_demand": null,
-        "nearest_supply": null,
-        "dca1": null,
-        "dca2": null,
-        "dca3": null
+        "in_supply": true,
+        "nearest_demand": {
+          "timeframe": "2T",
+          "from": 0.7,
+          "to": 1.7,
+          "distance_pct": 8.207343412527004
+        },
+        "nearest_supply": {
+          "timeframe": "1D",
+          "from": 1.82,
+          "to": 1.92,
+          "distance_pct": 0.0
+        },
+        "dca1": 1.4,
+        "dca2": 1.1,
+        "dca3": 0.8
       },
       "trend_score_0_4": 4,
       "fomo_score_0_10": 7,
@@ -282,50 +292,49 @@
       "market_phase": "ALT_ROTATION_CANDIDATE",
       "long_flow_score": 7,
       "long_flow_label": "POSITIVE",
-      "blockers": [
-        "BRAK_PEŁNEJ_MAPY_STREF_7_Z_7"
+      "blockers": [],
+      "entry_blockers": [
+        "W_STREFIE_PODAŻY"
       ],
-      "entry_blockers": [],
-      "dca1": null,
-      "dca2": null,
-      "dca3": null
+      "dca1": 1.4,
+      "dca2": 1.1,
+      "dca3": 0.8
     },
     {
       "symbol": "FLOKI",
       "price": 3.032e-05,
-      "decision": "DANE NIEPEŁNE",
-      "reason_pl": "Technika działa, ale pełna decyzja LONG czeka na potwierdzone strefy 7/7.",
+      "decision": "SPRAWDŹ",
+      "reason_pl": "Cena znajduje się w potwierdzonej strefie podaży.",
       "technical_ready": true,
       "zones": {
-        "complete_7_of_7": false,
+        "complete_7_of_7": true,
         "confirmed_timeframes": [
           "1D",
-          "1T"
-        ],
-        "missing_timeframes": [
+          "1T",
           "2D",
+          "2T",
           "3D",
           "4D",
-          "5D",
-          "2T"
+          "5D"
         ],
-        "in_demand": false,
-        "in_supply": false,
+        "missing_timeframes": [],
+        "in_demand": true,
+        "in_supply": true,
         "nearest_demand": {
-          "timeframe": "1D",
-          "from": 2.2e-06,
-          "to": 2.7e-06,
-          "distance_pct": 91.09498680738785
+          "timeframe": "2T",
+          "from": 0.0,
+          "to": 3.2e-05,
+          "distance_pct": 0.0
         },
         "nearest_supply": {
-          "timeframe": "1T",
-          "from": 7.8e-06,
-          "to": 8.9e-06,
-          "distance_pct": 70.64643799472296
+          "timeframe": "2D",
+          "from": 2.85e-05,
+          "to": 3.15e-05,
+          "distance_pct": 0.0
         },
-        "dca1": 2.7e-06,
-        "dca2": 2.25e-06,
-        "dca3": 1.8e-06
+        "dca1": 2.6e-05,
+        "dca2": 2.05e-05,
+        "dca3": 1.5e-05
       },
       "trend_score_0_4": 4,
       "fomo_score_0_10": 7,
@@ -338,50 +347,49 @@
       "market_phase": "ALT_ROTATION_CANDIDATE",
       "long_flow_score": 7,
       "long_flow_label": "POSITIVE",
-      "blockers": [
-        "BRAK_PEŁNEJ_MAPY_STREF_7_Z_7"
+      "blockers": [],
+      "entry_blockers": [
+        "W_STREFIE_PODAŻY"
       ],
-      "entry_blockers": [],
-      "dca1": 2.7e-06,
-      "dca2": 2.25e-06,
-      "dca3": 1.8e-06
+      "dca1": 2.6e-05,
+      "dca2": 2.05e-05,
+      "dca3": 1.5e-05
     },
     {
       "symbol": "PEPE",
       "price": 4.99e-06,
-      "decision": "DANE NIEPEŁNE",
-      "reason_pl": "Technika działa, ale pełna decyzja LONG czeka na potwierdzone strefy 7/7.",
+      "decision": "CZEKAJ",
+      "reason_pl": "FOMO jest skrajne — nowe wejście zablokowane.",
       "technical_ready": true,
       "zones": {
-        "complete_7_of_7": false,
+        "complete_7_of_7": true,
         "confirmed_timeframes": [
           "1D",
-          "1T"
-        ],
-        "missing_timeframes": [
+          "1T",
           "2D",
+          "2T",
           "3D",
           "4D",
-          "5D",
-          "2T"
+          "5D"
         ],
+        "missing_timeframes": [],
         "in_demand": false,
-        "in_supply": false,
+        "in_supply": true,
         "nearest_demand": {
-          "timeframe": "1T",
-          "from": 2e-07,
-          "to": 3.7e-07,
-          "distance_pct": 92.58517034068137
+          "timeframe": "2T",
+          "from": 1e-06,
+          "to": 3.7e-06,
+          "distance_pct": 25.85170340681362
         },
         "nearest_supply": {
-          "timeframe": "1T",
-          "from": 6.2e-07,
-          "to": 1.05e-06,
-          "distance_pct": 78.95791583166333
+          "timeframe": "1D",
+          "from": 4.8e-06,
+          "to": 5.2e-06,
+          "distance_pct": 0.0
         },
-        "dca1": 3.1e-07,
-        "dca2": 2.55e-07,
-        "dca3": 2e-07
+        "dca1": 3.5e-06,
+        "dca2": 2.4999999999999998e-06,
+        "dca3": 1.5e-06
       },
       "trend_score_0_4": 4,
       "fomo_score_0_10": 9,
@@ -394,52 +402,50 @@
       "market_phase": "ALT_ROTATION_CANDIDATE",
       "long_flow_score": 7,
       "long_flow_label": "POSITIVE",
-      "blockers": [
-        "BRAK_PEŁNEJ_MAPY_STREF_7_Z_7"
-      ],
+      "blockers": [],
       "entry_blockers": [
+        "W_STREFIE_PODAŻY",
         "FOMO_SKRAJNE"
       ],
-      "dca1": 3.1e-07,
-      "dca2": 2.55e-07,
-      "dca3": 2e-07
+      "dca1": 3.5e-06,
+      "dca2": 2.4999999999999998e-06,
+      "dca3": 1.5e-06
     },
     {
       "symbol": "SPX6900",
       "price": 0.5198,
-      "decision": "DANE NIEPEŁNE",
-      "reason_pl": "Technika działa, ale pełna decyzja LONG czeka na potwierdzone strefy 7/7.",
+      "decision": "SPRAWDŹ",
+      "reason_pl": "Cena znajduje się w potwierdzonej strefie podaży.",
       "technical_ready": true,
       "zones": {
-        "complete_7_of_7": false,
+        "complete_7_of_7": true,
         "confirmed_timeframes": [
           "1D",
-          "1T"
-        ],
-        "missing_timeframes": [
+          "1T",
           "2D",
+          "2T",
           "3D",
           "4D",
-          "5D",
-          "2T"
+          "5D"
         ],
-        "in_demand": false,
-        "in_supply": false,
+        "missing_timeframes": [],
+        "in_demand": true,
+        "in_supply": true,
         "nearest_demand": {
-          "timeframe": "1D",
-          "from": 0.39,
-          "to": 0.43,
-          "distance_pct": 17.275875336667955
+          "timeframe": "5D",
+          "from": 0.16,
+          "to": 0.54,
+          "distance_pct": 0.0
         },
         "nearest_supply": {
-          "timeframe": "1D",
-          "from": 0.64,
-          "to": 0.68,
-          "distance_pct": 23.124278568680253
+          "timeframe": "1T",
+          "from": 0.5,
+          "to": 0.67,
+          "distance_pct": 0.0
         },
-        "dca1": 0.43,
-        "dca2": 0.36,
-        "dca3": 0.29
+        "dca1": 0.44,
+        "dca2": 0.295,
+        "dca3": 0.15
       },
       "trend_score_0_4": 4,
       "fomo_score_0_10": 2,
@@ -452,39 +458,49 @@
       "market_phase": "ALT_ROTATION_CANDIDATE",
       "long_flow_score": 7,
       "long_flow_label": "POSITIVE",
-      "blockers": [
-        "BRAK_PEŁNEJ_MAPY_STREF_7_Z_7"
+      "blockers": [],
+      "entry_blockers": [
+        "W_STREFIE_PODAŻY"
       ],
-      "entry_blockers": [],
-      "dca1": 0.43,
-      "dca2": 0.36,
-      "dca3": 0.29
+      "dca1": 0.44,
+      "dca2": 0.295,
+      "dca3": 0.15
     },
     {
       "symbol": "XRP",
       "price": 1.5727,
-      "decision": "DANE NIEPEŁNE",
-      "reason_pl": "Technika działa, ale pełna decyzja LONG czeka na potwierdzone strefy 7/7.",
+      "decision": "SPRAWDŹ",
+      "reason_pl": "Cena znajduje się w potwierdzonej strefie podaży.",
       "technical_ready": true,
       "zones": {
-        "complete_7_of_7": false,
-        "confirmed_timeframes": [],
-        "missing_timeframes": [
+        "complete_7_of_7": true,
+        "confirmed_timeframes": [
           "1D",
+          "1T",
           "2D",
+          "2T",
           "3D",
           "4D",
-          "5D",
-          "1T",
-          "2T"
+          "5D"
         ],
+        "missing_timeframes": [],
         "in_demand": false,
-        "in_supply": false,
-        "nearest_demand": null,
-        "nearest_supply": null,
-        "dca1": null,
-        "dca2": null,
-        "dca3": null
+        "in_supply": true,
+        "nearest_demand": {
+          "timeframe": "2T",
+          "from": 0.95,
+          "to": 1.5,
+          "distance_pct": 4.622623513702549
+        },
+        "nearest_supply": {
+          "timeframe": "2D",
+          "from": 1.5,
+          "to": 1.65,
+          "distance_pct": 0.0
+        },
+        "dca1": 1.3,
+        "dca2": 0.91,
+        "dca3": 0.52
       },
       "trend_score_0_4": 4,
       "fomo_score_0_10": 4,
@@ -497,39 +513,49 @@
       "market_phase": "ALT_ROTATION_CANDIDATE",
       "long_flow_score": 7,
       "long_flow_label": "POSITIVE",
-      "blockers": [
-        "BRAK_PEŁNEJ_MAPY_STREF_7_Z_7"
+      "blockers": [],
+      "entry_blockers": [
+        "W_STREFIE_PODAŻY"
       ],
-      "entry_blockers": [],
-      "dca1": null,
-      "dca2": null,
-      "dca3": null
+      "dca1": 1.3,
+      "dca2": 0.91,
+      "dca3": 0.52
     },
     {
       "symbol": "XLM",
       "price": 0.2162,
-      "decision": "DANE NIEPEŁNE",
-      "reason_pl": "Technika działa, ale pełna decyzja LONG czeka na potwierdzone strefy 7/7.",
+      "decision": "SPRAWDŹ",
+      "reason_pl": "Cena znajduje się w potwierdzonej strefie podaży.",
       "technical_ready": true,
       "zones": {
-        "complete_7_of_7": false,
-        "confirmed_timeframes": [],
-        "missing_timeframes": [
+        "complete_7_of_7": true,
+        "confirmed_timeframes": [
           "1D",
+          "1T",
           "2D",
+          "2T",
           "3D",
           "4D",
-          "5D",
-          "1T",
-          "2T"
+          "5D"
         ],
-        "in_demand": false,
-        "in_supply": false,
-        "nearest_demand": null,
-        "nearest_supply": null,
-        "dca1": null,
-        "dca2": null,
-        "dca3": null
+        "missing_timeframes": [],
+        "in_demand": true,
+        "in_supply": true,
+        "nearest_demand": {
+          "timeframe": "2T",
+          "from": 0.115,
+          "to": 0.225,
+          "distance_pct": 0.0
+        },
+        "nearest_supply": {
+          "timeframe": "1D",
+          "from": 0.21,
+          "to": 0.225,
+          "distance_pct": 0.0
+        },
+        "dca1": 0.176,
+        "dca2": 0.1505,
+        "dca3": 0.125
       },
       "trend_score_0_4": 4,
       "fomo_score_0_10": 5,
@@ -542,13 +568,13 @@
       "market_phase": "ALT_ROTATION_CANDIDATE",
       "long_flow_score": 7,
       "long_flow_label": "POSITIVE",
-      "blockers": [
-        "BRAK_PEŁNEJ_MAPY_STREF_7_Z_7"
+      "blockers": [],
+      "entry_blockers": [
+        "W_STREFIE_PODAŻY"
       ],
-      "entry_blockers": [],
-      "dca1": null,
-      "dca2": null,
-      "dca3": null
+      "dca1": 0.176,
+      "dca2": 0.1505,
+      "dca3": 0.125
     },
     {
       "symbol": "HBAR",
