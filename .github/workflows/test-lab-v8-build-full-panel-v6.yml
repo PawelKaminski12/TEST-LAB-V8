@@ -1,0 +1,88 @@
+name: TEST LAB V8 Build Full Panel V6
+
+on:
+  push:
+    paths:
+      - 'google_sheets/V8_ALERT_FRESHNESS_CENTER_V6.txt'
+      - '.github/workflows/test-lab-v8-build-full-panel-v6.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-test-save:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz projekt
+        uses: actions/checkout@v4
+
+      - name: Zbuduj pełny skrypt V6
+        run: |
+          cat google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V5.txt google_sheets/V8_ALERT_FRESHNESS_CENTER_V6.txt > /tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V6.js
+
+      - name: Sprawdź składnię pełnego skryptu
+        run: node --check /tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V6.js
+
+      - name: Sprawdź integralność V6
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('/tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V6.js').read_text(encoding='utf-8')
+          required=[
+            "'PANEL'","'PORTFEL_LONG'","'PORTFEL_TACTICAL'","'SILNIK_LONG'","'SILNIK_TACTICAL'",
+            "'ALARMY_EKSTREMOW'","function ODSWIEZ_WSZYSTKO()","function SPRAWDZ_EKSTREMA()",
+            "function alarmFreshness_","function compareExtremeFreshnessPriority_",
+            "ALARM_MAX_WIEK_1H_H","ALARM_MAX_WIEK_4H_H","ALARM_MAX_WIEK_1D_H",
+            "'AKTUALNY'","'STARY'","'BRAK CZASU'","ALARM WYGASŁ",
+            "a.aktywny && a.freshness === 'AKTUALNY'",
+            "if (!a || !a.aktywny || a.freshness !== 'AKTUALNY') return false;",
+            "Research / decision support only. No broker execution.","V7 is not modified by this script."
+          ]
+          missing=[x for x in required if x not in s]
+          forbidden=['placeOrder(', 'createOrder(', 'broker.place', 'AUTO_EXECUTION = ON']
+          bad=[x for x in forbidden if x in s]
+          if missing: raise SystemExit('BRAK: '+', '.join(missing))
+          if bad: raise SystemExit('NIEDOZWOLONA LOGIKA: '+', '.join(bad))
+          print('PASS — integralność i zabezpieczenia V6')
+          PY
+
+      - name: Test zachowania świeżości alarmów
+        run: |
+          cat > /tmp/smoke.js <<'NODE'
+          const fs=require('fs');
+          const vm=require('vm');
+          const code=fs.readFileSync('/tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V6.js','utf8');
+          const ctx={console,Date,Number,String,Math,JSON,Array,Object,RegExp};
+          vm.createContext(ctx);
+          vm.runInContext(code,ctx);
+          const cfg={stale1h:3,stale4h:10,stale1d:36};
+          const isoHoursAgo=h=>new Date(Date.now()-h*3600000).toISOString();
+          const fresh1=ctx.alarmFreshness_('1H',isoHoursAgo(1),cfg);
+          const stale1=ctx.alarmFreshness_('1H',isoHoursAgo(5),cfg);
+          const fresh4=ctx.alarmFreshness_('4H',isoHoursAgo(7),cfg);
+          const stale4=ctx.alarmFreshness_('4H',isoHoursAgo(12),cfg);
+          const freshD=ctx.alarmFreshness_('1D',isoHoursAgo(24),cfg);
+          const staleD=ctx.alarmFreshness_('1D',isoHoursAgo(48),cfg);
+          const noTime=ctx.alarmFreshness_('1H','',cfg);
+          if(!fresh1.fresh || stale1.fresh || !fresh4.fresh || stale4.fresh || !freshD.fresh || staleD.fresh || noTime.fresh) throw new Error('Błąd logiki świeżości');
+          if(ctx.panelEligibleExtreme_({aktywny:false,freshness:'STARY',tf:'1D',priority:'KRYTYCZNY',signalCount:4})) throw new Error('Stary alarm wszedł do PANELU');
+          if(ctx.panelEligibleExtreme_({aktywny:true,freshness:'AKTUALNY',tf:'1H',priority:'OSTRZEŻENIE',signalCount:1})) throw new Error('Szum 1H nie został stłumiony');
+          if(!ctx.panelEligibleExtreme_({aktywny:true,freshness:'AKTUALNY',tf:'4H',priority:'MOCNY',signalCount:2})) throw new Error('Aktualny 4H został błędnie odrzucony');
+          if(ctx.confluencePriorityForTf_(1,'1D')!=='MOCNY' || ctx.confluencePriorityForTf_(2,'1D')!=='KRYTYCZNY') throw new Error('Błąd hierarchii 1D');
+          console.log('PASS — smoke test świeżości, wygaszania i hierarchii');
+          NODE
+          node /tmp/smoke.js
+
+      - name: Zapisz pełny skrypt V6
+        run: |
+          cp /tmp/DUAL_ENGINE_APPS_SCRIPT_FULL_V6.js google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V6.txt
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V6.txt
+          if git diff --cached --quiet; then
+            echo 'Brak zmian do zapisu'
+          else
+            git commit -m 'Zbuduj pełny panel V8 V6 z centrum świeżości alarmów'
+            git push
+          fi
