@@ -26,6 +26,9 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Install dependencies
+        run: pip install --quiet pandas
+
       - name: Build confluence
         run: |
           python - <<'PY'
@@ -84,23 +87,17 @@ jobs:
                   heat+=1; reasons_heat.append('FOMO>=8')
 
               if heat>=4 and heat>cold:
-                  label='EXTREME_OVERHEAT'
-                  direction='HEAT'
+                  label='EXTREME_OVERHEAT'; direction='HEAT'
               elif cold>=4 and cold>heat:
-                  label='EXTREME_OVERSOLD'
-                  direction='COLD'
+                  label='EXTREME_OVERSOLD'; direction='COLD'
               elif heat>=2 and heat>cold:
-                  label='WARNING_OVERHEAT'
-                  direction='HEAT'
+                  label='WARNING_OVERHEAT'; direction='HEAT'
               elif cold>=2 and cold>heat:
-                  label='WARNING_OVERSOLD'
-                  direction='COLD'
+                  label='WARNING_OVERSOLD'; direction='COLD'
               elif heat>0 or cold>0:
-                  label='MIXED_EXTREME_CONTEXT'
-                  direction='MIXED'
+                  label='MIXED_EXTREME_CONTEXT'; direction='MIXED'
               else:
-                  label='NORMAL'
-                  direction='NONE'
+                  label='NORMAL'; direction='NONE'
 
               return {
                   'extreme_heat_score':int(heat),
