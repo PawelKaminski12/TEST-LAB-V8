@@ -1,0 +1,129 @@
+{
+  "generated_at_utc": "2026-09-23T15:50:41.661020+00:00",
+  "engine": "V8_LAB_DEEP_REPORT_v0.1",
+  "source_lab_engine": "V8_ASSET_LAB_v0.5",
+  "assets": [
+    {
+      "symbol": "BTC",
+      "status_po_polsku": {
+        "symbol": "BTC",
+        "asset_type": "CRYPTO",
+        "stan_danych_pl": "DANE WYSTARCZAJĄCE DO ANALIZY",
+        "ocena_biezaca_pl": "MOCNE POTWIERDZENIE",
+        "ocena_biezaca_0_10": 9.2,
+        "punkt_startowy": "D0",
+        "punkt_startowy_czas": "2026-09-23 15:41:15.312796+00:00",
+        "zapisane_punkty": "D0",
+        "nastepny_punkt": "D1",
+        "cena_biezaca": 84536.2421875,
+        "zmiana_ceny_od_startu_pct": 0.0,
+        "zmiana_oceny_od_startu": 0.0,
+        "zmiana_trendu_od_startu": 0.0,
+        "zmiana_rsi_od_startu": 0.0,
+        "zmiana_mfi_od_startu": 0.0,
+        "zmiana_fomo_od_startu": 0.0,
+        "onchain_long": null,
+        "onchain_tactical": null,
+        "etf_status": "NAPŁYW PRZYSPIESZA",
+        "decyzja_glownego_silnika": null,
+        "opis_zmian": "Cena od punktu startowego: +0.00% | Ocena LAB zmieniła się o +0.00 pkt | Trend: BEZ ZMIANY | ETF: NAPŁYW PRZYSPIESZA"
+      },
+      "zmiany_od_punktu_startowego": {
+        "price_pct": 0.0,
+        "trend_change": 0.0,
+        "rsi_change": 0.0,
+        "mfi_change": 0.0,
+        "fomo_change": 0.0,
+        "fast_score_change": 0.0,
+        "onchain_long_change": null,
+        "onchain_tactical_change": null
+      },
+      "immutable_checkpoint_count": 1,
+      "next_checkpoint": "D1"
+    },
+    {
+      "symbol": "ETH",
+      "status_po_polsku": {
+        "symbol": "ETH",
+        "asset_type": "CRYPTO",
+        "stan_danych_pl": "DANE WYSTARCZAJĄCE DO ANALIZY",
+        "ocena_biezaca_pl": "MOCNE POTWIERDZENIE",
+        "ocena_biezaca_0_10": 8.97,
+        "punkt_startowy": "D0",
+        "punkt_startowy_czas": "2026-09-23 15:41:15.312796+00:00",
+        "zapisane_punkty": "D0",
+        "nastepny_punkt": "D1",
+        "cena_biezaca": 2677.43994140625,
+        "zmiana_ceny_od_startu_pct": 0.0,
+        "zmiana_oceny_od_startu": 0.0,
+        "zmiana_trendu_od_startu": 0.0,
+        "zmiana_rsi_od_startu": 0.0,
+        "zmiana_mfi_od_startu": 0.0,
+        "zmiana_fomo_od_startu": 0.0,
+        "onchain_long": 9,
+        "onchain_tactical": 9,
+        "etf_status": "NAPŁYW PRZYSPIESZA",
+        "decyzja_glownego_silnika": "CZEKAJ",
+        "opis_zmian": "Cena od punktu startowego: +0.00% | Ocena LAB zmieniła się o +0.00 pkt | Trend: BEZ ZMIANY | ETF: NAPŁYW PRZYSPIESZA"
+      },
+      "zmiany_od_punktu_startowego": {
+        "price_pct": 0.0,
+        "trend_change": 0.0,
+        "rsi_change": 0.0,
+        "mfi_change": 0.0,
+        "fomo_change": 0.0,
+        "fast_score_change": 0.0,
+        "onchain_long_change": 0.0,
+        "onchain_tactical_change": 0.0
+      },
+      "immutable_checkpoint_count": 1,
+      "next_checkpoint": "D1"
+    },
+    {
+      "symbol": "ANET",
+      "status_po_polsku": {
+        "symbol": "ANET",
+        "asset_type": "STOCK",
+        "stan_danych_pl": "DANE NIEPEŁNE — WYNIK TRAKTUJ OSTROŻNIE",
+        "ocena_biezaca_pl": "SYGNAŁY MIESZANE",
+        "ocena_biezaca_0_10": 5.15,
+        "punkt_startowy": "D0",
+        "punkt_startowy_czas": "2026-09-23 15:41:15.312796+00:00",
+        "zapisane_punkty": "D0",
+        "nastepny_punkt": "D7",
+        "cena_biezaca": 201.99000549316406,
+        "zmiana_ceny_od_startu_pct": -1.1102230246251565e-14,
+        "zmiana_oceny_od_startu": 0.0,
+        "zmiana_trendu_od_startu": 0.0,
+        "zmiana_rsi_od_startu": 0.0,
+        "zmiana_mfi_od_startu": 0.0,
+        "zmiana_fomo_od_startu": 0.0,
+        "onchain_long": null,
+        "onchain_tactical": null,
+        "etf_status": null,
+        "decyzja_glownego_silnika": null,
+        "opis_zmian": "Cena od punktu startowego: -0.00% | Ocena LAB zmieniła się o +0.00 pkt | Trend: BEZ ZMIANY"
+      },
+      "zmiany_od_punktu_startowego": {
+        "price_pct": -1.1102230246251565e-14,
+        "trend_change": 0.0,
+        "rsi_change": 0.0,
+        "mfi_change": 0.0,
+        "fomo_change": 0.0,
+        "fast_score_change": 0.0,
+        "onchain_long_change": null,
+        "onchain_tactical_change": null
+      },
+      "immutable_checkpoint_count": 1,
+      "next_checkpoint": "D7"
+    }
+  ],
+  "rules": {
+    "uses_immutable_canonical_checkpoints": true,
+    "baseline_prefers_D0": true,
+    "user_language_polish": true,
+    "research_only": true,
+    "portfolio_connection": false,
+    "execution_connection": false
+  }
+}
