@@ -1,5 +1,6 @@
 name: TEST LAB V8 Tactical MACD Extremes
 
+# V8 TACTICAL MACD EXTREMES v0.5 — relative to each asset's own history
 on:
   workflow_dispatch:
   push:
