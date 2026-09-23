@@ -18,7 +18,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Sprawdź składnię JavaScript
-        run: node --check google_sheets/V8_EXTREME_CONFLUENCE_V2.txt
+        run: |
+          cp google_sheets/V8_EXTREME_CONFLUENCE_V2.txt /tmp/V8_EXTREME_CONFLUENCE_V2.js
+          node --check /tmp/V8_EXTREME_CONFLUENCE_V2.js
 
       - name: Sprawdź wymagane funkcje i zabezpieczenia
         run: |
@@ -44,7 +46,6 @@ jobs:
               'execution',
           ]
           missing = [x for x in required if x not in s]
-          # Moduł alarmowy nie może wykonywać zleceń ani modyfikować LONG/TACTICAL.
           forbidden = ['placeOrder(', 'createOrder(', 'broker.', 'AUTO_EXECUTION = ON']
           found_forbidden = [x for x in forbidden if x in s]
           if missing:
