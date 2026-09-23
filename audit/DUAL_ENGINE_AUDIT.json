@@ -1,0 +1,370 @@
+{
+  "generated_at_utc": "2026-09-23T12:04:36.630427+00:00",
+  "engine": "V8_DUAL_ENGINE_AUDIT_v0.1",
+  "checks_total": 70,
+  "checks_passed": 70,
+  "checks_failed": 0,
+  "technical_status": "PASS",
+  "long_engine_status": "READY_FOR_PAPER_OBSERVATION",
+  "tactical_engine_status": "TECHNICALLY_READY_CALIBRATION_NOT_FROZEN",
+  "tactical_validation_flags": [
+    "ETH_MEAN24_NONPOSITIVE",
+    "SOL_WIN12_BELOW_50",
+    "ONDO_MEAN24_NONPOSITIVE"
+  ],
+  "tactical_validation_note": "Historical technical validation is observational; current thresholds are not frozen and should not be treated as validated execution rules.",
+  "market_reader_note": "External Market Reader remains optional second eye and is not required for core QA.",
+  "execution_connected": false,
+  "checks": [
+    {
+      "check": "LONG_ENGINE_VERSION",
+      "pass": true,
+      "detail": "ALT_DECISION_ENGINE_v0.3"
+    },
+    {
+      "check": "LONG_PRODUCTION_4",
+      "pass": true,
+      "detail": "['ETH', 'LINK', 'ONDO', 'SOL']"
+    },
+    {
+      "check": "LONG_ETH_ZONE_READY",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "LONG_ETH_DCA_COMPLETE",
+      "pass": true,
+      "detail": "(2450.0, 1975.0, 1500.0)"
+    },
+    {
+      "check": "LONG_ETH_DCA_ORDER",
+      "pass": true,
+      "detail": "(2450.0, 1975.0, 1500.0)"
+    },
+    {
+      "check": "LONG_ETH_SUPPLY_BLOCKER",
+      "pass": true,
+      "detail": "['IN_SUPPLY']"
+    },
+    {
+      "check": "LONG_ETH_NO_BUY_IN_SUPPLY",
+      "pass": true,
+      "detail": "CZEKAJ"
+    },
+    {
+      "check": "LONG_LINK_ZONE_READY",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "LONG_LINK_DCA_COMPLETE",
+      "pass": true,
+      "detail": "(8.5, 7.35, 6.2)"
+    },
+    {
+      "check": "LONG_LINK_DCA_ORDER",
+      "pass": true,
+      "detail": "(8.5, 7.35, 6.2)"
+    },
+    {
+      "check": "LONG_LINK_SUPPLY_BLOCKER",
+      "pass": true,
+      "detail": "['IN_SUPPLY']"
+    },
+    {
+      "check": "LONG_LINK_NO_BUY_IN_SUPPLY",
+      "pass": true,
+      "detail": "SPRAWDŹ"
+    },
+    {
+      "check": "LONG_ONDO_ZONE_READY",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "LONG_ONDO_DCA_COMPLETE",
+      "pass": true,
+      "detail": "(0.348, 0.274, 0.2)"
+    },
+    {
+      "check": "LONG_ONDO_DCA_ORDER",
+      "pass": true,
+      "detail": "(0.348, 0.274, 0.2)"
+    },
+    {
+      "check": "LONG_ONDO_SUPPLY_BLOCKER",
+      "pass": true,
+      "detail": "['IN_SUPPLY']"
+    },
+    {
+      "check": "LONG_ONDO_NO_BUY_IN_SUPPLY",
+      "pass": true,
+      "detail": "CZEKAJ"
+    },
+    {
+      "check": "LONG_SOL_ZONE_READY",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "LONG_SOL_DCA_COMPLETE",
+      "pass": true,
+      "detail": "(97.0, 78.5, 60.0)"
+    },
+    {
+      "check": "LONG_SOL_DCA_ORDER",
+      "pass": true,
+      "detail": "(97.0, 78.5, 60.0)"
+    },
+    {
+      "check": "LONG_SOL_SUPPLY_BLOCKER",
+      "pass": true,
+      "detail": "['IN_SUPPLY']"
+    },
+    {
+      "check": "LONG_SOL_NO_BUY_IN_SUPPLY",
+      "pass": true,
+      "detail": "CZEKAJ"
+    },
+    {
+      "check": "TACT_ENGINE_VERSION",
+      "pass": true,
+      "detail": "V8_TACTICAL_ENGINE_v0.3"
+    },
+    {
+      "check": "TACT_PRODUCTION_4",
+      "pass": true,
+      "detail": "['ETH', 'LINK', 'ONDO', 'SOL']"
+    },
+    {
+      "check": "TACT_GLOBAL_QA",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACT_ETH_QA",
+      "pass": true,
+      "detail": "PASS"
+    },
+    {
+      "check": "TACT_ETH_TF_COMPLETE",
+      "pass": true,
+      "detail": "['1H', '4H', '1D']"
+    },
+    {
+      "check": "TACT_ETH_1H_CLOSED",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACT_ETH_1H_NOT_STALE",
+      "pass": true,
+      "detail": "False"
+    },
+    {
+      "check": "TACT_ETH_4H_CLOSED",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACT_ETH_4H_NOT_STALE",
+      "pass": true,
+      "detail": "False"
+    },
+    {
+      "check": "TACT_ETH_1D_CLOSED",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACT_ETH_1D_NOT_STALE",
+      "pass": true,
+      "detail": "False"
+    },
+    {
+      "check": "TACT_ETH_SUPPLY_BLOCKER",
+      "pass": true,
+      "detail": "['IN_SUPPLY']"
+    },
+    {
+      "check": "TACT_ETH_NO_LONG_IN_SUPPLY",
+      "pass": true,
+      "detail": "WATCH_SUPPLY"
+    },
+    {
+      "check": "TACT_LINK_QA",
+      "pass": true,
+      "detail": "PASS"
+    },
+    {
+      "check": "TACT_LINK_TF_COMPLETE",
+      "pass": true,
+      "detail": "['1H', '4H', '1D']"
+    },
+    {
+      "check": "TACT_LINK_1H_CLOSED",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACT_LINK_1H_NOT_STALE",
+      "pass": true,
+      "detail": "False"
+    },
+    {
+      "check": "TACT_LINK_4H_CLOSED",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACT_LINK_4H_NOT_STALE",
+      "pass": true,
+      "detail": "False"
+    },
+    {
+      "check": "TACT_LINK_1D_CLOSED",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACT_LINK_1D_NOT_STALE",
+      "pass": true,
+      "detail": "False"
+    },
+    {
+      "check": "TACT_LINK_SUPPLY_BLOCKER",
+      "pass": true,
+      "detail": "['IN_SUPPLY']"
+    },
+    {
+      "check": "TACT_LINK_NO_LONG_IN_SUPPLY",
+      "pass": true,
+      "detail": "WATCH_SUPPLY"
+    },
+    {
+      "check": "TACT_ONDO_QA",
+      "pass": true,
+      "detail": "PASS"
+    },
+    {
+      "check": "TACT_ONDO_TF_COMPLETE",
+      "pass": true,
+      "detail": "['1H', '4H', '1D']"
+    },
+    {
+      "check": "TACT_ONDO_1H_CLOSED",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACT_ONDO_1H_NOT_STALE",
+      "pass": true,
+      "detail": "False"
+    },
+    {
+      "check": "TACT_ONDO_4H_CLOSED",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACT_ONDO_4H_NOT_STALE",
+      "pass": true,
+      "detail": "False"
+    },
+    {
+      "check": "TACT_ONDO_1D_CLOSED",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACT_ONDO_1D_NOT_STALE",
+      "pass": true,
+      "detail": "False"
+    },
+    {
+      "check": "TACT_ONDO_SUPPLY_BLOCKER",
+      "pass": true,
+      "detail": "['IN_SUPPLY']"
+    },
+    {
+      "check": "TACT_ONDO_NO_LONG_IN_SUPPLY",
+      "pass": true,
+      "detail": "WATCH_SUPPLY"
+    },
+    {
+      "check": "TACT_SOL_QA",
+      "pass": true,
+      "detail": "PASS"
+    },
+    {
+      "check": "TACT_SOL_TF_COMPLETE",
+      "pass": true,
+      "detail": "['1H', '4H', '1D']"
+    },
+    {
+      "check": "TACT_SOL_1H_CLOSED",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACT_SOL_1H_NOT_STALE",
+      "pass": true,
+      "detail": "False"
+    },
+    {
+      "check": "TACT_SOL_4H_CLOSED",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACT_SOL_4H_NOT_STALE",
+      "pass": true,
+      "detail": "False"
+    },
+    {
+      "check": "TACT_SOL_1D_CLOSED",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACT_SOL_1D_NOT_STALE",
+      "pass": true,
+      "detail": "False"
+    },
+    {
+      "check": "TACT_SOL_SUPPLY_BLOCKER",
+      "pass": true,
+      "detail": "['IN_SUPPLY']"
+    },
+    {
+      "check": "TACT_SOL_NO_LONG_IN_SUPPLY",
+      "pass": true,
+      "detail": "WATCH_SUPPLY"
+    },
+    {
+      "check": "TACT_READINESS_STATUS",
+      "pass": true,
+      "detail": "TACTICAL_CORE_READY_FOR_VALIDATION"
+    },
+    {
+      "check": "TACT_READINESS_4_OF_4",
+      "pass": true,
+      "detail": "(4, 4)"
+    },
+    {
+      "check": "TACT_VALIDATION_ASSETS",
+      "pass": true,
+      "detail": "['ETH', 'LINK', 'ONDO', 'SOL']"
+    },
+    {
+      "check": "TACT_THRESHOLD_NOT_FROZEN",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACT_THRESHOLD_RESEARCH_ONLY",
+      "pass": true,
+      "detail": "True"
+    }
+  ]
+}
