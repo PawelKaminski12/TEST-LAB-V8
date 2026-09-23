@@ -1,0 +1,85 @@
+name: TEST LAB V8 Canonical Checkpoints
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'lab/LAB_REPORT.json'
+      - 'config/lab_assets.csv'
+      - 'scripts/v8_lab_checkpoints.py'
+      - '.github/workflows/test-lab-v8-lab-checkpoints.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-lab-checkpoint-writes
+  cancel-in-progress: false
+
+jobs:
+  build-canonical-checkpoints:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz najnowszą wersję projektu
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Przygotuj Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Zainstaluj biblioteki
+        run: pip install --quiet pandas
+
+      - name: Zbuduj trwałe punkty kontrolne
+        run: python scripts/v8_lab_checkpoints.py
+
+      - name: Sprawdź niezmienność i bezpieczeństwo
+        run: |
+          python - <<'PY'
+          import json
+          import pandas as pd
+          from pathlib import Path
+
+          st=json.loads(Path('lab/LAB_CHECKPOINT_STATUS.json').read_text(encoding='utf-8'))
+          assert st['immutable_checkpoints'] is True
+          assert st['snapshot_sha256_enabled'] is True
+          assert st['portfolio_connection'] is False
+          assert st['execution_connection'] is False
+
+          p=Path('lab/LAB_CHECKPOINTS.csv')
+          assert p.exists()
+          df=pd.read_csv(p)
+          if not df.empty:
+              assert not df.duplicated(['symbol','checkpoint']).any()
+              assert df['snapshot_sha256'].astype(str).str.len().eq(64).all()
+              assert df['immutable_after_write'].astype(str).str.lower().eq('true').all()
+          payload=json.loads(Path('lab/LAB_CHECKPOINTS.json').read_text(encoding='utf-8'))
+          assert payload['rules']['existing_checkpoint_is_never_overwritten'] is True
+          assert payload['rules']['no_trade_execution'] is True
+          print('Trwałe punkty kontrolne V8 LAB sprawdzone poprawnie')
+          PY
+
+      - name: Zapisz punkty kontrolne
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add lab/LAB_CHECKPOINTS.csv lab/LAB_CHECKPOINTS.json lab/LAB_CHECKPOINT_STATUS.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Update V8 LAB canonical checkpoints'
+          for attempt in 1 2 3; do
+            if git push; then exit 0; fi
+            mkdir -p /tmp/labcheck
+            cp lab/LAB_CHECKPOINTS.csv lab/LAB_CHECKPOINTS.json lab/LAB_CHECKPOINT_STATUS.json /tmp/labcheck/
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/labcheck/LAB_CHECKPOINTS.csv /tmp/labcheck/LAB_CHECKPOINTS.json /tmp/labcheck/LAB_CHECKPOINT_STATUS.json lab/
+            git add lab/LAB_CHECKPOINTS.csv lab/LAB_CHECKPOINTS.json lab/LAB_CHECKPOINT_STATUS.json
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Update V8 LAB canonical checkpoints'
+            sleep $((attempt * 3))
+          done
+          exit 1
