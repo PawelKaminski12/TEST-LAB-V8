@@ -130,8 +130,8 @@ jobs:
           }
 
           out={
-              'date':s['target_date'],'engine':'ALT_ROTATION_SCORE_v0.3','score_0_10':score,'status':status,
-              'confidence':clevel,'confidence_pct':conf,'parts':parts,
+              'date':s['target_date'],'engine':'ALT_ROTATION_SCORE_v0.3','source_snapshot_generated_at_utc':s.get('generated_at_utc'),
+              'score_0_10':score,'status':status,'confidence':clevel,'confidence_pct':conf,'parts':parts,
               'flow_context':flow_context,
               'broad_rotation_history_ready':ready,'broad_rotation_detail':detail,
               'selected_alt_breadth_strong':strong,'alt_readiness':ar,
