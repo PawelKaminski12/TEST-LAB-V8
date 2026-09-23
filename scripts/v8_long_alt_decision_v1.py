@@ -11,7 +11,7 @@ ZONES=Path('config/alt_zones.csv')
 PHASE=ROOT/'CRYPTO_MARKET_PHASE.json'
 OUT=ROOT/'ALT_DECISION_ENGINE.json'
 HIST=ROOT/'ALT_DECISION_HISTORY.csv'
-EXPECTED=['ETH','SOL','LINK','ONDO','RENDER','FLOKI','PEPE','SPX6900','XRP','XLM','HBAR']
+EXPECTED=['ETH','SOL','LINK','ONDO','RENDER','FLOKI','PEPE','SPX6900','XRP','XLM','HBAR','AVAX','AWE']
 REQUIRED_TF=['1D','2D','3D','4D','5D','1T','2T']
 
 
@@ -69,8 +69,8 @@ def main():
     active=[s for s in cfg['symbol'].astype(str).str.upper().tolist() if s!='BTC']
     if active!=EXPECTED: raise SystemExit(f'Nieprawidłowa lista LONG: {active}')
     tech=load_json(TECH)
-    if tech.get('engine')!='ALT_TECHNICAL_LAYER_v1.0' or tech.get('asset_count')!=11:
-        raise SystemExit('Brak kompletnej techniki LONG 11/11')
+    if tech.get('engine')!='ALT_TECHNICAL_LAYER_v1.0' or tech.get('asset_count')!=13:
+        raise SystemExit('Brak kompletnej techniki LONG 13/13')
     tmap={x['symbol']:x for x in tech.get('assets',[]) if x.get('qa')=='PASS'}
     zones=pd.read_csv(ZONES)
     zones['symbol']=zones['symbol'].astype(str); zones['timeframe']=zones['timeframe'].astype(str); zones['side']=zones['side'].astype(str); zones['source_status']=zones['source_status'].astype(str)
@@ -119,7 +119,7 @@ def main():
         })
     out={
         'generated_at_utc':datetime.now(timezone.utc).isoformat(),
-        'engine':'ALT_DECISION_ENGINE_v1.0','asset_count':11,'universe':EXPECTED,
+        'engine':'ALT_DECISION_ENGINE_v1.0','asset_count':len(EXPECTED),'universe':EXPECTED,
         'btc_role':'REŻIM RYNKU — nie jest wierszem decyzji alta',
         'stocks_role':'SPÓŁKI pozostają osobną częścią silnika LONG',
         'rules':{'no_zone_guessing':True,'full_zone_map_required_for_final_long_decision':True,'fomo_hard_block_at_8':True,'no_buy_in_supply':True,'execution_connected':False},
@@ -130,6 +130,6 @@ def main():
     if HIST.exists():
         old=pd.read_csv(HIST); new=pd.concat([old,new],ignore_index=True).drop_duplicates(['date','symbol'],keep='last').sort_values(['date','symbol'])
     new.to_csv(HIST,index=False)
-    print(json.dumps({'engine':out['engine'],'asset_count':11,'technical_ready':sum(a['technical_ready'] for a in assets),'zones_7_of_7':sum(a['zones']['complete_7_of_7'] for a in assets)},ensure_ascii=False,indent=2))
+    print(json.dumps({'engine':out['engine'],'asset_count':len(EXPECTED),'technical_ready':sum(a['technical_ready'] for a in assets),'zones_7_of_7':sum(a['zones']['complete_7_of_7'] for a in assets)},ensure_ascii=False,indent=2))
 
 if __name__=='__main__': main()
