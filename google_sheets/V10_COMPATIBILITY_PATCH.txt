@@ -1,0 +1,23 @@
+// ===== V10 COMPATIBILITY PATCH =====
+// Apps Script ConditionalFormatRule nie obsługuje setFontWeight().
+// Nadpisanie bezpieczne: zachowuje kolory, usuwa niedozwolone pogrubienie z reguł warunkowych.
+
+function formatAlarmStatesV8_(sheet,rowCount) {
+  const n=Math.max(1,rowCount);
+  const stateRange=sheet.getRange(2,5,n,1), priorityRange=sheet.getRange(2,10,n,1), freshRange=sheet.getRange(2,6,n,1);
+  const rules=[];
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('NOWY').setBackground('#d9ead3').setRanges([stateRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('NASILA SIĘ').setBackground('#f4cccc').setRanges([stateRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('SŁABNIE').setBackground('#fff2cc').setRanges([stateRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('WYGASŁ').setBackground('#d9d9d9').setRanges([stateRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('KRYTYCZNY').setBackground('#f4cccc').setRanges([priorityRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('MOCNY').setBackground('#fce5cd').setRanges([priorityRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('STARY').setBackground('#d9d9d9').setRanges([freshRange]).build());
+  rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('BRAK CZASU').setBackground('#d9d9d9').setRanges([freshRange]).build());
+  sheet.setConditionalFormatRules(rules);
+}
+
+// Alias wymagany przez warstwę dynamiki alarmów V8.
+function classifyAlarmDirection_(a) {
+  return alarmDirection_(a);
+}
