@@ -1,12 +1,13 @@
 name: TEST LAB V8 Tactical Readiness
 
+# Final pipeline stage: confluence v0.6 -> readiness v0.5
 on:
   workflow_dispatch:
   schedule:
     - cron: '35 */4 * * *'
   push:
     paths:
-      - 'tactical_engine/TACTICAL_ENGINE.json'
+      - 'tactical_engine/TACTICAL_EXTREME_CONFLUENCE.csv'
       - 'config/market_reader_signals.csv'
       - 'crypto_data_hub/CRYPTO_MARKET_PHASE.json'
       - '.github/workflows/test-lab-v8-tactical-readiness.yml'
@@ -41,177 +42,70 @@ jobs:
           from datetime import datetime, timezone
           import pandas as pd
 
-          ROOT=Path('tactical_engine')
-          ROOT.mkdir(exist_ok=True)
+          ROOT=Path('tactical_engine'); ROOT.mkdir(exist_ok=True)
           src=ROOT/'TACTICAL_ENGINE.json'
           mr_path=Path('config/market_reader_signals.csv')
           phase_path=Path('crypto_data_hub/CRYPTO_MARKET_PHASE.json')
-          if not src.exists():
-              raise SystemExit('TACTICAL_ENGINE.json missing')
+          if not src.exists(): raise SystemExit('TACTICAL_ENGINE.json missing')
 
           eng=json.loads(src.read_text(encoding='utf-8'))
+          source_engine=str(eng.get('engine',''))
+          if source_engine != 'V8_TACTICAL_ENGINE_v0.6':
+              raise SystemExit(f'EXPECTED CONFLUENCE V0.6, GOT {source_engine}')
+
           phase=json.loads(phase_path.read_text(encoding='utf-8')) if phase_path.exists() else {}
           generated=pd.to_datetime(eng.get('generated_at_utc'),utc=True,errors='coerce')
           now=pd.Timestamp.now(tz='UTC')
           engine_age_h=(now-generated).total_seconds()/3600 if pd.notna(generated) else None
 
-          try:
-              mr=pd.read_csv(mr_path) if mr_path.exists() else pd.DataFrame()
-          except Exception:
-              mr=pd.DataFrame()
+          try: mr=pd.read_csv(mr_path) if mr_path.exists() else pd.DataFrame()
+          except Exception: mr=pd.DataFrame()
           required_mr=['symbol','timeframe','signal','strength','source_time_utc','source_note']
           mr_schema_ok=all(c in mr.columns for c in required_mr) if mr_path.exists() else False
           if mr_schema_ok and len(mr):
-              mr=mr.copy()
-              mr['symbol']=mr['symbol'].astype(str).str.upper().str.strip()
-              mr['timeframe']=mr['timeframe'].astype(str).str.upper().str.strip()
-              mr['signal']=mr['signal'].astype(str).str.upper().str.strip()
-              mr['strength']=pd.to_numeric(mr['strength'],errors='coerce')
-              mr['source_time_utc']=pd.to_datetime(mr['source_time_utc'],utc=True,errors='coerce')
-              mr['age_hours']=(now-mr['source_time_utc']).dt.total_seconds()/3600
-              mr['fresh']=mr['age_hours'].between(0,6,inclusive='both')
-              mr['valid_signal']=mr['signal'].isin(['LONG','NEUTRAL','EXIT','SHORT'])
-              mr['valid_timeframe']=mr['timeframe'].isin(['1H','4H','1D'])
-              mr['valid_strength']=mr['strength'].between(0,10,inclusive='both')
-              mr['usable']=mr['fresh'] & mr['valid_signal'] & mr['valid_timeframe'] & mr['valid_strength']
+              mr=mr.copy(); mr['symbol']=mr['symbol'].astype(str).str.upper().str.strip(); mr['timeframe']=mr['timeframe'].astype(str).str.upper().str.strip(); mr['signal']=mr['signal'].astype(str).str.upper().str.strip()
+              mr['strength']=pd.to_numeric(mr['strength'],errors='coerce'); mr['source_time_utc']=pd.to_datetime(mr['source_time_utc'],utc=True,errors='coerce'); mr['age_hours']=(now-mr['source_time_utc']).dt.total_seconds()/3600
+              mr['fresh']=mr['age_hours'].between(0,6,inclusive='both'); mr['valid_signal']=mr['signal'].isin(['LONG','NEUTRAL','EXIT','SHORT']); mr['valid_timeframe']=mr['timeframe'].isin(['1H','4H','1D']); mr['valid_strength']=mr['strength'].between(0,10,inclusive='both'); mr['usable']=mr['fresh'] & mr['valid_signal'] & mr['valid_timeframe'] & mr['valid_strength']
           else:
               mr=pd.DataFrame(columns=required_mr+['age_hours','fresh','valid_signal','valid_timeframe','valid_strength','usable'])
 
-          assets=[]
-          hist_rows=[]
+          assets=[]; hist_rows=[]
           for a in eng.get('assets',[]):
-              sym=str(a.get('symbol','')).upper().strip()
-              scope=a.get('target_scope')
-              qa=a.get('qa')=='PASS'
-              tfs=a.get('timeframes',{})
+              sym=str(a.get('symbol','')).upper().strip(); scope=a.get('target_scope'); qa=a.get('qa')=='PASS'; tfs=a.get('timeframes',{})
               closed_ok=qa and all(tf in tfs for tf in ['1H','4H','1D'])
-              indicators_ok=closed_ok and all(
-                  tfs[tf].get('rsi14') is not None and
-                  tfs[tf].get('mfi14') is not None and
-                  tfs[tf].get('macd_hist') is not None and
-                  tfs[tf].get('atr14') is not None
-                  for tf in ['1H','4H','1D']
-              )
-              macd_extreme_ok=closed_ok and all(
-                  tfs[tf].get('macd_hist_percentile') is not None and
-                  tfs[tf].get('macd_hist_zscore') is not None and
-                  tfs[tf].get('macd_extreme_label') is not None
-                  for tf in ['1H','4H','1D']
-              )
-              history_evidence_ok=indicators_ok and macd_extreme_ok
-              status=a.get('tactical_status')
-              score=a.get('tactical_score_0_10')
-              exit_risk=a.get('exit_risk_0_10')
-              z=a.get('zone_context',{}) or {}
+              indicators_ok=closed_ok and all(tfs[tf].get('rsi14') is not None and tfs[tf].get('mfi14') is not None and tfs[tf].get('macd_hist') is not None and tfs[tf].get('atr14') is not None for tf in ['1H','4H','1D'])
+              macd_extreme_ok=closed_ok and all(tfs[tf].get('macd_hist_percentile') is not None and tfs[tf].get('macd_hist_zscore') is not None and tfs[tf].get('macd_extreme_label') is not None for tf in ['1H','4H','1D'])
+              confluence_ok=closed_ok and all(tfs[tf].get('extreme_confluence_label') is not None for tf in ['1H','4H','1D']) and bool((a.get('extreme_confluence') or {}).get('overall_label'))
+              history_evidence_ok=indicators_ok and macd_extreme_ok and confluence_ok
+              status=a.get('tactical_status'); score=a.get('tactical_score_0_10'); exit_risk=a.get('exit_risk_0_10'); z=a.get('zone_context',{}) or {}
 
-              mrs=mr[(mr['symbol']==sym) & (mr['usable']==True)].copy() if len(mr) else pd.DataFrame()
-              mr_state='NOT_CONNECTED'
-              mr_4h=None
-              mr_conflict=False
+              mrs=mr[(mr['symbol']==sym) & (mr['usable']==True)].copy() if len(mr) else pd.DataFrame(); mr_state='NOT_CONNECTED'; mr_4h=None; mr_conflict=False
               if len(mrs):
-                  mr_state='CONNECTED_FRESH'
-                  x=mrs[mrs['timeframe']=='4H']
+                  mr_state='CONNECTED_FRESH'; x=mrs[mrs['timeframe']=='4H']
                   if len(x):
-                      rr=x.sort_values('source_time_utc').iloc[-1]
-                      mr_4h={'signal':rr['signal'],'strength':float(rr['strength']),'age_hours':float(rr['age_hours'])}
-                      longish=status in ['LONG_SETUP_RETEST','LONG_SETUP_WATCH','WATCH_BREAKOUT']
-                      if longish and rr['signal'] in ['EXIT','SHORT']:
-                          mr_conflict=True
-                      if status in ['NO_TRADE','NO_TRADE_FOMO'] and rr['signal']=='LONG' and float(rr['strength'])>=7:
-                          mr_conflict=True
-              elif mr_schema_ok and len(mr):
-                  mr_state='CONNECTED_NO_FRESH_SIGNAL'
-              elif mr_schema_ok:
-                  mr_state='CONTRACT_READY_NO_DATA'
+                      rr=x.sort_values('source_time_utc').iloc[-1]; mr_4h={'signal':rr['signal'],'strength':float(rr['strength']),'age_hours':float(rr['age_hours'])}; longish=status in ['LONG_SETUP_RETEST','LONG_SETUP_WATCH','WATCH_BREAKOUT']
+                      if longish and rr['signal'] in ['EXIT','SHORT']: mr_conflict=True
+                      if status in ['NO_TRADE','NO_TRADE_FOMO'] and rr['signal']=='LONG' and float(rr['strength'])>=7: mr_conflict=True
+              elif mr_schema_ok and len(mr): mr_state='CONNECTED_NO_FRESH_SIGNAL'
+              elif mr_schema_ok: mr_state='CONTRACT_READY_NO_DATA'
 
-              readiness=0
-              readiness += 20 if qa else 0
-              readiness += 20 if closed_ok else 0
-              readiness += 20 if indicators_ok else 0
-              readiness += 20 if macd_extreme_ok else 0
-              readiness += 20 if status is not None else 0
-              ready=readiness==100
+              readiness=0; readiness += 20 if qa else 0; readiness += 20 if closed_ok else 0; readiness += 20 if indicators_ok else 0; readiness += 20 if macd_extreme_ok and confluence_ok else 0; readiness += 20 if status is not None else 0; ready=readiness==100
+              con=(a.get('extreme_confluence') or {})
+              assets.append({'symbol':sym,'scope':scope,'qa':qa,'closed_timeframes_ready':closed_ok,'history_evidence_ready':history_evidence_ok,'history_evidence':'RSI_MACD_MFI_ATR_RELATIVE_MACD_PLUS_EXTREME_CONFLUENCE' if history_evidence_ok else 'INSUFFICIENT','indicators_ready':indicators_ok,'mfi_ready':indicators_ok,'macd_extremes_ready':macd_extreme_ok,'extreme_confluence_ready':confluence_ok,'extreme_confluence_label':con.get('overall_label'),'weighted_heat_score':con.get('weighted_heat_score'),'weighted_cold_score':con.get('weighted_cold_score'),'tactical_score_0_10':score,'tactical_status':status,'exit_risk_0_10':exit_risk,'in_supply':z.get('in_supply'),'in_demand':z.get('in_demand'),'market_reader_state':mr_state,'market_reader_4h':mr_4h,'market_reader_conflict':mr_conflict,'readiness_score_0_100':readiness,'readiness_status':'TACTICAL_CORE_READY' if ready else 'TACTICAL_DATA_GAP'})
+              hist_rows.append({'generated_at_utc':eng.get('generated_at_utc'),'symbol':sym,'scope':scope,'status':status,'score':score,'exit_risk':exit_risk,'1H_rsi':tfs.get('1H',{}).get('rsi14'),'1H_mfi':tfs.get('1H',{}).get('mfi14'),'1H_macd_pct':tfs.get('1H',{}).get('macd_hist_percentile'),'1H_macd_z':tfs.get('1H',{}).get('macd_hist_zscore'),'1H_extreme':tfs.get('1H',{}).get('extreme_confluence_label'),'4H_rsi':tfs.get('4H',{}).get('rsi14'),'4H_mfi':tfs.get('4H',{}).get('mfi14'),'4H_macd_pct':tfs.get('4H',{}).get('macd_hist_percentile'),'4H_macd_z':tfs.get('4H',{}).get('macd_hist_zscore'),'4H_extreme':tfs.get('4H',{}).get('extreme_confluence_label'),'1D_rsi':tfs.get('1D',{}).get('rsi14'),'1D_mfi':tfs.get('1D',{}).get('mfi14'),'1D_macd_pct':tfs.get('1D',{}).get('macd_hist_percentile'),'1D_macd_z':tfs.get('1D',{}).get('macd_hist_zscore'),'1D_extreme':tfs.get('1D',{}).get('extreme_confluence_label'),'overall_extreme':con.get('overall_label'),'weighted_heat':con.get('weighted_heat_score'),'weighted_cold':con.get('weighted_cold_score'),'in_supply':z.get('in_supply'),'in_demand':z.get('in_demand'),'market_phase':(a.get('market_phase_context') or {}).get('phase'),'market_reader_state':mr_state,'market_reader_conflict':mr_conflict})
 
-              assets.append({
-                  'symbol':sym,'scope':scope,'qa':qa,'closed_timeframes_ready':closed_ok,
-                  'history_evidence_ready':history_evidence_ok,
-                  'history_evidence':'RSI_MACD_MFI_ATR_PLUS_RELATIVE_MACD_EXTREMES' if history_evidence_ok else 'INSUFFICIENT',
-                  'indicators_ready':indicators_ok,
-                  'mfi_ready':indicators_ok,
-                  'macd_extremes_ready':macd_extreme_ok,
-                  'tactical_score_0_10':score,'tactical_status':status,'exit_risk_0_10':exit_risk,
-                  'in_supply':z.get('in_supply'),'in_demand':z.get('in_demand'),
-                  'market_reader_state':mr_state,'market_reader_4h':mr_4h,
-                  'market_reader_conflict':mr_conflict,
-                  'readiness_score_0_100':readiness,
-                  'readiness_status':'TACTICAL_CORE_READY' if ready else 'TACTICAL_DATA_GAP'
-              })
-              hist_rows.append({
-                  'generated_at_utc':eng.get('generated_at_utc'),'symbol':sym,'scope':scope,
-                  'status':status,'score':score,'exit_risk':exit_risk,
-                  '1H_rsi':tfs.get('1H',{}).get('rsi14'),'1H_mfi':tfs.get('1H',{}).get('mfi14'),'1H_mfi_zone':tfs.get('1H',{}).get('mfi_zone'),'1H_macd_hist':tfs.get('1H',{}).get('macd_hist'),'1H_macd_pct':tfs.get('1H',{}).get('macd_hist_percentile'),'1H_macd_z':tfs.get('1H',{}).get('macd_hist_zscore'),'1H_macd_extreme':tfs.get('1H',{}).get('macd_extreme_label'),
-                  '4H_rsi':tfs.get('4H',{}).get('rsi14'),'4H_mfi':tfs.get('4H',{}).get('mfi14'),'4H_mfi_zone':tfs.get('4H',{}).get('mfi_zone'),'4H_macd_hist':tfs.get('4H',{}).get('macd_hist'),'4H_macd_pct':tfs.get('4H',{}).get('macd_hist_percentile'),'4H_macd_z':tfs.get('4H',{}).get('macd_hist_zscore'),'4H_macd_extreme':tfs.get('4H',{}).get('macd_extreme_label'),'4H_trend':tfs.get('4H',{}).get('trend_score_0_4'),
-                  '1D_rsi':tfs.get('1D',{}).get('rsi14'),'1D_mfi':tfs.get('1D',{}).get('mfi14'),'1D_mfi_zone':tfs.get('1D',{}).get('mfi_zone'),'1D_macd_hist':tfs.get('1D',{}).get('macd_hist'),'1D_macd_pct':tfs.get('1D',{}).get('macd_hist_percentile'),'1D_macd_z':tfs.get('1D',{}).get('macd_hist_zscore'),'1D_macd_extreme':tfs.get('1D',{}).get('macd_extreme_label'),'1D_trend':tfs.get('1D',{}).get('trend_score_0_4'),
-                  'extremes':' | '.join(a.get('extreme_summary',[])),
-                  'in_supply':z.get('in_supply'),'in_demand':z.get('in_demand'),
-                  'market_phase':(a.get('market_phase_context') or {}).get('phase'),
-                  'market_reader_state':mr_state,'market_reader_conflict':mr_conflict
-              })
-
-          adf=pd.DataFrame(assets)
-          production=adf[adf['scope'].astype(str).str.upper().eq('PRODUCTION')] if len(adf) else adf
-          all_prod_ready=bool(len(production)) and bool(production['readiness_status'].eq('TACTICAL_CORE_READY').all())
-
-          bridge={
-              'generated_at_utc':datetime.now(timezone.utc).isoformat(),
-              'contract_file':'config/market_reader_signals.csv',
-              'schema_ok':bool(mr_schema_ok),
-              'rows_received':int(len(mr)),
-              'usable_rows':int(mr['usable'].sum()) if 'usable' in mr.columns else 0,
-              'accepted_timeframes':['1H','4H','1D'],
-              'accepted_signals':['LONG','NEUTRAL','EXIT','SHORT'],
-              'strength_scale':'0-10',
-              'freshness_limit_hours':6,
-              'role':'SECOND_EYE_ONLY_NOT_STANDALONE_SIGNAL',
-              'connected':bool(len(mr) and ('usable' in mr.columns) and mr['usable'].any())
-          }
+          adf=pd.DataFrame(assets); production=adf[adf['scope'].astype(str).str.upper().eq('PRODUCTION')] if len(adf) else adf; all_prod_ready=bool(len(production)) and bool(production['readiness_status'].eq('TACTICAL_CORE_READY').all())
+          bridge={'generated_at_utc':datetime.now(timezone.utc).isoformat(),'contract_file':'config/market_reader_signals.csv','schema_ok':bool(mr_schema_ok),'rows_received':int(len(mr)),'usable_rows':int(mr['usable'].sum()) if 'usable' in mr.columns else 0,'accepted_timeframes':['1H','4H','1D'],'accepted_signals':['LONG','NEUTRAL','EXIT','SHORT'],'strength_scale':'0-10','freshness_limit_hours':6,'role':'SECOND_EYE_ONLY_NOT_STANDALONE_SIGNAL','connected':bool(len(mr) and ('usable' in mr.columns) and mr['usable'].any())}
           (ROOT/'MARKET_READER_BRIDGE_STATUS.json').write_text(json.dumps(bridge,indent=2,ensure_ascii=False),encoding='utf-8')
+          payload={'generated_at_utc':datetime.now(timezone.utc).isoformat(),'engine':'V8_TACTICAL_READINESS_v0.5','source_engine':eng.get('engine'),'source_engine_age_hours':engine_age_h,'status':'TACTICAL_CORE_READY_FOR_PAPER_OBSERVATION' if all_prod_ready else 'TACTICAL_CORE_NOT_READY','production_assets':int(len(production)),'production_ready':int(production['readiness_status'].eq('TACTICAL_CORE_READY').sum()) if len(production) else 0,'market_phase':phase.get('phase'),'market_reader_bridge':bridge,'assets':assets,'rules':{'closed_candles_only_required':True,'rsi_macd_mfi_atr_required_on_1h_4h_1d':True,'relative_macd_extremes_required_on_1h_4h_1d':True,'extreme_confluence_required_on_1h_4h_1d':True,'market_reader_never_overrides_hard_risk_blocks':True,'market_reader_is_second_eye_only':True,'history_is_observational_not_strategy_validation':True,'not_execution_connected':True}}
+          (ROOT/'TACTICAL_READINESS.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False),encoding='utf-8'); adf.to_csv(ROOT/'TACTICAL_READINESS.csv',index=False)
 
-          payload={
-              'generated_at_utc':datetime.now(timezone.utc).isoformat(),
-              'engine':'V8_TACTICAL_READINESS_v0.4',
-              'source_engine':eng.get('engine'),
-              'source_engine_age_hours':engine_age_h,
-              'status':'TACTICAL_CORE_READY_FOR_VALIDATION' if all_prod_ready else 'TACTICAL_CORE_NOT_READY',
-              'production_assets':int(len(production)),
-              'production_ready':int(production['readiness_status'].eq('TACTICAL_CORE_READY').sum()) if len(production) else 0,
-              'market_phase':phase.get('phase'),
-              'market_reader_bridge':bridge,
-              'assets':assets,
-              'rules':{
-                  'closed_candles_only_required':True,
-                  'rsi_macd_mfi_atr_required_on_1h_4h_1d':True,
-                  'relative_macd_extremes_required_on_1h_4h_1d':True,
-                  'market_reader_never_overrides_hard_risk_blocks':True,
-                  'market_reader_is_second_eye_only':True,
-                  'history_is_observational_not_strategy_validation':True,
-                  'not_execution_connected':True
-              }
-          }
-          (ROOT/'TACTICAL_READINESS.json').write_text(json.dumps(payload,indent=2,ensure_ascii=False),encoding='utf-8')
-          adf.to_csv(ROOT/'TACTICAL_READINESS.csv',index=False)
-
-          hist=ROOT/'TACTICAL_SIGNAL_HISTORY.csv'
-          hnew=pd.DataFrame(hist_rows)
+          hist=ROOT/'TACTICAL_SIGNAL_HISTORY.csv'; hnew=pd.DataFrame(hist_rows)
           if hist.exists():
-              hold=pd.read_csv(hist)
-              hnew=pd.concat([hold,hnew],ignore_index=True)
-              hnew=hnew.drop_duplicates(['generated_at_utc','symbol'],keep='last').sort_values(['generated_at_utc','symbol'])
+              hold=pd.read_csv(hist); hnew=pd.concat([hold,hnew],ignore_index=True); hnew=hnew.drop_duplicates(['generated_at_utc','symbol'],keep='last').sort_values(['generated_at_utc','symbol'])
           hnew.to_csv(hist,index=False)
-
           print(json.dumps(payload,indent=2,ensure_ascii=False))
-          if not all_prod_ready:
-              raise SystemExit('TACTICAL CORE READINESS FAIL')
+          if not all_prod_ready: raise SystemExit('TACTICAL CORE READINESS FAIL')
           PY
 
       - name: Commit tactical validation outputs
@@ -220,7 +114,7 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add tactical_engine/TACTICAL_READINESS.json tactical_engine/TACTICAL_READINESS.csv tactical_engine/TACTICAL_SIGNAL_HISTORY.csv tactical_engine/MARKET_READER_BRIDGE_STATUS.json
           if ! git diff --cached --quiet; then
-            git commit -m 'Update V8 tactical readiness with MACD extremes'
+            git commit -m 'Update V8 tactical readiness with extreme confluence'
             git pull --rebase origin main
             git push
           fi
