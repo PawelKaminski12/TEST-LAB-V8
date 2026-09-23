@@ -1,0 +1,86 @@
+// V8 DUAL ENGINE — ALARMY EKSTREMÓW UI V3
+// Wyłącznie warstwa wizualna zakładki ALARMY_EKSTREMOW.
+// Nie zmienia logiki LONG ani TACTICAL i nie wykonuje transakcji.
+
+function setupExtremes_(sheet) {
+  const headers = ['AKTYWNY','AKTYWO','INTERWAŁ','ZBIEŻNOŚĆ','PRIORYTET','WAGA INTERWAŁU','SYGNAŁY','RSI','MFI','MACD %','MACD Z','FOMO','OPIS','CZAS DANYCH'];
+  sheet.getRange(1,1,1,headers.length).setValues([headers]);
+  formatExtremeSheet_(sheet, 0);
+}
+
+function writeExtremeAlarms_(sheet, alarms) {
+  const headers = ['AKTYWNY','AKTYWO','INTERWAŁ','ZBIEŻNOŚĆ','PRIORYTET','WAGA INTERWAŁU','SYGNAŁY','RSI','MFI','MACD %','MACD Z','FOMO','OPIS','CZAS DANYCH'];
+  sheet.clearContents();
+  sheet.getRange(1,1,1,headers.length).setValues([headers]);
+
+  const rows = alarms.map(a => [
+    'TAK',a.symbol,a.tf,a.signalCount,a.priority,a.tfWeight,a.type,
+    a.rsi,a.mfi,a.macdPct,a.macdZ,a.fomo,a.reason,a.ts
+  ]);
+
+  if (rows.length) {
+    sheet.getRange(2,1,rows.length,headers.length).setValues(rows);
+  } else {
+    sheet.getRange(2,1,1,headers.length).setValues([['NIE','','','0','BRAK','BRAK','BRAK AKTYWNYCH EKSTREMÓW','','','','','','','']]);
+  }
+
+  formatExtremeSheet_(sheet, rows.length);
+}
+
+function formatExtremeSheet_(sheet, alarmCount) {
+  if (!sheet) return;
+  const cols = 14;
+  const rows = Math.max(2, Number(alarmCount || 0) + 1);
+
+  sheet.setFrozenRows(1);
+  sheet.setFrozenColumns(3);
+  sheet.getRange(1,1,1,cols)
+    .setFontWeight('bold')
+    .setHorizontalAlignment('center')
+    .setVerticalAlignment('middle');
+
+  sheet.getRange(1,1,rows,cols)
+    .setWrap(true)
+    .setVerticalAlignment('middle');
+
+  [72,82,82,88,112,120,310,76,76,88,88,76,430,175]
+    .forEach((w,i)=>sheet.setColumnWidth(i+1,w));
+
+  if (rows > 1) {
+    sheet.getRange(2,2,rows-1,5).setHorizontalAlignment('center');
+    sheet.getRange(2,8,rows-1,5).setHorizontalAlignment('center');
+  }
+
+  const rules = [];
+  const priorityRange = sheet.getRange(2,5,Math.max(1,rows-1),1);
+  rules.push(
+    SpreadsheetApp.newConditionalFormatRule()
+      .whenTextEqualTo('KRYTYCZNY')
+      .setBackground('#f4cccc')
+      .setFontWeight('bold')
+      .setRanges([priorityRange])
+      .build(),
+    SpreadsheetApp.newConditionalFormatRule()
+      .whenTextEqualTo('MOCNY')
+      .setBackground('#fce5cd')
+      .setFontWeight('bold')
+      .setRanges([priorityRange])
+      .build(),
+    SpreadsheetApp.newConditionalFormatRule()
+      .whenTextEqualTo('OSTRZEŻENIE')
+      .setBackground('#fff2cc')
+      .setRanges([priorityRange])
+      .build()
+  );
+
+  const tfRange = sheet.getRange(2,3,Math.max(1,rows-1),1);
+  rules.push(
+    SpreadsheetApp.newConditionalFormatRule()
+      .whenTextEqualTo('1D')
+      .setFontWeight('bold')
+      .setRanges([tfRange])
+      .build()
+  );
+
+  sheet.setConditionalFormatRules(rules);
+}
