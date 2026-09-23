@@ -11,6 +11,8 @@ const V8_FILES = {
   long: V8_REPO_RAW + 'crypto_data_hub/ALT_ENGINE_MASTER_CHECKPOINT.json',
   tactical: V8_REPO_RAW + 'tactical_engine/TACTICAL_ENGINE.json',
   tacticalReadiness: V8_REPO_RAW + 'tactical_engine/TACTICAL_READINESS.json',
+  marketPhase: V8_REPO_RAW + 'crypto_data_hub/CRYPTO_MARKET_PHASE.json',
+  snapshot: V8_REPO_RAW + 'crypto_data_hub/LATEST_SNAPSHOT.json',
   marketReader: V8_REPO_RAW + 'market_reader/TACTICAL_CONFLUENCE.csv'
 };
 
@@ -20,6 +22,7 @@ const V8_SHEETS = {
   portfolioTactical: 'PORTFEL_TACTICAL',
   long: 'SILNIK_LONG',
   tactical: 'SILNIK_TACTICAL',
+  flow: 'PRZEPLYWY',
   marketReader: 'MARKET_READER',
   extremes: 'ALARMY_EKSTREMOW',
   history: 'HISTORIA',
@@ -62,11 +65,14 @@ function ODSWIEZ_WSZYSTKO() {
     const longJson = JSON.parse(fetchText_(V8_FILES.long));
     const tacticalJson = JSON.parse(fetchText_(V8_FILES.tactical));
     const readinessJson = JSON.parse(fetchText_(V8_FILES.tacticalReadiness));
+    const phaseJson = JSON.parse(fetchText_(V8_FILES.marketPhase));
+    const snapshotJson = JSON.parse(fetchText_(V8_FILES.snapshot));
     const mrCsv = fetchText_(V8_FILES.marketReader);
 
     writePolishPanel_(ss.getSheetByName(V8_SHEETS.panel), panelCsv);
     writeLongEngine_(ss.getSheetByName(V8_SHEETS.long), longJson);
-    writeTacticalEngine_(ss.getSheetByName(V8_SHEETS.tactical), tacticalJson, readinessJson);
+    writeTacticalEngine_(ss.getSheetByName(V8_SHEETS.tactical), tacticalJson, readinessJson, phaseJson);
+    writeFlowEngine_(ss.getSheetByName(V8_SHEETS.flow), phaseJson, snapshotJson);
     writeCsvSheet_(ss.getSheetByName(V8_SHEETS.marketReader), mrCsv, false);
 
     const machineSheet = getOrCreateSheet_(ss, 'DANE_MASZYNOWNIA');
@@ -83,7 +89,7 @@ function ODSWIEZ_WSZYSTKO() {
     stampRefresh_(ss);
 
     const active = alarms.filter(a => a.aktywny).length;
-    ss.toast('LONG + TACTICAL odświeżone. Aktywne ekstrema: ' + active, 'V8 DUAL ENGINE', 5);
+    ss.toast('LONG + TACTICAL + PRZEPŁYWY odświeżone. Aktywne ekstrema: ' + active, 'V8 DUAL ENGINE', 5);
   } finally {
     lock.releaseLock();
   }
@@ -148,10 +154,11 @@ function writePolishPanel_(sheet, csvText) {
 }
 
 function writeLongEngine_(sheet, data) {
-  const headers = ['AKTYWO','JAKOŚĆ','STATUS DANYCH','STREFY','TREND','FOMO','ROTACJA','FAZA RYNKU','DECYZJA','DCA1','DCA2','DCA3','BLOKADY'];
+  const headers = ['AKTYWO','JAKOŚĆ','STATUS DANYCH','STREFY','TREND','FOMO','ROTACJA','FAZA RYNKU','FLOW LONG 0–10','FLOW OCENA','ETF 5D','ETF 20D','ETF 30D','DECYZJA','DCA1','DCA2','DCA3','BLOKADY'];
   const assets = (data.assets || []).map(a => [
     a.symbol, a.data_quality, translateReady_(a.readiness_status), a.zone_timeframes,
     a.trend_score_0_4, a.fomo_score_0_10, translateGeneric_(a.rotation_label), translateMarketPhase_(a.market_phase),
+    a.long_flow_score_0_10, translateFlow_(a.long_flow_label), a.direct_etf_5d_usdm, a.direct_etf_20d_usdm, a.direct_etf_30d_usdm,
     translateLong_(a.decision), a.dca1, a.dca2, a.dca3, translateBlockers_(a.blockers)
   ]);
   sheet.clearContents();
@@ -160,15 +167,16 @@ function writeLongEngine_(sheet, data) {
   sheet.setFrozenRows(1);
 }
 
-function writeTacticalEngine_(sheet, data, readiness) {
+function writeTacticalEngine_(sheet, data, readiness, phaseData) {
   const readyMap = {};
   (readiness.assets || []).forEach(a => readyMap[a.symbol] = a);
+  const tacticalFlow = (((phaseData || {}).dual_horizon_flow_context || {}).TACTICAL || {});
   const headers = [
     'AKTYWO','QA','GOTOWOŚĆ','WYNIK','STATUS','RYZYKO WYJŚCIA',
     '1H RSI','1H MFI','1H MACD HIST','1H MACD %','1H MACD Z','1H FOMO','1H EKSTREMUM',
     '4H RSI','4H MFI','4H MACD HIST','4H MACD %','4H MACD Z','4H TREND','4H FOMO','4H EKSTREMUM',
     '1D RSI','1D MFI','1D MACD HIST','1D MACD %','1D MACD Z','1D TREND','1D FOMO','1D EKSTREMUM',
-    'W PODAŻY','W POPYCIE','FAZA RYNKU','BLOKADY'
+    'W PODAŻY','W POPYCIE','FAZA RYNKU','FLOW TACTICAL 0–5','FLOW OCENA','BLOKADY'
   ];
   const settings = getExtremeSettings_(SpreadsheetApp.getActiveSpreadsheet());
   const assets = (data.assets || []).map(a => {
@@ -180,13 +188,36 @@ function writeTacticalEngine_(sheet, data, readiness) {
       h4.rsi14, h4.mfi14, h4.macd_hist, h4.macd_hist_percentile, h4.macd_hist_zscore, h4.trend_score_0_4, h4.fomo_score_0_10, extremeLabel_(h4, settings),
       d1.rsi14, d1.mfi14, d1.macd_hist, d1.macd_hist_percentile, d1.macd_hist_zscore, d1.trend_score_0_4, d1.fomo_score_0_10, extremeLabel_(d1, settings),
       boolPl_(z.in_supply), boolPl_(z.in_demand), translateMarketPhase_((a.market_phase_context || {}).phase || ''),
-      translateBlockers_(a.entry_blockers || a.blockers || [])
+      tacticalFlow.score_0_5, translateFlow_(tacticalFlow.label), translateBlockers_(a.entry_blockers || a.blockers || [])
     ];
   });
   sheet.clearContents();
   sheet.getRange(1,1,1,headers.length).setValues([headers]);
   if (assets.length) sheet.getRange(2,1,assets.length,headers.length).setValues(assets);
   sheet.setFrozenRows(1);
+}
+
+function writeFlowEngine_(sheet, phase, snap) {
+  const i = (phase || {}).inputs || {};
+  const f = (phase || {}).dual_horizon_flow_context || {};
+  const etf = (snap || {}).etf_flows || {};
+  const rows = [
+    ['SEKCJA','WSKAŹNIK','1D / 5D','14D / 20D','30D','STATUS'],
+    ['ROTACJA','ETH/BTC',i.eth_btc_5d_pct,'',i.eth_btc_20d_pct, i.eth_btc_strength ? 'SIŁA ETH/BTC' : 'SŁABOŚĆ ETH/BTC'],
+    ['ROTACJA','BTC.D',i.btc_dominance_pct,i.btc_dom_20d_change_pp,'', 'zmiana pp: ujemna wspiera alty'],
+    ['ROTACJA','ETH.D',i.eth_dominance_pct,'','', 'dominacja ETH'],
+    ['ROTACJA','OTHERS/BTC EQ',i.others_btc_eq_5d_change_pct,i.others_btc_eq_20d_change_pct,'', 'trend altów vs BTC'],
+    ['PŁYNNOŚĆ','STABLECOINY',i.stablecoin_7d_pct,i.stablecoin_14d_pct,i.stablecoin_30d_pct, i.stablecoin_30d_pct > 0 ? 'NAPŁYW PŁYNNOŚCI' : 'BRAK NAPŁYWU'],
+    ['ETF','BTC ETF',i.btc_etf_5d_usdm,i.btc_etf_20d_usdm,i.btc_etf_30d_usdm, ((etf.BTC || {}).trend_label || '')],
+    ['ETF','ETH ETF',i.eth_etf_5d_usdm,i.eth_etf_20d_usdm,i.eth_etf_30d_usdm, ((etf.ETH || {}).trend_label || '')],
+    ['ETF','SOL ETF',i.sol_etf_5d_usdm,i.sol_etf_20d_usdm,i.sol_etf_30d_usdm, ((etf.SOL || {}).trend_label || '')],
+    ['SCORE','LONG FLOW',((f.LONG || {}).score_0_10 || ''),'','',translateFlow_((f.LONG || {}).label)],
+    ['SCORE','TACTICAL FLOW',((f.TACTICAL || {}).score_0_5 || ''),'','',translateFlow_((f.TACTICAL || {}).label)]
+  ];
+  sheet.clearContents();
+  sheet.getRange(1,1,rows.length,rows[0].length).setValues(rows);
+  sheet.setFrozenRows(1);
+  sheet.autoResizeColumns(1,rows[0].length);
 }
 
 function setupPortfolioLong_(sheet) {
@@ -377,7 +408,7 @@ function appendHistoryOnChanges_(ss, oldState, newState) {
 }
 
 function translateLong_(v) {
-  const m = {'WAIT':'CZEKAJ','CHECK':'SPRAWDŹ','BUY_DCA':'KUP DCA','BUY_TREND':'KUP TRENDOWO','BUY_RETEST':'KUP PO RETEŚCIE','HOLD':'TRZYMAJ','PROTECT_PROFIT':'OCHRONA ZYSKU','EXIT':'UPŁYNNIJ BASEN'};
+  const m = {'WAIT':'CZEKAJ','CHECK':'SPRAWDŹ','BUY_DCA':'KUP DCA','BUY_TREND':'KUP TRENDOWO','BUY_RETEST':'KUP PO RETEŚCIE','HOLD':'TRZYMAJ','PROTECT_PROFIT':'OCHRONA ZYSKU','EXIT':'WYJDŹ'};
   return m[String(v||'').toUpperCase()] || v || '';
 }
 
@@ -397,12 +428,17 @@ function translateAlert_(v) {
 }
 
 function translateReady_(v) {
-  const m = {'TACTICAL_CORE_READY':'RDZEŃ TACTICAL GOTOWY','READY_FOR_PAPER_OBSERVATION':'GOTOWY DO OBSERWACJI','READY':'GOTOWY','PASS':'OK'};
+  const m = {'TACTICAL_CORE_READY':'RDZEŃ TACTICAL GOTOWY','READY_FOR_PAPER_OBSERVATION':'GOTOWY DO OBSERWACJI','READY':'GOTOWY','PASS':'OK','PRODUCTION_DATA_READY':'DANE PRODUKCYJNE GOTOWE'};
   return m[String(v||'').toUpperCase()] || v || '';
 }
 
 function translateMarketPhase_(v) {
-  const m = {'ALT_ROTATION_CANDIDATE':'KANDYDAT DO ROTACJI W ALTY','BTC_DOMINANT':'DOMINACJA BTC','RISK_OFF':'RISK-OFF','RISK_ON':'RISK-ON','NEUTRAL':'NEUTRALNIE'};
+  const m = {'ALT_ROTATION_CANDIDATE':'KANDYDAT DO ROTACJI W ALTY','ALT_ROTATION_CONFIRMED':'ROTACJA W ALTY POTWIERDZONA','BTC_LEAD':'PROWADZI BTC','BROAD_RECOVERY':'SZEROKIE ODBICIE','ALT_WATCH':'OBSERWUJ ALTY','RISK_OFF_OR_REPAIR':'RISK-OFF / NAPRAWA RYNKU','BTC_DOMINANT':'DOMINACJA BTC','RISK_OFF':'RISK-OFF','RISK_ON':'RISK-ON','NEUTRAL':'NEUTRALNIE'};
+  return m[String(v||'').toUpperCase()] || v || '';
+}
+
+function translateFlow_(v) {
+  const m = {'STRONG_POSITIVE':'MOCNO DODATNIO','POSITIVE':'DODATNIO','NEUTRAL':'NEUTRALNIE','WEAK':'SŁABO','INFLOW_ACCELERATING':'NAPŁYW PRZYSPIESZA','INFLOW_POSITIVE':'NAPŁYW DODATNI','OUTFLOW_ACCELERATING':'ODPŁYW PRZYSPIESZA','OUTFLOW_NEGATIVE':'ODPŁYW','INSUFFICIENT':'ZA MAŁO DANYCH'};
   return m[String(v||'').toUpperCase()] || v || '';
 }
 
