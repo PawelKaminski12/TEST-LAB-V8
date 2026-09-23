@@ -1,0 +1,234 @@
+name: TEST LAB V8 Crypto Market Phase
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '25 6 * * *'
+  push:
+    paths:
+      - '.github/workflows/test-lab-v8-crypto-market-phase.yml'
+      - 'crypto_data_hub/LATEST_SNAPSHOT.json'
+      - 'crypto_data_hub/HISTORY.csv'
+      - 'crypto_data_hub/ALT_ROTATION_SCORE.json'
+      - 'crypto_data_hub/ALT_TECHNICAL_LAYER.json'
+      - 'config/alt_universe.csv'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-alt-engine-writes
+  cancel-in-progress: false
+
+jobs:
+  build-crypto-market-phase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install --quiet pandas
+
+      - name: Build market phase and capital-flow context
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import pandas as pd
+
+          R=Path('crypto_data_hub')
+          required=[R/'LATEST_SNAPSHOT.json',R/'ALT_ROTATION_SCORE.json',R/'ALT_TECHNICAL_LAYER.json',Path('config/alt_universe.csv')]
+          missing=[str(p) for p in required if not p.exists()]
+          if missing:
+              raise SystemExit('Missing required files: '+', '.join(missing))
+
+          snap=json.loads((R/'LATEST_SNAPSHOT.json').read_text(encoding='utf-8'))
+          rot=json.loads((R/'ALT_ROTATION_SCORE.json').read_text(encoding='utf-8'))
+          tech=json.loads((R/'ALT_TECHNICAL_LAYER.json').read_text(encoding='utf-8'))
+          hist=pd.read_csv(R/'HISTORY.csv') if (R/'HISTORY.csv').exists() else pd.DataFrame()
+          cfg=pd.read_csv('config/alt_universe.csv')
+          cfg=cfg[cfg['enabled'].astype(str).str.lower().eq('true')].copy()
+
+          qa=bool(snap.get('qa',{}).get('PASS'))
+          if not qa:
+              raise SystemExit('CRYPTO DATA HUB QA FAIL')
+
+          btc=snap.get('btc_regime',{})
+          eth=snap.get('eth_regime',{})
+          rs=snap.get('relative_strength',{})
+          liq=snap.get('stablecoin_liquidity',{})
+          etf=snap.get('etf_flows',{})
+          mkt=snap.get('market_rotation',{})
+          techmap={x.get('symbol'):x for x in tech.get('assets',[])}
+
+          history_days=int(len(hist))
+          broad_history_ready=bool(rot.get('broad_rotation_history_ready'))
+          score=int(rot.get('score_0_10',0) or 0)
+          rot_status=str(rot.get('status','OFF'))
+          rot_conf=str(rot.get('confidence','LOW'))
+
+          btc_trend = bool(btc.get('above_sma50')) and bool(btc.get('above_sma200')) and bool(btc.get('sma50_rising_20d'))
+          eth_trend = bool(eth.get('above_sma50')) and bool(eth.get('above_sma200')) and bool(eth.get('sma50_rising_20d'))
+          ethbtc = rs.get('ETH_BTC',{})
+          ethbtc_strength = bool(ethbtc.get('above_sma50')) and bool(ethbtc.get('sma50_rising_20d'))
+          stable_positive = float(liq.get('change_30d_pct') or 0) > 0
+          btc_etf_5 = float(etf.get('BTC',{}).get('flow_5d_usdm') or 0)
+          eth_etf_5 = float(etf.get('ETH',{}).get('flow_5d_usdm') or 0)
+          sol_etf_5 = float(etf.get('SOL',{}).get('flow_5d_usdm') or 0)
+          etf_risk_on = btc_etf_5 > 0 and eth_etf_5 > 0
+
+          # Phase is descriptive, not a buy/sell command.
+          # Broad alt confirmation is deliberately withheld until persisted dominance/breadth history matures.
+          if not btc_trend and not eth_trend:
+              phase='RISK_OFF_OR_REPAIR'
+          elif btc_trend and not eth_trend:
+              phase='BTC_LEAD'
+          elif btc_trend and eth_trend and score <= 3:
+              phase='BROAD_RECOVERY'
+          elif btc_trend and eth_trend and score <= 5:
+              phase='ALT_WATCH'
+          elif btc_trend and eth_trend and score >= 6 and not broad_history_ready:
+              phase='ALT_ROTATION_CANDIDATE'
+          elif btc_trend and eth_trend and score >= 6 and broad_history_ready:
+              phase='ALT_ROTATION_CONFIRMED'
+          else:
+              phase='MIXED'
+
+          phase_points={
+              'BTC_TREND':2 if btc_trend else 0,
+              'ETH_TREND':2 if eth_trend else 0,
+              'ETH_BTC':1 if ethbtc_strength else 0,
+              'ETF_RISK_ON':1 if etf_risk_on else 0,
+              'STABLECOIN_LIQUIDITY':1 if stable_positive else 0,
+              'ALT_ROTATION_SCORE':2 if score>=6 else 1 if score>=4 else 0,
+              'BROAD_HISTORY_CONFIRMATION':1 if broad_history_ready and int(rot.get('parts',{}).get('BROAD_ROTATION_TREND',0) or 0)>0 else 0,
+          }
+          phase_score=sum(phase_points.values())
+
+          mature_inputs=0
+          mature_inputs += 1 if history_days>=20 else 0
+          mature_inputs += 1 if int(snap.get('qa',{}).get('btc_etf_rows',0) or 0)>=100 else 0
+          mature_inputs += 1 if int(snap.get('qa',{}).get('eth_etf_rows',0) or 0)>=100 else 0
+          mature_inputs += 1 if int(snap.get('qa',{}).get('sol_etf_rows',0) or 0)>=20 else 0
+          mature_inputs += 1 if int(snap.get('qa',{}).get('stablecoin_history_rows',0) or 0)>=100 else 0
+          phase_conf_pct=round(mature_inputs/5*100)
+          phase_conf='HIGH' if phase_conf_pct>=80 else 'MEDIUM' if phase_conf_pct>=60 else 'LOW'
+
+          asset_context=[]
+          rotation_assets=rot.get('alt_readiness',{})
+          for _,r in cfg.iterrows():
+              sym=str(r['symbol']).upper().strip()
+              if sym=='BTC':
+                  continue
+              t=techmap.get(sym,{})
+              ar=rotation_assets.get(sym,{})
+              direct_etf=None
+              if sym in etf:
+                  ee=etf[sym]
+                  direct_etf={
+                      'flow_1d_usdm':ee.get('flow_1d_usdm'),
+                      'flow_5d_usdm':ee.get('flow_5d_usdm'),
+                      'flow_20d_usdm':ee.get('flow_20d_usdm'),
+                      'rows':ee.get('rows'),
+                      'mature':bool(int(ee.get('rows',0) or 0)>=20),
+                  }
+              asset_context.append({
+                  'symbol':sym,
+                  'target_scope':str(r.get('target_scope','UNCLASSIFIED')),
+                  'market_phase':phase,
+                  'rotation_score_0_10':score,
+                  'rotation_status':rot_status,
+                  'rotation_label':ar.get('label','CORE_ALT' if sym=='ETH' else 'NO_RS_LABEL'),
+                  'individual_rs_0_4':ar.get('individual_rs_0_4'),
+                  'trend_score_0_4':t.get('trend_score_0_4'),
+                  'fomo_score_0_10':t.get('fomo_score_0_10'),
+                  'direct_etf_context':direct_etf,
+                  'stablecoin_30d_pct':liq.get('change_30d_pct'),
+              })
+
+          limitations=[]
+          if not broad_history_ready:
+              limitations.append('BROAD_ROTATION_TREND_NOT_MATURE: fewer than 20 persisted daily market-rotation snapshots.')
+          if int(snap.get('qa',{}).get('sol_etf_rows',0) or 0)<20:
+              limitations.append('SOL_ETF_HISTORY_IMMATURE: direct SOL ETF flow is context only.')
+          limitations.append('V8_TOTAL3_EQ and V8_OTHERS_BTC_EQ remain CoinGecko equivalents and are not certified 1:1 versus TradingView.')
+          limitations.append('Market phase is descriptive context; it is not an execution signal.')
+
+          out={
+              'date':snap.get('target_date'),
+              'engine':'CRYPTO_MARKET_PHASE_v0.1',
+              'phase':phase,
+              'phase_score_0_10':phase_score,
+              'phase_confidence':phase_conf,
+              'phase_confidence_pct':phase_conf_pct,
+              'rotation_score_0_10':score,
+              'rotation_status':rot_status,
+              'rotation_confidence':rot_conf,
+              'history_days':history_days,
+              'broad_rotation_history_ready':broad_history_ready,
+              'inputs':{
+                  'btc_trend':btc_trend,
+                  'eth_trend':eth_trend,
+                  'eth_btc_strength':ethbtc_strength,
+                  'btc_drawdown_365d_pct':btc.get('drawdown_365d_pct'),
+                  'eth_drawdown_365d_pct':eth.get('drawdown_365d_pct'),
+                  'btc_dominance_pct':mkt.get('btc_dominance_pct'),
+                  'eth_dominance_pct':mkt.get('eth_dominance_pct'),
+                  'stablecoin_7d_pct':liq.get('change_7d_pct'),
+                  'stablecoin_30d_pct':liq.get('change_30d_pct'),
+                  'btc_etf_5d_usdm':btc_etf_5,
+                  'eth_etf_5d_usdm':eth_etf_5,
+                  'sol_etf_5d_usdm':sol_etf_5,
+              },
+              'phase_points':phase_points,
+              'asset_context':asset_context,
+              'limitations':limitations,
+              'hard_rules':{
+                  'not_execution_signal':True,
+                  'no_broad_alt_confirmation_without_history':True,
+                  'relative_strength_not_hard_gate':True,
+                  'etf_flow_is_confirmation_not_oracle':True,
+              }
+          }
+          (R/'CRYPTO_MARKET_PHASE.json').write_text(json.dumps(out,indent=2,ensure_ascii=False),encoding='utf-8')
+
+          cockpit=pd.DataFrame(asset_context)
+          # Flatten direct ETF for compact CSV cockpit.
+          if not cockpit.empty:
+              cockpit['direct_etf_5d_usdm']=cockpit['direct_etf_context'].apply(lambda x: x.get('flow_5d_usdm') if isinstance(x,dict) else None)
+              cockpit['direct_etf_mature']=cockpit['direct_etf_context'].apply(lambda x: x.get('mature') if isinstance(x,dict) else None)
+              cockpit=cockpit.drop(columns=['direct_etf_context'])
+          cockpit.to_csv(R/'CRYPTO_MARKET_COCKPIT.csv',index=False)
+
+          histrow=pd.DataFrame([{
+              'date':out['date'],'phase':phase,'phase_score':phase_score,'phase_confidence_pct':phase_conf_pct,
+              'rotation_score':score,'btc_trend':btc_trend,'eth_trend':eth_trend,'eth_btc_strength':ethbtc_strength,
+              'btc_dom_pct':mkt.get('btc_dominance_pct'),'eth_dom_pct':mkt.get('eth_dominance_pct'),
+              'stablecoin_30d_pct':liq.get('change_30d_pct'),'btc_etf_5d_usdm':btc_etf_5,'eth_etf_5d_usdm':eth_etf_5,'sol_etf_5d_usdm':sol_etf_5,
+              'broad_history_ready':broad_history_ready
+          }])
+          hf=R/'CRYPTO_MARKET_PHASE_HISTORY.csv'
+          if hf.exists():
+              histrow=pd.concat([pd.read_csv(hf),histrow],ignore_index=True).drop_duplicates('date',keep='last').sort_values('date')
+          histrow.to_csv(hf,index=False)
+          print(json.dumps(out,indent=2,ensure_ascii=False))
+          PY
+
+      - name: Commit market phase outputs
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add crypto_data_hub/CRYPTO_MARKET_PHASE.json crypto_data_hub/CRYPTO_MARKET_COCKPIT.csv crypto_data_hub/CRYPTO_MARKET_PHASE_HISTORY.csv
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update V8 crypto market phase'
+            git pull --rebase origin main
+            git push
+          fi
