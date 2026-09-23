@@ -4,7 +4,7 @@ from pathlib import Path
 from datetime import datetime, timezone
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / 'tactical_validation' / 'TACTICAL_VALIDATION_DATA.csv'
+DATA = ROOT / 'tactical_validation' / 'TACTICAL_WALKFORWARD_OBSERVATIONS.csv'
 LAB = ROOT / 'tactical_validation' / 'TACTICAL_THRESHOLD_LAB.json'
 OUT_JSON = ROOT / 'tactical_validation' / 'TACTICAL_CHALLENGER_MATRIX_V3.json'
 OUT_CSV = ROOT / 'tactical_validation' / 'TACTICAL_CHALLENGER_MATRIX_V3.csv'
@@ -80,13 +80,6 @@ def by_group(rows, rule, keyfn):
     for r in rows:
         groups.setdefault(keyfn(r),[]).append(r)
     return {k:metric(v,rule) for k,v in sorted(groups.items())}
-
-
-def temporal_quarters(rows):
-    times=sorted({r.get('decision_time_utc','') for r in rows})
-    if not times: return {}
-    idx={t:min(3,int(i*4/len(times))) for i,t in enumerate(times)}
-    return by_group(rows, {'score_min':-999,'fomo_max':999,'trend4_min':-999,'rsi_lo':-999,'rsi_hi':999}, lambda r:'Q'+str(idx[r.get('decision_time_utc','')]+1))
 
 
 def fold_slices(rows):
