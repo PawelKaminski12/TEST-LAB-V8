@@ -1,11 +1,13 @@
 {
-  "generated_at_utc": "2026-09-23T15:06:53.046318+00:00",
-  "engine": "V8_ASSET_LAB_v0.3",
-  "active_assets": 2,
+  "generated_at_utc": "2026-09-23T15:16:25.291301+00:00",
+  "engine": "V8_ASSET_LAB_v0.4",
+  "active_assets": 3,
   "fast_mode_ready": true,
   "fast_multitimeframe_enabled": true,
   "deep_mode_ready": true,
   "deep_comparison_enabled": true,
+  "polish_user_language": true,
+  "btc_dedicated_etf_filter": true,
   "crypto_checkpoints": [
     "D0",
     "D1",

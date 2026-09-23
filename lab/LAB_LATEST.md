@@ -1,37 +1,56 @@
-# V8 ASSET LAB — latest
+# V8 LAB — NAJNOWSZA ANALIZA
 
-Generated: 2026-09-23T15:06:53.046318+00:00
-Engine: V8_ASSET_LAB_v0.3
+Czas analizy: 2026-09-23T15:16:25.291301+00:00
 
-## ETH — CRYPTO — BOTH
-- Data: **DATA_READY** (80/100) | MTF ready: 3/3
-- Checkpoint: **D0** | FAST: **STRONG_CONTEXT 8.17/10**
-- Risk flags: BRAK
-- 1H: trend 2/4 | RSI 24.327173066829218 | MFI 4.050394312405459 | MACD hist -9.311889816085367 | FOMO 0/10
-- 4H: trend 3/4 | RSI 48.52722300532416 | MFI 72.12367695513406 | MACD hist -10.75729453196827 | FOMO 0/10
-- 1D: price 2674.3798828125 | trend 4/4 | RSI 62.4408715320313 | MFI 57.669992013105286 | MACD hist 12.872175374986668 | FOMO 0/10
-- Market phase: ALT_ROTATION_CANDIDATE | rotation: 7/10 CONFIRMED
-- BTC.D: 58.72003957091988 | ETH.D: 11.325673395922939 | ETH/BTC 20D: 3.279176735238498%
-- ETF BTC 5D/20D: 2306.2 / 2516.4 mln USD | ETF ETH 5D/20D: 536.5999999999999 / 1235.5000000000002 mln USD
-- Stablecoin liquidity 7D/30D: 0.4492048921584946% / 1.094835977572206%
-- On-chain LONG: 9/10 | Tactical: 9/10 | quality: TRUSTED
-- Existing engine decision: CZEKAJ | flow LONG: 7 | flow TACTICAL: 3
-- DEEP: TRACKING | elapsed days: 0.006551320648148147 | price Δ: -0.015708314937745715% | RSI Δ: -0.035274172980408025 | MFI Δ: -0.1411354213426037
-
----
-
-## ANET — STOCK — BOTH
-- Data: **PARTIAL** (55/100) | MTF ready: 2/3
-- Checkpoint: **D0** | FAST: **MIXED_CONTEXT 5.15/10**
-- Risk flags: BRAK
-- 1H: trend 3/4 | RSI 49.01818782385777 | MFI 67.70541002459979 | MACD hist -0.39565049240018313 | FOMO 0/10
-- 4H: trend None/4 | RSI None | MFI None | MACD hist None | FOMO None/10
-- 1D: price 201.80999755859375 | trend 4/4 | RSI 56.50973757241232 | MFI 74.82664436347737 | MACD hist 0.6625498024599006 | FOMO 0/10
-- Market cap: 254716952576.0 | P/E: 63.911392 | Forward P/E: 38.93265 | P/S: 24.14691
-- Revenue growth: 0.377 | Earnings growth: 0.357 | Debt/Equity: None | FCF: 3891512576.0
-- DEEP: TRACKING | elapsed days: 0.006551320648148147 | price Δ: -0.6302618555210859% | RSI Δ: -1.1403247792439828 | MFI Δ: -0.07573844835717125
+## BTC — KRYPTO — SZYBKA ANALIZA + GŁĘBOKA OBSERWACJA
+- Stan danych: **DANE WYSTARCZAJĄCE DO ANALIZY** (65/100). Pełne interwały: 3/3.
+- Wniosek z szybkiej analizy: **MOCNE POTWIERDZENIE — 9.20/10**.
+- Ryzyka / ostrzeżenia: brak ważnych ostrzeżeń.
+- 1 godzina: trend 2/4, RSI 35.09, MFI 6.17, FOMO 0/10.
+- 4 godziny: trend 4/4, RSI 57.15, MFI 73.10, FOMO 0/10.
+- 1 dzień: cena 84745.59, trend 4/4, RSI 66.73, MFI 57.25, FOMO 0/10.
+- Sytuacja rynku krypto: ALT_ROTATION_CANDIDATE | siła rotacji w alty: 7/10.
+- Dominacja BTC: 58.72% | dominacja ETH: 11.33% | ETH/BTC za 20 dni: 3.28%.
+- Płynność stablecoinów: 7 dni 0.45% | 30 dni 1.09%.
+- Dane z sieci blockchain: długi termin None/10 | krótki termin None/10.
+- Decyzja głównego silnika: brak osobnej decyzji dla tego aktywa.
+- **ETF BTC: NAPŁYW PRZYSPIESZA**.
+- Przepływ do ETF BTC: 1 dzień 0.00 mln USD | 5 dni 2306.20 mln USD | 20 dni 2516.40 mln USD | 30 dni 4837.70 mln USD.
+- Zmiana tempa napływów z ostatnich 5 dni: 3188.50 mln USD.
+- Co to znaczy: Dodatnia wartość oznacza napływ kapitału do amerykańskich spot ETF BTC; ujemna oznacza odpływ.
+- Głęboka obserwacja: **UTWORZONO PUNKT STARTOWY**. Minęło brak danych dnia; zmiana ceny od punktu startowego brak danych%.
 
 ---
 
-FAST score is context only, not a buy/sell signal.
-Research only. LAB never executes trades and never auto-adds an asset to the production portfolio.
+## ETH — KRYPTO — SZYBKA ANALIZA + GŁĘBOKA OBSERWACJA
+- Stan danych: **DANE WYSTARCZAJĄCE DO ANALIZY** (80/100). Pełne interwały: 3/3.
+- Wniosek z szybkiej analizy: **MOCNE POTWIERDZENIE — 8.17/10**.
+- Ryzyka / ostrzeżenia: brak ważnych ostrzeżeń.
+- 1 godzina: trend 2/4, RSI 28.99, MFI 4.13, FOMO 0/10.
+- 4 godziny: trend 3/4, RSI 50.09, MFI 73.35, FOMO 0/10.
+- 1 dzień: cena 2683.33, trend 4/4, RSI 63.20, MFI 57.61, FOMO 0/10.
+- Sytuacja rynku krypto: ALT_ROTATION_CANDIDATE | siła rotacji w alty: 7/10.
+- Dominacja BTC: 58.72% | dominacja ETH: 11.33% | ETH/BTC za 20 dni: 3.28%.
+- Płynność stablecoinów: 7 dni 0.45% | 30 dni 1.09%.
+- Dane z sieci blockchain: długi termin 9/10 | krótki termin 9/10.
+- Decyzja głównego silnika: CZEKAJ.
+- Tło ETF: BTC 5 dni 2306.20 mln USD / 20 dni 2516.40 mln USD; ETH 5 dni 536.60 mln USD / 20 dni 1235.50 mln USD.
+- Głęboka obserwacja: **OBSERWACJA TRWA**. Minęło 0.01 dnia; zmiana ceny od punktu startowego 0.32%.
+
+---
+
+## ANET — SPÓŁKA — SZYBKA ANALIZA + GŁĘBOKA OBSERWACJA
+- Stan danych: **DANE NIEPEŁNE — WYNIK TRAKTUJ OSTROŻNIE** (55/100). Pełne interwały: 2/3.
+- Wniosek z szybkiej analizy: **SYGNAŁY MIESZANE — 5.15/10**.
+- Ryzyka / ostrzeżenia: brak ważnych ostrzeżeń.
+- 1 godzina: trend 3/4, RSI 48.71, MFI 66.93, FOMO 0/10.
+- 4 godziny: trend None/4, RSI brak danych, MFI brak danych, FOMO None/10.
+- 1 dzień: cena 201.71, trend 4/4, RSI 56.42, MFI 74.75, FOMO 0/10.
+- Kapitalizacja: 254414241792 | P/E: 63.84 | przyszłe P/E: 38.89 | cena/sprzedaż: 24.14.
+- Wzrost przychodów: 37.70% | wzrost zysków: 35.70% | wolne przepływy pieniężne: 3891512576.
+- Głęboka obserwacja: **OBSERWACJA TRWA**. Minęło 0.01 dnia; zmiana ceny od punktu startowego -0.68%.
+
+---
+
+Wynik LAB-u jest pomocą w analizie. Nie jest automatycznym poleceniem kupna ani sprzedaży.
+LAB nie wykonuje transakcji i nie dodaje aktywów automatycznie do portfela produkcyjnego.
