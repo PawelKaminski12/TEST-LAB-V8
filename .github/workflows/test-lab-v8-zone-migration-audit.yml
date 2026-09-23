@@ -1,0 +1,154 @@
+name: TEST LAB V8 Zone Migration Audit
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'config/alt_zones.csv'
+      - 'config/alt_zone_migration.csv'
+      - '.github/workflows/test-lab-v8-zone-migration-audit.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-zone-migration-audit
+  cancel-in-progress: false
+
+jobs:
+  audit-zone-migration:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz najnowszy projekt
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Przygotuj Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Zainstaluj biblioteki
+        run: pip install --quiet pandas
+
+      - name: Sprawdź migrację stref
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from datetime import datetime, timezone
+          import pandas as pd
+
+          required_assets=['ETH','SOL','LINK','ONDO','RENDER','FLOKI','PEPE','SPX6900','XRP','XLM','HBAR']
+          required_tfs=['1D','2D','3D','4D','5D','1T','2T']
+          mig=Path('config/alt_zone_migration.csv')
+          zones=Path('config/alt_zones.csv')
+          if not mig.exists() or not zones.exists():
+              raise SystemExit('Brak pliku migracji albo MASTER stref.')
+          m=pd.read_csv(mig)
+          z=pd.read_csv(zones)
+          m['symbol']=m['symbol'].astype(str).str.upper()
+          m['timeframe']=m['timeframe'].astype(str).str.upper()
+          z['symbol']=z['symbol'].astype(str).str.upper()
+          z['timeframe']=z['timeframe'].astype(str).str.upper()
+          z['source_status']=z['source_status'].astype(str).str.upper()
+
+          rows=[]
+          errors=[]
+          for sym in required_assets:
+              sm=m[m.symbol.eq(sym)]
+              got=sorted(set(sm.timeframe.tolist()), key=lambda x: required_tfs.index(x) if x in required_tfs else 99)
+              missing=[tf for tf in required_tfs if tf not in got]
+              if missing:
+                  errors.append(f'{sym}: brak rekordów migracji {missing}')
+              numeric=[]
+              source=[]
+              for tf in required_tfs:
+                  r=sm[sm.timeframe.eq(tf)]
+                  if len(r):
+                      rr=r.iloc[0]
+                      if str(rr.get('source_found','')).lower()=='true': source.append(tf)
+                      if str(rr.get('numeric_ready','')).lower()=='true': numeric.append(tf)
+              master_numeric=sorted(set(z[(z.symbol.eq(sym)) & (z.source_status.eq('CONFIRMED'))].timeframe.tolist()), key=lambda x: required_tfs.index(x) if x in required_tfs else 99)
+              mismatch=[tf for tf in numeric if tf not in master_numeric]
+              if mismatch:
+                  errors.append(f'{sym}: migracja mówi GOTOWE, ale brak liczbowych stref w MASTER: {mismatch}')
+              rows.append({
+                  'symbol':sym,
+                  'source_found_count':len(source),
+                  'numeric_ready_count':len(numeric),
+                  'source_found_timeframes':', '.join(source) if source else 'BRAK',
+                  'numeric_ready_timeframes':', '.join(numeric) if numeric else 'BRAK',
+                  'missing_numeric_timeframes':', '.join([tf for tf in required_tfs if tf not in numeric]) or 'BRAK',
+                  'complete_7_of_7':len(numeric)==7,
+              })
+
+          if errors:
+              print('\n'.join(errors))
+              raise SystemExit('Audyt migracji wykrył niespójność danych.')
+
+          out=pd.DataFrame(rows)
+          Path('audit').mkdir(exist_ok=True)
+          out.to_csv('audit/V8_ZONE_MIGRATION_STATUS.csv',index=False)
+          ready_assets=int(out.complete_7_of_7.sum())
+          numeric_points=int(out.numeric_ready_count.sum())
+          total_points=len(required_assets)*len(required_tfs)
+          pct=round(numeric_points/total_points*100,1)
+          lines=[
+              '# V8 — MIGRACJA STREF V7 → V8',
+              '',
+              f'**Liczbowo przeniesione interwały: {numeric_points}/{total_points} ({pct}%)**',
+              f'**Aktywa z pełnym kompletem 7/7: {ready_assets}/{len(required_assets)}**',
+              '',
+              'Zasada: brak zgadywania. Strefa jest liczbowo GOTOWA tylko wtedy, gdy jej poziomy są zapisane w `config/alt_zones.csv` jako `CONFIRMED`.',
+              '',
+          ]
+          for r in rows:
+              status='GOTOWE 7/7' if r['complete_7_of_7'] else f"GOTOWE {r['numeric_ready_count']}/7"
+              lines.append(f"- **{r['symbol']}** — {status}; brak liczb: {r['missing_numeric_timeframes']}")
+          Path('audit/V8_ZONE_MIGRATION_LATEST.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
+          Path('audit/V8_ZONE_MIGRATION_STATUS.json').write_text(json.dumps({
+              'generated_at_utc':datetime.now(timezone.utc).isoformat(),
+              'numeric_ready_points':numeric_points,
+              'total_points':total_points,
+              'numeric_ready_percent':pct,
+              'assets_complete_7_of_7':ready_assets,
+              'asset_count':len(required_assets),
+              'no_guessing':True,
+              'rows':rows,
+          },ensure_ascii=False,indent=2),encoding='utf-8')
+          print(f'Migracja: {numeric_points}/{total_points} = {pct}%; komplet 7/7: {ready_assets}/{len(required_assets)}')
+          PY
+
+      - name: Sprawdź zasady bezpieczeństwa
+        run: |
+          python - <<'PY'
+          import json
+          x=json.load(open('audit/V8_ZONE_MIGRATION_STATUS.json'))
+          assert x['no_guessing'] is True
+          assert x['asset_count']==11
+          assert x['total_points']==77
+          assert len(x['rows'])==11
+          print('Audyt bezpieczeństwa migracji zakończony poprawnie.')
+          PY
+
+      - name: Zapisz wynik bez konfliktu
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          mkdir -p /tmp/zoneaudit
+          cp audit/V8_ZONE_MIGRATION_STATUS.csv audit/V8_ZONE_MIGRATION_STATUS.json audit/V8_ZONE_MIGRATION_LATEST.md /tmp/zoneaudit/
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            mkdir -p audit
+            cp /tmp/zoneaudit/* audit/
+            git add audit/V8_ZONE_MIGRATION_STATUS.csv audit/V8_ZONE_MIGRATION_STATUS.json audit/V8_ZONE_MIGRATION_LATEST.md
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Update V8 zone migration audit'
+            if git push origin main; then exit 0; fi
+            sleep $((attempt*3))
+          done
+          exit 1
