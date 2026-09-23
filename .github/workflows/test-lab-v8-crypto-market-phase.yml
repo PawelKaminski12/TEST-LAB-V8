@@ -47,8 +47,7 @@ jobs:
           R=Path('crypto_data_hub')
           required=[R/'LATEST_SNAPSHOT.json',R/'ALT_ROTATION_SCORE.json',R/'ALT_TECHNICAL_LAYER.json',Path('config/alt_universe.csv')]
           missing=[str(p) for p in required if not p.exists()]
-          if missing:
-              raise SystemExit('Missing required files: '+', '.join(missing))
+          if missing: raise SystemExit('Missing required files: '+', '.join(missing))
 
           snap=json.loads((R/'LATEST_SNAPSHOT.json').read_text(encoding='utf-8'))
           rot=json.loads((R/'ALT_ROTATION_SCORE.json').read_text(encoding='utf-8'))
@@ -57,50 +56,41 @@ jobs:
           cfg=pd.read_csv('config/alt_universe.csv')
           cfg=cfg[cfg['enabled'].astype(str).str.lower().eq('true')].copy()
 
-          qa=bool(snap.get('qa',{}).get('PASS'))
-          if not qa:
-              raise SystemExit('CRYPTO DATA HUB QA FAIL')
+          if not bool(snap.get('qa',{}).get('PASS')): raise SystemExit('CRYPTO DATA HUB QA FAIL')
 
-          btc=snap.get('btc_regime',{})
-          eth=snap.get('eth_regime',{})
-          rs=snap.get('relative_strength',{})
-          liq=snap.get('stablecoin_liquidity',{})
-          etf=snap.get('etf_flows',{})
-          mkt=snap.get('market_rotation',{})
+          btc=snap.get('btc_regime',{}); eth=snap.get('eth_regime',{})
+          rs=snap.get('relative_strength',{}); liq=snap.get('stablecoin_liquidity',{})
+          etf=snap.get('etf_flows',{}); mkt=snap.get('market_rotation',{})
           techmap={x.get('symbol'):x for x in tech.get('assets',[])}
 
           history_days=int(len(hist))
           broad_history_ready=bool(rot.get('broad_rotation_history_ready'))
           score=int(rot.get('score_0_10',0) or 0)
-          rot_status=str(rot.get('status','OFF'))
-          rot_conf=str(rot.get('confidence','LOW'))
+          rot_status=str(rot.get('status','OFF')); rot_conf=str(rot.get('confidence','LOW'))
 
-          btc_trend = bool(btc.get('above_sma50')) and bool(btc.get('above_sma200')) and bool(btc.get('sma50_rising_20d'))
-          eth_trend = bool(eth.get('above_sma50')) and bool(eth.get('above_sma200')) and bool(eth.get('sma50_rising_20d'))
-          ethbtc = rs.get('ETH_BTC',{})
-          ethbtc_strength = bool(ethbtc.get('above_sma50')) and bool(ethbtc.get('sma50_rising_20d'))
-          stable_positive = float(liq.get('change_30d_pct') or 0) > 0
-          btc_etf_5 = float(etf.get('BTC',{}).get('flow_5d_usdm') or 0)
-          eth_etf_5 = float(etf.get('ETH',{}).get('flow_5d_usdm') or 0)
-          sol_etf_5 = float(etf.get('SOL',{}).get('flow_5d_usdm') or 0)
-          etf_risk_on = btc_etf_5 > 0 and eth_etf_5 > 0
+          btc_trend=bool(btc.get('above_sma50')) and bool(btc.get('above_sma200')) and bool(btc.get('sma50_rising_20d'))
+          eth_trend=bool(eth.get('above_sma50')) and bool(eth.get('above_sma200')) and bool(eth.get('sma50_rising_20d'))
+          ethbtc=rs.get('ETH_BTC',{})
+          ethbtc_strength=bool(ethbtc.get('above_sma50')) and bool(ethbtc.get('sma50_rising_20d'))
+          ethbtc_5=float(ethbtc.get('change_5d_pct') or 0); ethbtc_20=float(ethbtc.get('change_20d_pct') or 0)
 
-          # Phase is descriptive, not a buy/sell command.
-          # Broad alt confirmation is deliberately withheld until persisted dominance/breadth history matures.
-          if not btc_trend and not eth_trend:
-              phase='RISK_OFF_OR_REPAIR'
-          elif btc_trend and not eth_trend:
-              phase='BTC_LEAD'
-          elif btc_trend and eth_trend and score <= 3:
-              phase='BROAD_RECOVERY'
-          elif btc_trend and eth_trend and score <= 5:
-              phase='ALT_WATCH'
-          elif btc_trend and eth_trend and score >= 6 and not broad_history_ready:
-              phase='ALT_ROTATION_CANDIDATE'
-          elif btc_trend and eth_trend and score >= 6 and broad_history_ready:
-              phase='ALT_ROTATION_CONFIRMED'
-          else:
-              phase='MIXED'
+          stable7=float(liq.get('change_7d_pct') or 0); stable14=float(liq.get('change_14d_pct') or 0); stable30=float(liq.get('change_30d_pct') or 0)
+          stable_positive=stable30>0
+
+          def ef(sym,key): return float(etf.get(sym,{}).get(key) or 0)
+          btc_etf_1=ef('BTC','flow_1d_usdm'); btc_etf_5=ef('BTC','flow_5d_usdm'); btc_etf_20=ef('BTC','flow_20d_usdm'); btc_etf_30=ef('BTC','flow_30d_usdm')
+          eth_etf_1=ef('ETH','flow_1d_usdm'); eth_etf_5=ef('ETH','flow_5d_usdm'); eth_etf_20=ef('ETH','flow_20d_usdm'); eth_etf_30=ef('ETH','flow_30d_usdm')
+          sol_etf_1=ef('SOL','flow_1d_usdm'); sol_etf_5=ef('SOL','flow_5d_usdm'); sol_etf_20=ef('SOL','flow_20d_usdm'); sol_etf_30=ef('SOL','flow_30d_usdm')
+          btc_accel=ef('BTC','acceleration_5d_vs_prev5_usdm'); eth_accel=ef('ETH','acceleration_5d_vs_prev5_usdm'); sol_accel=ef('SOL','acceleration_5d_vs_prev5_usdm')
+          etf_risk_on=btc_etf_5>0 and eth_etf_5>0
+
+          if not btc_trend and not eth_trend: phase='RISK_OFF_OR_REPAIR'
+          elif btc_trend and not eth_trend: phase='BTC_LEAD'
+          elif btc_trend and eth_trend and score<=3: phase='BROAD_RECOVERY'
+          elif btc_trend and eth_trend and score<=5: phase='ALT_WATCH'
+          elif btc_trend and eth_trend and score>=6 and not broad_history_ready: phase='ALT_ROTATION_CANDIDATE'
+          elif btc_trend and eth_trend and score>=6 and broad_history_ready: phase='ALT_ROTATION_CONFIRMED'
+          else: phase='MIXED'
 
           phase_points={
               'BTC_TREND':2 if btc_trend else 0,
@@ -114,110 +104,136 @@ jobs:
           phase_score=sum(phase_points.values())
 
           mature_inputs=0
-          mature_inputs += 1 if history_days>=20 else 0
-          mature_inputs += 1 if int(snap.get('qa',{}).get('btc_etf_rows',0) or 0)>=100 else 0
-          mature_inputs += 1 if int(snap.get('qa',{}).get('eth_etf_rows',0) or 0)>=100 else 0
-          mature_inputs += 1 if int(snap.get('qa',{}).get('sol_etf_rows',0) or 0)>=20 else 0
-          mature_inputs += 1 if int(snap.get('qa',{}).get('stablecoin_history_rows',0) or 0)>=100 else 0
+          mature_inputs+=1 if history_days>=20 else 0
+          mature_inputs+=1 if int(snap.get('qa',{}).get('btc_etf_rows',0) or 0)>=100 else 0
+          mature_inputs+=1 if int(snap.get('qa',{}).get('eth_etf_rows',0) or 0)>=100 else 0
+          mature_inputs+=1 if int(snap.get('qa',{}).get('sol_etf_rows',0) or 0)>=20 else 0
+          mature_inputs+=1 if int(snap.get('qa',{}).get('stablecoin_history_rows',0) or 0)>=100 else 0
           phase_conf_pct=round(mature_inputs/5*100)
           phase_conf='HIGH' if phase_conf_pct>=80 else 'MEDIUM' if phase_conf_pct>=60 else 'LOW'
+
+          broad=rot.get('broad_rotation_detail',{}) or {}
+          others5=broad.get('others_btc_eq_5d_change_pct'); others20=broad.get('others_btc_eq_20d_change_pct')
+          btcdom5=broad.get('btc_dom_5d_change_pp'); btcdom20=broad.get('btc_dom_20d_change_pp')
+
+          tactical_flow_score=0
+          tactical_flow_score += 1 if ethbtc_5>0 else 0
+          tactical_flow_score += 1 if eth_etf_5>0 else 0
+          tactical_flow_score += 1 if eth_accel>0 else 0
+          tactical_flow_score += 1 if stable7>0 else 0
+          tactical_flow_score += 1 if others5 is not None and float(others5)>0 else 0
+
+          long_flow_score=0
+          long_flow_score += 2 if ethbtc_strength and ethbtc_20>0 else 0
+          long_flow_score += 2 if eth_etf_20>0 and eth_etf_30>0 else 0
+          long_flow_score += 1 if btc_etf_20>0 else 0
+          long_flow_score += 1 if stable30>0 else 0
+          long_flow_score += 2 if others20 is not None and float(others20)>0 and btcdom20 is not None and float(btcdom20)<0 else 0
+          long_flow_score += 1 if score>=6 else 0
+          long_flow_score=min(long_flow_score,10)
+
+          def flow_label(v,maxv):
+              p=v/maxv if maxv else 0
+              return 'STRONG_POSITIVE' if p>=0.75 else 'POSITIVE' if p>=0.5 else 'NEUTRAL' if p>=0.25 else 'WEAK'
+
+          dual_flow={
+              'LONG':{
+                  'score_0_10':long_flow_score,'label':flow_label(long_flow_score,10),
+                  'horizon':'20D_30D_PERSISTENCE',
+                  'role':'capital-flow confirmation, never standalone buy signal'
+              },
+              'TACTICAL':{
+                  'score_0_5':tactical_flow_score,'label':flow_label(tactical_flow_score,5),
+                  'horizon':'1D_5D_7D_ACCELERATION',
+                  'role':'shorter-horizon confirmation, never standalone trade signal'
+              }
+          }
 
           asset_context=[]
           rotation_assets=rot.get('alt_readiness',{})
           for _,r in cfg.iterrows():
               sym=str(r['symbol']).upper().strip()
-              if sym=='BTC':
-                  continue
+              if sym=='BTC': continue
               t=techmap.get(sym,{})
               ar=rotation_assets.get(sym,{})
               direct_etf=None
               if sym in etf:
                   ee=etf[sym]
                   direct_etf={
-                      'flow_1d_usdm':ee.get('flow_1d_usdm'),
-                      'flow_5d_usdm':ee.get('flow_5d_usdm'),
-                      'flow_20d_usdm':ee.get('flow_20d_usdm'),
-                      'rows':ee.get('rows'),
+                      'flow_1d_usdm':ee.get('flow_1d_usdm'),'flow_5d_usdm':ee.get('flow_5d_usdm'),
+                      'flow_20d_usdm':ee.get('flow_20d_usdm'),'flow_30d_usdm':ee.get('flow_30d_usdm'),
+                      'acceleration_5d_vs_prev5_usdm':ee.get('acceleration_5d_vs_prev5_usdm'),
+                      'trend_label':ee.get('trend_label'),'rows':ee.get('rows'),
                       'mature':bool(int(ee.get('rows',0) or 0)>=20),
                   }
               asset_context.append({
-                  'symbol':sym,
-                  'target_scope':str(r.get('target_scope','UNCLASSIFIED')),
-                  'market_phase':phase,
-                  'rotation_score_0_10':score,
-                  'rotation_status':rot_status,
+                  'symbol':sym,'target_scope':str(r.get('target_scope','UNCLASSIFIED')),
+                  'market_phase':phase,'rotation_score_0_10':score,'rotation_status':rot_status,
                   'rotation_label':ar.get('label','CORE_ALT' if sym=='ETH' else 'NO_RS_LABEL'),
                   'individual_rs_0_4':ar.get('individual_rs_0_4'),
-                  'trend_score_0_4':t.get('trend_score_0_4'),
-                  'fomo_score_0_10':t.get('fomo_score_0_10'),
+                  'vs_btc_5d_pct':ar.get('vs_btc_5d_pct'),'vs_btc_20d_pct':ar.get('vs_btc_20d_pct'),
+                  'vs_eth_5d_pct':ar.get('vs_eth_5d_pct'),'vs_eth_20d_pct':ar.get('vs_eth_20d_pct'),
+                  'trend_score_0_4':t.get('trend_score_0_4'),'fomo_score_0_10':t.get('fomo_score_0_10'),
                   'direct_etf_context':direct_etf,
-                  'stablecoin_30d_pct':liq.get('change_30d_pct'),
+                  'stablecoin_7d_pct':stable7,'stablecoin_14d_pct':stable14,'stablecoin_30d_pct':stable30,
+                  'long_flow_score_0_10':long_flow_score,'tactical_flow_score_0_5':tactical_flow_score
               })
 
           limitations=[]
-          if not broad_history_ready:
-              limitations.append('BROAD_ROTATION_TREND_NOT_MATURE: fewer than 20 persisted daily market-rotation snapshots.')
-          if int(snap.get('qa',{}).get('sol_etf_rows',0) or 0)<20:
-              limitations.append('SOL_ETF_HISTORY_IMMATURE: direct SOL ETF flow is context only.')
+          if not broad_history_ready: limitations.append('BROAD_ROTATION_TREND_NOT_MATURE: fewer than 20 persisted daily market-rotation snapshots.')
+          if int(snap.get('qa',{}).get('sol_etf_rows',0) or 0)<20: limitations.append('SOL_ETF_HISTORY_IMMATURE: direct SOL ETF flow is context only.')
           limitations.append('V8_TOTAL3_EQ and V8_OTHERS_BTC_EQ remain CoinGecko equivalents and are not certified 1:1 versus TradingView.')
-          limitations.append('Market phase is descriptive context; it is not an execution signal.')
+          limitations.append('Market phase and flow scores are descriptive context; they are not execution signals.')
 
           out={
-              'date':snap.get('target_date'),
-              'engine':'CRYPTO_MARKET_PHASE_v0.1',
-              'phase':phase,
-              'phase_score_0_10':phase_score,
-              'phase_confidence':phase_conf,
-              'phase_confidence_pct':phase_conf_pct,
-              'rotation_score_0_10':score,
-              'rotation_status':rot_status,
-              'rotation_confidence':rot_conf,
-              'history_days':history_days,
-              'broad_rotation_history_ready':broad_history_ready,
+              'date':snap.get('target_date'),'engine':'CRYPTO_MARKET_PHASE_v0.2','phase':phase,
+              'phase_score_0_10':phase_score,'phase_confidence':phase_conf,'phase_confidence_pct':phase_conf_pct,
+              'rotation_score_0_10':score,'rotation_status':rot_status,'rotation_confidence':rot_conf,
+              'history_days':history_days,'broad_rotation_history_ready':broad_history_ready,
               'inputs':{
-                  'btc_trend':btc_trend,
-                  'eth_trend':eth_trend,
-                  'eth_btc_strength':ethbtc_strength,
-                  'btc_drawdown_365d_pct':btc.get('drawdown_365d_pct'),
-                  'eth_drawdown_365d_pct':eth.get('drawdown_365d_pct'),
-                  'btc_dominance_pct':mkt.get('btc_dominance_pct'),
-                  'eth_dominance_pct':mkt.get('eth_dominance_pct'),
-                  'stablecoin_7d_pct':liq.get('change_7d_pct'),
-                  'stablecoin_30d_pct':liq.get('change_30d_pct'),
-                  'btc_etf_5d_usdm':btc_etf_5,
-                  'eth_etf_5d_usdm':eth_etf_5,
-                  'sol_etf_5d_usdm':sol_etf_5,
+                  'btc_trend':btc_trend,'eth_trend':eth_trend,'eth_btc_strength':ethbtc_strength,
+                  'eth_btc_5d_pct':ethbtc_5,'eth_btc_20d_pct':ethbtc_20,
+                  'btc_drawdown_365d_pct':btc.get('drawdown_365d_pct'),'eth_drawdown_365d_pct':eth.get('drawdown_365d_pct'),
+                  'btc_dominance_pct':mkt.get('btc_dominance_pct'),'eth_dominance_pct':mkt.get('eth_dominance_pct'),
+                  'btc_dom_5d_change_pp':btcdom5,'btc_dom_20d_change_pp':btcdom20,
+                  'others_btc_eq_5d_change_pct':others5,'others_btc_eq_20d_change_pct':others20,
+                  'stablecoin_7d_pct':stable7,'stablecoin_14d_pct':stable14,'stablecoin_30d_pct':stable30,
+                  'btc_etf_1d_usdm':btc_etf_1,'btc_etf_5d_usdm':btc_etf_5,'btc_etf_20d_usdm':btc_etf_20,'btc_etf_30d_usdm':btc_etf_30,'btc_etf_accel_5d_usdm':btc_accel,
+                  'eth_etf_1d_usdm':eth_etf_1,'eth_etf_5d_usdm':eth_etf_5,'eth_etf_20d_usdm':eth_etf_20,'eth_etf_30d_usdm':eth_etf_30,'eth_etf_accel_5d_usdm':eth_accel,
+                  'sol_etf_1d_usdm':sol_etf_1,'sol_etf_5d_usdm':sol_etf_5,'sol_etf_20d_usdm':sol_etf_20,'sol_etf_30d_usdm':sol_etf_30,'sol_etf_accel_5d_usdm':sol_accel,
               },
-              'phase_points':phase_points,
-              'asset_context':asset_context,
-              'limitations':limitations,
+              'dual_horizon_flow_context':dual_flow,
+              'phase_points':phase_points,'asset_context':asset_context,'limitations':limitations,
               'hard_rules':{
-                  'not_execution_signal':True,
-                  'no_broad_alt_confirmation_without_history':True,
-                  'relative_strength_not_hard_gate':True,
-                  'etf_flow_is_confirmation_not_oracle':True,
+                  'not_execution_signal':True,'no_broad_alt_confirmation_without_history':True,
+                  'relative_strength_not_hard_gate':True,'etf_flow_is_confirmation_not_oracle':True,
+                  'long_and_tactical_use_separate_horizon_scores':True
               }
           }
           (R/'CRYPTO_MARKET_PHASE.json').write_text(json.dumps(out,indent=2,ensure_ascii=False),encoding='utf-8')
 
           cockpit=pd.DataFrame(asset_context)
-          # Flatten direct ETF for compact CSV cockpit.
           if not cockpit.empty:
-              cockpit['direct_etf_5d_usdm']=cockpit['direct_etf_context'].apply(lambda x: x.get('flow_5d_usdm') if isinstance(x,dict) else None)
-              cockpit['direct_etf_mature']=cockpit['direct_etf_context'].apply(lambda x: x.get('mature') if isinstance(x,dict) else None)
+              cockpit['direct_etf_5d_usdm']=cockpit['direct_etf_context'].apply(lambda x:x.get('flow_5d_usdm') if isinstance(x,dict) else None)
+              cockpit['direct_etf_20d_usdm']=cockpit['direct_etf_context'].apply(lambda x:x.get('flow_20d_usdm') if isinstance(x,dict) else None)
+              cockpit['direct_etf_30d_usdm']=cockpit['direct_etf_context'].apply(lambda x:x.get('flow_30d_usdm') if isinstance(x,dict) else None)
+              cockpit['direct_etf_trend']=cockpit['direct_etf_context'].apply(lambda x:x.get('trend_label') if isinstance(x,dict) else None)
+              cockpit['direct_etf_mature']=cockpit['direct_etf_context'].apply(lambda x:x.get('mature') if isinstance(x,dict) else None)
               cockpit=cockpit.drop(columns=['direct_etf_context'])
           cockpit.to_csv(R/'CRYPTO_MARKET_COCKPIT.csv',index=False)
 
           histrow=pd.DataFrame([{
-              'date':out['date'],'phase':phase,'phase_score':phase_score,'phase_confidence_pct':phase_conf_pct,
-              'rotation_score':score,'btc_trend':btc_trend,'eth_trend':eth_trend,'eth_btc_strength':ethbtc_strength,
-              'btc_dom_pct':mkt.get('btc_dominance_pct'),'eth_dom_pct':mkt.get('eth_dominance_pct'),
-              'stablecoin_30d_pct':liq.get('change_30d_pct'),'btc_etf_5d_usdm':btc_etf_5,'eth_etf_5d_usdm':eth_etf_5,'sol_etf_5d_usdm':sol_etf_5,
+              'date':out['date'],'phase':phase,'phase_score':phase_score,'phase_confidence_pct':phase_conf_pct,'rotation_score':score,
+              'btc_trend':btc_trend,'eth_trend':eth_trend,'eth_btc_strength':ethbtc_strength,'eth_btc_5d_pct':ethbtc_5,'eth_btc_20d_pct':ethbtc_20,
+              'btc_dom_pct':mkt.get('btc_dominance_pct'),'eth_dom_pct':mkt.get('eth_dominance_pct'),'btc_dom_5d_change_pp':btcdom5,'btc_dom_20d_change_pp':btcdom20,
+              'others_btc_eq_5d_pct':others5,'others_btc_eq_20d_pct':others20,
+              'stablecoin_7d_pct':stable7,'stablecoin_14d_pct':stable14,'stablecoin_30d_pct':stable30,
+              'btc_etf_5d_usdm':btc_etf_5,'btc_etf_20d_usdm':btc_etf_20,'eth_etf_5d_usdm':eth_etf_5,'eth_etf_20d_usdm':eth_etf_20,'sol_etf_5d_usdm':sol_etf_5,
+              'long_flow_score_0_10':long_flow_score,'tactical_flow_score_0_5':tactical_flow_score,
               'broad_history_ready':broad_history_ready
           }])
           hf=R/'CRYPTO_MARKET_PHASE_HISTORY.csv'
-          if hf.exists():
-              histrow=pd.concat([pd.read_csv(hf),histrow],ignore_index=True).drop_duplicates('date',keep='last').sort_values('date')
+          if hf.exists(): histrow=pd.concat([pd.read_csv(hf),histrow],ignore_index=True).drop_duplicates('date',keep='last').sort_values('date')
           histrow.to_csv(hf,index=False)
           print(json.dumps(out,indent=2,ensure_ascii=False))
           PY
