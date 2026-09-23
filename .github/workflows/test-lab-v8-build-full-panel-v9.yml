@@ -1,0 +1,74 @@
+name: TEST LAB V8 Build Full Panel V9
+
+on:
+  push:
+    paths:
+      - 'google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V8.txt'
+      - 'google_sheets/V8_TACTICAL_RISK_CENTER_V9.txt'
+      - '.github/workflows/test-lab-v8-build-full-panel-v9.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-test-save:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz projekt
+        uses: actions/checkout@v4
+
+      - name: Zbuduj pełny skrypt V9
+        run: |
+          cat google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V8.txt > /tmp/v9.txt
+          printf '\n\n' >> /tmp/v9.txt
+          cat google_sheets/V8_TACTICAL_RISK_CENTER_V9.txt >> /tmp/v9.txt
+          cp /tmp/v9.txt google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt
+
+      - name: Sprawdź składnię pełnego skryptu
+        run: |
+          cp google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt /tmp/v9.js
+          node --check /tmp/v9.js
+
+      - name: Sprawdź integralność V9
+        run: |
+          grep -q "function tacticalRiskAssessment_" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt
+          grep -q "function applyRiskCenterToTacticalSheet_" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt
+          grep -q "OCHRONA KAPITAŁU" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt
+          grep -q "PODWYŻSZONE RYZYKO" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt
+          grep -q "CENTRUM RYZYKA" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt
+          grep -q "POWÓD RYZYKA" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt
+          grep -q "AUTO_EXECUTION','OFF" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt
+          grep -q "V7_TOUCH','OFF" google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt
+
+      - name: Test centrum ryzyka Tactical
+        run: |
+          node <<'NODE'
+          const fs = require('fs'), vm = require('vm');
+          const code = fs.readFileSync('google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt','utf8');
+          const ctx = {console, Date, Math, JSON, Number, String, Array, Object};
+          vm.createContext(ctx); vm.runInContext(code, ctx);
+          const asset=(o={})=>({symbol:'TEST', tactical_status:o.status||'WAIT', exit_risk_0_10:o.exit??2, zone_context:{in_supply:!!o.supply,in_demand:!!o.demand}, timeframes:{'1H':{fomo_score_0_10:o.f1??2},'4H':{fomo_score_0_10:o.f4??2},'1D':{fomo_score_0_10:o.fd??2}}});
+          const A=(o={})=>({aktywny:true,symbol:'TEST',priority:o.priority||'MOCNY',multiTf:!!o.multiTf,direction:o.direction||'PRZEGRZANIE'});
+          function eq(got,want,msg){ if(got!==want) throw new Error(msg+': '+got+' != '+want); }
+          eq(ctx.tacticalRiskAssessment_(asset(),[]).state,'NORMALNIE','normal');
+          eq(ctx.tacticalRiskAssessment_(asset({exit:5}),[]).state,'UWAGA','uwaga');
+          eq(ctx.tacticalRiskAssessment_(asset({exit:7,supply:true,f4:8}),[]).state,'PODWYŻSZONE RYZYKO','podwyzszone');
+          eq(ctx.tacticalRiskAssessment_(asset({exit:8,supply:true,f4:9,status:'NO_TRADE_FOMO'}),[]).state,'OCHRONA KAPITAŁU','ochrona');
+          eq(ctx.tacticalRiskAssessment_(asset({exit:4}),[A({priority:'KRYTYCZNY',multiTf:true,direction:'PRZEGRZANIE'})]).state,'OCHRONA KAPITAŁU','multi tf overheating');
+          const w=ctx.tacticalRiskAssessment_(asset({exit:4,demand:true}),[A({priority:'MOCNY',multiTf:true,direction:'WYPRZEDANIE'})]);
+          if(w.state==='OCHRONA KAPITAŁU') throw new Error('washout nie może automatycznie dać ochrony kapitału');
+          console.log('TACTICAL RISK CENTER PASS');
+          NODE
+
+      - name: Zapisz pełny skrypt V9
+        run: |
+          git config user.name "PawelKaminski12"
+          git config user.email "pkaminski1@gmail.com"
+          git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt
+          if git diff --cached --quiet; then
+            echo "Brak zmian do zapisu"
+          else
+            git commit -m "Zbuduj pełny panel V8 V9 z centrum ryzyka Tactical"
+            git push
+          fi
