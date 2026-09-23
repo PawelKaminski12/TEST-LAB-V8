@@ -1,0 +1,117 @@
+{
+  "generated_at_utc": "2026-09-23T21:32:00.849064+00:00",
+  "engine": "V8_TACTICAL_META_GATE_v5.0",
+  "research_only": true,
+  "deploy_block": true,
+  "auto_execution": false,
+  "production_modified": false,
+  "source_rows": 768,
+  "challenger": "BALANCED_LOW_FOMO",
+  "rule": {
+    "score_min": 6,
+    "fomo_max": 6,
+    "trend4_min": 3,
+    "rsi_lo": 45,
+    "rsi_hi": 68
+  },
+  "historical_note": "Pełne pola exit-risk/extreme/strefy nie istnieją w starej próbce; historia używa jawnego risk proxy z status/FOMO/RSI/trend. Bieżący meta-gate używa pełniejszych pól z TACTICAL_ENGINE.",
+  "historical_ungated_challenger": {
+    "n": 342,
+    "mean12": 0.14327810962489945,
+    "median12": 0.014789959633676464,
+    "win12": 50.292397660818715,
+    "mean24": 0.22422813631040484,
+    "lcb12": 0.026271251091914236
+  },
+  "historical_by_meta_decision": {
+    "ALLOW": {
+      "n": 302,
+      "mean12": 0.14012244206564667,
+      "median12": 0.06172908560971857,
+      "win12": 51.98675496688742,
+      "mean24": 0.28495859169037724,
+      "lcb12": 0.012820959269058213
+    },
+    "CAUTION": {
+      "n": 22,
+      "mean12": 0.5444493157591294,
+      "median12": -0.3360308308271165,
+      "win12": 40.90909090909091,
+      "mean24": 0.09503275568973599,
+      "lcb12": 0.11270194120536042
+    },
+    "BLOCK": {
+      "n": 18,
+      "mean12": -0.29409716437836275,
+      "median12": -0.32702743610458773,
+      "win12": 33.333333333333336,
+      "mean24": -0.6367884831949808,
+      "lcb12": -0.6092465947362914
+    },
+    "HOLD_CHALLENGER": {
+      "n": 426,
+      "mean12": 0.38720272524622956,
+      "median12": 0.29178056595918767,
+      "win12": 54.929577464788736,
+      "mean24": 0.7304113803050234,
+      "lcb12": 0.26249952608597327
+    }
+  },
+  "allow_quarters": {
+    "Q1": {
+      "n": 64,
+      "mean12": 0.14314373165137795,
+      "median12": -0.1659865891813772,
+      "win12": 48.4375,
+      "mean24": 0.45846476677472764,
+      "lcb12": -0.14070236817986792
+    },
+    "Q2": {
+      "n": 74,
+      "mean12": -0.7759122189019773,
+      "median12": -0.7820747236166936,
+      "win12": 33.78378378378378,
+      "mean24": -1.5392176750661413,
+      "lcb12": -0.9853013493007854
+    },
+    "Q3": {
+      "n": 89,
+      "mean12": 0.1530552128565806,
+      "median12": 0.10294243802007053,
+      "win12": 56.17977528089887,
+      "mean24": 0.568110106575208,
+      "lcb12": -0.02082275369263159
+    },
+    "Q4": {
+      "n": 75,
+      "mean12": 1.0260182524353032,
+      "median12": 0.9690768654150084,
+      "win12": 68.0,
+      "mean24": 1.6007474411548306,
+      "lcb12": 0.7101695029914685
+    }
+  },
+  "validation_gates": {
+    "allow_n_ge_100": true,
+    "allow_mean12_positive": true,
+    "allow_mean24_positive": true,
+    "allow_lcb12_positive": true,
+    "allow_win_not_worse_than_ungated": true,
+    "allow_mean12_beats_ungated": false,
+    "block_underperforms_allow": true,
+    "allow_temporal_no_deep_failure": false
+  },
+  "gate_pass_count": 6,
+  "verdict": "WATCH_META_GATE",
+  "current": {
+    "engine_snapshot_utc": "2026-09-23T20:28:22.554038+00:00",
+    "regime_gate": "ACTIVE",
+    "counts": {
+      "ALLOW": 0,
+      "CAUTION": 5,
+      "BLOCK": 4,
+      "HOLD_CHALLENGER": 4
+    }
+  },
+  "manual_promotion_only": true
+}

@@ -1,0 +1,171 @@
+{
+  "generated_at_utc": "2026-09-23T21:32:00.849353+00:00",
+  "engine_snapshot_utc": "2026-09-23T20:28:22.554038+00:00",
+  "regime_gate": "ACTIVE",
+  "rows": [
+    {
+      "symbol": "ETH",
+      "challenger_hit": true,
+      "regime_gate": "ACTIVE",
+      "risk_points": 2,
+      "exit_risk": 5.0,
+      "max_fomo": 4.0,
+      "overheat_score": 0,
+      "production_status": "WATCH_SUPPLY",
+      "meta_decision": "CAUTION",
+      "reasons": "exit risk>=4; status SUPPLY"
+    },
+    {
+      "symbol": "SOL",
+      "challenger_hit": true,
+      "regime_gate": "ACTIVE",
+      "risk_points": 2,
+      "exit_risk": 5.0,
+      "max_fomo": 5.0,
+      "overheat_score": 0,
+      "production_status": "WATCH_SUPPLY",
+      "meta_decision": "CAUTION",
+      "reasons": "exit risk>=4; status SUPPLY"
+    },
+    {
+      "symbol": "LINK",
+      "challenger_hit": false,
+      "regime_gate": "ACTIVE",
+      "risk_points": 2,
+      "exit_risk": 5.0,
+      "max_fomo": 3.0,
+      "overheat_score": 0,
+      "production_status": "WATCH_SUPPLY",
+      "meta_decision": "HOLD_CHALLENGER",
+      "reasons": "exit risk>=4; status SUPPLY"
+    },
+    {
+      "symbol": "ONDO",
+      "challenger_hit": false,
+      "regime_gate": "ACTIVE",
+      "risk_points": 6,
+      "exit_risk": 4.0,
+      "max_fomo": 4.0,
+      "overheat_score": 3.0,
+      "production_status": "NO_TRADE",
+      "meta_decision": "HOLD_CHALLENGER",
+      "reasons": "exit risk>=4; status NO_TRADE; przegrzanie ekstremalne"
+    },
+    {
+      "symbol": "RENDER",
+      "challenger_hit": true,
+      "regime_gate": "ACTIVE",
+      "risk_points": 5,
+      "exit_risk": 4.0,
+      "max_fomo": 7.0,
+      "overheat_score": 3.0,
+      "production_status": "WAIT",
+      "meta_decision": "BLOCK",
+      "reasons": "exit risk>=4; FOMO>=6; przegrzanie ekstremalne"
+    },
+    {
+      "symbol": "FLOKI",
+      "challenger_hit": true,
+      "regime_gate": "ACTIVE",
+      "risk_points": 2,
+      "exit_risk": 4.0,
+      "max_fomo": 7.0,
+      "overheat_score": 0,
+      "production_status": "WAIT",
+      "meta_decision": "CAUTION",
+      "reasons": "exit risk>=4; FOMO>=6"
+    },
+    {
+      "symbol": "PEPE",
+      "challenger_hit": true,
+      "regime_gate": "ACTIVE",
+      "risk_points": 8,
+      "exit_risk": 5.0,
+      "max_fomo": 9.0,
+      "overheat_score": 9.0,
+      "production_status": "WATCH_SUPPLY",
+      "meta_decision": "BLOCK",
+      "reasons": "exit risk>=4; status SUPPLY; FOMO>=8; przegrzanie ekstremalne"
+    },
+    {
+      "symbol": "SPX6900",
+      "challenger_hit": false,
+      "regime_gate": "ACTIVE",
+      "risk_points": 4,
+      "exit_risk": 6.0,
+      "max_fomo": 2.0,
+      "overheat_score": 0,
+      "production_status": "NO_TRADE",
+      "meta_decision": "HOLD_CHALLENGER",
+      "reasons": "exit risk>=6; status NO_TRADE"
+    },
+    {
+      "symbol": "XRP",
+      "challenger_hit": true,
+      "regime_gate": "ACTIVE",
+      "risk_points": 2,
+      "exit_risk": 5.0,
+      "max_fomo": 4.0,
+      "overheat_score": 0,
+      "production_status": "WATCH_SUPPLY",
+      "meta_decision": "CAUTION",
+      "reasons": "exit risk>=4; status SUPPLY"
+    },
+    {
+      "symbol": "XLM",
+      "challenger_hit": true,
+      "regime_gate": "ACTIVE",
+      "risk_points": 1,
+      "exit_risk": 4.0,
+      "max_fomo": 5.0,
+      "overheat_score": 0,
+      "production_status": "WAIT",
+      "meta_decision": "CAUTION",
+      "reasons": "exit risk>=4"
+    },
+    {
+      "symbol": "HBAR",
+      "challenger_hit": true,
+      "regime_gate": "ACTIVE",
+      "risk_points": 8,
+      "exit_risk": 5.0,
+      "max_fomo": 9.0,
+      "overheat_score": 9.0,
+      "production_status": "WATCH_SUPPLY",
+      "meta_decision": "BLOCK",
+      "reasons": "exit risk>=4; status SUPPLY; FOMO>=8; przegrzanie ekstremalne"
+    },
+    {
+      "symbol": "AVAX",
+      "challenger_hit": true,
+      "regime_gate": "ACTIVE",
+      "risk_points": 8,
+      "exit_risk": 5.0,
+      "max_fomo": 10.0,
+      "overheat_score": 9.0,
+      "production_status": "WATCH_SUPPLY",
+      "meta_decision": "BLOCK",
+      "reasons": "exit risk>=4; status SUPPLY; FOMO>=8; przegrzanie ekstremalne"
+    },
+    {
+      "symbol": "AWE",
+      "challenger_hit": false,
+      "regime_gate": "ACTIVE",
+      "risk_points": 3,
+      "exit_risk": 4.0,
+      "max_fomo": 0,
+      "overheat_score": 0,
+      "production_status": "NO_TRADE",
+      "meta_decision": "HOLD_CHALLENGER",
+      "reasons": "exit risk>=4; status NO_TRADE"
+    }
+  ],
+  "counts": {
+    "ALLOW": 0,
+    "CAUTION": 5,
+    "BLOCK": 4,
+    "HOLD_CHALLENGER": 4
+  },
+  "research_only": true,
+  "deploy_block": true
+}

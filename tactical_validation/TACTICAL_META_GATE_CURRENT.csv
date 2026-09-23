@@ -1,0 +1,14 @@
+symbol,challenger_hit,regime_gate,risk_points,exit_risk,max_fomo,overheat_score,production_status,meta_decision,reasons
+ETH,True,ACTIVE,2,5.0,4.0,0,WATCH_SUPPLY,CAUTION,exit risk>=4; status SUPPLY
+SOL,True,ACTIVE,2,5.0,5.0,0,WATCH_SUPPLY,CAUTION,exit risk>=4; status SUPPLY
+LINK,False,ACTIVE,2,5.0,3.0,0,WATCH_SUPPLY,HOLD_CHALLENGER,exit risk>=4; status SUPPLY
+ONDO,False,ACTIVE,6,4.0,4.0,3.0,NO_TRADE,HOLD_CHALLENGER,exit risk>=4; status NO_TRADE; przegrzanie ekstremalne
+RENDER,True,ACTIVE,5,4.0,7.0,3.0,WAIT,BLOCK,exit risk>=4; FOMO>=6; przegrzanie ekstremalne
+FLOKI,True,ACTIVE,2,4.0,7.0,0,WAIT,CAUTION,exit risk>=4; FOMO>=6
+PEPE,True,ACTIVE,8,5.0,9.0,9.0,WATCH_SUPPLY,BLOCK,exit risk>=4; status SUPPLY; FOMO>=8; przegrzanie ekstremalne
+SPX6900,False,ACTIVE,4,6.0,2.0,0,NO_TRADE,HOLD_CHALLENGER,exit risk>=6; status NO_TRADE
+XRP,True,ACTIVE,2,5.0,4.0,0,WATCH_SUPPLY,CAUTION,exit risk>=4; status SUPPLY
+XLM,True,ACTIVE,1,4.0,5.0,0,WAIT,CAUTION,exit risk>=4
+HBAR,True,ACTIVE,8,5.0,9.0,9.0,WATCH_SUPPLY,BLOCK,exit risk>=4; status SUPPLY; FOMO>=8; przegrzanie ekstremalne
+AVAX,True,ACTIVE,8,5.0,10.0,9.0,WATCH_SUPPLY,BLOCK,exit risk>=4; status SUPPLY; FOMO>=8; przegrzanie ekstremalne
+AWE,False,ACTIVE,3,4.0,0,0,NO_TRADE,HOLD_CHALLENGER,exit risk>=4; status NO_TRADE
