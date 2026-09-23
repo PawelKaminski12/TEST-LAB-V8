@@ -1,0 +1,56 @@
+{
+  "project": "DANE SILNIKA V8 / DUAL ENGINE",
+  "component": "TACTICAL",
+  "checkpoint_date": "2026-09-23",
+  "technical_closure": "COMPLETE",
+  "execution_status": "RESEARCH_DECISION_SUPPORT_ONLY",
+  "v7_untouched": true,
+  "long_tactical_separate_capital": true,
+  "completed": {
+    "closed_candles_only_1h_4h_1d": true,
+    "freshness_checks_1h_4h_1d": true,
+    "multi_timeframe_score": true,
+    "fomo_hard_block": true,
+    "daily_regime_block": true,
+    "4h_breakdown_block": true,
+    "confirmed_supply_block": true,
+    "exit_risk": true,
+    "market_reader_second_eye_only": true,
+    "production_assets_eth_sol_link_ondo": true,
+    "paper_observation_ready": true,
+    "google_sheets_dual_panel": true,
+    "panel_polish_translation": true,
+    "separate_long_and_tactical_portfolios": true,
+    "extreme_alarm_sheet": true,
+    "extreme_alarms_1h": true,
+    "extreme_alarms_4h": true,
+    "extreme_alarms_1d": true,
+    "extreme_alarm_history": true,
+    "optional_email_extreme_alerts": true
+  },
+  "default_extreme_thresholds": {
+    "rsi_overbought": 75,
+    "rsi_oversold": 25,
+    "fomo_hard_block": 8
+  },
+  "calibration": {
+    "status": "NOT_FROZEN",
+    "reason": "Latest threshold lab candidate passed its holdout robustness gate but had negative train mean returns; a single holdout sample is insufficient to freeze execution thresholds.",
+    "candidate_score_min": 6,
+    "candidate_fomo_max": 7,
+    "candidate_trend4_min": 3,
+    "candidate_rsi_lo": 50,
+    "candidate_rsi_hi": 70,
+    "allowed_use": "paper observation and further validation",
+    "not_allowed_use": "automatic execution or claiming a validated trading strategy"
+  },
+  "next_phase": "PAPER_OBSERVATION_AND_CALIBRATION",
+  "source_files": [
+    "tactical_engine/TACTICAL_ENGINE.json",
+    "tactical_engine/TACTICAL_READINESS.json",
+    "tactical_validation/TACTICAL_THRESHOLD_LAB.json",
+    "audit/DUAL_ENGINE_AUDIT.json",
+    "google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL.txt",
+    "google_sheets/DUAL_ENGINE_PANEL_SPEC.md"
+  ]
+}
