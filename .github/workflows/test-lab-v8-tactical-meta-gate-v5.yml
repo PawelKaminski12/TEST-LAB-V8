@@ -1,0 +1,88 @@
+name: TEST LAB V8 Tactical Meta Gate V5
+
+on:
+  push:
+    paths:
+      - 'scripts/v8_tactical_meta_gate_v5.py'
+      - 'tactical_validation/TACTICAL_WALKFORWARD_OBSERVATIONS.csv'
+      - 'tactical_validation/TACTICAL_CHALLENGER_MATRIX_V3.json'
+      - 'tactical_validation/TACTICAL_REGIME_GATE_V4_HISTORY.csv'
+      - 'tactical_validation/TACTICAL_REGIME_GATE_CURRENT.json'
+      - 'tactical_engine/TACTICAL_ENGINE.json'
+      - '.github/workflows/test-lab-v8-tactical-meta-gate-v5.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  meta-gate-v5:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz projekt
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Zapamiętaj produkcję
+        run: |
+          sha256sum tactical_engine/TACTICAL_ENGINE.json > /tmp/prod_before.sha
+          sha256sum google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt >> /tmp/prod_before.sha
+
+      - name: Sprawdź składnię Meta Gate V5
+        run: python -m py_compile scripts/v8_tactical_meta_gate_v5.py
+
+      - name: Uruchom Meta Gate V5
+        run: python scripts/v8_tactical_meta_gate_v5.py
+
+      - name: Sprawdź kontrakt bezpieczeństwa i strukturę
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=json.loads(Path('tactical_validation/TACTICAL_META_GATE_V5.json').read_text(encoding='utf-8'))
+          c=json.loads(Path('tactical_validation/TACTICAL_META_GATE_CURRENT.json').read_text(encoding='utf-8'))
+          assert p['research_only'] is True
+          assert p['deploy_block'] is True
+          assert p['auto_execution'] is False
+          assert p['production_modified'] is False
+          assert p['manual_promotion_only'] is True
+          assert p['source_rows'] >= 500
+          assert len(p['validation_gates']) == 8
+          assert c['research_only'] is True and c['deploy_block'] is True
+          assert len(c['rows']) == 13
+          allowed={'ALLOW','CAUTION','BLOCK','HOLD_CHALLENGER'}
+          assert all(r['meta_decision'] in allowed for r in c['rows'])
+          assert sum(c['counts'].values()) == 13
+          print('META GATE V5 SAFETY + STRUCTURE PASS')
+          PY
+
+      - name: Potwierdź brak zmian produkcyjnych
+        run: |
+          sha256sum tactical_engine/TACTICAL_ENGINE.json > /tmp/prod_after.sha
+          sha256sum google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V9.txt >> /tmp/prod_after.sha
+          diff -u /tmp/prod_before.sha /tmp/prod_after.sha
+
+      - name: Final readiness
+        run: python scripts/v8_final_readiness.py
+
+      - name: Pełny audyt 1 z 2
+        run: python scripts/v8_full_double_audit_v2.py --pass-number 1
+
+      - name: Pełny audyt 2 z 2
+        run: python scripts/v8_full_double_audit_v2.py --pass-number 2
+
+      - name: Zapisz Meta Gate V5 i audyty
+        run: |
+          git config user.name 'PawelKaminski12'
+          git config user.email 'pkaminski1@gmail.com'
+          git add tactical_validation/TACTICAL_META_GATE_V5.json tactical_validation/TACTICAL_META_GATE_CURRENT.json tactical_validation/TACTICAL_META_GATE_CURRENT.csv tactical_validation/TACTICAL_META_GATE_V5_HISTORY.csv audit/V8_TACTICAL_META_GATE_V5.md audit/V8_FINAL_READINESS.json audit/V8_FINAL_READINESS_LATEST.md audit/V8_FULL_AUDIT_PASS_1.json audit/V8_FULL_AUDIT_PASS_1.md audit/V8_FULL_AUDIT_PASS_2.json audit/V8_FULL_AUDIT_PASS_2.md google_sheets/V8_FINAL_READINESS.csv 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo 'Brak zmian do zapisu'
+          else
+            git commit -m 'Zapisz wyniki Tactical Meta Gate V5'
+            git push
+          fi
