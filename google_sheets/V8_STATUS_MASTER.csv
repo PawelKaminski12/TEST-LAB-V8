@@ -23,6 +23,7 @@ ALARMY,WIELE TF,GOTOWE,Zgodność 1H+4H / 4H+1D / 1H+4H+1D z kierunkiem PRZEGRZA
 ALARMY,DYNAMIKA,GOTOWE,NOWY / NASILA SIĘ / BEZ ZMIAN / SŁABNIE / WYGASŁ; powiadomienia bez duplikowania stanu bez zmian
 TACTICAL,CENTRUM RYZYKA,GOTOWE,NORMALNIE / UWAGA / PODWYŻSZONE RYZYKO / OCHRONA KAPITAŁU; exit risk + FOMO + strefy + status + ekstrema + wiele TF
 TACTICAL,KALIBRACJA,BADANIA ZAMKNIĘTE — DEPLOY HOLD,QA PASS i obserwacje PASS; TRAIN FAIL przy HOLDOUT PASS; spójność między aktywami FAIL; produkcyjnych progów nie zmieniono
+TACTICAL,SHADOW MONITOR,GOTOWE — DEPLOY HOLD,Kandydat score>=6 / FOMO<=7 / trend4>=3 / RSI4 50–70 jest liczony równolegle dla 13 altów; historia oddzielna; brak wpływu na produkcję
 PANEL,GOOGLE SHEETS,GOTOWE,Polskie etykiety; 7 kolumn bez rozbudowy układu; ALERT zawiera najważniejsze ekstrema i centrum ryzyka
 PANEL,SILNIK_TACTICAL,GOTOWE,Dodatkowe kolumny CENTRUM RYZYKA i POWÓD RYZYKA w maszynowni Tactical
 ARCHIWUM,AAVE,NIEAKTYWNE,Nie wchodzi do aktywnego zakresu V8
@@ -32,3 +33,4 @@ BEZPIECZEŃSTWO,V7 TOUCH,OFF,V7 produkcyjny pozostaje nietknięty
 BEZPIECZEŃSTWO,STREFY,GOTOWE,System nie zgaduje stref użytkownika
 BEZPIECZEŃSTWO,ALARMY,GOTOWE,Alarmy i centrum ryzyka są warstwą informacyjną; nie wykonują zleceń
 BEZPIECZEŃSTWO,KALIBRACJA,GOTOWE,Bramka badawcza nie może automatycznie zmienić progów produkcyjnych ani połączyć wykonania transakcji
+BEZPIECZEŃSTWO,SHADOW,GOTOWE,Shadow monitor zapisuje wyniki osobno; produkcyjny TACTICAL_ENGINE i Apps Script V9 są chronione sumami kontrolnymi przed modyfikacją
