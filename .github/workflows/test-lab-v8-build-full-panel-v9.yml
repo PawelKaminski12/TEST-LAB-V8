@@ -53,7 +53,7 @@ jobs:
           function eq(got,want,msg){ if(got!==want) throw new Error(msg+': '+got+' != '+want); }
           eq(ctx.tacticalRiskAssessment_(asset(),[]).state,'NORMALNIE','normal');
           eq(ctx.tacticalRiskAssessment_(asset({exit:5}),[]).state,'UWAGA','uwaga');
-          eq(ctx.tacticalRiskAssessment_(asset({exit:7,supply:true,f4:8}),[]).state,'PODWYŻSZONE RYZYKO','podwyzszone');
+          eq(ctx.tacticalRiskAssessment_(asset({exit:7,supply:true,f4:8}),[]).state,'OCHRONA KAPITAŁU','silna kumulacja ryzyka');
           eq(ctx.tacticalRiskAssessment_(asset({exit:8,supply:true,f4:9,status:'NO_TRADE_FOMO'}),[]).state,'OCHRONA KAPITAŁU','ochrona');
           eq(ctx.tacticalRiskAssessment_(asset({exit:4}),[A({priority:'KRYTYCZNY',multiTf:true,direction:'PRZEGRZANIE'})]).state,'OCHRONA KAPITAŁU','multi tf overheating');
           const w=ctx.tacticalRiskAssessment_(asset({exit:4,demand:true}),[A({priority:'MOCNY',multiTf:true,direction:'WYPRZEDANIE'})]);
