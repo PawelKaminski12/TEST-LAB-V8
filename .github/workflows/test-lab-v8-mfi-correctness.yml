@@ -1,0 +1,114 @@
+name: TEST LAB V8 MFI Correctness
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/test-lab-v8-tactical-engine.yml'
+      - '.github/workflows/test-lab-v8-mfi-correctness.yml'
+      - 'tactical_engine/TACTICAL_ENGINE.json'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-mfi:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz projekt
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Przygotuj Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Zainstaluj biblioteki
+        run: pip install --quiet pandas numpy
+
+      - name: Sprawdź poprawioną logikę MFI
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import numpy as np
+          import pandas as pd
+
+          src=Path('.github/workflows/test-lab-v8-tactical-engine.yml').read_text(encoding='utf-8')
+          required=[
+              'both_zero=(pos_sum==0)&(neg_sum==0)',
+              'only_pos=(pos_sum>0)&(neg_sum==0)',
+              'only_neg=(pos_sum==0)&(neg_sum>0)',
+              'out=out.mask(both_zero,50.0)',
+              'out=out.mask(only_pos,100.0)',
+              'out=out.mask(only_neg,0.0)'
+          ]
+          for item in required:
+              assert item in src, f'Brakuje poprawki MFI: {item}'
+          forbidden=[
+              'out=out.where(~((pos_sum==0)&(neg_sum==0)),50.0)',
+              'out=out.where(neg_sum!=0,100.0)',
+              'out=out.where(pos_sum!=0,0.0)'
+          ]
+          for item in forbidden:
+              assert item not in src, f'Pozostała stara błędna logika MFI: {item}'
+
+          def mfi(df,n=14):
+              tp=(df['high']+df['low']+df['close'])/3.0
+              raw=tp*df['volume']
+              direction=tp.diff()
+              pos=raw.where(direction>0,0.0)
+              neg=raw.where(direction<0,0.0)
+              pos_sum=pos.rolling(n,min_periods=n).sum()
+              neg_sum=neg.rolling(n,min_periods=n).sum()
+              ratio=pos_sum/neg_sum.replace(0,np.nan)
+              out=100-(100/(1+ratio))
+              both_zero=(pos_sum==0)&(neg_sum==0)
+              only_pos=(pos_sum>0)&(neg_sum==0)
+              only_neg=(pos_sum==0)&(neg_sum>0)
+              out=out.mask(both_zero,50.0)
+              out=out.mask(only_pos,100.0)
+              out=out.mask(only_neg,0.0)
+              return out.clip(0,100)
+
+          def frame(prices,volume=100.0):
+              p=pd.Series(prices,dtype=float)
+              return pd.DataFrame({'high':p,'low':p,'close':p,'volume':float(volume)})
+
+          flat=frame([100.0]*30)
+          up=frame(list(range(100,130)))
+          down=frame(list(range(130,100,-1)))
+          mixed=frame([100,101,100,102,101,103,102,104,103,105,104,106,105,107,106,108,107,109,108,110,109,111,110,112,111,113,112,114,113,115])
+
+          f=float(mfi(flat).iloc[-1]); u=float(mfi(up).iloc[-1]); d=float(mfi(down).iloc[-1]); q=float(mfi(mixed).iloc[-1])
+          assert f==50.0, f'Płaski rynek powinien dać MFI 50, jest {f}'
+          assert u==100.0, f'Tylko dodatni przepływ powinien dać MFI 100, jest {u}'
+          assert d==0.0, f'Tylko ujemny przepływ powinien dać MFI 0, jest {d}'
+          assert 0.0 <= q <= 100.0 and np.isfinite(q), f'MFI mieszany poza zakresem: {q}'
+          print({'płaski':f,'tylko_dodatni':u,'tylko_ujemny':d,'mieszany':q})
+          PY
+
+      - name: Sprawdź aktualne wyniki silnika
+        run: |
+          python - <<'PY'
+          import json, math
+          from pathlib import Path
+          p=Path('tactical_engine/TACTICAL_ENGINE.json')
+          assert p.exists(), 'Brakuje TACTICAL_ENGINE.json'
+          x=json.loads(p.read_text(encoding='utf-8'))
+          checked=0
+          for a in x.get('assets',[]):
+              if a.get('qa')!='PASS':
+                  continue
+              for tf in ('1H','4H','1D'):
+                  v=((a.get('timeframes') or {}).get(tf) or {}).get('mfi14')
+                  assert v is not None, f"{a.get('symbol')} {tf}: brak MFI"
+                  v=float(v)
+                  assert math.isfinite(v), f"{a.get('symbol')} {tf}: MFI nie jest liczbą skończoną"
+                  assert 0.0 <= v <= 100.0, f"{a.get('symbol')} {tf}: MFI poza 0-100"
+                  checked+=1
+          assert checked>=12, f'Za mało sprawdzonych wartości MFI: {checked}'
+          assert x.get('not_execution_connected') is True
+          print('Sprawdzono wartości MFI:',checked)
+          PY
