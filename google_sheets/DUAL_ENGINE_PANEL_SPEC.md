@@ -42,7 +42,7 @@ Przykładowe tłumaczenia TACTICAL:
 - TAKE_PROFIT_WATCH → OBSERWUJ REALIZACJĘ ZYSKU
 - EXIT_RISK_HIGH → WYSOKIE RYZYKO WYJŚCIA
 
-Nie pokazujemy w PANELU MACD, RSI, ATR, FOMO, stref, punktacji, przepływów, rotacji i szczegółów Market Reader. Te dane zostają w maszynowni.
+Nie pokazujemy w PANELU MACD, RSI, MFI, ATR, FOMO, stref, punktacji, przepływów, rotacji i szczegółów Market Reader. Te dane zostają w maszynowni oraz w alarmach.
 
 ## PORTFEL_LONG
 Tylko pozycje długoterminowe. Minimalne dane użytkowe:
@@ -92,6 +92,7 @@ Warstwy:
 - 1D regime
 - MACD
 - RSI
+- MFI(14)
 - wolumen
 - ATR
 - breakout/retest
@@ -103,13 +104,41 @@ Warstwy:
 - tactical status
 - ekstrema 1H / 4H / 1D
 
+MFI nie jest samodzielnym sygnałem kupna/sprzedaży. Działa jako warstwa potwierdzenia i wykrywania skrajności razem z RSI, MACD, FOMO, trendem i strefami.
+
+## MFI — zatwierdzona logika ekstremów
+MFI liczymy automatycznie na zamkniętych świecach dla 1H / 4H / 1D.
+
+Poziomy:
+- 80–90 → wykupienie / ostrzeżenie
+- >= 90 → skrajne wykupienie
+- 10–20 → wyprzedanie / ostrzeżenie
+- <= 10 → skrajne wyprzedanie
+
+Znaczenie interwałów:
+- 1H — szybkie lokalne przegrzanie/wyprzedanie; najniższa waga,
+- 4H — główny interwał decyzji TACTICAL; wysoka waga,
+- 1D — rzadsze, ale najważniejsze skrajności; najwyższy kontekst.
+
 ## ALARMY_EKSTREMOW
 Osobna zakładka użytkowa. Alarm jest informacyjny i nie wykonuje transakcji.
 
-Domyślne progi:
+Źródła alarmów:
+- RSI,
+- MFI,
+- FOMO,
+- MACD pozostaje kontekstem kierunku/momentum w SILNIK_TACTICAL.
+
+Domyślne progi RSI/FOMO:
 - RSI wykupienie: RSI >= 75
 - RSI wyprzedanie: RSI <= 25
 - FOMO HARD BLOCK: FOMO >= 8
+
+Domyślne progi MFI:
+- ostrzeżenie górne: 80
+- skrajne górne: 90
+- ostrzeżenie dolne: 20
+- skrajne dolne: 10
 
 Interwały:
 - 1H
@@ -122,6 +151,7 @@ Kolumny:
 - INTERWAŁ
 - TYP
 - RSI
+- MFI
 - FOMO
 - WAGA
 - CZAS DANYCH
@@ -133,6 +163,10 @@ Nowy alarm jest dopisywany do HISTORIA. Przy odświeżeniu pojawia się toast w 
 - RSI_GORNY = 75
 - RSI_DOLNY = 25
 - FOMO_TWARDY = 8
+- MFI_GORNY_OSTRZEZENIE = 80
+- MFI_GORNY_SKRAJNY = 90
+- MFI_DOLNY_OSTRZEZENIE = 20
+- MFI_DOLNY_SKRAJNY = 10
 - EMAIL_ALERTY = ON/OFF
 - EMAIL_DO = adres docelowy
 
@@ -156,7 +190,7 @@ Jeden przycisk `ODŚWIEŻ_WSZYSTKO` kolejno:
 3. pobiera MARKET_READER jeśli dostępny,
 4. odświeża maszynownię LONG i TACTICAL,
 5. przelicza polski PANEL,
-6. skanuje ekstrema 1H / 4H / 1D,
+6. skanuje RSI / MFI / FOMO na 1H / 4H / 1D,
 7. zapisuje nowe alarmy do HISTORIA,
 8. opcjonalnie wysyła e-mail,
 9. aktualizuje znacznik czasu.
@@ -170,10 +204,10 @@ Dodatkowa komenda `SPRAWDŹ EKSTREMA` wykonuje sam skan ekstremów bez pełnego 
 - Brak synchronizacji ilości między portfelami.
 - V7 produkcyjny pozostaje nietknięty.
 - Market Reader nie może nadpisywać twardych blokad.
-- Alarm ekstremum nie jest automatycznie sygnałem sprzedaży ani zakupu.
+- RSI/MFI/FOMO ekstremum nie jest automatycznie sygnałem sprzedaży ani zakupu.
 - Dane maszynowni nie rozrastają głównego PANELU.
 
 ## Status projektu
-Warstwa panelu i integracji Google Sheets jest domknięta funkcjonalnie: LONG + TACTICAL, polski widok użytkownika, oddzielne portfele, historia oraz alarmy ekstremów 1H/4H/1D są zdefiniowane i zaimplementowane w `DUAL_ENGINE_APPS_SCRIPT_FULL.txt`.
+Warstwa panelu i integracji Google Sheets jest domknięta funkcjonalnie: LONG + TACTICAL, polski widok użytkownika, oddzielne portfele, historia oraz alarmy ekstremów RSI/MFI/FOMO 1H/4H/1D są zdefiniowane i zaimplementowane w `DUAL_ENGINE_APPS_SCRIPT_FULL.txt`.
 
 Kalibracja progów strategii TACTICAL pozostaje osobnym etapem badawczym. Nie wolno oznaczać jej jako zamrożonej strategii wykonawczej wyłącznie na podstawie pojedynczego holdoutu.
