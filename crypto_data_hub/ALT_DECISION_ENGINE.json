@@ -1,0 +1,178 @@
+{
+  "date": "2026-09-22",
+  "engine": "ALT_DECISION_ENGINE_v0.1",
+  "universe_source": "config/alt_universe.csv",
+  "zones_source": "config/alt_zones.csv",
+  "important_rules": {
+    "dynamic_universe": true,
+    "no_zone_guessing": true,
+    "relative_strength_not_hard_gate": true,
+    "rotation_score_not_standalone_buy_signal": true,
+    "fomo_hard_block_at_8": true,
+    "current_output_is_research_engine_status_not_execution": true
+  },
+  "assets": [
+    {
+      "symbol": "ETH",
+      "decision": "CZEKAJ",
+      "reason": "Brak pe\u0142nego zestawu warunk\u00f3w wej\u015bcia",
+      "price": 2753.63,
+      "rotation_score_0_10": 7,
+      "rotation_status": "CONFIRMED",
+      "rotation_confidence": "MEDIUM",
+      "trend_score_0_4": 4,
+      "fomo_score_0_10": 2,
+      "fomo_label": "NORMAL",
+      "fresh_breakout_20d": false,
+      "retest_confirmed_10d": true,
+      "volume_ratio_vs_20d": 0.9437789401559079,
+      "zones": {
+        "zone_ready": true,
+        "zone_count": 30,
+        "in_demand": false,
+        "in_supply": true,
+        "dca1": 2450.0,
+        "dca2": 1870.0,
+        "dca3": 1290.0,
+        "nearest_demand": {
+          "timeframe": "1D",
+          "from": 2350.0,
+          "to": 2450.0,
+          "distance_pct": 11.026535881727034
+        },
+        "nearest_supply": {
+          "timeframe": "3D",
+          "from": 2700.0,
+          "to": 2800.0,
+          "distance_pct": 0.0
+        }
+      },
+      "blockers": []
+    },
+    {
+      "symbol": "SOL",
+      "decision": "KUP PO RETE\u015aCIE",
+      "reason": "Rotacja >=6, trend >=3, retest potwierdzony, brak FOMO hard block",
+      "price": 118.57,
+      "rotation_score_0_10": 7,
+      "rotation_status": "CONFIRMED",
+      "rotation_confidence": "MEDIUM",
+      "trend_score_0_4": 4,
+      "fomo_score_0_10": 4,
+      "fomo_label": "WATCH",
+      "fresh_breakout_20d": false,
+      "retest_confirmed_10d": true,
+      "volume_ratio_vs_20d": 1.231005468853846,
+      "zones": {
+        "zone_ready": true,
+        "zone_count": 8,
+        "in_demand": false,
+        "in_supply": false,
+        "dca1": 97.0,
+        "dca2": 78.5,
+        "dca3": 60.0,
+        "nearest_demand": {
+          "timeframe": "1D",
+          "from": 87.0,
+          "to": 97.0,
+          "distance_pct": 18.191785443198107
+        },
+        "nearest_supply": {
+          "timeframe": "1D",
+          "from": 119.0,
+          "to": 125.0,
+          "distance_pct": 0.36265497174665334
+        }
+      },
+      "blockers": []
+    },
+    {
+      "symbol": "LINK",
+      "decision": "DATA_PENDING",
+      "reason": "Brakuje krytycznej warstwy: STREFY_MISSING",
+      "price": 13.046,
+      "rotation_score_0_10": 7,
+      "rotation_status": "CONFIRMED",
+      "rotation_confidence": "MEDIUM",
+      "trend_score_0_4": 4,
+      "fomo_score_0_10": 2,
+      "fomo_label": "NORMAL",
+      "fresh_breakout_20d": false,
+      "retest_confirmed_10d": false,
+      "volume_ratio_vs_20d": 1.212697689451405,
+      "zones": {
+        "zone_ready": false,
+        "zone_count": 0
+      },
+      "blockers": [
+        "STREFY_MISSING"
+      ]
+    },
+    {
+      "symbol": "AAVE",
+      "decision": "DATA_PENDING",
+      "reason": "Brakuje krytycznej warstwy: STREFY_MISSING",
+      "price": 148.06,
+      "rotation_score_0_10": 7,
+      "rotation_status": "CONFIRMED",
+      "rotation_confidence": "MEDIUM",
+      "trend_score_0_4": 4,
+      "fomo_score_0_10": 2,
+      "fomo_label": "NORMAL",
+      "fresh_breakout_20d": false,
+      "retest_confirmed_10d": false,
+      "volume_ratio_vs_20d": 1.2153255239385996,
+      "zones": {
+        "zone_ready": false,
+        "zone_count": 0
+      },
+      "blockers": [
+        "STREFY_MISSING"
+      ]
+    },
+    {
+      "symbol": "HBAR",
+      "decision": "DATA_PENDING",
+      "reason": "Brakuje krytycznej warstwy: STREFY_MISSING",
+      "price": 0.0991,
+      "rotation_score_0_10": 7,
+      "rotation_status": "CONFIRMED",
+      "rotation_confidence": "MEDIUM",
+      "trend_score_0_4": 3,
+      "fomo_score_0_10": 5,
+      "fomo_label": "WATCH",
+      "fresh_breakout_20d": true,
+      "retest_confirmed_10d": true,
+      "volume_ratio_vs_20d": 2.4514230286395615,
+      "zones": {
+        "zone_ready": false,
+        "zone_count": 0
+      },
+      "blockers": [
+        "STREFY_MISSING"
+      ]
+    },
+    {
+      "symbol": "ONDO",
+      "decision": "DATA_PENDING",
+      "reason": "Brakuje krytycznej warstwy: STREFY_MISSING",
+      "price": 0.4413,
+      "rotation_score_0_10": 7,
+      "rotation_status": "CONFIRMED",
+      "rotation_confidence": "MEDIUM",
+      "trend_score_0_4": 3,
+      "fomo_score_0_10": 3,
+      "fomo_label": "NORMAL",
+      "fresh_breakout_20d": false,
+      "retest_confirmed_10d": true,
+      "volume_ratio_vs_20d": 1.6100255898987441,
+      "zones": {
+        "zone_ready": false,
+        "zone_count": 0
+      },
+      "blockers": [
+        "STREFY_MISSING"
+      ]
+    }
+  ]
+}
