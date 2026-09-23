@@ -1,12 +1,12 @@
 {
-  "generated_at_utc": "2026-09-23T14:32:06.903229+00:00",
-  "engine": "ONCHAIN_ACTIVITY_v0.5",
+  "generated_at_utc": "2026-09-23T14:35:02.481344+00:00",
+  "engine": "ONCHAIN_ACTIVITY_v0.6",
   "assets": [
     {
       "symbol": "ETH",
       "metric_profile": "CHAIN_L1",
-      "coverage_pct": 43,
-      "directional_votes": 3,
+      "coverage_pct": 57,
+      "directional_votes": 4,
       "quality_gate": "TRUSTED",
       "source_status": {
         "coinmetrics": "HTTP_403",
@@ -50,10 +50,10 @@
         "trend": "STRONG_RISING"
       },
       "stablecoin_liquidity": {
-        "latest_usd": null,
-        "change_7d_pct": null,
-        "change_30d_pct": null,
-        "trend": "NO_DATA"
+        "latest_usd": 147507002015.31,
+        "change_7d_pct": -0.27927980803108543,
+        "change_30d_pct": 0.24998227456822786,
+        "trend": "FLAT"
       },
       "chain_fees": {
         "latest_daily_usd": 10640042.309999999,
@@ -76,17 +76,17 @@
         "change_30d_vs_prev30_pct": null,
         "trend": "NO_DATA"
       },
-      "long_onchain_score_0_10": 10,
+      "long_onchain_score_0_10": 9,
       "long_onchain_label": "STRONG_POSITIVE",
-      "tactical_onchain_score_0_10": 10,
+      "tactical_onchain_score_0_10": 9,
       "tactical_onchain_label": "STRONG_POSITIVE",
       "role": "context only; never standalone trade signal"
     },
     {
       "symbol": "SOL",
       "metric_profile": "CHAIN_L1",
-      "coverage_pct": 43,
-      "directional_votes": 3,
+      "coverage_pct": 57,
+      "directional_votes": 4,
       "quality_gate": "TRUSTED",
       "source_status": {
         "coinmetrics": "HTTP_403",
@@ -130,10 +130,10 @@
         "trend": "STRONG_RISING"
       },
       "stablecoin_liquidity": {
-        "latest_usd": null,
-        "change_7d_pct": null,
-        "change_30d_pct": null,
-        "trend": "NO_DATA"
+        "latest_usd": 16817457146.97,
+        "change_7d_pct": 5.787562949526226,
+        "change_30d_pct": 3.7344113133770174,
+        "trend": "RISING"
       },
       "chain_fees": {
         "latest_daily_usd": 17102881.169999994,
@@ -245,9 +245,9 @@
     {
       "symbol": "ONDO",
       "metric_profile": "RWA_PROTOCOL",
-      "coverage_pct": 0,
-      "directional_votes": 0,
-      "quality_gate": "NO_DATA",
+      "coverage_pct": 20,
+      "directional_votes": 1,
+      "quality_gate": "PARTIAL",
       "source_status": {
         "coinmetrics": "HTTP_400",
         "defillama_chain_tvl": "NOT_APPLICABLE",
@@ -255,7 +255,7 @@
         "defillama_stablecoins": "NOT_APPLICABLE",
         "defillama_chain_fees": "NOT_APPLICABLE",
         "defillama_protocol": "OK",
-        "defillama_protocol_fees": "HTTP_502"
+        "defillama_protocol_fees": "OK"
       },
       "network_metrics": {
         "AdrActCnt": {
@@ -309,12 +309,12 @@
         "quality": "NO_DATA"
       },
       "protocol_fees": {
-        "fees_24h_usd": null,
-        "fees_7d_usd": null,
-        "fees_30d_usd": null,
-        "change_7d_vs_prev7_pct": null,
-        "change_30d_vs_prev30_pct": null,
-        "trend": "NO_DATA"
+        "fees_24h_usd": 308171.0,
+        "fees_7d_usd": 1751389.0,
+        "fees_30d_usd": 7663856.0,
+        "change_7d_vs_prev7_pct": -9.543494956788335,
+        "change_30d_vs_prev30_pct": 11.5731025737708,
+        "trend": "FLAT"
       },
       "long_onchain_score_0_10": null,
       "long_onchain_label": "INSUFFICIENT_QUALITY",
@@ -325,7 +325,7 @@
   ],
   "summary": {
     "assets_requested": 4,
-    "assets_with_any_data": 2,
+    "assets_with_any_data": 3,
     "trusted_assets": 2,
     "source_health": {
       "coinmetrics_assets_ok": 0,
@@ -334,7 +334,7 @@
       "stablecoin_assets_ok": 2,
       "chain_fees_assets_ok": 2,
       "protocol_assets_ok": 1,
-      "protocol_fees_assets_ok": 0
+      "protocol_fees_assets_ok": 1
     },
     "layers": [
       "NETWORK_ACTIVITY",
