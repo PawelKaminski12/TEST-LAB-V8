@@ -1,0 +1,82 @@
+name: TEST LAB V8 LONG Alt Decision v1
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/v8_long_alt_decision_v1.py'
+      - 'crypto_data_hub/ALT_TECHNICAL_LAYER.json'
+      - 'config/alt_universe.csv'
+      - 'config/alt_zones.csv'
+      - '.github/workflows/test-lab-v8-long-alt-decision-v1.yml'
+  schedule:
+    - cron: '50 6 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-long-alt-decision-v1
+  cancel-in-progress: false
+
+jobs:
+  build-long-alt-decision:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pobierz najnowszy projekt
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Przygotuj Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Zainstaluj biblioteki
+        run: pip install --quiet pandas
+
+      - name: Zbuduj decyzje LONG
+        run: python scripts/v8_long_alt_decision_v1.py
+
+      - name: Sprawdź pełną listę i blokady bezpieczeństwa
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          expected=['ETH','SOL','LINK','ONDO','RENDER','FLOKI','PEPE','SPX6900','XRP','XLM','HBAR']
+          p=Path('crypto_data_hub/ALT_DECISION_ENGINE.json')
+          assert p.exists()
+          x=json.loads(p.read_text(encoding='utf-8'))
+          assert x['engine']=='ALT_DECISION_ENGINE_v1.0'
+          assert x['asset_count']==11 and x['universe']==expected
+          assert x['rules']['no_zone_guessing'] is True
+          assert x['rules']['execution_connected'] is False
+          assert x['rules']['no_buy_in_supply'] is True
+          assert [a['symbol'] for a in x['assets']]==expected
+          for a in x['assets']:
+              assert a['technical_ready'] is True
+              if a['decision'].startswith('KUP'):
+                  assert not a['blockers'] and not a['entry_blockers']
+                  assert a['zones']['complete_7_of_7'] is True
+          print('LONG: 11/11 altów podłączonych; decyzje i blokady bezpieczeństwa sprawdzone poprawnie.')
+          PY
+
+      - name: Zapisz wyniki bez konfliktu
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          mkdir -p /tmp/longdecision
+          cp crypto_data_hub/ALT_DECISION_ENGINE.json crypto_data_hub/ALT_DECISION_HISTORY.csv /tmp/longdecision/
+          for attempt in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            cp /tmp/longdecision/ALT_DECISION_ENGINE.json /tmp/longdecision/ALT_DECISION_HISTORY.csv crypto_data_hub/
+            git add crypto_data_hub/ALT_DECISION_ENGINE.json crypto_data_hub/ALT_DECISION_HISTORY.csv
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Update V8 LONG decisions 11 alts'
+            if git push origin main; then exit 0; fi
+            sleep $((attempt*3))
+          done
+          exit 1
