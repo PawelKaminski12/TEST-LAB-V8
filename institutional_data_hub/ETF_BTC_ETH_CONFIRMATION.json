@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-24T07:47:32.754547+00:00",
+  "generated_at_utc": "2026-09-24T08:48:20.528394+00:00",
   "engine": "V8_ETF_BTC_ETH_CONFIRMATION_v1.0",
   "assets": {
     "BTC": {
@@ -10,10 +10,10 @@
         "reasons_pl": []
       },
       "last_closed_date": "2026-09-23",
-      "last_closed_flow_usdm": 32.4,
-      "closed_5d_usdm": 2338.6,
-      "closed_20d_usdm": 2548.8,
-      "closed_30d_usdm": 4870.099999999999,
+      "last_closed_flow_usdm": 346.9,
+      "closed_5d_usdm": 2653.1,
+      "closed_20d_usdm": 2863.3,
+      "closed_30d_usdm": 5184.599999999999,
       "flow_trend_pl": "NAPŁYW PRZYSPIESZA",
       "today_status_pl": "DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE",
       "today_preview_usdm": null,
@@ -23,14 +23,14 @@
       "price_vs_etf_5d": {
         "horizon": "5D",
         "price_change_pct": 4.492849953362432,
-        "etf_flow_usdm": 2338.6,
+        "etf_flow_usdm": 2653.1,
         "label_pl": "CENA I ETF POTWIERDZAJĄ SIĘ — NAPŁYW WSPIERA WZROST",
         "confirmation_adjustment": 0.5
       },
       "price_vs_etf_20d": {
         "horizon": "20D",
         "price_change_pct": 4.016771281300402,
-        "etf_flow_usdm": 2548.8,
+        "etf_flow_usdm": 2863.3,
         "label_pl": "CENA I ETF POTWIERDZAJĄ SIĘ — NAPŁYW WSPIERA WZROST",
         "confirmation_adjustment": 0.5
       },
@@ -46,10 +46,10 @@
         "reasons_pl": []
       },
       "last_closed_date": "2026-09-23",
-      "last_closed_flow_usdm": 2.5,
-      "closed_5d_usdm": 539.0999999999999,
-      "closed_20d_usdm": 1238.0000000000002,
-      "closed_30d_usdm": 2244.4,
+      "last_closed_flow_usdm": 104.5,
+      "closed_5d_usdm": 641.0999999999999,
+      "closed_20d_usdm": 1340.0000000000002,
+      "closed_30d_usdm": 2346.4,
       "flow_trend_pl": "NAPŁYW PRZYSPIESZA",
       "today_status_pl": "DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE",
       "today_preview_usdm": null,
@@ -59,14 +59,14 @@
       "price_vs_etf_5d": {
         "horizon": "5D",
         "price_change_pct": 2.530983786767438,
-        "etf_flow_usdm": 539.0999999999999,
+        "etf_flow_usdm": 641.0999999999999,
         "label_pl": "CENA I ETF POTWIERDZAJĄ SIĘ — NAPŁYW WSPIERA WZROST",
         "confirmation_adjustment": 0.5
       },
       "price_vs_etf_20d": {
         "horizon": "20D",
         "price_change_pct": 6.755095200914485,
-        "etf_flow_usdm": 1238.0000000000002,
+        "etf_flow_usdm": 1340.0000000000002,
         "label_pl": "CENA I ETF POTWIERDZAJĄ SIĘ — NAPŁYW WSPIERA WZROST",
         "confirmation_adjustment": 0.5
       },
@@ -78,10 +78,10 @@
   "global_institutional_interest": {
     "score_0_10": 9.5,
     "label_pl": "SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE ROŚNIE",
-    "btc_closed_5d_usdm": 2338.6,
-    "eth_closed_5d_usdm": 539.0999999999999,
-    "btc_acceleration_5d_usdm": 3220.8999999999996,
-    "eth_acceleration_5d_usdm": 597.5999999999999,
+    "btc_closed_5d_usdm": 2653.1,
+    "eth_closed_5d_usdm": 641.0999999999999,
+    "btc_acceleration_5d_usdm": 3535.3999999999996,
+    "eth_acceleration_5d_usdm": 699.5999999999999,
     "role": "kontekst instytucjonalny, nie samodzielny sygnał kupna lub sprzedaży"
   },
   "rules": {
