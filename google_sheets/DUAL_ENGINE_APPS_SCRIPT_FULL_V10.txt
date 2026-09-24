@@ -1233,8 +1233,8 @@ function ODSWIEZ_WSZYSTKO() {
     writeMorningRadarBrief_(ss.getSheetByName(V10_MORNING_SHEET), morningRadarJson);
 
     PropertiesService.getDocumentProperties().setProperty('V10_MACHINE_CSV_CACHE', machineCsv);
-    const machineSheet = getOrCreateSheet_(ss, 'DANE_MASZYNOWNIA');
-    machineSheet.hideSheet();
+    // V10: legacy DANE_MASZYNOWNIA is intentionally left untouched.
+    // Technical CSV lives in DocumentProperties to avoid old merge-state failures.
 
     const alarms = buildExtremeAlarms_(ss, tacticalJson);
     writeExtremeAlarms_(ss.getSheetByName(V8_SHEETS.extremes), alarms);
@@ -1851,9 +1851,12 @@ function strongestMorningRowKindV10_(sheet, r) {
   // Jeśli radar jest NEUTRALNY, ale którykolwiek wskaźnik już daje sygnał,
   // zielone tło nie może sugerować "wszystko w normie".
   if (Number.isFinite(fomo) && fomo >= 8) return 'FOMO';
-  if (macd.indexOf('EKSTREMUM') >= 0 || macd.indexOf('UWAGA') >= 0) return 'WARN';
+  // MACD: NORMALNY is the only neutral label. DOLNE/GORNE GRANICE, OSTRZEZ.,
+  // EKSTREMUM etc. must make the whole asset row yellow.
+  if (macd && macd.indexOf('NORMAL') < 0) return 'WARN';
   if (Number.isFinite(rsi) && (rsi >= 75 || rsi <= 25)) return 'WARN';
-  if (Number.isFinite(mfi) && (mfi >= 90 || mfi <= 10)) return 'WARN';
+  // MFI warning band starts at 80/20; 90/10 remains the stronger extreme tier in engine logic.
+  if (Number.isFinite(mfi) && (mfi >= 80 || mfi <= 20)) return 'WARN';
 
   return radarKindV10_(status);
 }
@@ -1930,10 +1933,10 @@ function polishMorningRadarV10_(sheet, assets) {
     if (rsi >= 75 || rsi <= 25) paintMorningRangeV10_(sheet.getRange(r,3), 'WARN', true);
 
     const mfi = Number(sheet.getRange(r,4).getValue());
-    if (mfi >= 90 || mfi <= 10) paintMorningRangeV10_(sheet.getRange(r,4), 'WARN', true);
+    if (mfi >= 80 || mfi <= 20) paintMorningRangeV10_(sheet.getRange(r,4), 'WARN', true);
 
     const macd = String(sheet.getRange(r,5).getDisplayValue() || '').toUpperCase();
-    if (macd.indexOf('EKSTREMUM') >= 0 || macd.indexOf('UWAGA') >= 0) {
+    if (macd && macd.indexOf('NORMAL') < 0) {
       paintMorningRangeV10_(sheet.getRange(r,5), 'MACD', true);
     }
 
