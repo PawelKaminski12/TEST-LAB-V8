@@ -70,11 +70,15 @@ new_write_csv = r'''function writeCsvSheet_(sheet, csvText, preserveCompactPanel
 
 s = replace_function(s, 'writeCsvSheet_', new_write_csv)
 
-old = """    const machineSheet = getOrCreateSheet_(ss, 'DANE_MASZYNOWNIA');\n    writeCsvSheet_(machineSheet, machineCsv, false);\n    machineSheet.hideSheet();"""
-new = """    const machineSheet = getOrCreateSheet_(ss, 'DANE_MASZYNOWNIA');\n    const rebuiltMachineSheet = writeCsvSheet_(machineSheet, machineCsv, false);\n    rebuiltMachineSheet.hideSheet();"""
-if old not in s:
-    raise SystemExit('Machine-room caller pattern not found')
-s = s.replace(old, new, 1)
+# Maszynownia musi używać ZWRÓCONEGO arkusza, bo writeCsvSheet_ usuwa stary obiekt Sheet.
+old_const = """    const machineSheet = getOrCreateSheet_(ss, 'DANE_MASZYNOWNIA');\n    writeCsvSheet_(machineSheet, machineCsv, false);\n    machineSheet.hideSheet();"""
+new_const = """    let machineSheet = getOrCreateSheet_(ss, 'DANE_MASZYNOWNIA');\n    machineSheet = writeCsvSheet_(machineSheet, machineCsv, false);\n    machineSheet.hideSheet();"""
+if old_const in s:
+    s = s.replace(old_const, new_const, 1)
+
+required_machine = """    let machineSheet = getOrCreateSheet_(ss, 'DANE_MASZYNOWNIA');\n    machineSheet = writeCsvSheet_(machineSheet, machineCsv, false);\n    machineSheet.hideSheet();"""
+if required_machine not in s:
+    raise SystemExit('Safe machine-room caller pattern not found')
 
 # Guard against accidentally retaining the old merge-inspection strategy inside writeCsvSheet_.
 start = s.find('function writeCsvSheet_(')
@@ -85,4 +89,4 @@ for forbidden in ('getMergedRanges()', 'breakApart()', 'unmergeAllSafelyV10_'):
         raise SystemExit(f'Forbidden token still in writeCsvSheet_: {forbidden}')
 
 p.write_text(s, encoding='utf-8')
-print('Patched V10: writeCsvSheet_ now always rebuilds technical CSV sheets without merge inspection.')
+print('Patched V10: technical CSV sheets rebuild unconditionally; no merge inspection.')
