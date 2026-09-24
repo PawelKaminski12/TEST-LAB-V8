@@ -110,13 +110,11 @@ function polishMorningRadarV10_(sheet, assets) {
   }
 
   // RADAR 13 ALTÓW — cały wiersz dziedziczy kolor statusu RADAR.
-  // Potem pojedyncze alarmowe komórki RSI/MFI/MACD/FOMO nadpisują tło.
   for (let i=0; i<n; i++) {
     const r = 20 + i;
     const status = String(sheet.getRange(r,8).getDisplayValue() || '');
     const kind = radarKindV10_(status);
 
-    // Mocniej widoczny kolor całego wiersza A:I.
     paintMorningRangeV10_(sheet.getRange(r,1,1,9), kind, false);
     paintMorningRangeV10_(sheet.getRange(r,8), kind, true);
 
@@ -135,9 +133,38 @@ function polishMorningRadarV10_(sheet, assets) {
     if (fomo >= 8) paintMorningRangeV10_(sheet.getRange(r,6), 'FOMO', true);
   }
 
+  // LEGENDA po prawej — ten sam kod kolorów co w tabelach.
+  sheet.getRange('L4:O4').merge().setValue('LEGENDA KOLORÓW');
+  sheet.getRange('L4:O4').setBackground('#CFE8F6').setFontColor('#17324D').setFontWeight('bold').setHorizontalAlignment('center');
+
+  const legend = [
+    ['GORĄCO','Mocne przegrzanie / sygnał gorący','HOT'],
+    ['CHŁODNO','Słabość / sygnał chłodny','COLD'],
+    ['NEUTRALNIE','Brak skrajności','NEUTRAL'],
+    ['UWAGA','Sygnał ostrzegawczy','WARN'],
+    ['FOMO ≥ 8','Podwyższone FOMO','FOMO'],
+    ['MACD ALERT','Ostrzeżenie MACD','MACD'],
+    ['INFO','Informacja / stan pomocniczy','INFO']
+  ];
+  legend.forEach((x,i) => {
+    const r = 5 + i;
+    sheet.getRange(r,12).setValue(x[0]);
+    sheet.getRange(r,13,1,3).merge().setValue(x[1]);
+    paintMorningRangeV10_(sheet.getRange(r,12), x[2], true);
+    sheet.getRange(r,13,1,3).setBackground('#F7FAFC').setFontColor('#243447');
+  });
+
+  sheet.getRange('L13:O13').merge().setValue('AUTO = wybiera dla KAŻDEGO aktywa osobno najsilniejszy sygnał z 1H / 2H / 4H. To nie jest średnia.');
+  sheet.getRange('L13:O13').setBackground('#EAF4FB').setFontColor('#245A7A').setFontWeight('bold').setWrap(true);
+  sheet.getRange('L14:O14').merge().setValue('1H / 2H / 4H = cały radar pracuje ręcznie na jednym wybranym interwale.');
+  sheet.getRange('L14:O14').setBackground('#F7FAFC').setFontColor('#456276').setWrap(true);
+  [125,150,150,150].forEach((w,i)=>sheet.setColumnWidth(12+i,w));
+  sheet.setRowHeight(13,48);
+  sheet.setRowHeight(14,40);
+
   styleMorningRadarButtonsV10_(sheet, morningRadarModeV10_(sheet));
 }
 '''
 
 p.write_text(s, encoding='utf-8')
-print('V10 Morning Radar toned canvas and stronger row colors patched')
+print('V10 Morning Radar legend and AUTO explanation patched')
