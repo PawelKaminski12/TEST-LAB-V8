@@ -2266,7 +2266,7 @@ function writeMorningRadarBrief_(sheet, radarJson) {
       tf: String(x.timeframe || (mode === 'AUTO' ? (a.auto || {}).timeframe : mode) || ''),
       rsi: round1V10_(x.rsi14),
       mfi: round1V10_(x.mfi14),
-      macd: macdBriefV10_(x.macd_extreme_label),
+      macd: String(x.macd_display_pl || macdBriefV10_(x.macd_extreme_label)),
       fomo: Number(x.fomo_score_0_10 || 0),
       trend: Number(x.trend_score_0_4 || 0),
       radar: String(x.radar_status || 'BRAK'),
