@@ -64,8 +64,10 @@ jobs:
                   for k in ['rsi14','mfi14','macd_extreme_label','fomo_score_0_10','radar_status','radar_intensity_0_10','reason_pl']:
                       assert k in x
                   assert x['closed_bar_only'] is True
-                  assert x['stale'] is False
-          print('MORNING RADAR: 13/13, 1H/2H/4H + AUTO OK')
+                  assert isinstance(x['stale'], bool)
+                  assert x['fresh_limit_hours'] in (3,5,10)
+                  assert 'signal_started_at_utc' in x
+          print('MORNING RADAR: 13/13, 1H/2H/4H + AUTO + freshness OK')
           PY
 
       - name: Commit radar output
