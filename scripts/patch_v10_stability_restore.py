@@ -9,24 +9,39 @@ s = s.replace('    applyUnifiedV8Theme_(ss);\n', '')
 s = s.replace('  applyUnifiedThemeV10_(ss);\n', '')
 s = s.replace('  applyUnifiedV8Theme_(ss);\n', '')
 
-# 2) Bezpieczne rozpinanie scaleń wyłącznie w trzech dashboardach budowanych od zera.
-full_unmerge = "  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();\n"
+# 2) Bezpieczne rozpinanie scaleń.
+# Zamiast breakApart() na dużym zakresie rozpinamy KAŻDY faktycznie scalony zakres osobno.
+# getMergedRanges() zwraca dokładne zakresy scaleń, więc nie ma błędu
+# "musisz zaznaczyć wszystkie komórki w scalanym zakresie".
+safe_unmerge = "  sheet.getMergedRanges().forEach(r => r.breakApart());\n"
 for fn in ['setupPortfolioLong_', 'setupPortfolioTactical_', 'setupMorningBrief_']:
     marker = f'function {fn}(sheet) {{\n'
     if marker not in s:
         continue
     start = s.index(marker) + len(marker)
-    tail = s[start:start+260]
-    tail2 = tail.replace('  sheet.getDataRange().breakApart();\n', '')
-    tail2 = tail2.replace('  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();\n', '')
-    s = s[:start] + tail2 + s[start+len(tail):]
-    s = s[:start] + full_unmerge + s[start:]
+    tail = s[start:start+420]
+    for old in [
+        '  sheet.getDataRange().breakApart();\n',
+        '  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();\n',
+        '  sheet.getMergedRanges().forEach(r => r.breakApart());\n'
+    ]:
+        tail = tail.replace(old, '')
+    s = s[:start] + safe_unmerge + tail + s[start+420:]
 
-# 3) ROOT FIX: tryb Porannego Radaru NIE jest już przechowywany w K1.
-# K1 mogło pozostać w historycznym scaleniu i sam odczyt getDisplayValue() wywalał wyjątek.
+# 3) Tryb Porannego Radaru poza arkuszem — DocumentProperties, bez K1.
 old_setup = """function setupMorningBrief_(sheet) {\n  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();\n  let savedMode = String(sheet.getRange('K1').getDisplayValue() || '').trim().toUpperCase();\n  if (!['1H','2H','4H','AUTO'].includes(savedMode)) savedMode = '1H';\n\n  sheet.clear();\n  sheet.setHiddenGridlines(true);\n  sheet.getRange('K1').setValue(savedMode);\n  sheet.hideColumns(11);\n"""
-new_setup = """function setupMorningBrief_(sheet) {\n  let savedMode = String(PropertiesService.getDocumentProperties().getProperty('V10_MORNING_MODE') || '1H').trim().toUpperCase();\n  if (!['1H','2H','4H','AUTO'].includes(savedMode)) savedMode = '1H';\n  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();\n  sheet.clear();\n  sheet.setHiddenGridlines(true);\n  PropertiesService.getDocumentProperties().setProperty('V10_MORNING_MODE', savedMode);\n"""
+new_setup = """function setupMorningBrief_(sheet) {\n  sheet.getMergedRanges().forEach(r => r.breakApart());\n  let savedMode = String(PropertiesService.getDocumentProperties().getProperty('V10_MORNING_MODE') || '1H').trim().toUpperCase();\n  if (!['1H','2H','4H','AUTO'].includes(savedMode)) savedMode = '1H';\n  sheet.clear();\n  sheet.setHiddenGridlines(true);\n  PropertiesService.getDocumentProperties().setProperty('V10_MORNING_MODE', savedMode);\n"""
 s = s.replace(old_setup, new_setup)
+
+# Usuń ewentualny drugi breakApart() z początku setupMorningBrief_.
+needle = "function setupMorningBrief_(sheet) {\n  sheet.getMergedRanges().forEach(r => r.breakApart());\n"
+if needle in s:
+    start = s.index(needle) + len(needle)
+    tail = s[start:start+300]
+    tail = tail.replace('  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();\n', '')
+    tail = tail.replace('  sheet.getDataRange().breakApart();\n', '')
+    tail = tail.replace('  sheet.getMergedRanges().forEach(r => r.breakApart());\n', '')
+    s = s[:start] + tail + s[start+300:]
 
 old_mode = """function morningRadarModeV10_(sheet) {\n  const v = String(sheet.getRange('K1').getDisplayValue() || '1H').trim().toUpperCase();\n  return ['1H','2H','4H','AUTO'].includes(v) ? v : '1H';\n}\n"""
 new_mode = """function morningRadarModeV10_(sheet) {\n  const v = String(PropertiesService.getDocumentProperties().getProperty('V10_MORNING_MODE') || '1H').trim().toUpperCase();\n  return ['1H','2H','4H','AUTO'].includes(v) ? v : '1H';\n}\n"""
@@ -100,4 +115,4 @@ if 'applySafeEngineColorsV10_(sheet);\n}\n\nfunction writeFlowEngine_' not in s:
     s = s.replace(old,new,1)
 
 p.write_text(s, encoding='utf-8')
-print('V10 stability root fix: mode stored in DocumentProperties; no K1 dependency')
+print('V10 stability root fix: exact merged ranges only + mode in DocumentProperties')
