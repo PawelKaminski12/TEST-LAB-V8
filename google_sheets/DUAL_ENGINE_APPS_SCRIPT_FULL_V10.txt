@@ -1971,6 +1971,7 @@ function writeTacticalDashboard_(sheet, tacticalJson, metaCsv) {
 }
 
 function setupMorningBrief_(sheet) {
+  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();
   let savedMode = String(PropertiesService.getDocumentProperties().getProperty('V10_MORNING_MODE') || '1H').trim().toUpperCase();
   if (!['1H','2H','4H','AUTO'].includes(savedMode)) savedMode = '1H';
   sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();
