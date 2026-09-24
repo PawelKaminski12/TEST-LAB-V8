@@ -1226,14 +1226,14 @@ function ODSWIEZ_WSZYSTKO() {
     writeEtfPanel_(ss.getSheetByName(V8_SHEETS.etf), etfStatusJson, etfConfirmationJson);
     writeEtfHistory_(ss.getSheetByName(V8_SHEETS.etfHistory), etfHistoryCsv);
     writeLabPanel_(ss.getSheetByName(V8_SHEETS.lab), labJson);
-    writeCsvSheet_(ss.getSheetByName(V8_SHEETS.marketReader), mrCsv, false);
+    PropertiesService.getDocumentProperties().setProperty('V10_MARKET_READER_CSV_CACHE', mrCsv);
 
     writeLongDashboard_(ss.getSheetByName(V8_SHEETS.portfolioLong), longJson);
     writeTacticalDashboard_(ss.getSheetByName(V8_SHEETS.portfolioTactical), tacticalJson, metaCsv);
     writeMorningRadarBrief_(ss.getSheetByName(V10_MORNING_SHEET), morningRadarJson);
 
-    let machineSheet = getOrCreateSheet_(ss, 'DANE_MASZYNOWNIA');
-    machineSheet = writeCsvSheet_(machineSheet, machineCsv, false);
+    PropertiesService.getDocumentProperties().setProperty('V10_MACHINE_CSV_CACHE', machineCsv);
+    const machineSheet = getOrCreateSheet_(ss, 'DANE_MASZYNOWNIA');
     machineSheet.hideSheet();
 
     const alarms = buildExtremeAlarms_(ss, tacticalJson);
