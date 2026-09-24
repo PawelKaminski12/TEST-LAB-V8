@@ -1,0 +1,54 @@
+name: V10 CSV Rebuild On Merges
+
+on:
+  push:
+    paths:
+      - 'scripts/patch_v10_csv_rebuild_on_merges.py'
+      - '.github/workflows/v10-csv-rebuild-on-merges.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Apply robust CSV patch
+        run: python scripts/patch_v10_csv_rebuild_on_merges.py
+      - name: Syntax check
+        run: |
+          cp google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt /tmp/v10.js
+          node --check /tmp/v10.js
+      - name: Static checks
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt').read_text(encoding='utf-8')
+          assert 'unmergeAllSafelyV10_(sheet);' not in s[s.find('function writeCsvSheet_'):s.find('function writePolishPanel_')]
+          assert "sheet = ss.insertSheet(name, index);" in s
+          assert "machineSheet = writeCsvSheet_(machineSheet, machineCsv, false);" in s
+          funcs=re.findall(r'(?m)^\s*function\s+([A-Za-z_$][\w$]*)\s*\(',s)
+          from collections import Counter
+          d={k:v for k,v in Counter(funcs).items() if v>1}
+          assert not d,d
+          print('PASS static checks')
+          PY
+      - name: Commit patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'Fix V10 CSV writes on legacy merged sheets'
+            git pull --rebase origin main
+            git push origin main
+          fi
