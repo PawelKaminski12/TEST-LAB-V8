@@ -92,23 +92,42 @@ function getOrCreateSheet_(ss, name) {
 
 function writeCsvSheet_(sheet, csvText, preserveCompactPanel) {
   const rows = Utilities.parseCsv(csvText);
-  // V10 SHADOW TECH: nigdy nie dotykamy starego arkusza z potencjalnie uszkodzonymi scaleniami.
-  // Dane techniczne trafiają do świeżego arkusza _V10_DATA.
   const ss = sheet.getParent();
   const baseName = sheet.getName();
-  const dataName = baseName + '_V10_DATA';
-  let out = ss.getSheetByName(dataName);
-  if (!out) out = ss.insertSheet(dataName);
-  out.clearContents();
-  if (!rows.length) return out;
-  out.getRange(1, 1, rows.length, rows[0].length).setValues(rows);
-  out.setFrozenRows(1);
-  if (preserveCompactPanel) {
-    const maxCols = 7;
-    if (out.getMaxColumns() > maxCols) out.hideColumns(maxCols + 1, out.getMaxColumns() - maxCols);
+  const finalName = baseName + '_V10_DATA';
+  const tmpName = baseName + '_V10_TMP_' + Date.now();
+
+  // V10 ATOMIC SHADOW: zawsze zapisujemy do NOWEGO arkusza.
+  // Nie czyścimy, nie rozpinamy i nie zapisujemy do żadnego istniejącego arkusza technicznego.
+  let out = ss.insertSheet(tmpName);
+
+  if (rows.length) {
+    out.getRange(1, 1, rows.length, rows[0].length).setValues(rows);
+    out.setFrozenRows(1);
+    if (preserveCompactPanel) {
+      const maxCols = 7;
+      if (out.getMaxColumns() > maxCols) out.hideColumns(maxCols + 1, out.getMaxColumns() - maxCols);
+    }
   }
+
+  // Dopiero po udanym zapisie próbujemy wymienić poprzedni shadow.
+  const old = ss.getSheetByName(finalName);
+  if (old) {
+    try {
+      ss.deleteSheet(old);
+      out.setName(finalName);
+    } catch (e) {
+      // Jeśli stary arkusz jest uszkodzony po wcześniejszych scaleniach, nie dotykamy go więcej.
+      // Nowy pozostaje pod unikalną nazwą i cały przebieg może iść dalej.
+      out.setName(baseName + '_V10_DATA_' + Date.now());
+    }
+  } else {
+    out.setName(finalName);
+  }
+
   return out;
 }
+
 
 
 function writePolishPanel_(sheet, csvText) {
