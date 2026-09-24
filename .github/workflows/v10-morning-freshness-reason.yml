@@ -1,0 +1,55 @@
+name: V10 Morning Freshness + Reason Time
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/patch_v10_morning_freshness_reason.py'
+      - '.github/workflows/v10-morning-freshness-reason.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Apply patch
+        run: python scripts/patch_v10_morning_freshness_reason.py
+      - name: Syntax check Python
+        run: python -m py_compile scripts/v8_morning_radar.py scripts/patch_v10_morning_freshness_reason.py
+      - name: Static Apps Script checks
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt')
+          s=p.read_text(encoding='utf-8')
+          assert "function freshMorningSheetV10_(ss)" in s
+          assert "function morningFreshnessV10_(x)" in s
+          assert "signal_started_at_utc" in s
+          assert "STARE DANE" in s
+          assert "setupMorningBrief_(ss.getSheetByName(V10_MORNING_SHEET));" not in s
+          print('APPS SCRIPT STATIC: OK')
+          PY
+      - name: Static workflow checks
+        run: |
+          grep -q "cron: '5 \* \* \* \*'" .github/workflows/test-lab-v8-tactical-engine.yml
+          grep -q "signal_started_at_utc" .github/workflows/test-lab-v8-morning-radar.yml
+      - name: Commit patched files
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt scripts/v8_morning_radar.py .github/workflows/test-lab-v8-tactical-engine.yml .github/workflows/test-lab-v8-morning-radar.yml
+          if git diff --cached --quiet; then
+            echo 'No changes'
+            exit 0
+          fi
+          git commit -m 'Harden V10 morning radar freshness and signal time'
+          git push origin main
