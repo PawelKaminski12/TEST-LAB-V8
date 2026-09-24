@@ -68,6 +68,37 @@ def derive_2h(pair: str):
     return state
 
 
+def normalize_macd_direction(tf):
+    """Keep alert strength, but force +/- to follow the actual MACD histogram side of zero.
+
+    This is a Morning Radar display normalization only. It does not modify the frozen
+    Tactical production engine. Upper MACD extreme = positive histogram, lower = negative.
+    """
+    out = dict(tf or {})
+    label = str(out.get('macd_extreme_label') or 'NORMAL').upper()
+    hist = clean_number(out.get('macd_hist'))
+    if hist is None or label in {'NORMAL', 'NO_DATA'}:
+        return out
+
+    is_extreme = 'EXTREME' in label
+    is_warning = 'WARNING' in label
+    if not (is_extreme or is_warning):
+        return out
+
+    if hist > 0:
+        out['macd_extreme_label'] = 'EXTREME_POSITIVE' if is_extreme else 'WARNING_POSITIVE'
+        out['macd_extreme_direction'] = 'POSITIVE'
+    elif hist < 0:
+        out['macd_extreme_label'] = 'EXTREME_NEGATIVE' if is_extreme else 'WARNING_NEGATIVE'
+        out['macd_extreme_direction'] = 'NEGATIVE'
+    else:
+        out['macd_extreme_label'] = 'NORMAL'
+        out['macd_extreme_direction'] = 'NONE'
+        out['macd_extreme_warning'] = False
+        out['macd_extreme'] = False
+    return out
+
+
 def radar_eval(tf):
     rsi = clean_number(tf.get('rsi14'))
     mfi = clean_number(tf.get('mfi14'))
@@ -101,10 +132,10 @@ def radar_eval(tf):
 
     if 'POSITIVE' in macd_label:
         hot += 2
-        reasons.append('MACD dodatnie ekstremum' if 'EXTREME' in macd_label else 'MACD dodatnie ostrzeżenie')
+        reasons.append('MACD górne granice' if 'EXTREME' in macd_label else 'MACD górne ostrzeżenie')
     elif 'NEGATIVE' in macd_label:
         cold += 2
-        reasons.append('MACD ujemne ekstremum' if 'EXTREME' in macd_label else 'MACD ujemne ostrzeżenie')
+        reasons.append('MACD dolne granice' if 'EXTREME' in macd_label else 'MACD dolne ostrzeżenie')
 
     if fomo >= 8:
         hot += 3; reasons.append(f'FOMO {int(fomo)}')
@@ -144,6 +175,7 @@ def radar_eval(tf):
 
 
 def compact_tf(tf):
+    tf = normalize_macd_direction(tf)
     keys = [
         'timeframe','close','trend_score_0_4','macd_hist','macd_hist_percentile','macd_hist_zscore',
         'macd_extreme_label','rsi14','mfi14','fomo_score_0_10','fomo_label','last_close_time_utc',
