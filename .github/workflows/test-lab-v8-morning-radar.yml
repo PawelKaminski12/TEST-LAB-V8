@@ -1,0 +1,81 @@
+name: TEST LAB V8 Morning Radar
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '25 * * * *'
+  push:
+    paths:
+      - 'scripts/v8_morning_radar.py'
+      - 'scripts/v8_tactical_engine_v1.py'
+      - 'tactical_engine/TACTICAL_ENGINE.json'
+      - 'tactical_engine/*USDT_1H.csv'
+      - '.github/workflows/test-lab-v8-morning-radar.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-morning-radar-writes
+  cancel-in-progress: false
+
+jobs:
+  build-morning-radar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install --quiet pandas numpy requests
+
+      - name: Build Morning Radar 1H 2H 4H
+        run: python scripts/v8_morning_radar.py
+
+      - name: Validate radar
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('morning_radar/MORNING_RADAR.json')
+          assert p.exists()
+          d=json.loads(p.read_text(encoding='utf-8'))
+          expected=['ETH','SOL','LINK','ONDO','RENDER','FLOKI','PEPE','SPX6900','XRP','XLM','HBAR','AVAX','AWE']
+          assert d['engine']=='V8_MORNING_RADAR_v1'
+          assert d['research_only'] is True
+          assert d['execution_connected'] is False
+          assert d['timeframes']==['1H','2H','4H']
+          assert d['asset_count']==13
+          assert d['errors']==[]
+          assert [a['symbol'] for a in d['assets']]==expected
+          for a in d['assets']:
+              assert set(a['timeframes'])=={'1H','2H','4H'}
+              assert a['auto']['timeframe'] in {'1H','2H','4H'}
+              for tf in ['1H','2H','4H']:
+                  x=a['timeframes'][tf]
+                  for k in ['rsi14','mfi14','macd_extreme_label','fomo_score_0_10','radar_status','radar_intensity_0_10','reason_pl']:
+                      assert k in x
+                  assert x['closed_bar_only'] is True
+                  assert x['stale'] is False
+          print('MORNING RADAR: 13/13, 1H/2H/4H + AUTO OK')
+          PY
+
+      - name: Commit radar output
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add morning_radar/MORNING_RADAR.json
+          if git diff --cached --quiet; then
+            echo 'No radar changes'
+            exit 0
+          fi
+          git commit -m 'Update V8 morning radar 1H 2H 4H'
+          git push origin main
