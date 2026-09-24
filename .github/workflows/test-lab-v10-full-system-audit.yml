@@ -82,4 +82,4 @@ jobs:
             git push origin main
           fi
 
-# Triggered after robust CSV rebuild-on-merges hardening.
+# Triggered after CSV always-rebuild hardening.
