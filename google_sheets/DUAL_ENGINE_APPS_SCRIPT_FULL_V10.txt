@@ -2440,14 +2440,14 @@ function onSelectionChange(e) {
 // Wzorzec: blok "TERAZ — KLUCZOWE LICZBY".
 function morningPaletteV10_(kind) {
   const p = {
-    HOT:      {bg:'#FDE2E2', fg:'#8F2D2D'},
-    COLD:     {bg:'#E6F0FA', fg:'#245A7A'},
-    NEUTRAL:  {bg:'#E5F5EA', fg:'#1F6B3A'},
-    WARN:     {bg:'#FFF3CD', fg:'#7A5B00'},
-    FOMO:     {bg:'#FFE9D6', fg:'#9A4D00'},
-    MACD:     {bg:'#EDF1F5', fg:'#44546A'},
-    INFO:     {bg:'#EAF4FB', fg:'#245A7A'},
-    NORMAL:   {bg:'#F8FBFD', fg:'#243447'}
+    HOT:      {bg:'#F9D6D6', fg:'#8F2D2D'},
+    COLD:     {bg:'#D9EAF7', fg:'#245A7A'},
+    NEUTRAL:  {bg:'#DDF1E4', fg:'#1F6B3A'},
+    WARN:     {bg:'#FFF0BF', fg:'#7A5B00'},
+    FOMO:     {bg:'#FFE4CF', fg:'#9A4D00'},
+    MACD:     {bg:'#E5EBF1', fg:'#44546A'},
+    INFO:     {bg:'#E2F0F8', fg:'#245A7A'},
+    NORMAL:   {bg:'#F2F5F7', fg:'#243447'}
   };
   return p[kind] || p.NORMAL;
 }
@@ -2471,12 +2471,20 @@ function radarKindV10_(status) {
 function polishMorningRadarV10_(sheet, assets) {
   const n = assets.length;
 
+  // Stonowane tło całego widocznego pulpitu zamiast ostrej bieli.
+  sheet.getRange(1,1,60,18).setBackground('#EEF3F6').setFontColor('#243447');
+
   // Około +5% skali całego pulpitu — zaakceptowany rozmiar.
   sheet.getRange(1,1,Math.max(32,19+n),10).setFontSize(11);
-  sheet.getRange('A1:J1').setFontSize(18);
+  sheet.getRange('A1:J1').setFontSize(18).setBackground('#DCEEF8').setFontColor('#17324D').setFontWeight('bold');
   ['A4:B4','D4:I4','A10:F10','H10:J10','A18:I18','A19:I19'].forEach(a1 => {
-    sheet.getRange(a1).setFontSize(12);
+    sheet.getRange(a1).setFontSize(12).setBackground('#CFE8F6').setFontColor('#17324D').setFontWeight('bold');
   });
+  sheet.getRange('A5:A8').setBackground('#EAF4FB').setFontColor('#243447').setFontWeight('bold');
+  sheet.getRange('B5:B8').setBackground('#F7FAFC').setFontColor('#243447').setFontWeight('bold');
+  sheet.getRange('A2').setBackground('#EAF4FB').setFontWeight('bold');
+  sheet.getRange('F2:J2').setBackground('#F4F7F9').setFontColor('#456276');
+
   sheet.getRange('B2:E2').setFontSize(12);
   sheet.setRowHeight(1,40);
   sheet.setRowHeight(2,36);
@@ -2519,33 +2527,28 @@ function polishMorningRadarV10_(sheet, assets) {
     paintMorningRangeV10_(sheet.getRange(r,10), kind, true);
   }
 
-  // RADAR 13 ALTÓW — TERAZ CAŁY WIERSZ dziedziczy kolor statusu RADAR.
-  // Potem pojedyncze alarmowe komórki RSI/MFI/MACD/FOMO mogą nadpisać tło.
+  // RADAR 13 ALTÓW — cały wiersz dziedziczy kolor statusu RADAR.
+  // Potem pojedyncze alarmowe komórki RSI/MFI/MACD/FOMO nadpisują tło.
   for (let i=0; i<n; i++) {
     const r = 20 + i;
-
     const status = String(sheet.getRange(r,8).getDisplayValue() || '');
     const kind = radarKindV10_(status);
 
-    // Główna zmiana: A:I całego aktywa w tym samym kolorze co jego status.
+    // Mocniej widoczny kolor całego wiersza A:I.
     paintMorningRangeV10_(sheet.getRange(r,1,1,9), kind, false);
     paintMorningRangeV10_(sheet.getRange(r,8), kind, true);
 
-    // RSI: ekstremum -> żółty jak RSI EKSTREMUM.
     const rsi = Number(sheet.getRange(r,3).getValue());
     if (rsi >= 75 || rsi <= 25) paintMorningRangeV10_(sheet.getRange(r,3), 'WARN', true);
 
-    // MFI: ekstremum -> żółty jak MFI EKSTREMUM.
     const mfi = Number(sheet.getRange(r,4).getValue());
     if (mfi >= 90 || mfi <= 10) paintMorningRangeV10_(sheet.getRange(r,4), 'WARN', true);
 
-    // MACD: alert -> szaro-niebieski jak MACD ALERT.
     const macd = String(sheet.getRange(r,5).getDisplayValue() || '').toUpperCase();
     if (macd.indexOf('EKSTREMUM') >= 0 || macd.indexOf('UWAGA') >= 0) {
       paintMorningRangeV10_(sheet.getRange(r,5), 'MACD', true);
     }
 
-    // FOMO >= 8 -> pomarańczowy jak kafel FOMO >= 8.
     const fomo = Number(sheet.getRange(r,6).getValue());
     if (fomo >= 8) paintMorningRangeV10_(sheet.getRange(r,6), 'FOMO', true);
   }
