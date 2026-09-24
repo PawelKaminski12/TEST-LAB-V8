@@ -5,6 +5,7 @@ on:
     paths:
       - 'scripts/build_v10_panel_pack.py'
       - 'scripts/patch_v10_morning_ui.py'
+      - 'scripts/patch_v10_morning_radar.py'
       - 'google_sheets/V10_COMPATIBILITY_PATCH.txt'
       - '.github/workflows/build-v10-panel-pack.yml'
   workflow_dispatch:
@@ -24,6 +25,9 @@ jobs:
 
       - name: Apply Morning Brief light dashboard UI
         run: python scripts/patch_v10_morning_ui.py
+
+      - name: Apply Morning Radar 1H 2H 4H AUTO
+        run: python scripts/patch_v10_morning_radar.py
 
       - name: Apply Apps Script compatibility fixes in generated V10
         run: |
@@ -47,7 +51,7 @@ jobs:
           p.write_text(s, encoding='utf-8')
           PY
 
-      - name: Validate required functions and Morning Brief UI
+      - name: Validate required functions and Morning Radar UI
         run: |
           FILE=google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
           grep -q "function alarmDirection_(" "$FILE"
@@ -56,13 +60,16 @@ jobs:
           grep -q "function ODSWIEZ_PORANNY_BRIEF(" "$FILE"
           grep -q "function writeLongDashboard_(" "$FILE"
           grep -q "function writeTacticalDashboard_(" "$FILE"
-          grep -q "function styleMorningBriefV10_(" "$FILE"
+          grep -q "function writeMorningRadarBrief_(" "$FILE"
+          grep -q "function styleMorningRadarBriefV10_(" "$FILE"
+          grep -q "V10_MORNING_RADAR_URL" "$FILE"
+          grep -q "requireValueInList(\['AUTO','1H','2H','4H'\]" "$FILE"
+          grep -q "AUTO = dla każdego aktywa wybiera najsilniejszy sygnał" "$FILE"
+          grep -q "RADAR 13 ALTÓW" "$FILE"
+          grep -q "\['AKTYWO','TF','RSI','MFI','MACD','FOMO','TREND','RADAR','POWÓD'\]" "$FILE"
           grep -q "setHiddenGridlines(true)" "$FILE"
           grep -q "#DCEEF8" "$FILE"
           grep -q "setFontFamily('Roboto')" "$FILE"
-          grep -q "\[135,225,235,130,130,115,115,160,450,190\]" "$FILE"
-          grep -q "m.reasons || m.reason || ''" "$FILE"
-          grep -q "styleMorningBriefV10_(sheet, detail.length)" "$FILE"
           if grep "newConditionalFormatRule()" "$FILE" | grep -q "setFontWeight"; then
             echo "Forbidden setFontWeight() remains in ConditionalFormatRule"
             exit 1
@@ -82,5 +89,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
-          git commit -m "Build V10 with centered Morning Brief and reasons"
+          git commit -m "Build V10 with Morning Radar 1H 2H 4H AUTO"
           git push
