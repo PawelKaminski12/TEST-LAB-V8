@@ -1,0 +1,61 @@
+name: V10 Consolidate Apps Script
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/v10_consolidate_apps_script.py'
+      - '.github/workflows/v10-consolidate-apps-script.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v10-consolidate-apps-script
+  cancel-in-progress: false
+
+jobs:
+  consolidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Consolidate V10
+        run: python scripts/v10_consolidate_apps_script.py
+
+      - name: Syntax check cleaned Apps Script
+        run: |
+          cp google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt /tmp/v10_clean.js
+          node --check /tmp/v10_clean.js
+
+      - name: Verify no duplicate top-level functions
+        run: |
+          python - <<'PY'
+          import importlib.util
+          from pathlib import Path
+          spec=importlib.util.spec_from_file_location('c','scripts/v10_consolidate_apps_script.py')
+          m=importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+          s=Path('google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt').read_text(encoding='utf-8')
+          counts=m.count_functions(s)
+          d={k:v for k,v in counts.items() if v>1}
+          assert not d,d
+          print('PASS: no duplicate top-level functions')
+          PY
+
+      - name: Commit cleaned V10
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'Consolidate V10 Apps Script to single function definitions'
+            git pull --rebase origin main
+            git push origin main
+          fi
