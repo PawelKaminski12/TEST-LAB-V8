@@ -1,0 +1,1089 @@
+{
+  "engine": "V10_FULL_SYSTEM_AUDIT_v1",
+  "app_script_sha256": "c02775feb441d093330ee91d2212a3564618e42ea8eb8eee3248cf537a14ec55",
+  "app_script_lines": 3038,
+  "checks_total": 208,
+  "checks_passed": 201,
+  "checks_failed": 7,
+  "status": "FAIL",
+  "failures": [
+    {
+      "check": "FUNCTION_onOpen",
+      "pass": false,
+      "detail": "count=2"
+    },
+    {
+      "check": "FUNCTION_V8_SETUP",
+      "pass": false,
+      "detail": "count=2"
+    },
+    {
+      "check": "FUNCTION_ODSWIEZ_WSZYSTKO",
+      "pass": false,
+      "detail": "count=2"
+    },
+    {
+      "check": "FUNCTION_alarmDirection_",
+      "pass": false,
+      "detail": "count=2"
+    },
+    {
+      "check": "NO_DUPLICATE_FUNCTIONS",
+      "pass": false,
+      "detail": "{'onOpen': 2, 'V8_SETUP': 2, 'ODSWIEZ_WSZYSTKO': 2, 'setupPortfolioLong_': 2, 'setupPortfolioTactical_': 2, 'setupSettings_': 2, 'setupExtremes_': 5, 'getExtremeSettings_': 2, 'buildExtremeAlarms_': 6, 'extremeLabel_': 2, 'writeExtremeAlarms_': 5, 'readActiveExtremeKeys_': 3, 'appendExtremeHistory_': 4, 'notifyNewExtremeAlarms_': 6, 'updateMainPanelExtremeSummary_': 6, 'panelEligibleExtreme_': 3, 'selectMainPanelExtreme_': 2, 'alarmDirection_': 2}"
+    },
+    {
+      "check": "NO_SUSPICIOUS_BARE_IDENTIFIERS",
+      "pass": false,
+      "detail": "[(2227, 'range')]"
+    },
+    {
+      "check": "NO_WIDE_BREAKAPART",
+      "pass": false,
+      "detail": ""
+    }
+  ],
+  "warnings": [],
+  "checks": [
+    {
+      "check": "APP_SCRIPT_EXISTS",
+      "pass": true,
+      "detail": "google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt"
+    },
+    {
+      "check": "APP_SCRIPT_NONEMPTY",
+      "pass": true,
+      "detail": "bytes=148232 lines=3038 sha256=c02775feb441d093330ee91d2212a3564618e42ea8eb8eee3248cf537a14ec55"
+    },
+    {
+      "check": "FUNCTION_onOpen",
+      "pass": false,
+      "detail": "count=2"
+    },
+    {
+      "check": "FUNCTION_V8_SETUP",
+      "pass": false,
+      "detail": "count=2"
+    },
+    {
+      "check": "FUNCTION_ODSWIEZ_WSZYSTKO",
+      "pass": false,
+      "detail": "count=2"
+    },
+    {
+      "check": "FUNCTION_ODSWIEZ_PORANNY_BRIEF",
+      "pass": true,
+      "detail": "count=1"
+    },
+    {
+      "check": "FUNCTION_ODSWIEZ_ETF_BTC_ETH",
+      "pass": true,
+      "detail": "count=1"
+    },
+    {
+      "check": "FUNCTION_ODSWIEZ_LAB",
+      "pass": true,
+      "detail": "count=1"
+    },
+    {
+      "check": "FUNCTION_SPRAWDZ_EKSTREMA",
+      "pass": true,
+      "detail": "count=1"
+    },
+    {
+      "check": "FUNCTION_writePolishPanel_",
+      "pass": true,
+      "detail": "count=1"
+    },
+    {
+      "check": "FUNCTION_writeLongEngine_",
+      "pass": true,
+      "detail": "count=1"
+    },
+    {
+      "check": "FUNCTION_writeTacticalEngine_",
+      "pass": true,
+      "detail": "count=1"
+    },
+    {
+      "check": "FUNCTION_writeFlowEngine_",
+      "pass": true,
+      "detail": "count=1"
+    },
+    {
+      "check": "FUNCTION_writeMorningRadarBrief_",
+      "pass": true,
+      "detail": "count=1"
+    },
+    {
+      "check": "FUNCTION_setupMorningBrief_",
+      "pass": true,
+      "detail": "count=1"
+    },
+    {
+      "check": "FUNCTION_morningRadarModeV10_",
+      "pass": true,
+      "detail": "count=1"
+    },
+    {
+      "check": "FUNCTION_onSelectionChange",
+      "pass": true,
+      "detail": "count=1"
+    },
+    {
+      "check": "FUNCTION_classifyAlarmDirection_",
+      "pass": true,
+      "detail": "count=1"
+    },
+    {
+      "check": "FUNCTION_alarmDirection_",
+      "pass": false,
+      "detail": "count=2"
+    },
+    {
+      "check": "NO_DUPLICATE_FUNCTIONS",
+      "pass": false,
+      "detail": "{'onOpen': 2, 'V8_SETUP': 2, 'ODSWIEZ_WSZYSTKO': 2, 'setupPortfolioLong_': 2, 'setupPortfolioTactical_': 2, 'setupSettings_': 2, 'setupExtremes_': 5, 'getExtremeSettings_': 2, 'buildExtremeAlarms_': 6, 'extremeLabel_': 2, 'writeExtremeAlarms_': 5, 'readActiveExtremeKeys_': 3, 'appendExtremeHistory_': 4, 'notifyNewExtremeAlarms_': 6, 'updateMainPanelExtremeSummary_': 6, 'panelEligibleExtreme_': 3, 'selectMainPanelExtreme_': 2, 'alarmDirection_': 2}"
+    },
+    {
+      "check": "NO_SUSPICIOUS_BARE_IDENTIFIERS",
+      "pass": false,
+      "detail": "[(2227, 'range')]"
+    },
+    {
+      "check": "NO_K1_MODE_DEPENDENCY",
+      "pass": true,
+      "detail": "K1 must not store radar mode"
+    },
+    {
+      "check": "MODE_IN_DOCUMENT_PROPERTIES",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "NO_WIDE_BREAKAPART",
+      "pass": false,
+      "detail": ""
+    },
+    {
+      "check": "HAS_EXACT_MERGED_RANGE_UNMERGE",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "EXECUTION_OFF_TEXT",
+      "pass": true,
+      "detail": "visual/support layer only"
+    },
+    {
+      "check": "LONG_UNIVERSE_13",
+      "pass": true,
+      "detail": "['AVAX', 'AWE', 'ETH', 'FLOKI', 'HBAR', 'LINK', 'ONDO', 'PEPE', 'RENDER', 'SOL', 'SPX6900', 'XLM', 'XRP']"
+    },
+    {
+      "check": "TACTICAL_UNIVERSE_14",
+      "pass": true,
+      "detail": "['AVAX', 'AWE', 'BTC', 'ETH', 'FLOKI', 'HBAR', 'LINK', 'ONDO', 'PEPE', 'RENDER', 'SOL', 'SPX6900', 'XLM', 'XRP']"
+    },
+    {
+      "check": "AAVE_ARCHIVED",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "NO_SUI_IN_SCOPE",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "LONG_ZONES_91_OF_91",
+      "pass": true,
+      "detail": "actual=91 expected=91 missing=[] extra=[]"
+    },
+    {
+      "check": "LONG_ZONES_CONFIRMED",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "check": "LONG_CHECKPOINT_13",
+      "pass": true,
+      "detail": "['AVAX', 'AWE', 'ETH', 'FLOKI', 'HBAR', 'LINK', 'ONDO', 'PEPE', 'RENDER', 'SOL', 'SPX6900', 'XLM', 'XRP']"
+    },
+    {
+      "check": "TACTICAL_ENGINE_PRODUCTION_14",
+      "pass": true,
+      "detail": "['AVAX', 'AWE', 'BTC', 'ETH', 'FLOKI', 'HBAR', 'LINK', 'ONDO', 'PEPE', 'RENDER', 'SOL', 'SPX6900', 'XLM', 'XRP']"
+    },
+    {
+      "check": "TACTICAL_BTC_TF_1H4H1D",
+      "pass": true,
+      "detail": "['1D', '1H', '4H']"
+    },
+    {
+      "check": "TACTICAL_BTC_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_BTC_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_BTC_1D_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_ETH_TF_1H4H1D",
+      "pass": true,
+      "detail": "['1D', '1H', '4H']"
+    },
+    {
+      "check": "TACTICAL_ETH_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_ETH_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_ETH_1D_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_SOL_TF_1H4H1D",
+      "pass": true,
+      "detail": "['1D', '1H', '4H']"
+    },
+    {
+      "check": "TACTICAL_SOL_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_SOL_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_SOL_1D_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_LINK_TF_1H4H1D",
+      "pass": true,
+      "detail": "['1D', '1H', '4H']"
+    },
+    {
+      "check": "TACTICAL_LINK_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_LINK_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_LINK_1D_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_ONDO_TF_1H4H1D",
+      "pass": true,
+      "detail": "['1D', '1H', '4H']"
+    },
+    {
+      "check": "TACTICAL_ONDO_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_ONDO_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_ONDO_1D_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_RENDER_TF_1H4H1D",
+      "pass": true,
+      "detail": "['1D', '1H', '4H']"
+    },
+    {
+      "check": "TACTICAL_RENDER_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_RENDER_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_RENDER_1D_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_FLOKI_TF_1H4H1D",
+      "pass": true,
+      "detail": "['1D', '1H', '4H']"
+    },
+    {
+      "check": "TACTICAL_FLOKI_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_FLOKI_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_FLOKI_1D_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_PEPE_TF_1H4H1D",
+      "pass": true,
+      "detail": "['1D', '1H', '4H']"
+    },
+    {
+      "check": "TACTICAL_PEPE_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_PEPE_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_PEPE_1D_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_SPX6900_TF_1H4H1D",
+      "pass": true,
+      "detail": "['1D', '1H', '4H']"
+    },
+    {
+      "check": "TACTICAL_SPX6900_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_SPX6900_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_SPX6900_1D_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_XRP_TF_1H4H1D",
+      "pass": true,
+      "detail": "['1D', '1H', '4H']"
+    },
+    {
+      "check": "TACTICAL_XRP_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_XRP_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_XRP_1D_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_XLM_TF_1H4H1D",
+      "pass": true,
+      "detail": "['1D', '1H', '4H']"
+    },
+    {
+      "check": "TACTICAL_XLM_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_XLM_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_XLM_1D_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_HBAR_TF_1H4H1D",
+      "pass": true,
+      "detail": "['1D', '1H', '4H']"
+    },
+    {
+      "check": "TACTICAL_HBAR_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_HBAR_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_HBAR_1D_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_AVAX_TF_1H4H1D",
+      "pass": true,
+      "detail": "['1D', '1H', '4H']"
+    },
+    {
+      "check": "TACTICAL_AVAX_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_AVAX_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_AVAX_1D_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_AWE_TF_1H4H1D",
+      "pass": true,
+      "detail": "['1D', '1H', '4H']"
+    },
+    {
+      "check": "TACTICAL_AWE_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_AWE_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "TACTICAL_AWE_1D_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "MORNING_RADAR_13",
+      "pass": true,
+      "detail": "['AVAX', 'AWE', 'ETH', 'FLOKI', 'HBAR', 'LINK', 'ONDO', 'PEPE', 'RENDER', 'SOL', 'SPX6900', 'XLM', 'XRP']"
+    },
+    {
+      "check": "RADAR_ETH_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
+    },
+    {
+      "check": "RADAR_ETH_2H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_ETH_2H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-10.035028150992275 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_ETH_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_ETH_4H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=18.82873283954359 side=UPPER expected=UPPER"
+    },
+    {
+      "check": "RADAR_ETH_4H_MACD_TEXT_UPPER",
+      "pass": true,
+      "detail": "GÓRNE OSTRZEŻ. | MACD górne ostrzeżenie; schłodzenie − | side=UPPER"
+    },
+    {
+      "check": "RADAR_ETH_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_ETH_1H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-10.386259673633504 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_SOL_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
+    },
+    {
+      "check": "RADAR_SOL_2H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_SOL_2H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.30805222316470804 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_SOL_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_SOL_4H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=1.322235472524568 side=UPPER expected=UPPER"
+    },
+    {
+      "check": "RADAR_SOL_4H_MACD_TEXT_UPPER",
+      "pass": true,
+      "detail": "GÓRNE OSTRZEŻ. | MACD górne ostrzeżenie; schłodzenie − | side=UPPER"
+    },
+    {
+      "check": "RADAR_SOL_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_SOL_1H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.4691277839680481 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_LINK_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
+    },
+    {
+      "check": "RADAR_LINK_2H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_LINK_2H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.13522046321375392 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_LINK_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_LINK_4H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=0.02553969816078805 side=UPPER expected=UPPER"
+    },
+    {
+      "check": "RADAR_LINK_4H_MACD_TEXT_UPPER",
+      "pass": true,
+      "detail": "GÓRNE OSTRZEŻ. | MACD górne ostrzeżenie; schłodzenie − | side=UPPER"
+    },
+    {
+      "check": "RADAR_LINK_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_LINK_1H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.0998488105927482 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_ONDO_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
+    },
+    {
+      "check": "RADAR_ONDO_2H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_ONDO_2H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.0025996051887671734 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_ONDO_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_ONDO_4H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=0.0037489127145362566 side=UPPER expected=UPPER"
+    },
+    {
+      "check": "RADAR_ONDO_4H_MACD_TEXT_UPPER",
+      "pass": true,
+      "detail": "GÓRNE OSTRZEŻ. | MACD górne ostrzeżenie; schłodzenie − | side=UPPER"
+    },
+    {
+      "check": "RADAR_ONDO_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_ONDO_1H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.0003745786290088593 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_ONDO_1H_MACD_TEXT_LOWER",
+      "pass": true,
+      "detail": "DOLNE GRANICE | MACD dolne granice; odbicie + | side=LOWER"
+    },
+    {
+      "check": "RADAR_RENDER_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
+    },
+    {
+      "check": "RADAR_RENDER_2H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_RENDER_2H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.006516645405637789 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_RENDER_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_RENDER_4H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=0.039185399828981726 side=UPPER expected=UPPER"
+    },
+    {
+      "check": "RADAR_RENDER_4H_MACD_TEXT_UPPER",
+      "pass": true,
+      "detail": "GÓRNE GRANICE | MACD górne granice; schłodzenie − | side=UPPER"
+    },
+    {
+      "check": "RADAR_RENDER_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_RENDER_1H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.007159842225580526 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_FLOKI_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
+    },
+    {
+      "check": "RADAR_FLOKI_2H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_FLOKI_2H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-3.384231190774058e-07 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_FLOKI_2H_MACD_TEXT_LOWER",
+      "pass": true,
+      "detail": "DOLNE OSTRZEŻ. | MACD dolne ostrzeżenie; schłodzenie − | side=LOWER"
+    },
+    {
+      "check": "RADAR_FLOKI_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_FLOKI_4H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=3.711159105524612e-07 side=UPPER expected=UPPER"
+    },
+    {
+      "check": "RADAR_FLOKI_4H_MACD_TEXT_UPPER",
+      "pass": true,
+      "detail": "GÓRNE GRANICE | MACD górne granice; schłodzenie − | side=UPPER"
+    },
+    {
+      "check": "RADAR_FLOKI_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_FLOKI_1H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-4.02280063939261e-07 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_FLOKI_1H_MACD_TEXT_LOWER",
+      "pass": true,
+      "detail": "DOLNE OSTRZEŻ. | MACD dolne ostrzeżenie; odbicie + | side=LOWER"
+    },
+    {
+      "check": "RADAR_PEPE_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
+    },
+    {
+      "check": "RADAR_PEPE_2H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_PEPE_2H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-8.831174674947562e-08 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_PEPE_2H_MACD_TEXT_LOWER",
+      "pass": true,
+      "detail": "DOLNE OSTRZEŻ. | MACD dolne ostrzeżenie; schłodzenie − | side=LOWER"
+    },
+    {
+      "check": "RADAR_PEPE_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_PEPE_4H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=8.831539227442555e-08 side=UPPER expected=UPPER"
+    },
+    {
+      "check": "RADAR_PEPE_4H_MACD_TEXT_UPPER",
+      "pass": true,
+      "detail": "GÓRNE GRANICE | MACD górne granice; schłodzenie − | side=UPPER"
+    },
+    {
+      "check": "RADAR_PEPE_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_PEPE_1H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-9.715288544155126e-08 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_SPX6900_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
+    },
+    {
+      "check": "RADAR_SPX6900_2H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_SPX6900_2H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.0203423444265044 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_SPX6900_2H_MACD_TEXT_LOWER",
+      "pass": true,
+      "detail": "DOLNE OSTRZEŻ. | MACD dolne ostrzeżenie; schłodzenie − | side=LOWER"
+    },
+    {
+      "check": "RADAR_SPX6900_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_SPX6900_4H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.012654289817435882 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_SPX6900_4H_MACD_TEXT_LOWER",
+      "pass": true,
+      "detail": "DOLNE OSTRZEŻ. | MACD dolne ostrzeżenie; schłodzenie − | side=LOWER"
+    },
+    {
+      "check": "RADAR_SPX6900_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_SPX6900_1H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.015978206566253372 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_SPX6900_1H_MACD_TEXT_LOWER",
+      "pass": true,
+      "detail": "DOLNE OSTRZEŻ. | MACD dolne ostrzeżenie; odbicie + | side=LOWER"
+    },
+    {
+      "check": "RADAR_XRP_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
+    },
+    {
+      "check": "RADAR_XRP_2H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_XRP_2H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.005964851301877738 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_XRP_2H_MACD_TEXT_LOWER",
+      "pass": true,
+      "detail": "DOLNE OSTRZEŻ. | MACD dolne ostrzeżenie; schłodzenie − | side=LOWER"
+    },
+    {
+      "check": "RADAR_XRP_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_XRP_4H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=0.025195126065830076 side=UPPER expected=UPPER"
+    },
+    {
+      "check": "RADAR_XRP_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_XRP_1H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.014877398349930848 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_XLM_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
+    },
+    {
+      "check": "RADAR_XLM_2H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_XLM_2H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.0021853074171433173 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_XLM_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_XLM_4H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=0.0018287188654927122 side=UPPER expected=UPPER"
+    },
+    {
+      "check": "RADAR_XLM_4H_MACD_TEXT_UPPER",
+      "pass": true,
+      "detail": "GÓRNE GRANICE | MACD górne granice; schłodzenie − | side=UPPER"
+    },
+    {
+      "check": "RADAR_XLM_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_XLM_1H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.0026187518839590473 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_HBAR_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
+    },
+    {
+      "check": "RADAR_HBAR_2H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_HBAR_2H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.0006229489426137907 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_HBAR_2H_MACD_TEXT_LOWER",
+      "pass": true,
+      "detail": "DOLNE OSTRZEŻ. | MACD dolne ostrzeżenie; schłodzenie − | side=LOWER"
+    },
+    {
+      "check": "RADAR_HBAR_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_HBAR_4H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=0.002054017061761726 side=UPPER expected=UPPER"
+    },
+    {
+      "check": "RADAR_HBAR_4H_MACD_TEXT_UPPER",
+      "pass": true,
+      "detail": "GÓRNE GRANICE | MACD górne granice; schłodzenie − | side=UPPER"
+    },
+    {
+      "check": "RADAR_HBAR_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_HBAR_1H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.0010908830567698674 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_AVAX_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
+    },
+    {
+      "check": "RADAR_AVAX_2H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_AVAX_2H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.17450244966797435 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_AVAX_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_AVAX_4H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=0.1742752403374599 side=UPPER expected=UPPER"
+    },
+    {
+      "check": "RADAR_AVAX_4H_MACD_TEXT_UPPER",
+      "pass": true,
+      "detail": "GÓRNE GRANICE | MACD górne granice; schłodzenie − | side=UPPER"
+    },
+    {
+      "check": "RADAR_AVAX_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_AVAX_1H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.16303591896411085 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_AWE_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
+    },
+    {
+      "check": "RADAR_AWE_2H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_AWE_2H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.00019014514892516654 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_AWE_4H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_AWE_4H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.00015290936742398675 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_AWE_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_AWE_1H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.000139200246885976 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "PANEL_HEADER_AKTYWO",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "PANEL_HEADER_CENA",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "PANEL_HEADER_LONG",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "PANEL_HEADER_TACTICAL",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "PANEL_HEADER_RYZYKO 0–10",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "PANEL_HEADER_ZGODNOŚĆ",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "check": "PANEL_HEADER_ALERT",
+      "pass": true,
+      "detail": ""
+    }
+  ]
+}
