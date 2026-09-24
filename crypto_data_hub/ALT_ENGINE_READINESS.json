@@ -65,7 +65,7 @@
       "full_zone_missing": "",
       "zones_core_ready": true,
       "zones_full_ready": true,
-      "decision": "CZEKAJ",
+      "decision": "SPRAWDŹ",
       "decision_ready": true,
       "data_quality_score_0_100": 100,
       "readiness_status": "PRODUCTION_DATA_READY"
@@ -113,7 +113,7 @@
       "full_zone_missing": "",
       "zones_core_ready": true,
       "zones_full_ready": true,
-      "decision": "CZEKAJ",
+      "decision": "SPRAWDŹ",
       "decision_ready": true,
       "data_quality_score_0_100": 100,
       "readiness_status": "PRODUCTION_DATA_READY"
@@ -145,7 +145,7 @@
       "full_zone_missing": "",
       "zones_core_ready": true,
       "zones_full_ready": true,
-      "decision": "CZEKAJ",
+      "decision": "SPRAWDŹ",
       "decision_ready": true,
       "data_quality_score_0_100": 100,
       "readiness_status": "PRODUCTION_DATA_READY"
