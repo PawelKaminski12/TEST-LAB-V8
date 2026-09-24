@@ -70,12 +70,22 @@ def derive_2h(pair: str):
 
 
 def macd_context(tf):
-    """Separate MACD location from histogram momentum.
+    """Morning Radar MACD semantics.
 
-    Alert strength still comes from the existing historical histogram percentile/z-score.
-    Location (upper/lower) follows the actual MACD line versus zero.
-    Momentum follows the histogram sign. This is Morning Radar semantics only and does not
-    modify the frozen Tactical production engine.
+    The historical MACD alert label already says whether the histogram is in a positive
+    or negative warning/extreme tail. That polarity defines the user-facing side:
+    WARNING/EXTREME_NEGATIVE -> DOLNE, WARNING/EXTREME_POSITIVE -> GÓRNE.
+
+    The actual MACD line versus zero is kept only as technical context and must not flip
+    the visible DOLNE/GÓRNE label. This avoids cases where a strongly negative histogram
+    is shown as 'GÓRNE' merely because the slower MACD line has not crossed zero yet.
+
+    Momentum wording stays separate:
+    histogram > 0 -> ODBICIE +
+    histogram < 0 -> SCHŁODZENIE −
+
+    This affects Morning Radar presentation/scoring only; frozen Tactical production
+    calculations and thresholds are not modified.
     """
     label = str(tf.get('macd_extreme_label') or 'NORMAL').upper()
     macd_line = clean_number(tf.get('macd'))
@@ -85,7 +95,12 @@ def macd_context(tf):
     extreme = 'EXTREME' in label
     warning = 'WARNING' in label
 
-    if macd_line is None:
+    # User-facing side comes from the alert polarity, not from MACD line vs zero.
+    if 'NEGATIVE' in label:
+        side = 'LOWER'
+    elif 'POSITIVE' in label:
+        side = 'UPPER'
+    elif macd_line is None:
         side = 'NONE'
     elif macd_line < 0:
         side = 'LOWER'
@@ -93,6 +108,15 @@ def macd_context(tf):
         side = 'UPPER'
     else:
         side = 'ZERO'
+
+    if macd_line is None:
+        line_side = 'NONE'
+    elif macd_line < 0:
+        line_side = 'LOWER'
+    elif macd_line > 0:
+        line_side = 'UPPER'
+    else:
+        line_side = 'ZERO'
 
     if hist is None or hist == 0:
         momentum = 'PŁASKO'
@@ -121,6 +145,7 @@ def macd_context(tf):
 
     return {
         'macd_level_side': side,
+        'macd_line_side': line_side,
         'macd_momentum': momentum_code,
         'macd_momentum_pl': momentum,
         'macd_display_pl': display,
