@@ -1971,14 +1971,12 @@ function writeTacticalDashboard_(sheet, tacticalJson, metaCsv) {
 }
 
 function setupMorningBrief_(sheet) {
-  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();
-  let savedMode = String(sheet.getRange('K1').getDisplayValue() || '').trim().toUpperCase();
+  let savedMode = String(PropertiesService.getDocumentProperties().getProperty('V10_MORNING_MODE') || '1H').trim().toUpperCase();
   if (!['1H','2H','4H','AUTO'].includes(savedMode)) savedMode = '1H';
-
+  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();
   sheet.clear();
   sheet.setHiddenGridlines(true);
-  sheet.getRange('K1').setValue(savedMode);
-  sheet.hideColumns(11);
+  PropertiesService.getDocumentProperties().setProperty('V10_MORNING_MODE', savedMode);
 
   sheet.getRange('A1:J1').merge().setValue('V8 / PORANNY RADAR — RĘCZNY WYBÓR INTERWAŁU');
   sheet.getRange('A1:J1')
@@ -2237,7 +2235,7 @@ function styleBriefCardV10_(range, bg, fg) {
 
 // ===== V10 MORNING RADAR 1H 2H 4H AUTO =====
 function morningRadarModeV10_(sheet) {
-  const v = String(sheet.getRange('K1').getDisplayValue() || '1H').trim().toUpperCase();
+  const v = String(PropertiesService.getDocumentProperties().getProperty('V10_MORNING_MODE') || '1H').trim().toUpperCase();
   return ['1H','2H','4H','AUTO'].includes(v) ? v : '1H';
 }
 
@@ -2425,7 +2423,7 @@ function onSelectionChange(e) {
       return;
     }
 
-    sheet.getRange('K1').setValue(mode);
+    PropertiesService.getDocumentProperties().setProperty('V10_MORNING_MODE', mode);
     styleMorningRadarButtonsV10_(sheet, mode);
 
     const cached = PropertiesService.getDocumentProperties().getProperty('V10_MORNING_RADAR_CACHE');
