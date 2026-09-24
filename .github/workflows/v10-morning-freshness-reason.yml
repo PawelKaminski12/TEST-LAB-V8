@@ -42,11 +42,11 @@ jobs:
         run: |
           grep -q "cron: '5 \* \* \* \*'" .github/workflows/test-lab-v8-tactical-engine.yml
           grep -q "signal_started_at_utc" .github/workflows/test-lab-v8-morning-radar.yml
-      - name: Commit patched files
+      - name: Commit patched code only
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt scripts/v8_morning_radar.py .github/workflows/test-lab-v8-tactical-engine.yml .github/workflows/test-lab-v8-morning-radar.yml
+          git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt scripts/v8_morning_radar.py
           if git diff --cached --quiet; then
             echo 'No changes'
             exit 0
