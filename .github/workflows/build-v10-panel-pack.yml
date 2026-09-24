@@ -7,6 +7,7 @@ on:
       - 'scripts/patch_v10_morning_ui.py'
       - 'scripts/patch_v10_morning_radar.py'
       - 'scripts/patch_v10_morning_buttons.py'
+      - 'scripts/patch_v10_morning_polish.py'
       - 'google_sheets/V10_COMPATIBILITY_PATCH.txt'
       - '.github/workflows/build-v10-panel-pack.yml'
   workflow_dispatch:
@@ -32,6 +33,9 @@ jobs:
 
       - name: Apply visible manual interval buttons
         run: python scripts/patch_v10_morning_buttons.py
+
+      - name: Apply final Morning Radar polish
+        run: python scripts/patch_v10_morning_polish.py
 
       - name: Apply Apps Script compatibility fixes in generated V10
         run: |
@@ -67,6 +71,7 @@ jobs:
           grep -q "function writeMorningRadarBrief_(" "$FILE"
           grep -q "function styleMorningRadarBriefV10_(" "$FILE"
           grep -q "function styleMorningRadarButtonsV10_(" "$FILE"
+          grep -q "function polishMorningRadarV10_(" "$FILE"
           grep -q "function onSelectionChange(e)" "$FILE"
           grep -q "V10_MORNING_RADAR_URL" "$FILE"
           grep -q "V10_MORNING_RADAR_CACHE" "$FILE"
@@ -76,6 +81,7 @@ jobs:
           grep -q "\['AKTYWO','TF','RSI','MFI','MACD','FOMO','TREND','RADAR','POWÓD'\]" "$FILE"
           grep -q "setHiddenGridlines(true)" "$FILE"
           grep -q "setFontFamily('Roboto')" "$FILE"
+          grep -q "setRowHeights(20,n,26)" "$FILE"
           if grep "newConditionalFormatRule()" "$FILE" | grep -q "setFontWeight"; then
             echo "Forbidden setFontWeight() remains in ConditionalFormatRule"
             exit 1
@@ -95,5 +101,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
-          git commit -m "Build V10 with manual Morning Radar interval buttons"
+          git commit -m "Build V10 with polished Morning Radar colors and scale"
           git push
