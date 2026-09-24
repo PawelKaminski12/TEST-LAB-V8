@@ -9,6 +9,7 @@ on:
       - 'scripts/patch_v10_morning_buttons.py'
       - 'scripts/patch_v10_morning_polish.py'
       - 'scripts/patch_v10_morning_legend.py'
+      - 'scripts/patch_v10_shared_indicator_language.py'
       - 'google_sheets/V10_COMPATIBILITY_PATCH.txt'
       - '.github/workflows/build-v10-panel-pack.yml'
   workflow_dispatch:
@@ -41,6 +42,9 @@ jobs:
       - name: Apply Morning Radar legend
         run: python scripts/patch_v10_morning_legend.py
 
+      - name: Apply shared indicator language across V8 dashboards
+        run: python scripts/patch_v10_shared_indicator_language.py
+
       - name: Apply Apps Script compatibility fixes in generated V10
         run: |
           python - <<'PY'
@@ -68,6 +72,13 @@ jobs:
           FILE=google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
           grep -q "function alarmDirection_(" "$FILE"
           grep -q "function classifyAlarmDirection_(" "$FILE"
+          grep -q "function macdDisplayLabelV10_(" "$FILE"
+          grep -q "RSI GÓRNE GRANICE" "$FILE"
+          grep -q "RSI DOLNE GRANICE" "$FILE"
+          grep -q "MFI GÓRNE GRANICE" "$FILE"
+          grep -q "MFI DOLNE GRANICE" "$FILE"
+          grep -q "MACD EKSTREMUM + — GÓRNE GRANICE" "$FILE"
+          grep -q "MACD EKSTREMUM − — DOLNE GRANICE" "$FILE"
           grep -q "function ODSWIEZ_WSZYSTKO(" "$FILE"
           grep -q "function ODSWIEZ_PORANNY_BRIEF(" "$FILE"
           grep -q "function writeLongDashboard_(" "$FILE"
@@ -107,5 +118,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
-          git commit -m "Build V10 with Morning Radar legend"
+          git commit -m "Build V10 with shared indicator language"
           git push
