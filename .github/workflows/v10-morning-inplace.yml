@@ -1,0 +1,46 @@
+name: V10 Morning Radar In-Place Refresh
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/patch_v10_morning_inplace.py'
+      - '.github/workflows/v10-morning-inplace.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Apply patch
+        run: python scripts/patch_v10_morning_inplace.py
+      - name: Static checks
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt').read_text(encoding='utf-8')
+          assert "return ss.getSheetByName(V10_MORNING_SHEET) || ss.insertSheet(V10_MORNING_SHEET);" in s
+          assert "ss.deleteSheet(old);" not in s[s.index('function freshMorningSheetV10_'):s.index('function setupMorningBrief_')]
+          assert "morningMergesV10" in s
+          print('STATIC OK')
+          PY
+      - name: Commit code
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
+          if git diff --cached --quiet; then
+            echo 'No changes'
+            exit 0
+          fi
+          git commit -m 'Refresh V10 Morning Radar in place without deleting active sheet'
+          git push origin main
