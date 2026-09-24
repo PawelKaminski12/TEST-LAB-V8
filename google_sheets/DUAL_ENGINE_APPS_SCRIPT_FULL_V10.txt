@@ -2376,7 +2376,6 @@ function styleMorningRadarBriefV10_(sheet, assets) {
   });
   if (n) sheet.getRange(19,1,n+1,9).setBorder(true,true,true,true,true,true,'#D5E3EC',SpreadsheetApp.BorderStyle.SOLID);
 
-  // Compact vertical layout: all 13 alts should fit on a normal desktop view.
   for (let r=4; r<=8; r++) sheet.setRowHeight(r,24);
   sheet.setRowHeight(10,26);
   for (let r=11; r<=15; r++) sheet.setRowHeight(r,23);
