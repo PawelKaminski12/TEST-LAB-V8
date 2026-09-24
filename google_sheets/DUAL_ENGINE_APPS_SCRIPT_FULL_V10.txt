@@ -92,17 +92,32 @@ function getOrCreateSheet_(ss, name) {
 
 function writeCsvSheet_(sheet, csvText, preserveCompactPanel) {
   const rows = Utilities.parseCsv(csvText);
-  // CSV-y są tabelami prostymi; przed zapisem rozpinamy wyłącznie realne stare scalenia.
-  // Zapobiega błędowi Apps Script: 'musisz zaznaczyć wszystkie komórki w scalanym zakresie'.
-  unmergeAllSafelyV10_(sheet);
-  sheet.clearContents();
-  if (!rows.length) return;
+  // Te arkusze są czystymi tabelami technicznymi. Jeżeli po starszej wersji zostały
+  // jakiekolwiek scalenia, nie próbujemy ich rozdzielać (Google Sheets bywa tu niestabilny).
+  // Zamiast tego odbudowujemy tylko ten techniczny arkusz od zera.
+  const ss = sheet.getParent();
+  const name = sheet.getName();
+  const index = sheet.getIndex();
+  const wasHidden = sheet.isSheetHidden();
+  const merged = sheet.getRange(1, 1, Math.max(1, sheet.getMaxRows()), Math.max(1, sheet.getMaxColumns())).getMergedRanges();
+  if (merged.length) {
+    ss.deleteSheet(sheet);
+    sheet = ss.insertSheet(name, index);
+  } else {
+    sheet.clearContents();
+  }
+  if (!rows.length) {
+    if (wasHidden) sheet.hideSheet();
+    return sheet;
+  }
   sheet.getRange(1, 1, rows.length, rows[0].length).setValues(rows);
   sheet.setFrozenRows(1);
   if (preserveCompactPanel) {
     const maxCols = 7;
     if (sheet.getMaxColumns() > maxCols) sheet.hideColumns(maxCols + 1, sheet.getMaxColumns() - maxCols);
   }
+  if (wasHidden) sheet.hideSheet();
+  return sheet;
 }
 
 function writePolishPanel_(sheet, csvText) {
@@ -1207,8 +1222,8 @@ function ODSWIEZ_WSZYSTKO() {
     writeTacticalDashboard_(ss.getSheetByName(V8_SHEETS.portfolioTactical), tacticalJson, metaCsv);
     writeMorningRadarBrief_(ss.getSheetByName(V10_MORNING_SHEET), morningRadarJson);
 
-    const machineSheet = getOrCreateSheet_(ss, 'DANE_MASZYNOWNIA');
-    writeCsvSheet_(machineSheet, machineCsv, false);
+    let machineSheet = getOrCreateSheet_(ss, 'DANE_MASZYNOWNIA');
+    machineSheet = writeCsvSheet_(machineSheet, machineCsv, false);
     machineSheet.hideSheet();
 
     const alarms = buildExtremeAlarms_(ss, tacticalJson);
