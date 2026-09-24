@@ -9,6 +9,7 @@ on:
       - 'scripts/patch_v10_morning_buttons.py'
       - 'scripts/patch_v10_morning_polish.py'
       - 'scripts/patch_v10_morning_legend.py'
+      - 'scripts/patch_v10_macd_context.py'
       - 'scripts/patch_v10_shared_indicator_language.py'
       - 'scripts/patch_v10_unified_dashboard_theme.py'
       - 'google_sheets/V10_COMPATIBILITY_PATCH.txt'
@@ -33,6 +34,9 @@ jobs:
 
       - name: Apply Morning Radar 1H 2H 4H AUTO
         run: python scripts/patch_v10_morning_radar.py
+
+      - name: Apply MACD level and momentum semantics
+        run: python scripts/patch_v10_macd_context.py
 
       - name: Apply visible manual interval buttons
         run: python scripts/patch_v10_morning_buttons.py
@@ -100,6 +104,7 @@ jobs:
           grep -q "LEGENDA KOLORÓW" "$FILE"
           grep -q "RADAR 13 ALTÓW" "$FILE"
           grep -q "\['AKTYWO','TF','RSI','MFI','MACD','FOMO','TREND','RADAR','POWÓD'\]" "$FILE"
+          grep -q "x.macd_display_pl" "$FILE"
           grep -q "function applyUnifiedV8Theme_(" "$FILE"
           grep -q "function unifiedSemanticStyleV10_(" "$FILE"
           grep -q "applyUnifiedV8Theme_(ss);" "$FILE"
@@ -126,5 +131,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
-          git commit -m "Build V10 with unified dashboard colors"
+          git commit -m "Build V10 with MACD level and momentum context"
           git push
