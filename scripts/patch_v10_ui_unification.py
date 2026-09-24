@@ -61,10 +61,9 @@ function applyUnifiedSheetThemeV10_(sheet) {
   merged.forEach(m => {
     const r0 = m.getRow(), c0 = m.getColumn(), rn = m.getNumRows(), cn = m.getNumColumns();
     for (let rr = r0; rr < r0 + rn; rr++) {
-      for (let cc = c0; cc < c0 + cn; cc++) mergeMap[rr + ':' + cc] = m;
+      for (let cc = c0; cc < c0 + cn; cc++) mergeMap[rr + ':' + cc] = true;
     }
   });
-  const styledMerged = {};
 
   for (let r = 0; r < vals.length; r++) {
     for (let c = 0; c < vals[r].length; c++) {
@@ -72,14 +71,11 @@ function applyUnifiedSheetThemeV10_(sheet) {
       if (!raw) continue;
       const t = raw.toUpperCase();
       const rr = r + 1, cc = c + 1;
-      const mergedRange = mergeMap[rr + ':' + cc];
-      let cell = sheet.getRange(rr, cc);
-      if (mergedRange) {
-        const key = mergedRange.getA1Notation();
-        if (styledMerged[key]) continue;
-        styledMerged[key] = true;
-        cell = mergedRange;
-      }
+
+      // Scalone nagłówki mają własne formatowanie. Globalny motyw ich nie dotyka.
+      if (mergeMap[rr + ':' + cc]) continue;
+
+      const cell = sheet.getRange(rr, cc);
 
       if (isHotV10_(t)) styleBriefCardV10_(cell, V10_UI.hot, V10_UI.hotText);
       else if (isColdV10_(t)) styleBriefCardV10_(cell, V10_UI.cold, V10_UI.coldText);
