@@ -103,10 +103,8 @@ function ODSWIEZ_WSZYSTKO() {
     notifyNewExtremeAlarms_(ss, oldAlarms, alarms);
 
     formatPanel_(ss.getSheetByName(V8_SHEETS.panel));
-    applyUnifiedThemeV10_(ss);
     appendHistoryOnChanges_(ss, oldPanel, readPanelState_(ss.getSheetByName(V8_SHEETS.panel)));
     stampRefresh_(ss);
-    applyUnifiedV8Theme_(ss);
 
     const active = alarms.filter(a => a.aktywny).length;
     ss.toast('LONG + TACTICAL + ETF + LAB odświeżone. Aktywne ekstrema: ' + active, 'V8 DUAL ENGINE', 5);
@@ -205,6 +203,7 @@ function writeLongEngine_(sheet, data) {
   sheet.getRange(1,1,1,headers.length).setValues([headers]);
   if (assets.length) sheet.getRange(2,1,assets.length,headers.length).setValues(assets);
   sheet.setFrozenRows(1);
+  applySafeEngineColorsV10_(sheet);
 }
 
 function writeTacticalEngine_(sheet, data, readiness, phaseData) {
@@ -235,6 +234,7 @@ function writeTacticalEngine_(sheet, data, readiness, phaseData) {
   sheet.getRange(1,1,1,headers.length).setValues([headers]);
   if (assets.length) sheet.getRange(2,1,assets.length,headers.length).setValues(assets);
   sheet.setFrozenRows(1);
+  applySafeEngineColorsV10_(sheet);
 }
 
 function writeFlowEngine_(sheet, phase, snap) {
@@ -390,11 +390,13 @@ function translateEtfTrend_(v) {
 }
 
 function setupPortfolioLong_(sheet) {
+  sheet.getDataRange().breakApart();
   const headers = ['AKTYWO','ILOŚĆ','ŚR. CENA','WARTOŚĆ','ZYSK/STRATA','DCA1','DCA2','DCA3','STATUS LONG','WYKONANE'];
   if (sheet.getLastRow() === 0) { sheet.getRange(1,1,1,headers.length).setValues([headers]); sheet.setFrozenRows(1); }
 }
 
 function setupPortfolioTactical_(sheet) {
+  sheet.getDataRange().breakApart();
   const headers = ['AKTYWO','ILOŚĆ','CENA WEJŚCIA','WARTOŚĆ','P&L','STATUS TACTICAL','RYZYKO 0–10','PLAN WYJŚCIA','WYKONANE'];
   if (sheet.getLastRow() === 0) { sheet.getRange(1,1,1,headers.length).setValues([headers]); sheet.setFrozenRows(1); }
 }
@@ -1893,7 +1895,6 @@ function ODSWIEZ_PORANNY_BRIEF() {
   const radarJson = JSON.parse(fetchText_(V10_MORNING_RADAR_URL));
   PropertiesService.getDocumentProperties().setProperty('V10_MORNING_RADAR_CACHE', JSON.stringify(radarJson));
   writeMorningRadarBrief_(sheet, radarJson);
-  applyUnifiedThemeV10_(ss);
   ss.toast('Poranny Radar odświeżony — ' + morningRadarModeV10_(sheet), 'V8', 4);
 }
 
@@ -1970,6 +1971,7 @@ function writeTacticalDashboard_(sheet, tacticalJson, metaCsv) {
 }
 
 function setupMorningBrief_(sheet) {
+  sheet.getDataRange().breakApart();
   let savedMode = String(sheet.getRange('K1').getDisplayValue() || '').trim().toUpperCase();
   if (!['1H','2H','4H','AUTO'].includes(savedMode)) savedMode = '1H';
 
@@ -2986,4 +2988,53 @@ function isMacdV10_(t) {
 }
 function isInfoV10_(t) {
   return t === 'INFO' || t.indexOf('STREF') >= 0 || t.indexOf('DCA') >= 0;
+}
+
+
+// ===== V10 SAFE TABLE COLORS — BEZ GLOBALNEGO SKANOWANIA =====
+// Stosowane wyłącznie do prostych tabel danych bez scaleń.
+function applySafeEngineColorsV10_(sheet) {
+  const rows = sheet.getLastRow();
+  const cols = sheet.getLastColumn();
+  if (rows < 2 || cols < 1) return;
+  const range = sheet.getRange(1,1,rows,cols);
+  if (range.getMergedRanges().length) return; // fail-safe: nie dotykamy tabel ze scaleniami
+  const vals = range.getDisplayValues();
+  const headers = vals[0].map(v => String(v||'').trim().toUpperCase());
+
+  for (let r=1; r<vals.length; r++) {
+    for (let c=0; c<vals[r].length; c++) {
+      const raw = String(vals[r][c]||'').trim();
+      if (!raw) continue;
+      const t = raw.toUpperCase();
+      const cell = sheet.getRange(r+1,c+1);
+      const h = headers[c] || '';
+
+      if (t==='BLOKUJ' || t==='GORĄCO' || t==='KRYTYCZNY' || t==='NIE DOKŁADAJ' || t==='OCHRONA KAPITAŁU')
+        cell.setBackground('#FAD1D1').setFontColor('#8F2D2D').setFontWeight('bold');
+      else if (t==='CHŁODNO' || t==='WYPRZEDANIE' || t.indexOf('DOLNE GRANICE')>=0 || t.indexOf('DOLNE OSTRZEŻ')>=0)
+        cell.setBackground('#D9EAF7').setFontColor('#245B78').setFontWeight('bold');
+      else if (t==='NEUTRALNIE' || t==='ZEZWÓL' || t==='GOTOWE' || t==='AKTUALNE' || t==='KUP' || t==='KUP TRENDOWO')
+        cell.setBackground('#DDF2E3').setFontColor('#1F6B3A').setFontWeight('bold');
+      else if (t==='UWAGA' || t.indexOf('UWAGA ')===0 || t==='OSTROŻNIE' || t==='CZEKAJ' || t==='PODWYŻSZONE RYZYKO')
+        cell.setBackground('#FFF0B8').setFontColor('#7A5B00').setFontWeight('bold');
+
+      const n = Number(raw.replace(',','.'));
+      if (!Number.isFinite(n)) continue;
+      if (h.indexOf('RSI')>=0) {
+        if (n>=75) cell.setBackground('#FAD1D1').setFontColor('#8F2D2D').setFontWeight('bold');
+        else if (n<=25) cell.setBackground('#D9EAF7').setFontColor('#245B78').setFontWeight('bold');
+      } else if (h.indexOf('MFI')>=0) {
+        if (n>=80) cell.setBackground('#FAD1D1').setFontColor('#8F2D2D').setFontWeight('bold');
+        else if (n<=20) cell.setBackground('#D9EAF7').setFontColor('#245B78').setFontWeight('bold');
+      } else if (h.indexOf('FOMO')>=0) {
+        if (n>=8) cell.setBackground('#FCE2B8').setFontColor('#8A4B08').setFontWeight('bold');
+        else if (n>=6) cell.setBackground('#FFF0B8').setFontColor('#7A5B00').setFontWeight('bold');
+      } else if (h.indexOf('RYZYKO')>=0) {
+        if (n>=8) cell.setBackground('#FAD1D1').setFontColor('#8F2D2D').setFontWeight('bold');
+        else if (n>=5) cell.setBackground('#FFF0B8').setFontColor('#7A5B00').setFontWeight('bold');
+        else if (n<=2) cell.setBackground('#DDF2E3').setFontColor('#1F6B3A').setFontWeight('bold');
+      }
+    }
+  }
 }
