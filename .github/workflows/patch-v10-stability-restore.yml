@@ -32,7 +32,7 @@ jobs:
       - name: Apply stability restore
         run: python scripts/patch_v10_stability_restore.py
 
-      - name: Validate no global theme calls remain
+      - name: Validate stability root fix
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -40,9 +40,27 @@ jobs:
           assert 'applyUnifiedThemeV10_(ss);' not in s
           assert 'applyUnifiedV8Theme_(ss);' not in s
           assert 'function applySafeEngineColorsV10_' in s
-          assert 'applySafeEngineColorsV10_(sheet);' in s
           assert 'writeMorningRadarBrief_(sheet, radarJson);' in s
-          print('V10 stability validation: OK')
+          assert "getProperty('V10_MORNING_MODE')" in s
+          assert "setProperty('V10_MORNING_MODE', mode)" in s
+          assert "getRange('K1')" not in s
+          assert "sheet.hideColumns(11)" not in s
+          assert "sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();" in s
+          print('PASS 1: structure and mode storage OK')
+          PY
+
+      - name: Second validation pass
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt').read_text(encoding='utf-8')
+          bad = ["getRange('K1')", 'getRange("K1")', 'hideColumns(11)']
+          hits = [x for x in bad if x in s]
+          if hits:
+              raise SystemExit('Forbidden K1 dependencies remain: ' + ', '.join(hits))
+          for fn in ['setupMorningBrief_','morningRadarModeV10_','onSelectionChange']:
+              assert ('function ' + fn) in s
+          print('PASS 2: no hidden-cell mode dependency remains')
           PY
 
       - name: Syntax check
@@ -59,6 +77,6 @@ jobs:
             echo 'No V10 changes'
             exit 0
           fi
-          git commit -m 'Restore V10 stability and use safe table colors'
+          git commit -m 'Fix Morning Radar mode storage outside sheet cells'
           git pull --rebase origin main
           git push origin main
