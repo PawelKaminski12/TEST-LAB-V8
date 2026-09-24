@@ -41,7 +41,7 @@ function styleMorningBriefV10_(sheet, detailCount) {
     .setFontWeight('bold')
     .setFontSize(18)
     .setHorizontalAlignment('center');
-  sheet.setRowHeight(1, 42);
+  sheet.setRowHeight(1, 38);
 
   ['A3:B3','D3:I3','A10:F10','H10:J10','A18:I18','A19:I19'].forEach(a1 => {
     sheet.getRange(a1)
@@ -104,12 +104,13 @@ function styleMorningBriefV10_(sheet, detailCount) {
       .setBorder(true,true,true,true,true,true,'#D5E3EC',SpreadsheetApp.BorderStyle.SOLID);
   }
 
-  for (let r=3; r<=8; r++) sheet.setRowHeight(r, 30);
-  sheet.setRowHeight(10, 32);
-  for (let r=11; r<=15; r++) sheet.setRowHeight(r, 30);
-  sheet.setRowHeight(18, 32);
-  sheet.setRowHeight(19, 32);
-  for (let r=20; r<=lastDetailRow; r++) sheet.setRowHeight(r, 28);
+  // Kompakt pionowy: wszystkie 13 altów mają być widoczne bez przewijania.
+  for (let r=3; r<=8; r++) sheet.setRowHeight(r, 27);
+  sheet.setRowHeight(10, 29);
+  for (let r=11; r<=15; r++) sheet.setRowHeight(r, 27);
+  sheet.setRowHeight(18, 29);
+  sheet.setRowHeight(19, 29);
+  for (let r=20; r<=lastDetailRow; r++) sheet.setRowHeight(r, 24);
 
   // Większa szerokość całego dashboardu przesuwa jego wizualny środek w prawo
   // i wykorzystuje wolne miejsce po prawej stronie arkusza.
@@ -129,4 +130,4 @@ function styleBriefCardV10_(range, bg, fg) {
 
 s = s.rstrip() + style + '\n'
 p.write_text(s, encoding='utf-8')
-print('Patched Morning Brief light dashboard UI + reason column')
+print('Patched Morning Brief light dashboard UI + reason column + compact vertical layout')
