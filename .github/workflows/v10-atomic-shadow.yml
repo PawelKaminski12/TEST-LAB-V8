@@ -1,0 +1,54 @@
+name: V10 Atomic Shadow Sheets
+
+on:
+  push:
+    paths:
+      - 'scripts/patch_v10_atomic_shadow.py'
+      - '.github/workflows/v10-atomic-shadow.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Apply atomic shadow patch
+        run: python scripts/patch_v10_atomic_shadow.py
+      - name: Syntax check
+        run: |
+          cp google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt /tmp/v10.js
+          node --check /tmp/v10.js
+      - name: Static checks
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt').read_text(encoding='utf-8')
+          start=s.index('function writeCsvSheet_(')
+          end=s.find('\nfunction ', start+1)
+          b=s[start:end if end>0 else len(s)]
+          assert 'clearContents()' not in b
+          assert 'getMergedRanges()' not in b
+          assert 'breakApart()' not in b
+          assert 'unmergeAllSafelyV10_' not in b
+          assert 'ss.insertSheet(tmpName)' in b
+          assert 'ss.deleteSheet(old)' in b
+          print('Atomic shadow invariants OK')
+          PY
+      - name: Commit patched V10
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
+          if ! git diff --cached --quiet; then
+            git commit -m 'Use atomic fresh sheets for V10 technical CSV writes'
+            git pull --rebase origin main
+            git push origin main
+          fi
