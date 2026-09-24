@@ -1944,35 +1944,7 @@ function polishMorningRadarV10_(sheet, assets) {
     if (fomo >= 8) paintMorningRangeV10_(sheet.getRange(r,6), 'FOMO', true);
   }
 
-  // LEGENDA po prawej — ten sam kod kolorów co w tabelach.
-  sheet.getRange('L4:O4').merge().setValue('LEGENDA KOLORÓW');
-  sheet.getRange('L4:O4').setBackground('#CFE8F6').setFontColor('#17324D').setFontWeight('bold').setHorizontalAlignment('center');
-
-  const legend = [
-    ['GORĄCO','Mocne przegrzanie / sygnał gorący','HOT'],
-    ['CHŁODNO','Słabość / sygnał chłodny','COLD'],
-    ['NEUTRALNIE','Brak skrajności','NEUTRAL'],
-    ['UWAGA','Sygnał ostrzegawczy','WARN'],
-    ['FOMO ≥ 8','Podwyższone FOMO','FOMO'],
-    ['MACD ALERT','Ostrzeżenie MACD','MACD'],
-    ['INFO','Informacja / stan pomocniczy','INFO']
-  ];
-  legend.forEach((x,i) => {
-    const r = 5 + i;
-    sheet.getRange(r,12).setValue(x[0]);
-    sheet.getRange(r,13,1,3).merge().setValue(x[1]);
-    paintMorningRangeV10_(sheet.getRange(r,12), x[2], true);
-    sheet.getRange(r,13,1,3).setBackground('#F7FAFC').setFontColor('#243447');
-  });
-
-  sheet.getRange('L13:O13').merge().setValue('AUTO = wybiera dla KAŻDEGO aktywa osobno najsilniejszy sygnał z 1H / 2H / 4H. To nie jest średnia.');
-  sheet.getRange('L13:O13').setBackground('#EAF4FB').setFontColor('#245A7A').setFontWeight('bold').setWrap(true);
-  sheet.getRange('L14:O14').merge().setValue('1H / 2H / 4H = cały radar pracuje ręcznie na jednym wybranym interwale.');
-  sheet.getRange('L14:O14').setBackground('#F7FAFC').setFontColor('#456276').setWrap(true);
-  [125,150,150,150].forEach((w,i)=>sheet.setColumnWidth(12+i,w));
-  sheet.setRowHeight(13,48);
-  sheet.setRowHeight(14,40);
-
+  // Przyciski + jedna, dedykowana legenda. Bez nakładających się scaleń.
   styleMorningRadarButtonsV10_(sheet, morningRadarModeV10_(sheet));
   drawMorningRadarLegendV10_(sheet);
 }
@@ -1981,7 +1953,7 @@ function polishMorningRadarV10_(sheet, assets) {
 // ===== V10 MORNING RADAR LEGEND =====
 function drawMorningRadarLegendV10_(sheet) {
   // Wolna prawa część ekranu: stała legenda kolorów + wyjaśnienie AUTO.
-  const title = sheet.getRange('L4:N4');
+  const title = sheet.getRange('L4:O4');
   title.merge().setValue('LEGENDA KOLORÓW')
     .setBackground('#CFE8F6').setFontColor('#17324D').setFontWeight('bold')
     .setFontFamily('Roboto').setFontSize(12)
@@ -1997,18 +1969,18 @@ function drawMorningRadarLegendV10_(sheet) {
     ['INFO',        'informacja pomocnicza',                'INFO']
   ];
 
-  sheet.getRange(5,12,rows.length,3).clearContent().clearFormat();
+  sheet.getRange(5,12,rows.length,4).clearContent().clearFormat();
   rows.forEach((x, i) => {
     const r = 5 + i;
     const c = morningPaletteV10_(x[2]);
     sheet.getRange(r,12).setValue(x[0]).setBackground(c.bg).setFontColor(c.fg)
       .setFontWeight('bold').setHorizontalAlignment('center');
-    sheet.getRange(r,13,1,2).merge().setValue(x[1]).setBackground(c.bg).setFontColor(c.fg)
+    sheet.getRange(r,13,1,3).merge().setValue(x[1]).setBackground(c.bg).setFontColor(c.fg)
       .setHorizontalAlignment('left');
-    sheet.getRange(r,12,1,3).setBorder(true,true,true,true,true,true,'#B8CDD9',SpreadsheetApp.BorderStyle.SOLID);
+    sheet.getRange(r,12,1,4).setBorder(true,true,true,true,true,true,'#B8CDD9',SpreadsheetApp.BorderStyle.SOLID);
   });
 
-  sheet.getRange('L13:N13').merge().setValue('AUTO — dla każdej monety wybiera osobno najsilniejszy sygnał z 1H / 2H / 4H. To nie jest średnia.')
+  sheet.getRange('L13:O13').merge().setValue('AUTO — dla każdej monety wybiera osobno najsilniejszy sygnał z 1H / 2H / 4H. To nie jest średnia.')
     .setBackground('#EAF4FB').setFontColor('#245A7A').setFontWeight('bold')
     .setWrap(true).setHorizontalAlignment('left').setVerticalAlignment('middle')
     .setBorder(true,true,true,true,true,true,'#9DBFD5',SpreadsheetApp.BorderStyle.SOLID_MEDIUM);
