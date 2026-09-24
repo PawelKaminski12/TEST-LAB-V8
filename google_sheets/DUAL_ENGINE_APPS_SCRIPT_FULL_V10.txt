@@ -390,13 +390,13 @@ function translateEtfTrend_(v) {
 }
 
 function setupPortfolioLong_(sheet) {
-  sheet.getDataRange().breakApart();
+  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();
   const headers = ['AKTYWO','ILOŚĆ','ŚR. CENA','WARTOŚĆ','ZYSK/STRATA','DCA1','DCA2','DCA3','STATUS LONG','WYKONANE'];
   if (sheet.getLastRow() === 0) { sheet.getRange(1,1,1,headers.length).setValues([headers]); sheet.setFrozenRows(1); }
 }
 
 function setupPortfolioTactical_(sheet) {
-  sheet.getDataRange().breakApart();
+  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();
   const headers = ['AKTYWO','ILOŚĆ','CENA WEJŚCIA','WARTOŚĆ','P&L','STATUS TACTICAL','RYZYKO 0–10','PLAN WYJŚCIA','WYKONANE'];
   if (sheet.getLastRow() === 0) { sheet.getRange(1,1,1,headers.length).setValues([headers]); sheet.setFrozenRows(1); }
 }
@@ -1971,7 +1971,7 @@ function writeTacticalDashboard_(sheet, tacticalJson, metaCsv) {
 }
 
 function setupMorningBrief_(sheet) {
-  sheet.getDataRange().breakApart();
+  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();
   let savedMode = String(sheet.getRange('K1').getDisplayValue() || '').trim().toUpperCase();
   if (!['1H','2H','4H','AUTO'].includes(savedMode)) savedMode = '1H';
 
