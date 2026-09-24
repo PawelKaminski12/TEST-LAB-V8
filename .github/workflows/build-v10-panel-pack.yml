@@ -10,6 +10,7 @@ on:
       - 'scripts/patch_v10_morning_polish.py'
       - 'scripts/patch_v10_morning_legend.py'
       - 'scripts/patch_v10_shared_indicator_language.py'
+      - 'scripts/patch_v10_unified_dashboard_theme.py'
       - 'google_sheets/V10_COMPATIBILITY_PATCH.txt'
       - '.github/workflows/build-v10-panel-pack.yml'
   workflow_dispatch:
@@ -45,6 +46,9 @@ jobs:
       - name: Apply shared indicator language across V8 dashboards
         run: python scripts/patch_v10_shared_indicator_language.py
 
+      - name: Apply unified colors across all V8 dashboards
+        run: python scripts/patch_v10_unified_dashboard_theme.py
+
       - name: Apply Apps Script compatibility fixes in generated V10
         run: |
           python - <<'PY'
@@ -67,7 +71,7 @@ jobs:
           p.write_text(s, encoding='utf-8')
           PY
 
-      - name: Validate required functions and Morning Radar UI
+      - name: Validate required functions and unified V8 UI
         run: |
           FILE=google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
           grep -q "function alarmDirection_(" "$FILE"
@@ -96,6 +100,10 @@ jobs:
           grep -q "LEGENDA KOLORÓW" "$FILE"
           grep -q "RADAR 13 ALTÓW" "$FILE"
           grep -q "\['AKTYWO','TF','RSI','MFI','MACD','FOMO','TREND','RADAR','POWÓD'\]" "$FILE"
+          grep -q "function applyUnifiedV8Theme_(" "$FILE"
+          grep -q "function unifiedSemanticStyleV10_(" "$FILE"
+          grep -q "applyUnifiedV8Theme_(ss);" "$FILE"
+          grep -q "const V8_UI" "$FILE"
           grep -q "setHiddenGridlines(true)" "$FILE"
           grep -q "setFontFamily('Roboto')" "$FILE"
           grep -q "setRowHeights(20,n,26)" "$FILE"
@@ -118,5 +126,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
-          git commit -m "Build V10 with shared indicator language"
+          git commit -m "Build V10 with unified dashboard colors"
           git push
