@@ -50,6 +50,28 @@ function radarKindV10_(status) {
   return 'NORMAL';
 }
 
+function strongestMorningRowKindV10_(sheet, r) {
+  const status = String(sheet.getRange(r,8).getDisplayValue() || '').toUpperCase();
+  const macd = String(sheet.getRange(r,5).getDisplayValue() || '').toUpperCase();
+  const rsi = Number(sheet.getRange(r,3).getValue());
+  const mfi = Number(sheet.getRange(r,4).getValue());
+  const fomo = Number(sheet.getRange(r,6).getValue());
+
+  // Najpierw pełny stan radaru.
+  if (status.indexOf('GORĄCO') >= 0) return 'HOT';
+  if (status.indexOf('CHŁODNO') >= 0) return 'COLD';
+  if (status.indexOf('UWAGA') >= 0) return 'WARN';
+
+  // Jeśli radar jest NEUTRALNY, ale którykolwiek wskaźnik już daje sygnał,
+  // zielone tło nie może sugerować "wszystko w normie".
+  if (Number.isFinite(fomo) && fomo >= 8) return 'FOMO';
+  if (macd.indexOf('EKSTREMUM') >= 0 || macd.indexOf('UWAGA') >= 0) return 'WARN';
+  if (Number.isFinite(rsi) && (rsi >= 75 || rsi <= 25)) return 'WARN';
+  if (Number.isFinite(mfi) && (mfi >= 90 || mfi <= 10)) return 'WARN';
+
+  return radarKindV10_(status);
+}
+
 function polishMorningRadarV10_(sheet, assets) {
   const n = assets.length;
 
@@ -109,11 +131,11 @@ function polishMorningRadarV10_(sheet, assets) {
     paintMorningRangeV10_(sheet.getRange(r,10), kind, true);
   }
 
-  // RADAR 13 ALTÓW — cały wiersz dziedziczy kolor statusu RADAR.
+  // RADAR 13 ALTÓW — cały wiersz bierze kolor NAJMOCNIEJSZEGO sygnału.
+  // Zielony = faktyczny brak skrajności; pojedynczy alert nie może zostać przykryty zielenią.
   for (let i=0; i<n; i++) {
     const r = 20 + i;
-    const status = String(sheet.getRange(r,8).getDisplayValue() || '');
-    const kind = radarKindV10_(status);
+    const kind = strongestMorningRowKindV10_(sheet, r);
 
     paintMorningRangeV10_(sheet.getRange(r,1,1,9), kind, false);
     paintMorningRangeV10_(sheet.getRange(r,8), kind, true);
@@ -167,4 +189,4 @@ function polishMorningRadarV10_(sheet, assets) {
 '''
 
 p.write_text(s, encoding='utf-8')
-print('V10 Morning Radar legend and AUTO explanation patched')
+print('V10 Morning Radar strongest-signal row coloring patched')
