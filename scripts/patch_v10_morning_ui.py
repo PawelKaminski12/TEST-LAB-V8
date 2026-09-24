@@ -4,10 +4,13 @@ p = Path('google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt')
 s = p.read_text(encoding='utf-8')
 
 old_widths = "[95,165,180,85,105,75,100,90,410,120].forEach((w,i)=>sheet.setColumnWidth(i+1,w));"
-new_widths = "[120,210,220,120,120,110,110,150,420,180].forEach((w,i)=>sheet.setColumnWidth(i+1,w));"
+new_widths = "[135,225,235,130,130,115,115,160,450,190].forEach((w,i)=>sheet.setColumnWidth(i+1,w));"
 if old_widths not in s:
     raise SystemExit('Morning Brief width marker not found')
 s = s.replace(old_widths, new_widths, 1)
+
+# Meta CSV uses the plural header `reasons`; keep `reason` as backward-compatible fallback.
+s = s.replace("translateReasonV10_(m.reason || '')", "translateReasonV10_(m.reasons || m.reason || '')")
 
 needle = "  applyTacticalColorsV10_(sheet, 20, detail.length + 19);\n}"
 replacement = "  applyTacticalColorsV10_(sheet, 20, detail.length + 19);\n  styleMorningBriefV10_(sheet, detail.length);\n}"
@@ -32,7 +35,6 @@ function styleMorningBriefV10_(sheet, detailCount) {
     .setFontColor('#243447')
     .setVerticalAlignment('middle');
 
-  // Tytuł — jasny niebieski zamiast ciężkiego granatu.
   sheet.getRange('A1:J1')
     .setBackground('#DCEEF8')
     .setFontColor('#17324D')
@@ -41,7 +43,6 @@ function styleMorningBriefV10_(sheet, detailCount) {
     .setHorizontalAlignment('center');
   sheet.setRowHeight(1, 42);
 
-  // Nagłówki sekcji.
   ['A3:B3','D3:I3','A10:F10','H10:J10','A18:I18','A19:I19'].forEach(a1 => {
     sheet.getRange(a1)
       .setBackground('#CFE8F6')
@@ -51,28 +52,25 @@ function styleMorningBriefV10_(sheet, detailCount) {
       .setHorizontalAlignment('center');
   });
 
-  // Stan systemu — czytelny kafel po lewej.
   sheet.getRange('A4:A8')
     .setBackground('#EAF4FB')
     .setFontWeight('bold')
-    .setHorizontalAlignment('left');
+    .setHorizontalAlignment('center');
   sheet.getRange('B4:B8')
     .setBackground('#F8FBFD')
     .setFontWeight('bold')
     .setHorizontalAlignment('center');
 
-  // Kluczowe liczby — kolorowe kafle sygnałowe.
-  styleBriefCardV10_(sheet.getRange('D4:E4'), '#E5F5EA', '#1F6B3A'); // ZEZWÓL
-  styleBriefCardV10_(sheet.getRange('F4:G4'), '#FFF3CD', '#7A5B00'); // OSTROŻNIE
-  styleBriefCardV10_(sheet.getRange('H4:I4'), '#FDE2E2', '#8F2D2D'); // BLOKUJ
-  styleBriefCardV10_(sheet.getRange('D5:E5'), '#EDF1F5', '#44546A'); // WSTRZYMAJ
-  styleBriefCardV10_(sheet.getRange('F5:G5'), '#FFF7E6', '#8A5A00'); // ŚR. RYZYKO
-  styleBriefCardV10_(sheet.getRange('H5:I5'), '#FFE9D6', '#9A4D00'); // FOMO
-  styleBriefCardV10_(sheet.getRange('D6:E6'), '#FFE4D6', '#9A3D00'); // PRZEGRZANIE
-  styleBriefCardV10_(sheet.getRange('F6:G6'), '#EEF2F6', '#455A64'); // BEZ TRANSAKCJI
-  styleBriefCardV10_(sheet.getRange('H6:I6'), '#E4F1FB', '#245A7A'); // PODAŻ
+  styleBriefCardV10_(sheet.getRange('D4:E4'), '#E5F5EA', '#1F6B3A');
+  styleBriefCardV10_(sheet.getRange('F4:G4'), '#FFF3CD', '#7A5B00');
+  styleBriefCardV10_(sheet.getRange('H4:I4'), '#FDE2E2', '#8F2D2D');
+  styleBriefCardV10_(sheet.getRange('D5:E5'), '#EDF1F5', '#44546A');
+  styleBriefCardV10_(sheet.getRange('F5:G5'), '#FFF7E6', '#8A5A00');
+  styleBriefCardV10_(sheet.getRange('H5:I5'), '#FFE9D6', '#9A4D00');
+  styleBriefCardV10_(sheet.getRange('D6:E6'), '#FFE4D6', '#9A3D00');
+  styleBriefCardV10_(sheet.getRange('F6:G6'), '#EEF2F6', '#455A64');
+  styleBriefCardV10_(sheet.getRange('H6:I6'), '#E4F1FB', '#245A7A');
 
-  // Priorytety / obserwacja — większe, oddechowe bloki.
   sheet.getRange('A11:F15')
     .setBackground('#FFFFFF')
     .setHorizontalAlignment('center')
@@ -82,7 +80,6 @@ function styleMorningBriefV10_(sheet, detailCount) {
     .setHorizontalAlignment('center')
     .setFontSize(11);
 
-  // Kolory decyzji w priorytetach.
   for (let r=11; r<=15; r++) {
     const v = String(sheet.getRange(r,3).getValue() || '');
     const c = sheet.getRange(r,3);
@@ -92,7 +89,6 @@ function styleMorningBriefV10_(sheet, detailCount) {
     else if (v === 'ZEZWÓL') c.setBackground('#DDF2E3').setFontColor('#1F6B3A').setFontWeight('bold');
   }
 
-  // Dolna tabela — szerzej, większa czcionka, wyśrodkowane liczby.
   if (detailCount > 0) {
     const body = sheet.getRange(20,1,detailCount,9);
     body.setFontSize(11).setVerticalAlignment('middle');
@@ -100,7 +96,6 @@ function styleMorningBriefV10_(sheet, detailCount) {
     sheet.getRange(20,9,detailCount,1).setHorizontalAlignment('left').setWrap(true);
   }
 
-  // Delikatne ramki tylko wokół kafli, bez ciężkiej siatki.
   ['A3:B8','D3:I6','A10:F15','H10:J15','A18:I19'].forEach(a1 => {
     sheet.getRange(a1).setBorder(true,true,true,true,true,true,'#B9D4E5',SpreadsheetApp.BorderStyle.SOLID);
   });
@@ -109,7 +104,6 @@ function styleMorningBriefV10_(sheet, detailCount) {
       .setBorder(true,true,true,true,true,true,'#D5E3EC',SpreadsheetApp.BorderStyle.SOLID);
   }
 
-  // Wysokości wierszy — koniec z upychaniem tekstu.
   for (let r=3; r<=8; r++) sheet.setRowHeight(r, 30);
   sheet.setRowHeight(10, 32);
   for (let r=11; r<=15; r++) sheet.setRowHeight(r, 30);
@@ -117,8 +111,9 @@ function styleMorningBriefV10_(sheet, detailCount) {
   sheet.setRowHeight(19, 32);
   for (let r=20; r<=lastDetailRow; r++) sheet.setRowHeight(r, 28);
 
-  // Duży obszar roboczy — szeroko i bez ścisku.
-  [120,210,220,120,120,110,110,150,420,180].forEach((w,i)=>sheet.setColumnWidth(i+1,w));
+  // Większa szerokość całego dashboardu przesuwa jego wizualny środek w prawo
+  // i wykorzystuje wolne miejsce po prawej stronie arkusza.
+  [135,225,235,130,130,115,115,160,450,190].forEach((w,i)=>sheet.setColumnWidth(i+1,w));
 }
 
 function styleBriefCardV10_(range, bg, fg) {
@@ -134,4 +129,4 @@ function styleBriefCardV10_(range, bg, fg) {
 
 s = s.rstrip() + style + '\n'
 p.write_text(s, encoding='utf-8')
-print('Patched Morning Brief light dashboard UI')
+print('Patched Morning Brief light dashboard UI + reason column')
