@@ -3,31 +3,39 @@ from pathlib import Path
 p = Path('google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt')
 s = p.read_text(encoding='utf-8')
 
-# Najważniejsze: wyłączamy globalne skanowanie/kolorowanie całego skoroszytu.
+# 1) Nie używamy globalnego kolorowania całego skoroszytu.
 s = s.replace('    applyUnifiedThemeV10_(ss);\n', '')
 s = s.replace('    applyUnifiedV8Theme_(ss);\n', '')
 s = s.replace('  applyUnifiedThemeV10_(ss);\n', '')
 s = s.replace('  applyUnifiedV8Theme_(ss);\n', '')
 
-# ROOT FIX DLA SCALEŃ:
-# getDataRange() może NIE obejmować pustych komórek należących do scalenia,
-# więc breakApart() rzuca wyjątek "musisz zaznaczyć wszystkie komórki".
-# Rozpinamy scalenia na PEŁNYM fizycznym arkuszu (maxRows x maxColumns).
+# 2) Bezpieczne rozpinanie scaleń wyłącznie w trzech dashboardach budowanych od zera.
 full_unmerge = "  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();\n"
 for fn in ['setupPortfolioLong_', 'setupPortfolioTactical_', 'setupMorningBrief_']:
     marker = f'function {fn}(sheet) {{\n'
     if marker not in s:
         continue
     start = s.index(marker) + len(marker)
-    # usuń stare warianty tylko z początku funkcji
-    tail = s[start:start+220]
+    tail = s[start:start+260]
     tail2 = tail.replace('  sheet.getDataRange().breakApart();\n', '')
     tail2 = tail2.replace('  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();\n', '')
     s = s[:start] + tail2 + s[start+len(tail):]
     s = s[:start] + full_unmerge + s[start:]
 
-# Dodajemy tylko bezpieczne, jawne formatowanie tabel bez scaleń.
-# Porannego Radaru nie kolorujemy globalnie — ma własny zaakceptowany renderer.
+# 3) ROOT FIX: tryb Porannego Radaru NIE jest już przechowywany w K1.
+# K1 mogło pozostać w historycznym scaleniu i sam odczyt getDisplayValue() wywalał wyjątek.
+old_setup = """function setupMorningBrief_(sheet) {\n  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();\n  let savedMode = String(sheet.getRange('K1').getDisplayValue() || '').trim().toUpperCase();\n  if (!['1H','2H','4H','AUTO'].includes(savedMode)) savedMode = '1H';\n\n  sheet.clear();\n  sheet.setHiddenGridlines(true);\n  sheet.getRange('K1').setValue(savedMode);\n  sheet.hideColumns(11);\n"""
+new_setup = """function setupMorningBrief_(sheet) {\n  let savedMode = String(PropertiesService.getDocumentProperties().getProperty('V10_MORNING_MODE') || '1H').trim().toUpperCase();\n  if (!['1H','2H','4H','AUTO'].includes(savedMode)) savedMode = '1H';\n  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();\n  sheet.clear();\n  sheet.setHiddenGridlines(true);\n  PropertiesService.getDocumentProperties().setProperty('V10_MORNING_MODE', savedMode);\n"""
+s = s.replace(old_setup, new_setup)
+
+old_mode = """function morningRadarModeV10_(sheet) {\n  const v = String(sheet.getRange('K1').getDisplayValue() || '1H').trim().toUpperCase();\n  return ['1H','2H','4H','AUTO'].includes(v) ? v : '1H';\n}\n"""
+new_mode = """function morningRadarModeV10_(sheet) {\n  const v = String(PropertiesService.getDocumentProperties().getProperty('V10_MORNING_MODE') || '1H').trim().toUpperCase();\n  return ['1H','2H','4H','AUTO'].includes(v) ? v : '1H';\n}\n"""
+s = s.replace(old_mode, new_mode)
+
+s = s.replace("    sheet.getRange('K1').setValue(mode);\n    styleMorningRadarButtonsV10_(sheet, mode);",
+              "    PropertiesService.getDocumentProperties().setProperty('V10_MORNING_MODE', mode);\n    styleMorningRadarButtonsV10_(sheet, mode);")
+
+# 4) Bezpieczne kolorowanie tylko prostych tabel danych bez scaleń.
 if 'function applySafeEngineColorsV10_' not in s:
     s += r'''
 
@@ -92,4 +100,4 @@ if 'applySafeEngineColorsV10_(sheet);\n}\n\nfunction writeFlowEngine_' not in s:
     s = s.replace(old,new,1)
 
 p.write_text(s, encoding='utf-8')
-print('V10 root merge fix: full-sheet breakApart + safe table colors')
+print('V10 stability root fix: mode stored in DocumentProperties; no K1 dependency')
