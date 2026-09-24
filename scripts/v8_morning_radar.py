@@ -68,35 +68,64 @@ def derive_2h(pair: str):
     return state
 
 
-def normalize_macd_direction(tf):
-    """Keep alert strength, but force +/- to follow the actual MACD histogram side of zero.
+def macd_context(tf):
+    """Separate MACD location from histogram momentum.
 
-    This is a Morning Radar display normalization only. It does not modify the frozen
-    Tactical production engine. Upper MACD extreme = positive histogram, lower = negative.
+    Alert strength still comes from the existing historical histogram percentile/z-score.
+    Location (upper/lower) follows the actual MACD line versus zero.
+    Momentum follows the histogram sign. This is Morning Radar semantics only and does not
+    modify the frozen Tactical production engine.
     """
-    out = dict(tf or {})
-    label = str(out.get('macd_extreme_label') or 'NORMAL').upper()
-    hist = clean_number(out.get('macd_hist'))
-    if hist is None or label in {'NORMAL', 'NO_DATA'}:
-        return out
+    label = str(tf.get('macd_extreme_label') or 'NORMAL').upper()
+    macd_line = clean_number(tf.get('macd'))
+    hist = clean_number(tf.get('macd_hist'))
 
-    is_extreme = 'EXTREME' in label
-    is_warning = 'WARNING' in label
-    if not (is_extreme or is_warning):
-        return out
+    alert = label not in {'NORMAL', 'NO_DATA'}
+    extreme = 'EXTREME' in label
+    warning = 'WARNING' in label
 
-    if hist > 0:
-        out['macd_extreme_label'] = 'EXTREME_POSITIVE' if is_extreme else 'WARNING_POSITIVE'
-        out['macd_extreme_direction'] = 'POSITIVE'
-    elif hist < 0:
-        out['macd_extreme_label'] = 'EXTREME_NEGATIVE' if is_extreme else 'WARNING_NEGATIVE'
-        out['macd_extreme_direction'] = 'NEGATIVE'
+    if macd_line is None:
+        side = 'NONE'
+    elif macd_line < 0:
+        side = 'LOWER'
+    elif macd_line > 0:
+        side = 'UPPER'
     else:
-        out['macd_extreme_label'] = 'NORMAL'
-        out['macd_extreme_direction'] = 'NONE'
-        out['macd_extreme_warning'] = False
-        out['macd_extreme'] = False
-    return out
+        side = 'ZERO'
+
+    if hist is None or hist == 0:
+        momentum = 'PŁASKO'
+        momentum_code = 'FLAT'
+    elif hist > 0:
+        momentum = 'ODBICIE +'
+        momentum_code = 'UP'
+    else:
+        momentum = 'SCHŁODZENIE −'
+        momentum_code = 'DOWN'
+
+    display = 'NORMALNY'
+    reason = None
+    if alert and (extreme or warning):
+        strength = 'GRANICE' if extreme else 'OSTRZEŻ.'
+        strength_reason = 'granice' if extreme else 'ostrzeżenie'
+        if side == 'LOWER':
+            display = f'DOLNE {strength}'
+            reason = f'MACD dolne {strength_reason}; {momentum.lower()}'
+        elif side == 'UPPER':
+            display = f'GÓRNE {strength}'
+            reason = f'MACD górne {strength_reason}; {momentum.lower()}'
+        else:
+            display = 'MACD ALERT'
+            reason = f'MACD alert; {momentum.lower()}'
+
+    return {
+        'macd_level_side': side,
+        'macd_momentum': momentum_code,
+        'macd_momentum_pl': momentum,
+        'macd_display_pl': display,
+        'macd_reason_pl': reason,
+        'macd_alert_strength': 'EXTREME' if extreme else 'WARNING' if warning else 'NORMAL',
+    }
 
 
 def radar_eval(tf):
@@ -104,7 +133,7 @@ def radar_eval(tf):
     mfi = clean_number(tf.get('mfi14'))
     fomo = clean_number(tf.get('fomo_score_0_10')) or 0
     trend = clean_number(tf.get('trend_score_0_4')) or 0
-    macd_label = str(tf.get('macd_extreme_label') or 'NORMAL').upper()
+    ctx = macd_context(tf)
 
     hot = 0
     cold = 0
@@ -130,12 +159,13 @@ def radar_eval(tf):
         elif mfi <= 20:
             cold += 2; reasons.append(f'MFI {mfi:.0f} niskie')
 
-    if 'POSITIVE' in macd_label:
-        hot += 2
-        reasons.append('MACD górne granice' if 'EXTREME' in macd_label else 'MACD górne ostrzeżenie')
-    elif 'NEGATIVE' in macd_label:
-        cold += 2
-        reasons.append('MACD dolne granice' if 'EXTREME' in macd_label else 'MACD dolne ostrzeżenie')
+    if ctx['macd_alert_strength'] != 'NORMAL':
+        if ctx['macd_level_side'] == 'UPPER':
+            hot += 2
+        elif ctx['macd_level_side'] == 'LOWER':
+            cold += 2
+        if ctx['macd_reason_pl']:
+            reasons.append(ctx['macd_reason_pl'])
 
     if fomo >= 8:
         hot += 3; reasons.append(f'FOMO {int(fomo)}')
@@ -168,17 +198,18 @@ def radar_eval(tf):
         'reason_pl': '; '.join(reasons) if reasons else 'brak skrajności',
         'rsi_extreme': bool(rsi is not None and (rsi >= 75 or rsi <= 25)),
         'mfi_extreme': bool(mfi is not None and (mfi >= 90 or mfi <= 10)),
-        'macd_alert': bool(macd_label not in ['NORMAL', 'NO_DATA']),
+        'macd_alert': bool(ctx['macd_alert_strength'] != 'NORMAL'),
         'fomo_hard': bool(fomo >= 8),
         'trend_score_0_4': trend,
+        **ctx,
     }
 
 
 def compact_tf(tf):
-    tf = normalize_macd_direction(tf)
     keys = [
-        'timeframe','close','trend_score_0_4','macd_hist','macd_hist_percentile','macd_hist_zscore',
-        'macd_extreme_label','rsi14','mfi14','fomo_score_0_10','fomo_label','last_close_time_utc',
+        'timeframe','close','trend_score_0_4','macd','macd_signal','macd_hist',
+        'macd_hist_percentile','macd_hist_zscore','macd_extreme_label',
+        'rsi14','mfi14','fomo_score_0_10','fomo_label','last_close_time_utc',
         'closed_bar_only','stale'
     ]
     out = {k: tf.get(k) for k in keys}
