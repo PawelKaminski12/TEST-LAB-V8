@@ -1,13 +1,13 @@
 {
-  "generated_at_utc": "2026-09-24T03:49:10.859226+00:00",
+  "generated_at_utc": "2026-09-24T04:49:23.907647+00:00",
   "engine": "V8_ETF_PRICE_DIVERGENCE_v1.0",
   "assets": {
     "BTC": {
       "price_change_5d_pct": 4.492849953362432,
-      "etf_closed_5d_usdm": 2010.3,
-      "etf_acceleration_5d_usdm": 2716.8999999999996,
-      "etf_last_closed_date": "2026-09-22",
-      "etf_last_closed_flow_usdm": 714.7,
+      "etf_closed_5d_usdm": 2338.6,
+      "etf_acceleration_5d_usdm": 3220.8999999999996,
+      "etf_last_closed_date": "2026-09-23",
+      "etf_last_closed_flow_usdm": 32.4,
       "streak_direction_pl": null,
       "streak_days": null,
       "status_pl": "CENA I ETF POTWIERDZAJĄ WZROST",
@@ -19,10 +19,10 @@
     },
     "ETH": {
       "price_change_5d_pct": 2.530983786767438,
-      "etf_closed_5d_usdm": 312.5,
-      "etf_acceleration_5d_usdm": 112.19999999999999,
-      "etf_last_closed_date": "2026-09-22",
-      "etf_last_closed_flow_usdm": 162.2,
+      "etf_closed_5d_usdm": 539.0999999999999,
+      "etf_acceleration_5d_usdm": 597.5999999999999,
+      "etf_last_closed_date": "2026-09-23",
+      "etf_last_closed_flow_usdm": 2.5,
       "streak_direction_pl": null,
       "streak_days": null,
       "status_pl": "CENA I ETF POTWIERDZAJĄ WZROST",
