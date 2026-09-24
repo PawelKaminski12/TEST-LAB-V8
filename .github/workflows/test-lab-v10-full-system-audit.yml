@@ -66,7 +66,7 @@ jobs:
           import re
           s=Path('google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt').read_text(encoding='utf-8')
           required=['ODSWIEZ_WSZYSTKO','ODSWIEZ_PORANNY_BRIEF','V8_SETUP','SPRAWDZ_EKSTREMA']
-          print('required counts:', {fn:len(re.findall(r'function\s+'+re.escape(fn)+r'\s*\(',s)) for fn in required})
+          print('required counts:', {fn:len(re.findall(r'function\\s+'+re.escape(fn)+r'\\s*\\(',s)) for fn in required})
           print('K1 dependency:', "getRange('K1')" in s or 'getRange("K1")' in s)
           PY
 
@@ -82,4 +82,4 @@ jobs:
             git push origin main
           fi
 
-# Triggered after safe-unmerge hardening and writeCsv safe-unmerge fix.
+# Triggered after robust CSV rebuild-on-merges hardening.
