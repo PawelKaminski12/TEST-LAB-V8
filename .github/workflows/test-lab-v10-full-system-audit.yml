@@ -43,7 +43,21 @@ jobs:
 
       - name: Apps Script undefined-name lint
         run: |
-          npx --yes eslint@8.57.1 --no-eslintrc --env es6 --env googleappsscript --parser-options '{"ecmaVersion":2021}' --rule 'no-undef:error' --rule 'no-redeclare:error' /tmp/v10.js
+          npx --yes eslint@8.57.1 --no-eslintrc --env es6 \
+            --global SpreadsheetApp:readonly \
+            --global Utilities:readonly \
+            --global UrlFetchApp:readonly \
+            --global PropertiesService:readonly \
+            --global Session:readonly \
+            --global GmailApp:readonly \
+            --global MailApp:readonly \
+            --global ScriptApp:readonly \
+            --global Logger:readonly \
+            --global console:readonly \
+            --parser-options '{"ecmaVersion":2021}' \
+            --rule 'no-undef:error' \
+            --rule 'no-redeclare:error' \
+            /tmp/v10.js
 
       - name: Python source compile check
         run: |
