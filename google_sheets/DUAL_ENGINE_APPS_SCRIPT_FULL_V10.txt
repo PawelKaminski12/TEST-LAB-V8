@@ -92,31 +92,22 @@ function getOrCreateSheet_(ss, name) {
 
 function writeCsvSheet_(sheet, csvText, preserveCompactPanel) {
   const rows = Utilities.parseCsv(csvText);
-
-  // V10 HARDENING: techniczne arkusze CSV są zawsze odbudowywane od zera.
-  // Nie pytamy o scalenia i nie wywołujemy breakApart/getMergedRanges, bo w części
-  // istniejących skoroszytów samo dotknięcie starych scaleń zgłasza wyjątek Apps Script.
+  // V10 SHADOW TECH: nigdy nie dotykamy starego arkusza z potencjalnie uszkodzonymi scaleniami.
+  // Dane techniczne trafiają do świeżego arkusza _V10_DATA.
   const ss = sheet.getParent();
-  const name = sheet.getName();
-  const index = sheet.getIndex();
-  const wasHidden = sheet.isSheetHidden();
-
-  ss.deleteSheet(sheet);
-  sheet = ss.insertSheet(name, index);
-
-  if (!rows.length) {
-    if (wasHidden) sheet.hideSheet();
-    return sheet;
-  }
-
-  sheet.getRange(1, 1, rows.length, rows[0].length).setValues(rows);
-  sheet.setFrozenRows(1);
+  const baseName = sheet.getName();
+  const dataName = baseName + '_V10_DATA';
+  let out = ss.getSheetByName(dataName);
+  if (!out) out = ss.insertSheet(dataName);
+  out.clearContents();
+  if (!rows.length) return out;
+  out.getRange(1, 1, rows.length, rows[0].length).setValues(rows);
+  out.setFrozenRows(1);
   if (preserveCompactPanel) {
     const maxCols = 7;
-    if (sheet.getMaxColumns() > maxCols) sheet.hideColumns(maxCols + 1, sheet.getMaxColumns() - maxCols);
+    if (out.getMaxColumns() > maxCols) out.hideColumns(maxCols + 1, out.getMaxColumns() - maxCols);
   }
-  if (wasHidden) sheet.hideSheet();
-  return sheet;
+  return out;
 }
 
 
