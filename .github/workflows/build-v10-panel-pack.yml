@@ -60,7 +60,8 @@ jobs:
           grep -q "setHiddenGridlines(true)" "$FILE"
           grep -q "#DCEEF8" "$FILE"
           grep -q "setFontFamily('Roboto')" "$FILE"
-          grep -q "\[120,210,220,120,120,110,110,150,420,180\]" "$FILE"
+          grep -q "\[135,225,235,130,130,115,115,160,450,190\]" "$FILE"
+          grep -q "m.reasons || m.reason || ''" "$FILE"
           grep -q "styleMorningBriefV10_(sheet, detail.length)" "$FILE"
           if grep "newConditionalFormatRule()" "$FILE" | grep -q "setFontWeight"; then
             echo "Forbidden setFontWeight() remains in ConditionalFormatRule"
@@ -81,5 +82,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
-          git commit -m "Build V10 with Morning Brief light dashboard UI"
+          git commit -m "Build V10 with centered Morning Brief and reasons"
           git push
