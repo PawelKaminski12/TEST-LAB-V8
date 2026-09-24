@@ -1,18 +1,12 @@
 {
   "engine": "V10_FULL_SYSTEM_AUDIT_v2",
-  "app_script_sha256": "e1adcf099e3e0d9b7e88dcf313554dc9c49a34127ce664080a3f5a80fa602959",
-  "app_script_lines": 2374,
+  "app_script_sha256": "1d788692d8742ef55277483bf97ea6308ab6b1ae4888b0169f75da7cf3eae789",
+  "app_script_lines": 2384,
   "checks_total": 208,
-  "checks_passed": 207,
-  "checks_failed": 1,
-  "status": "FAIL",
-  "failures": [
-    {
-      "check": "NO_WIDE_BREAKAPART",
-      "pass": false,
-      "detail": ""
-    }
-  ],
+  "checks_passed": 208,
+  "checks_failed": 0,
+  "status": "PASS",
+  "failures": [],
   "warnings": [],
   "checks": [
     {
@@ -23,7 +17,7 @@
     {
       "check": "APP_SCRIPT_NONEMPTY",
       "pass": true,
-      "detail": "bytes=114604 lines=2374 sha256=e1adcf099e3e0d9b7e88dcf313554dc9c49a34127ce664080a3f5a80fa602959"
+      "detail": "bytes=114958 lines=2384 sha256=1d788692d8742ef55277483bf97ea6308ab6b1ae4888b0169f75da7cf3eae789"
     },
     {
       "check": "FUNCTION_onOpen",
@@ -132,7 +126,7 @@
     },
     {
       "check": "NO_WIDE_BREAKAPART",
-      "pass": false,
+      "pass": true,
       "detail": ""
     },
     {
