@@ -8,6 +8,7 @@ on:
       - 'scripts/patch_v10_morning_radar.py'
       - 'scripts/patch_v10_morning_buttons.py'
       - 'scripts/patch_v10_morning_polish.py'
+      - 'scripts/patch_v10_morning_legend.py'
       - 'google_sheets/V10_COMPATIBILITY_PATCH.txt'
       - '.github/workflows/build-v10-panel-pack.yml'
   workflow_dispatch:
@@ -36,6 +37,9 @@ jobs:
 
       - name: Apply final Morning Radar polish
         run: python scripts/patch_v10_morning_polish.py
+
+      - name: Apply Morning Radar legend
+        run: python scripts/patch_v10_morning_legend.py
 
       - name: Apply Apps Script compatibility fixes in generated V10
         run: |
@@ -72,11 +76,13 @@ jobs:
           grep -q "function styleMorningRadarBriefV10_(" "$FILE"
           grep -q "function styleMorningRadarButtonsV10_(" "$FILE"
           grep -q "function polishMorningRadarV10_(" "$FILE"
+          grep -q "function drawMorningRadarLegendV10_(" "$FILE"
           grep -q "function onSelectionChange(e)" "$FILE"
           grep -q "V10_MORNING_RADAR_URL" "$FILE"
           grep -q "V10_MORNING_RADAR_CACHE" "$FILE"
           grep -q "\['1H','2H','4H','AUTO'\]" "$FILE"
           grep -q "AUTO nie jest średnią" "$FILE"
+          grep -q "LEGENDA KOLORÓW" "$FILE"
           grep -q "RADAR 13 ALTÓW" "$FILE"
           grep -q "\['AKTYWO','TF','RSI','MFI','MACD','FOMO','TREND','RADAR','POWÓD'\]" "$FILE"
           grep -q "setHiddenGridlines(true)" "$FILE"
@@ -101,5 +107,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt
-          git commit -m "Build V10 with polished Morning Radar colors and scale"
+          git commit -m "Build V10 with Morning Radar legend"
           git push
