@@ -39,7 +39,9 @@ jobs:
           assert 'unmergeAllSafelyV10_' not in b
           assert 'ss.deleteSheet(sheet);' in b
           assert 'ss.insertSheet(name, index);' in b
-          assert 'rebuiltMachineSheet.hideSheet();' in s
+          assert "let machineSheet = getOrCreateSheet_(ss, 'DANE_MASZYNOWNIA');" in s
+          assert 'machineSheet = writeCsvSheet_(machineSheet, machineCsv, false);' in s
+          assert 'machineSheet.hideSheet();' in s
           print('CSV rebuild invariants OK')
           PY
       - name: Commit patched V10
