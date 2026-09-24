@@ -92,6 +92,9 @@ function getOrCreateSheet_(ss, name) {
 
 function writeCsvSheet_(sheet, csvText, preserveCompactPanel) {
   const rows = Utilities.parseCsv(csvText);
+  // CSV-y są tabelami prostymi; przed zapisem rozpinamy wyłącznie realne stare scalenia.
+  // Zapobiega błędowi Apps Script: 'musisz zaznaczyć wszystkie komórki w scalanym zakresie'.
+  unmergeAllSafelyV10_(sheet);
   sheet.clearContents();
   if (!rows.length) return;
   sheet.getRange(1, 1, rows.length, rows[0].length).setValues(rows);
