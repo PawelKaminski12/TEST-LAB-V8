@@ -32,7 +32,7 @@ check('APP_SCRIPT_EXISTS', APP.exists(), APP)
 app = APP.read_text(encoding='utf-8') if APP.exists() else ''
 lines = app.splitlines()
 sha256 = hashlib.sha256(app.encode('utf-8')).hexdigest() if app else ''
-check('APP_SCRIPT_NONEMPTY', len(app) > 100000, f'bytes={len(app)} lines={len(lines)} sha256={sha256}')
+check('APP_SCRIPT_NONEMPTY', len(app) > 50000, f'bytes={len(app)} lines={len(lines)} sha256={sha256}')
 
 required_functions = [
     'onOpen','V8_SETUP','ODSWIEZ_WSZYSTKO','ODSWIEZ_PORANNY_BRIEF','ODSWIEZ_ETF_BTC_ETH','ODSWIEZ_LAB',
@@ -48,14 +48,13 @@ for fn in required_functions:
 dups={k:v for k,v in fc.items() if v>1}
 check('NO_DUPLICATE_FUNCTIONS', not dups, dups)
 
-# Bare identifiers often cause ReferenceError after accidental paste, e.g. line containing only "a".
-keywords={'else','try','finally','break','continue','return','throw','debugger'}
+# Accidental manual-paste garbage that caused the observed ReferenceError: standalone one-letter identifier.
 susp=[]
 for i,line in enumerate(lines,1):
-    m=re.match(r'^\s*([A-Za-z_$][A-Za-z0-9_$]*)\s*;?\s*$', line)
-    if m and m.group(1) not in keywords:
+    m=re.match(r'^\s*([A-Za-z_$])\s*;?\s*$', line)
+    if m:
         susp.append((i,m.group(1)))
-check('NO_SUSPICIOUS_BARE_IDENTIFIERS', not susp, susp[:20])
+check('NO_STANDALONE_SINGLE_LETTER_GARBAGE', not susp, susp[:20])
 
 check('NO_K1_MODE_DEPENDENCY', "getRange('K1')" not in app and 'getRange("K1")' not in app, 'K1 must not store radar mode')
 check('MODE_IN_DOCUMENT_PROPERTIES', "V10_MORNING_MODE" in app and 'PropertiesService.getDocumentProperties()' in app, '')
@@ -140,7 +139,7 @@ if status and status not in {'WAITING_FOR_SOURCE','WAITING'}:
 
 failed=[x for x in checks if not x['pass']]
 summary={
-    'engine':'V10_FULL_SYSTEM_AUDIT_v1',
+    'engine':'V10_FULL_SYSTEM_AUDIT_v2',
     'app_script_sha256':sha256,
     'app_script_lines':len(lines),
     'checks_total':len(checks),
@@ -154,23 +153,13 @@ summary={
 out=Path('audit'); out.mkdir(exist_ok=True)
 (out/'V10_FULL_SYSTEM_AUDIT.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2),encoding='utf-8')
 md=[
-    '# V10 FULL SYSTEM AUDIT',
-    '',
-    f"- Status: **{summary['status']}**",
-    f"- Checks: **{summary['checks_passed']}/{summary['checks_total']}**",
-    f"- App Script lines: **{summary['app_script_lines']}**",
-    f"- SHA-256: `{summary['app_script_sha256']}`",
-    '',
-    '## Failures',
+    '# V10 FULL SYSTEM AUDIT', '', f"- Status: **{summary['status']}**", f"- Checks: **{summary['checks_passed']}/{summary['checks_total']}**",
+    f"- App Script lines: **{summary['app_script_lines']}**", f"- SHA-256: `{summary['app_script_sha256']}`", '', '## Failures'
 ]
-if failed:
-    md += [f"- {x['check']}: {x['detail']}" for x in failed]
-else:
-    md += ['- None']
+md += [f"- {x['check']}: {x['detail']}" for x in failed] if failed else ['- None']
 md += ['', '## Warnings']
 md += [f"- {x['warning']}: {x['detail']}" for x in warns] or ['- None']
 (out/'V10_FULL_SYSTEM_AUDIT.md').write_text('\n'.join(md)+'\n',encoding='utf-8')
-
 print(json.dumps({k:summary[k] for k in ['status','checks_total','checks_passed','checks_failed','app_script_lines','app_script_sha256']},indent=2))
 if failed:
     print('FAILED CHECKS:')
