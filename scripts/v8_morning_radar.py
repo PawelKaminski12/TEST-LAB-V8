@@ -14,6 +14,7 @@ sys.path.insert(0, str(ROOT / 'scripts'))
 import v8_tactical_engine_v1 as tactical_base
 
 TF_ORDER = ['1H', '2H', '4H']
+FRESH_LIMIT_H = {'1H': 3, '2H': 5, '4H': 10}
 
 
 def clean_number(v):
@@ -205,6 +206,56 @@ def radar_eval(tf):
     }
 
 
+def freshness_state(tf_name, tf):
+    raw = tf.get('last_close_time_utc')
+    if not raw:
+        return True, None
+    try:
+        last = pd.Timestamp(raw)
+        if last.tzinfo is None:
+            last = last.tz_localize('UTC')
+        else:
+            last = last.tz_convert('UTC')
+        age_h = (pd.Timestamp.now(tz='UTC') - last).total_seconds() / 3600.0
+        return bool(age_h > FRESH_LIMIT_H[tf_name]), round(max(0.0, age_h), 2)
+    except Exception:
+        return True, None
+
+
+def signal_signature(tf):
+    reason = str(tf.get('reason_pl') or 'brak skrajności')
+    if reason.lower() == 'brak skrajności':
+        return None
+    return '|'.join([
+        reason,
+        str(tf.get('radar_status') or ''),
+        str(tf.get('macd_display_pl') or ''),
+    ])
+
+
+def previous_tf(previous, symbol, tf_name):
+    for a in (previous or {}).get('assets', []):
+        if str(a.get('symbol') or '') == symbol:
+            return ((a.get('timeframes') or {}).get(tf_name) or {})
+    return {}
+
+
+def attach_signal_start(symbol, tf_name, tf, previous):
+    sig = signal_signature(tf)
+    prev = previous_tf(previous, symbol, tf_name)
+    prev_sig = prev.get('signal_signature')
+    if sig is None:
+        tf['signal_signature'] = None
+        tf['signal_started_at_utc'] = None
+        return tf
+    tf['signal_signature'] = sig
+    if prev_sig == sig and prev.get('signal_started_at_utc'):
+        tf['signal_started_at_utc'] = prev.get('signal_started_at_utc')
+    else:
+        tf['signal_started_at_utc'] = tf.get('last_close_time_utc') or datetime.now(timezone.utc).isoformat()
+    return tf
+
+
 def compact_tf(tf):
     keys = [
         'timeframe','close','trend_score_0_4','macd','macd_signal','macd_hist',
@@ -218,6 +269,12 @@ def compact_tf(tf):
 
 
 def main():
+    previous = {}
+    if OUT_JSON.exists():
+        try:
+            previous = json.loads(OUT_JSON.read_text(encoding='utf-8'))
+        except Exception:
+            previous = {}
     data = json.loads(TACTICAL_JSON.read_text(encoding='utf-8'))
     assets = []
     errors = []
@@ -232,6 +289,12 @@ def main():
             t4 = compact_tf((a.get('timeframes') or {}).get('4H') or {})
             t2 = compact_tf(derive_2h(pair))
             tfs = {'1H': t1, '2H': t2, '4H': t4}
+            for tf_name, tf_state in tfs.items():
+                stale, age_h = freshness_state(tf_name, tf_state)
+                tf_state['stale'] = stale
+                tf_state['age_hours'] = age_h
+                tf_state['fresh_limit_hours'] = FRESH_LIMIT_H[tf_name]
+                attach_signal_start(sym, tf_name, tf_state, previous)
             ranked = sorted(
                 TF_ORDER,
                 key=lambda tf: (int(tfs[tf]['radar_intensity_0_10']), -TF_ORDER.index(tf)),
