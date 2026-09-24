@@ -1,13 +1,15 @@
 {
-  "generated_at_utc": "2026-09-24T11:46:54.430307+00:00",
+  "generated_at_utc": "2026-09-24T12:51:25.214545+00:00",
   "engine": "V8_ETF_BTC_ETH_CONFIRMATION_v1.0",
   "assets": {
     "BTC": {
       "asset": "BTC",
       "quality": {
-        "score_0_100": 100,
+        "score_0_100": 95,
         "label_pl": "ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE",
-        "reasons_pl": []
+        "reasons_pl": [
+          "DZISIAJ FUNDUSZE NIE OPUBLIKOWAŁY JESZCZE DANYCH"
+        ]
       },
       "last_closed_date": "2026-09-23",
       "last_closed_flow_usdm": 346.9,
@@ -15,8 +17,8 @@
       "closed_20d_usdm": 2863.3,
       "closed_30d_usdm": 5184.599999999999,
       "flow_trend_pl": "NAPŁYW PRZYSPIESZA",
-      "today_status_pl": "DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE",
-      "today_preview_usdm": null,
+      "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
+      "today_preview_usdm": 0.0,
       "today_completeness_pct": 0.0,
       "price_ret5_pct": 4.492849953362432,
       "price_ret20_pct": 4.016771281300402,
@@ -41,9 +43,11 @@
     "ETH": {
       "asset": "ETH",
       "quality": {
-        "score_0_100": 100,
+        "score_0_100": 95,
         "label_pl": "ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE",
-        "reasons_pl": []
+        "reasons_pl": [
+          "DZISIAJ FUNDUSZE NIE OPUBLIKOWAŁY JESZCZE DANYCH"
+        ]
       },
       "last_closed_date": "2026-09-23",
       "last_closed_flow_usdm": 104.5,
@@ -51,8 +55,8 @@
       "closed_20d_usdm": 1340.0000000000002,
       "closed_30d_usdm": 2346.4,
       "flow_trend_pl": "NAPŁYW PRZYSPIESZA",
-      "today_status_pl": "DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE",
-      "today_preview_usdm": null,
+      "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
+      "today_preview_usdm": 0.0,
       "today_completeness_pct": 0.0,
       "price_ret5_pct": 2.530983786767438,
       "price_ret20_pct": 6.755095200914485,
