@@ -28,9 +28,6 @@ if marker in text:
 append = r'''
 // ===== V10 UI UNIFICATION PACK — WSPÓLNA SEMANTYKA KOLORÓW =====
 // Tylko warstwa wizualna. Nie zmienia logiki LONG/TACTICAL, progów ani danych w maszynowni.
-// Kolory zgodne z zaakceptowanym Porannym Radarem:
-// GORĄCO = czerwony, CHŁODNO = niebieski, NEUTRALNIE = zielony,
-// UWAGA = żółty, FOMO = pomarańczowy, MACD/INFO = szaro-niebieski/jasnoniebieski.
 
 const V10_UI = {
   hot: '#FAD1D1', hotText: '#8F2D2D',
@@ -59,15 +56,31 @@ function applyUnifiedSheetThemeV10_(sheet) {
   const range = sheet.getDataRange();
   if (!range || range.getNumRows() < 1 || range.getNumColumns() < 1) return;
   const vals = range.getDisplayValues();
+  const merged = range.getMergedRanges();
+  const mergeMap = {};
+  merged.forEach(m => {
+    const r0 = m.getRow(), c0 = m.getColumn(), rn = m.getNumRows(), cn = m.getNumColumns();
+    for (let rr = r0; rr < r0 + rn; rr++) {
+      for (let cc = c0; cc < c0 + cn; cc++) mergeMap[rr + ':' + cc] = m;
+    }
+  });
+  const styledMerged = {};
 
   for (let r = 0; r < vals.length; r++) {
     for (let c = 0; c < vals[r].length; c++) {
       const raw = String(vals[r][c] || '').trim();
       if (!raw) continue;
       const t = raw.toUpperCase();
-      const cell = sheet.getRange(r + 1, c + 1);
+      const rr = r + 1, cc = c + 1;
+      const mergedRange = mergeMap[rr + ':' + cc];
+      let cell = sheet.getRange(rr, cc);
+      if (mergedRange) {
+        const key = mergedRange.getA1Notation();
+        if (styledMerged[key]) continue;
+        styledMerged[key] = true;
+        cell = mergedRange;
+      }
 
-      // Najpierw semantyka tekstowa — identyczna na każdym pulpicie.
       if (isHotV10_(t)) styleBriefCardV10_(cell, V10_UI.hot, V10_UI.hotText);
       else if (isColdV10_(t)) styleBriefCardV10_(cell, V10_UI.cold, V10_UI.coldText);
       else if (isNeutralV10_(t)) styleBriefCardV10_(cell, V10_UI.neutral, V10_UI.neutralText);
@@ -76,7 +89,6 @@ function applyUnifiedSheetThemeV10_(sheet) {
       else if (isMacdV10_(t)) styleBriefCardV10_(cell, V10_UI.macd, V10_UI.macdText);
       else if (isInfoV10_(t)) styleBriefCardV10_(cell, V10_UI.info, V10_UI.infoText);
 
-      // Liczbowe RSI/MFI/FOMO/RYZYKO dziedziczą tę samą logikę kolorów.
       const num = Number(String(raw).replace(',', '.'));
       if (Number.isFinite(num)) {
         const metric = nearestMetricHeaderV10_(vals, r, c);
