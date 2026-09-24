@@ -1235,7 +1235,7 @@ function ODSWIEZ_PORANNY_BRIEF() {
 }
 
 function setupPortfolioLong_(sheet) {
-  sheet.getDataRange().breakApart();
+  unmergeAllSafelyV10_(sheet);
   sheet.clear();
   sheet.getRange('A1:J1').merge().setValue('V8 / PORTFEL LONG — DŁUGI HORYZONT + STREFY DCA');
   styleTitleV10_(sheet.getRange('A1:J1'));
@@ -1269,7 +1269,7 @@ function writeLongDashboard_(sheet, data) {
 }
 
 function setupPortfolioTactical_(sheet) {
-  sheet.getDataRange().breakApart();
+  unmergeAllSafelyV10_(sheet);
   sheet.clear();
   sheet.getRange('A1:I1').merge().setValue('V8 / PANEL TAKTYCZNY — SZYBKIE ZAGRANIA 1H / 4H / 1D');
   styleTitleV10_(sheet.getRange('A1:I1'));
@@ -1307,7 +1307,7 @@ function writeTacticalDashboard_(sheet, tacticalJson, metaCsv) {
 }
 
 function setupMorningBrief_(sheet) {
-  sheet.getMergedRanges().forEach(r => r.breakApart());
+  unmergeAllSafelyV10_(sheet);
   let savedMode = String(PropertiesService.getDocumentProperties().getProperty('V10_MORNING_MODE') || '1H').trim().toUpperCase();
   if (!['1H','2H','4H','AUTO'].includes(savedMode)) savedMode = '1H';
   sheet.clear();
@@ -2371,4 +2371,14 @@ function applySafeEngineColorsV10_(sheet) {
       }
     }
   }
+}
+
+
+// ===== V10 SAFE UNMERGE =====
+// Rozdziela wyłącznie rzeczywiście scalone zakresy; nie wywołuje breakApart() na całym arkuszu.
+function unmergeAllSafelyV10_(sheet) {
+  const maxRows = Math.max(1, sheet.getMaxRows());
+  const maxCols = Math.max(1, sheet.getMaxColumns());
+  const merged = sheet.getRange(1, 1, maxRows, maxCols).getMergedRanges();
+  merged.forEach(r => r.breakApart());
 }
