@@ -2440,13 +2440,13 @@ function onSelectionChange(e) {
 // Wzorzec: blok "TERAZ — KLUCZOWE LICZBY".
 function morningPaletteV10_(kind) {
   const p = {
-    HOT:      {bg:'#FDE2E2', fg:'#8F2D2D'}, // GORĄCO / mocne przegrzanie
-    COLD:     {bg:'#E6F0FA', fg:'#245A7A'}, // CHŁODNO
-    NEUTRAL:  {bg:'#E5F5EA', fg:'#1F6B3A'}, // NEUTRALNIE
-    WARN:     {bg:'#FFF3CD', fg:'#7A5B00'}, // UWAGA / RSI / MFI
-    FOMO:     {bg:'#FFE9D6', fg:'#9A4D00'}, // FOMO >= 8
-    MACD:     {bg:'#EDF1F5', fg:'#44546A'}, // MACD alert
-    INFO:     {bg:'#EAF4FB', fg:'#245A7A'}, // informacyjne
+    HOT:      {bg:'#FDE2E2', fg:'#8F2D2D'},
+    COLD:     {bg:'#E6F0FA', fg:'#245A7A'},
+    NEUTRAL:  {bg:'#E5F5EA', fg:'#1F6B3A'},
+    WARN:     {bg:'#FFF3CD', fg:'#7A5B00'},
+    FOMO:     {bg:'#FFE9D6', fg:'#9A4D00'},
+    MACD:     {bg:'#EDF1F5', fg:'#44546A'},
+    INFO:     {bg:'#EAF4FB', fg:'#245A7A'},
     NORMAL:   {bg:'#F8FBFD', fg:'#243447'}
   };
   return p[kind] || p.NORMAL;
@@ -2488,7 +2488,7 @@ function polishMorningRadarV10_(sheet, assets) {
   if (n) sheet.setRowHeights(20,n,26);
   [126,116,116,116,116,126,126,158,452,190].forEach((w,i)=>sheet.setColumnWidth(i+1,w));
 
-  // TERAZ — KLUCZOWE LICZBY: wzorzec palety, nie zmieniamy układu.
+  // TERAZ — KLUCZOWE LICZBY: wzorzec palety.
   paintMorningRangeV10_(sheet.getRange('D5:E5'), 'HOT');
   paintMorningRangeV10_(sheet.getRange('F5:G5'), 'COLD');
   paintMorningRangeV10_(sheet.getRange('H5:I5'), 'NEUTRAL');
@@ -2499,7 +2499,7 @@ function polishMorningRadarV10_(sheet, assets) {
   paintMorningRangeV10_(sheet.getRange('F7:G7'), 'INFO');
   paintMorningRangeV10_(sheet.getRange('H7:I7'), 'INFO');
 
-  // PRIORYTETY — ten sam stan = ten sam kolor co w kluczowych liczbach.
+  // PRIORYTETY — cały wiersz bierze kolor statusu.
   for (let r=11; r<=15; r++) {
     const sym = String(sheet.getRange(r,2).getDisplayValue() || '').trim();
     if (!sym) continue;
@@ -2509,7 +2509,7 @@ function polishMorningRadarV10_(sheet, assets) {
     paintMorningRangeV10_(sheet.getRange(r,4), kind, true);
   }
 
-  // DO OBSERWACJI — dokładnie ta sama mapa kolorów.
+  // DO OBSERWACJI — cały wiersz bierze kolor statusu.
   for (let r=11; r<=15; r++) {
     const sym = String(sheet.getRange(r,8).getDisplayValue() || '').trim();
     if (!sym) continue;
@@ -2519,19 +2519,19 @@ function polishMorningRadarV10_(sheet, assets) {
     paintMorningRangeV10_(sheet.getRange(r,10), kind, true);
   }
 
-  // RADAR 13 ALTÓW — wspólna paleta dla RADAR / RSI / MFI / MACD / FOMO.
+  // RADAR 13 ALTÓW — TERAZ CAŁY WIERSZ dziedziczy kolor statusu RADAR.
+  // Potem pojedyncze alarmowe komórki RSI/MFI/MACD/FOMO mogą nadpisać tło.
   for (let i=0; i<n; i++) {
     const r = 20 + i;
-    const x = assets[i] || {};
 
-    // Bazowe pasy pozostają subtelne.
-    sheet.getRange(r,1,1,9).setBackground(i%2===0 ? '#FFFFFF' : '#F8FBFD').setFontColor('#243447');
+    const status = String(sheet.getRange(r,8).getDisplayValue() || '');
+    const kind = radarKindV10_(status);
 
-    // RADAR: dokładnie jak GORĄCO / CHŁODNO / NEUTRALNIE / UWAGA u góry.
-    const kind = radarKindV10_(sheet.getRange(r,8).getDisplayValue());
+    // Główna zmiana: A:I całego aktywa w tym samym kolorze co jego status.
+    paintMorningRangeV10_(sheet.getRange(r,1,1,9), kind, false);
     paintMorningRangeV10_(sheet.getRange(r,8), kind, true);
 
-    // RSI: ekstremum -> żółty jak RSI EKSTREMUM; normalne bez alarmowego tła.
+    // RSI: ekstremum -> żółty jak RSI EKSTREMUM.
     const rsi = Number(sheet.getRange(r,3).getValue());
     if (rsi >= 75 || rsi <= 25) paintMorningRangeV10_(sheet.getRange(r,3), 'WARN', true);
 
@@ -2539,17 +2539,17 @@ function polishMorningRadarV10_(sheet, assets) {
     const mfi = Number(sheet.getRange(r,4).getValue());
     if (mfi >= 90 || mfi <= 10) paintMorningRangeV10_(sheet.getRange(r,4), 'WARN', true);
 
-    // MACD: alert -> szaro-niebieski jak MACD ALERT; ekstremum mocniej, ale ta sama rodzina.
+    // MACD: alert -> szaro-niebieski jak MACD ALERT.
     const macd = String(sheet.getRange(r,5).getDisplayValue() || '').toUpperCase();
-    if (macd.indexOf('EKSTREMUM') >= 0) paintMorningRangeV10_(sheet.getRange(r,5), 'MACD', true);
-    else if (macd.indexOf('UWAGA') >= 0) paintMorningRangeV10_(sheet.getRange(r,5), 'MACD', true);
+    if (macd.indexOf('EKSTREMUM') >= 0 || macd.indexOf('UWAGA') >= 0) {
+      paintMorningRangeV10_(sheet.getRange(r,5), 'MACD', true);
+    }
 
     // FOMO >= 8 -> pomarańczowy jak kafel FOMO >= 8.
     const fomo = Number(sheet.getRange(r,6).getValue());
     if (fomo >= 8) paintMorningRangeV10_(sheet.getRange(r,6), 'FOMO', true);
   }
 
-  // Aktywny interwał dalej ma osobne mocne zaznaczenie.
   styleMorningRadarButtonsV10_(sheet, morningRadarModeV10_(sheet));
 }
 
