@@ -21,3 +21,137 @@ function formatAlarmStatesV8_(sheet,rowCount) {
 function classifyAlarmDirection_(a) {
   return alarmDirection_(a);
 }
+
+// ===== V10.1 PORANNY BRIEF — LIGHT DASHBOARD UI =====
+// Kierunek zaakceptowany: jasno, szeroko, czytelnie, bez ciężkich granatowych belek.
+// Zmiana dotyczy wyłącznie wyglądu PORANNY_BRIEF. Logika danych pozostaje bez zmian.
+function setupMorningBrief_(sheet) {
+  sheet.clear();
+  sheet.setHiddenGridlines(true);
+
+  // Cały pulpit: jasne tło + większa, czytelniejsza czcionka.
+  sheet.getRange('A1:J40')
+    .setBackground('#F7FAFC')
+    .setFontFamily('Roboto')
+    .setFontSize(11)
+    .setFontColor('#243447')
+    .setVerticalAlignment('middle');
+
+  // Tytuł — jasny niebieski zamiast granatu.
+  sheet.getRange('A1:J1').merge().setValue('V8 / PORANNY BRIEF — 30 SEKUND DO OBRAZU RYNKU');
+  sheet.getRange('A1:J1')
+    .setBackground('#D8ECF8')
+    .setFontColor('#163A5F')
+    .setFontWeight('bold')
+    .setFontSize(18)
+    .setHorizontalAlignment('center')
+    .setVerticalAlignment('middle');
+  sheet.setRowHeight(1, 38);
+  sheet.setRowHeight(2, 12);
+
+  // STAN SYSTEMU — lekki kafel po lewej.
+  sheet.getRange('A3:B8').setValues([
+    ['STAN SYSTEMU',''],
+    ['Produkcja','ZAMKNIĘTY — STABILNY'],
+    ['Badania','WSTRZYMANE'],
+    ['Reżim rynku','—'],
+    ['Automatyczne transakcje','WYŁĄCZONE'],
+    ['Strefy LONG','91/91']
+  ]);
+  sheet.getRange('A3:B3').merge();
+  styleMorningSectionV10_(sheet.getRange('A3:B3'));
+  sheet.getRange('A4:A8')
+    .setBackground('#EEF6FB')
+    .setFontWeight('bold')
+    .setHorizontalAlignment('left');
+  sheet.getRange('B4:B8')
+    .setBackground('#FFFFFF')
+    .setFontWeight('bold')
+    .setHorizontalAlignment('center');
+  sheet.getRange('B4').setBackground('#E8F5E9').setFontColor('#256029');
+  sheet.getRange('B5').setBackground('#F2F4F7').setFontColor('#475467');
+  sheet.getRange('B7').setBackground('#F2F4F7').setFontColor('#475467');
+  sheet.getRange('B8').setBackground('#E8F5E9').setFontColor('#256029');
+  morningBorderV10_(sheet.getRange('A3:B8'));
+
+  // KLUCZOWE LICZBY — 6 czytelnych kart liczbowych.
+  sheet.getRange('D3:I3').merge().setValue('DZISIAJ — KLUCZOWE LICZBY');
+  styleMorningSectionV10_(sheet.getRange('D3:I3'));
+  sheet.getRange('D4:I6').setBackground('#FFFFFF').setHorizontalAlignment('center');
+  ['D4','F4','H4','D5','F5','H5','D6','F6','H6'].forEach(a => {
+    sheet.getRange(a).setBackground('#EEF6FB').setFontWeight('bold').setFontColor('#315B78');
+  });
+  ['E4','G4','I4','E5','G5','I5','E6','G6','I6'].forEach(a => {
+    sheet.getRange(a).setFontSize(13).setFontWeight('bold').setFontColor('#17324D');
+  });
+  morningBorderV10_(sheet.getRange('D3:I6'));
+
+  // PRIORYTETY i OBSERWACJA — dwa osobne jasne kafle.
+  sheet.getRange('A10:F10').merge().setValue('PRIORYTETY NA DZIŚ');
+  styleMorningSectionV10_(sheet.getRange('A10:F10'));
+  sheet.getRange('A11:F15')
+    .setBackground('#FFF9F0')
+    .setHorizontalAlignment('center')
+    .setFontSize(11);
+  sheet.getRange('B11:B15').setFontWeight('bold').setFontSize(12).setFontColor('#17324D');
+  morningBorderV10_(sheet.getRange('A10:F15'));
+
+  sheet.getRange('H10:J10').merge().setValue('DO OBSERWACJI — BEZ BLOKADY');
+  styleMorningSectionV10_(sheet.getRange('H10:J10'));
+  sheet.getRange('H11:J15')
+    .setBackground('#F1F8FD')
+    .setHorizontalAlignment('center')
+    .setFontSize(11);
+  sheet.getRange('H11:H15').setFontWeight('bold').setFontSize(12).setFontColor('#17324D');
+  morningBorderV10_(sheet.getRange('H10:J15'));
+
+  // Dolny obraz rynku — szeroka tabela, bez łamania pojedynczych słów.
+  sheet.getRange('A18:I18').merge().setValue('TAKTYCZNY OBRAZ 13 ALTÓW');
+  styleMorningSectionV10_(sheet.getRange('A18:I18'));
+  sheet.getRange('A19:I19')
+    .setBackground('#E8F3FA')
+    .setFontColor('#315B78')
+    .setFontWeight('bold')
+    .setFontSize(11)
+    .setHorizontalAlignment('center');
+  morningBorderV10_(sheet.getRange('A18:I33'));
+
+  // Szerokości dobrane pod dashboard i teksty statusów.
+  [105,205,205,110,125,105,120,105,390,175].forEach((w,i)=>sheet.setColumnWidth(i+1,w));
+  for (let r=3; r<=33; r++) sheet.setRowHeight(r, 28);
+  [3,10,18,19].forEach(r=>sheet.setRowHeight(r, 32));
+
+  // Centrowanie danych; POWÓD pozostaje po lewej dla czytelności.
+  sheet.getRange('A3:H33').setHorizontalAlignment('center');
+  sheet.getRange('I19:I33').setHorizontalAlignment('left');
+  sheet.getRange('J1:J33').setHorizontalAlignment('center');
+  sheet.getRange('A3:J33').setWrap(true);
+
+  // Kolory decyzji także w górnych kaflach PRIORYTETY / OBSERWACJA.
+  const priorityMeta = sheet.getRange('C11:C15');
+  const watchMeta = sheet.getRange('I11:I15');
+  const rules = [];
+  [priorityMeta, watchMeta].forEach(rng => {
+    rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('ZEZWÓL').setBackground('#DDF3E4').setFontColor('#256029').setRanges([rng]).build());
+    rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('OSTROŻNIE').setBackground('#FFF0C2').setFontColor('#7A4E00').setRanges([rng]).build());
+    rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextEqualTo('BLOKUJ').setBackground('#FADBD8').setFontColor('#8A1C1C').setRanges([rng]).build());
+    rules.push(SpreadsheetApp.newConditionalFormatRule().whenTextContains('WSTRZYMAJ').setBackground('#E9EDF2').setFontColor('#475467').setRanges([rng]).build());
+  });
+  sheet.setConditionalFormatRules(rules);
+
+  sheet.setFrozenRows(1);
+}
+
+function styleMorningSectionV10_(range) {
+  range
+    .setBackground('#CFE7F5')
+    .setFontColor('#234A66')
+    .setFontWeight('bold')
+    .setFontSize(13)
+    .setHorizontalAlignment('center')
+    .setVerticalAlignment('middle');
+}
+
+function morningBorderV10_(range) {
+  range.setBorder(true,true,true,true,true,true,'#D5E2EA',SpreadsheetApp.BorderStyle.SOLID);
+}
