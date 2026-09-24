@@ -4,35 +4,40 @@ p = Path('google_sheets/DUAL_ENGINE_APPS_SCRIPT_FULL_V10.txt')
 s = p.read_text(encoding='utf-8')
 
 # Najważniejsze: wyłączamy globalne skanowanie/kolorowanie całego skoroszytu.
-# To ono powodowało wyjątki przy istniejących scalonych zakresach.
 s = s.replace('    applyUnifiedThemeV10_(ss);\n', '')
 s = s.replace('    applyUnifiedV8Theme_(ss);\n', '')
 s = s.replace('  applyUnifiedThemeV10_(ss);\n', '')
 s = s.replace('  applyUnifiedV8Theme_(ss);\n', '')
 
-# Bezpieczne setupy: przed ponownym tworzeniem zaakceptowanych dashboardów
-# rozpinamy scalenia wyłącznie w tych konkretnych arkuszach.
+# ROOT FIX DLA SCALEŃ:
+# getDataRange() może NIE obejmować pustych komórek należących do scalenia,
+# więc breakApart() rzuca wyjątek "musisz zaznaczyć wszystkie komórki".
+# Rozpinamy scalenia na PEŁNYM fizycznym arkuszu (maxRows x maxColumns).
+full_unmerge = "  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();\n"
 for fn in ['setupPortfolioLong_', 'setupPortfolioTactical_', 'setupMorningBrief_']:
     marker = f'function {fn}(sheet) {{\n'
-    if marker in s:
-        block_start = s.index(marker) + len(marker)
-        tail = s[block_start:block_start+120]
-        if 'sheet.getDataRange().breakApart();' not in tail:
-            s = s[:block_start] + '  sheet.getDataRange().breakApart();\n' + s[block_start:]
+    if marker not in s:
+        continue
+    start = s.index(marker) + len(marker)
+    # usuń stare warianty tylko z początku funkcji
+    tail = s[start:start+220]
+    tail2 = tail.replace('  sheet.getDataRange().breakApart();\n', '')
+    tail2 = tail2.replace('  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();\n', '')
+    s = s[:start] + tail2 + s[start+len(tail):]
+    s = s[:start] + full_unmerge + s[start:]
 
 # Dodajemy tylko bezpieczne, jawne formatowanie tabel bez scaleń.
-# Nie dotykamy Porannego Radaru — jego zaakceptowany styl pozostaje własny.
+# Porannego Radaru nie kolorujemy globalnie — ma własny zaakceptowany renderer.
 if 'function applySafeEngineColorsV10_' not in s:
     s += r'''
 
 // ===== V10 SAFE TABLE COLORS — BEZ GLOBALNEGO SKANOWANIA =====
-// Stosowane wyłącznie do prostych tabel danych bez scaleń.
 function applySafeEngineColorsV10_(sheet) {
   const rows = sheet.getLastRow();
   const cols = sheet.getLastColumn();
   if (rows < 2 || cols < 1) return;
   const range = sheet.getRange(1,1,rows,cols);
-  if (range.getMergedRanges().length) return; // fail-safe: nie dotykamy tabel ze scaleniami
+  if (range.getMergedRanges().length) return;
   const vals = range.getDisplayValues();
   const headers = vals[0].map(v => String(v||'').trim().toUpperCase());
 
@@ -74,22 +79,17 @@ function applySafeEngineColorsV10_(sheet) {
 }
 '''
 
-# Wpinamy bezpieczne formatowanie tylko do prostych tabel silników.
-for needle in [
-    "  sheet.setFrozenRows(1);\n}\n\nfunction writeTacticalEngine_",
-    "  sheet.setFrozenRows(1);\n}\n\nfunction writeFlowEngine_"
-]:
-    pass
-
 # LONG
 old = "  if (assets.length) sheet.getRange(2,1,assets.length,headers.length).setValues(assets);\n  sheet.setFrozenRows(1);\n}\n\nfunction writeTacticalEngine_"
 new = "  if (assets.length) sheet.getRange(2,1,assets.length,headers.length).setValues(assets);\n  sheet.setFrozenRows(1);\n  applySafeEngineColorsV10_(sheet);\n}\n\nfunction writeTacticalEngine_"
-s = s.replace(old,new,1)
+if 'applySafeEngineColorsV10_(sheet);\n}\n\nfunction writeTacticalEngine_' not in s:
+    s = s.replace(old,new,1)
 
 # TACTICAL
 old = "  if (assets.length) sheet.getRange(2,1,assets.length,headers.length).setValues(assets);\n  sheet.setFrozenRows(1);\n}\n\nfunction writeFlowEngine_"
 new = "  if (assets.length) sheet.getRange(2,1,assets.length,headers.length).setValues(assets);\n  sheet.setFrozenRows(1);\n  applySafeEngineColorsV10_(sheet);\n}\n\nfunction writeFlowEngine_"
-s = s.replace(old,new,1)
+if 'applySafeEngineColorsV10_(sheet);\n}\n\nfunction writeFlowEngine_' not in s:
+    s = s.replace(old,new,1)
 
 p.write_text(s, encoding='utf-8')
-print('V10 stability restored: global theme disabled, safe table colors enabled')
+print('V10 root merge fix: full-sheet breakApart + safe table colors')
