@@ -3,7 +3,7 @@ name: TEST LAB V8 Tactical Engine
 on:
   workflow_dispatch:
   schedule:
-    - cron: '15 */4 * * *'
+    - cron: '5 * * * *'
   push:
     paths:
       - 'config/tactical_universe.csv'
