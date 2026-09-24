@@ -92,24 +92,23 @@ function getOrCreateSheet_(ss, name) {
 
 function writeCsvSheet_(sheet, csvText, preserveCompactPanel) {
   const rows = Utilities.parseCsv(csvText);
-  // Te arkusze są czystymi tabelami technicznymi. Jeżeli po starszej wersji zostały
-  // jakiekolwiek scalenia, nie próbujemy ich rozdzielać (Google Sheets bywa tu niestabilny).
-  // Zamiast tego odbudowujemy tylko ten techniczny arkusz od zera.
+
+  // V10 HARDENING: techniczne arkusze CSV są zawsze odbudowywane od zera.
+  // Nie pytamy o scalenia i nie wywołujemy breakApart/getMergedRanges, bo w części
+  // istniejących skoroszytów samo dotknięcie starych scaleń zgłasza wyjątek Apps Script.
   const ss = sheet.getParent();
   const name = sheet.getName();
   const index = sheet.getIndex();
   const wasHidden = sheet.isSheetHidden();
-  const merged = sheet.getRange(1, 1, Math.max(1, sheet.getMaxRows()), Math.max(1, sheet.getMaxColumns())).getMergedRanges();
-  if (merged.length) {
-    ss.deleteSheet(sheet);
-    sheet = ss.insertSheet(name, index);
-  } else {
-    sheet.clearContents();
-  }
+
+  ss.deleteSheet(sheet);
+  sheet = ss.insertSheet(name, index);
+
   if (!rows.length) {
     if (wasHidden) sheet.hideSheet();
     return sheet;
   }
+
   sheet.getRange(1, 1, rows.length, rows[0].length).setValues(rows);
   sheet.setFrozenRows(1);
   if (preserveCompactPanel) {
@@ -119,6 +118,7 @@ function writeCsvSheet_(sheet, csvText, preserveCompactPanel) {
   if (wasHidden) sheet.hideSheet();
   return sheet;
 }
+
 
 function writePolishPanel_(sheet, csvText) {
   const rows = Utilities.parseCsv(csvText);
