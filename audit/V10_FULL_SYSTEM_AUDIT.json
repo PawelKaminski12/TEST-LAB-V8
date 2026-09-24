@@ -1,7 +1,7 @@
 {
   "engine": "V10_FULL_SYSTEM_AUDIT_v2",
-  "app_script_sha256": "1d788692d8742ef55277483bf97ea6308ab6b1ae4888b0169f75da7cf3eae789",
-  "app_script_lines": 2384,
+  "app_script_sha256": "1c9b2ee4a9aa7a751ba2bf32925e63d21e8464d97968335911bc7b3fe2fe2cd5",
+  "app_script_lines": 2387,
   "checks_total": 208,
   "checks_passed": 208,
   "checks_failed": 0,
@@ -17,7 +17,7 @@
     {
       "check": "APP_SCRIPT_NONEMPTY",
       "pass": true,
-      "detail": "bytes=114958 lines=2384 sha256=1d788692d8742ef55277483bf97ea6308ab6b1ae4888b0169f75da7cf3eae789"
+      "detail": "bytes=115173 lines=2387 sha256=1c9b2ee4a9aa7a751ba2bf32925e63d21e8464d97968335911bc7b3fe2fe2cd5"
     },
     {
       "check": "FUNCTION_onOpen",
@@ -470,16 +470,6 @@
       "detail": "['1H', '2H', '4H']"
     },
     {
-      "check": "RADAR_ETH_1H_CLOSED_BAR",
-      "pass": true,
-      "detail": "True"
-    },
-    {
-      "check": "RADAR_ETH_1H_MACD_SIDE",
-      "pass": true,
-      "detail": "macd=-10.386259673633504 side=LOWER expected=LOWER"
-    },
-    {
       "check": "RADAR_ETH_2H_CLOSED_BAR",
       "pass": true,
       "detail": "True"
@@ -505,19 +495,19 @@
       "detail": "GÓRNE OSTRZEŻ. | MACD górne ostrzeżenie; schłodzenie − | side=UPPER"
     },
     {
-      "check": "RADAR_SOL_TF_1H2H4H",
-      "pass": true,
-      "detail": "['1H', '2H', '4H']"
-    },
-    {
-      "check": "RADAR_SOL_1H_CLOSED_BAR",
+      "check": "RADAR_ETH_1H_CLOSED_BAR",
       "pass": true,
       "detail": "True"
     },
     {
-      "check": "RADAR_SOL_1H_MACD_SIDE",
+      "check": "RADAR_ETH_1H_MACD_SIDE",
       "pass": true,
-      "detail": "macd=-0.4691277839680481 side=LOWER expected=LOWER"
+      "detail": "macd=-10.386259673633504 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_SOL_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
     },
     {
       "check": "RADAR_SOL_2H_CLOSED_BAR",
@@ -545,19 +535,19 @@
       "detail": "GÓRNE OSTRZEŻ. | MACD górne ostrzeżenie; schłodzenie − | side=UPPER"
     },
     {
-      "check": "RADAR_LINK_TF_1H2H4H",
-      "pass": true,
-      "detail": "['1H', '2H', '4H']"
-    },
-    {
-      "check": "RADAR_LINK_1H_CLOSED_BAR",
+      "check": "RADAR_SOL_1H_CLOSED_BAR",
       "pass": true,
       "detail": "True"
     },
     {
-      "check": "RADAR_LINK_1H_MACD_SIDE",
+      "check": "RADAR_SOL_1H_MACD_SIDE",
       "pass": true,
-      "detail": "macd=-0.0998488105927482 side=LOWER expected=LOWER"
+      "detail": "macd=-0.4691277839680481 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_LINK_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
     },
     {
       "check": "RADAR_LINK_2H_CLOSED_BAR",
@@ -585,24 +575,19 @@
       "detail": "GÓRNE OSTRZEŻ. | MACD górne ostrzeżenie; schłodzenie − | side=UPPER"
     },
     {
-      "check": "RADAR_ONDO_TF_1H2H4H",
-      "pass": true,
-      "detail": "['1H', '2H', '4H']"
-    },
-    {
-      "check": "RADAR_ONDO_1H_CLOSED_BAR",
+      "check": "RADAR_LINK_1H_CLOSED_BAR",
       "pass": true,
       "detail": "True"
     },
     {
-      "check": "RADAR_ONDO_1H_MACD_SIDE",
+      "check": "RADAR_LINK_1H_MACD_SIDE",
       "pass": true,
-      "detail": "macd=-0.0003745786290088593 side=LOWER expected=LOWER"
+      "detail": "macd=-0.0998488105927482 side=LOWER expected=LOWER"
     },
     {
-      "check": "RADAR_ONDO_1H_MACD_TEXT_LOWER",
+      "check": "RADAR_ONDO_TF_1H2H4H",
       "pass": true,
-      "detail": "DOLNE GRANICE | MACD dolne granice; odbicie + | side=LOWER"
+      "detail": "['1H', '2H', '4H']"
     },
     {
       "check": "RADAR_ONDO_2H_CLOSED_BAR",
@@ -630,19 +615,24 @@
       "detail": "GÓRNE OSTRZEŻ. | MACD górne ostrzeżenie; schłodzenie − | side=UPPER"
     },
     {
-      "check": "RADAR_RENDER_TF_1H2H4H",
-      "pass": true,
-      "detail": "['1H', '2H', '4H']"
-    },
-    {
-      "check": "RADAR_RENDER_1H_CLOSED_BAR",
+      "check": "RADAR_ONDO_1H_CLOSED_BAR",
       "pass": true,
       "detail": "True"
     },
     {
-      "check": "RADAR_RENDER_1H_MACD_SIDE",
+      "check": "RADAR_ONDO_1H_MACD_SIDE",
       "pass": true,
-      "detail": "macd=-0.007159842225580526 side=LOWER expected=LOWER"
+      "detail": "macd=-0.0003745786290088593 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_ONDO_1H_MACD_TEXT_LOWER",
+      "pass": true,
+      "detail": "DOLNE GRANICE | MACD dolne granice; odbicie + | side=LOWER"
+    },
+    {
+      "check": "RADAR_RENDER_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
     },
     {
       "check": "RADAR_RENDER_2H_CLOSED_BAR",
@@ -670,24 +660,19 @@
       "detail": "GÓRNE GRANICE | MACD górne granice; schłodzenie − | side=UPPER"
     },
     {
-      "check": "RADAR_FLOKI_TF_1H2H4H",
-      "pass": true,
-      "detail": "['1H', '2H', '4H']"
-    },
-    {
-      "check": "RADAR_FLOKI_1H_CLOSED_BAR",
+      "check": "RADAR_RENDER_1H_CLOSED_BAR",
       "pass": true,
       "detail": "True"
     },
     {
-      "check": "RADAR_FLOKI_1H_MACD_SIDE",
+      "check": "RADAR_RENDER_1H_MACD_SIDE",
       "pass": true,
-      "detail": "macd=-4.02280063939261e-07 side=LOWER expected=LOWER"
+      "detail": "macd=-0.007159842225580526 side=LOWER expected=LOWER"
     },
     {
-      "check": "RADAR_FLOKI_1H_MACD_TEXT_LOWER",
+      "check": "RADAR_FLOKI_TF_1H2H4H",
       "pass": true,
-      "detail": "DOLNE OSTRZEŻ. | MACD dolne ostrzeżenie; odbicie + | side=LOWER"
+      "detail": "['1H', '2H', '4H']"
     },
     {
       "check": "RADAR_FLOKI_2H_CLOSED_BAR",
@@ -720,19 +705,24 @@
       "detail": "GÓRNE GRANICE | MACD górne granice; schłodzenie − | side=UPPER"
     },
     {
-      "check": "RADAR_PEPE_TF_1H2H4H",
-      "pass": true,
-      "detail": "['1H', '2H', '4H']"
-    },
-    {
-      "check": "RADAR_PEPE_1H_CLOSED_BAR",
+      "check": "RADAR_FLOKI_1H_CLOSED_BAR",
       "pass": true,
       "detail": "True"
     },
     {
-      "check": "RADAR_PEPE_1H_MACD_SIDE",
+      "check": "RADAR_FLOKI_1H_MACD_SIDE",
       "pass": true,
-      "detail": "macd=-9.715288544155126e-08 side=LOWER expected=LOWER"
+      "detail": "macd=-4.02280063939261e-07 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_FLOKI_1H_MACD_TEXT_LOWER",
+      "pass": true,
+      "detail": "DOLNE OSTRZEŻ. | MACD dolne ostrzeżenie; odbicie + | side=LOWER"
+    },
+    {
+      "check": "RADAR_PEPE_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
     },
     {
       "check": "RADAR_PEPE_2H_CLOSED_BAR",
@@ -765,24 +755,19 @@
       "detail": "GÓRNE GRANICE | MACD górne granice; schłodzenie − | side=UPPER"
     },
     {
-      "check": "RADAR_SPX6900_TF_1H2H4H",
-      "pass": true,
-      "detail": "['1H', '2H', '4H']"
-    },
-    {
-      "check": "RADAR_SPX6900_1H_CLOSED_BAR",
+      "check": "RADAR_PEPE_1H_CLOSED_BAR",
       "pass": true,
       "detail": "True"
     },
     {
-      "check": "RADAR_SPX6900_1H_MACD_SIDE",
+      "check": "RADAR_PEPE_1H_MACD_SIDE",
       "pass": true,
-      "detail": "macd=-0.015978206566253372 side=LOWER expected=LOWER"
+      "detail": "macd=-9.715288544155126e-08 side=LOWER expected=LOWER"
     },
     {
-      "check": "RADAR_SPX6900_1H_MACD_TEXT_LOWER",
+      "check": "RADAR_SPX6900_TF_1H2H4H",
       "pass": true,
-      "detail": "DOLNE OSTRZEŻ. | MACD dolne ostrzeżenie; odbicie + | side=LOWER"
+      "detail": "['1H', '2H', '4H']"
     },
     {
       "check": "RADAR_SPX6900_2H_CLOSED_BAR",
@@ -815,19 +800,24 @@
       "detail": "DOLNE OSTRZEŻ. | MACD dolne ostrzeżenie; schłodzenie − | side=LOWER"
     },
     {
-      "check": "RADAR_XRP_TF_1H2H4H",
-      "pass": true,
-      "detail": "['1H', '2H', '4H']"
-    },
-    {
-      "check": "RADAR_XRP_1H_CLOSED_BAR",
+      "check": "RADAR_SPX6900_1H_CLOSED_BAR",
       "pass": true,
       "detail": "True"
     },
     {
-      "check": "RADAR_XRP_1H_MACD_SIDE",
+      "check": "RADAR_SPX6900_1H_MACD_SIDE",
       "pass": true,
-      "detail": "macd=-0.014877398349930848 side=LOWER expected=LOWER"
+      "detail": "macd=-0.015978206566253372 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_SPX6900_1H_MACD_TEXT_LOWER",
+      "pass": true,
+      "detail": "DOLNE OSTRZEŻ. | MACD dolne ostrzeżenie; odbicie + | side=LOWER"
+    },
+    {
+      "check": "RADAR_XRP_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
     },
     {
       "check": "RADAR_XRP_2H_CLOSED_BAR",
@@ -855,19 +845,19 @@
       "detail": "macd=0.025195126065830076 side=UPPER expected=UPPER"
     },
     {
-      "check": "RADAR_XLM_TF_1H2H4H",
-      "pass": true,
-      "detail": "['1H', '2H', '4H']"
-    },
-    {
-      "check": "RADAR_XLM_1H_CLOSED_BAR",
+      "check": "RADAR_XRP_1H_CLOSED_BAR",
       "pass": true,
       "detail": "True"
     },
     {
-      "check": "RADAR_XLM_1H_MACD_SIDE",
+      "check": "RADAR_XRP_1H_MACD_SIDE",
       "pass": true,
-      "detail": "macd=-0.0026187518839590473 side=LOWER expected=LOWER"
+      "detail": "macd=-0.014877398349930848 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_XLM_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
     },
     {
       "check": "RADAR_XLM_2H_CLOSED_BAR",
@@ -895,19 +885,19 @@
       "detail": "GÓRNE GRANICE | MACD górne granice; schłodzenie − | side=UPPER"
     },
     {
-      "check": "RADAR_HBAR_TF_1H2H4H",
-      "pass": true,
-      "detail": "['1H', '2H', '4H']"
-    },
-    {
-      "check": "RADAR_HBAR_1H_CLOSED_BAR",
+      "check": "RADAR_XLM_1H_CLOSED_BAR",
       "pass": true,
       "detail": "True"
     },
     {
-      "check": "RADAR_HBAR_1H_MACD_SIDE",
+      "check": "RADAR_XLM_1H_MACD_SIDE",
       "pass": true,
-      "detail": "macd=-0.0010908830567698674 side=LOWER expected=LOWER"
+      "detail": "macd=-0.0026187518839590473 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_HBAR_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
     },
     {
       "check": "RADAR_HBAR_2H_CLOSED_BAR",
@@ -940,19 +930,19 @@
       "detail": "GÓRNE GRANICE | MACD górne granice; schłodzenie − | side=UPPER"
     },
     {
-      "check": "RADAR_AVAX_TF_1H2H4H",
-      "pass": true,
-      "detail": "['1H', '2H', '4H']"
-    },
-    {
-      "check": "RADAR_AVAX_1H_CLOSED_BAR",
+      "check": "RADAR_HBAR_1H_CLOSED_BAR",
       "pass": true,
       "detail": "True"
     },
     {
-      "check": "RADAR_AVAX_1H_MACD_SIDE",
+      "check": "RADAR_HBAR_1H_MACD_SIDE",
       "pass": true,
-      "detail": "macd=-0.16303591896411085 side=LOWER expected=LOWER"
+      "detail": "macd=-0.0010908830567698674 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_AVAX_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
     },
     {
       "check": "RADAR_AVAX_2H_CLOSED_BAR",
@@ -980,19 +970,19 @@
       "detail": "GÓRNE GRANICE | MACD górne granice; schłodzenie − | side=UPPER"
     },
     {
-      "check": "RADAR_AWE_TF_1H2H4H",
-      "pass": true,
-      "detail": "['1H', '2H', '4H']"
-    },
-    {
-      "check": "RADAR_AWE_1H_CLOSED_BAR",
+      "check": "RADAR_AVAX_1H_CLOSED_BAR",
       "pass": true,
       "detail": "True"
     },
     {
-      "check": "RADAR_AWE_1H_MACD_SIDE",
+      "check": "RADAR_AVAX_1H_MACD_SIDE",
       "pass": true,
-      "detail": "macd=-0.000139200246885976 side=LOWER expected=LOWER"
+      "detail": "macd=-0.16303591896411085 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_AWE_TF_1H2H4H",
+      "pass": true,
+      "detail": "['1H', '2H', '4H']"
     },
     {
       "check": "RADAR_AWE_2H_CLOSED_BAR",
@@ -1013,6 +1003,16 @@
       "check": "RADAR_AWE_4H_MACD_SIDE",
       "pass": true,
       "detail": "macd=-0.00015290936742398675 side=LOWER expected=LOWER"
+    },
+    {
+      "check": "RADAR_AWE_1H_CLOSED_BAR",
+      "pass": true,
+      "detail": "True"
+    },
+    {
+      "check": "RADAR_AWE_1H_MACD_SIDE",
+      "pass": true,
+      "detail": "macd=-0.000139200246885976 side=LOWER expected=LOWER"
     },
     {
       "check": "PANEL_HEADER_AKTYWO",
