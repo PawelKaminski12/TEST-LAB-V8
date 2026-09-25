@@ -1,13 +1,14 @@
 {
-  "generated_at_utc": "2026-09-24T23:45:04.825964+00:00",
+  "generated_at_utc": "2026-09-25T00:49:28.056996+00:00",
   "engine": "V8_ETF_BTC_ETH_CONFIRMATION_v1.0",
   "assets": {
     "BTC": {
       "asset": "BTC",
       "quality": {
-        "score_0_100": 97,
-        "label_pl": "ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE",
+        "score_0_100": 87,
+        "label_pl": "DANE DOBRE, ALE DZISIEJSZY ODCZYT JESZCZE NIEPEŁNY",
         "reasons_pl": [
+          "OSTATNI ZAMKNIĘTY DZIEŃ MA KILKA DNI",
           "DZISIAJ DANE SĄ CZĘŚCIOWE"
         ]
       },
@@ -18,8 +19,8 @@
       "closed_30d_usdm": 5184.599999999999,
       "flow_trend_pl": "NAPŁYW PRZYSPIESZA",
       "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
-      "today_preview_usdm": 10.2,
-      "today_completeness_pct": 33.3,
+      "today_preview_usdm": 15.2,
+      "today_completeness_pct": 66.7,
       "price_ret5_pct": 4.492849953362432,
       "price_ret20_pct": 4.016771281300402,
       "price_vs_etf_5d": {
@@ -43,9 +44,10 @@
     "ETH": {
       "asset": "ETH",
       "quality": {
-        "score_0_100": 97,
-        "label_pl": "ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE",
+        "score_0_100": 87,
+        "label_pl": "DANE DOBRE, ALE DZISIEJSZY ODCZYT JESZCZE NIEPEŁNY",
         "reasons_pl": [
+          "OSTATNI ZAMKNIĘTY DZIEŃ MA KILKA DNI",
           "DZISIAJ DANE SĄ CZĘŚCIOWE"
         ]
       },
@@ -57,7 +59,7 @@
       "flow_trend_pl": "NAPŁYW PRZYSPIESZA",
       "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
       "today_preview_usdm": 17.8,
-      "today_completeness_pct": 36.4,
+      "today_completeness_pct": 63.6,
       "price_ret5_pct": 2.530983786767438,
       "price_ret20_pct": 6.755095200914485,
       "price_vs_etf_5d": {
