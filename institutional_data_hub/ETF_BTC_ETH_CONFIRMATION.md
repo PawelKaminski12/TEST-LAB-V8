@@ -9,7 +9,7 @@ Ocena zainteresowania instytucjonalnego: **9.5/10**
 - 5D cena vs ETF: CENA I ETF POTWIERDZAJĄ SIĘ — NAPŁYW WSPIERA WZROST
 - 20D cena vs ETF: CENA I ETF POTWIERDZAJĄ SIĘ — NAPŁYW WSPIERA WZROST
 - Wniosek: **CENA I ETF DAJĄ ZGODNE DODATNIE POTWIERDZENIE**.
-- Dzisiaj: **DZISIAJ — DANE WSTĘPNE**; podgląd 28.1 mln USD; kompletność 83.3%.
+- Dzisiaj: **DZISIAJ — DANE WSTĘPNE**; podgląd 28.1 mln USD; kompletność 91.7%.
 
 ## ETH
 - Jakość danych: **ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE — 90/100**.
