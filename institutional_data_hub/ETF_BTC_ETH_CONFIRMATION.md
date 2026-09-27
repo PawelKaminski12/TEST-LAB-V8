@@ -4,7 +4,7 @@ Wspólny obraz: **SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE ROŚNIE**
 Ocena zainteresowania instytucjonalnego: **9.5/10**
 
 ## BTC
-- Jakość danych: **ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE — 100/100**.
+- Jakość danych: **ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE — 90/100**.
 - Trend ETF: **NAPŁYW PRZYSPIESZA**.
 - 5D cena vs ETF: CENA I ETF POTWIERDZAJĄ SIĘ — NAPŁYW WSPIERA WZROST
 - 20D cena vs ETF: CENA I ETF POTWIERDZAJĄ SIĘ — NAPŁYW WSPIERA WZROST
@@ -12,7 +12,7 @@ Ocena zainteresowania instytucjonalnego: **9.5/10**
 - Dzisiaj: **DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE**; podgląd None mln USD; kompletność 0.0%.
 
 ## ETH
-- Jakość danych: **ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE — 100/100**.
+- Jakość danych: **ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE — 90/100**.
 - Trend ETF: **NAPŁYW PRZYSPIESZA**.
 - 5D cena vs ETF: CENA I ETF POTWIERDZAJĄ SIĘ — NAPŁYW WSPIERA WZROST
 - 20D cena vs ETF: CENA I ETF POTWIERDZAJĄ SIĘ — NAPŁYW WSPIERA WZROST
