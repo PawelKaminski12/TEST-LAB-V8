@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-26T05:40:56.929768+00:00",
+  "generated_at_utc": "2026-09-27T05:40:47.090177+00:00",
   "engine": "PROJECT_ACTIVITY_v0.1",
   "assets": [
     {
@@ -13,11 +13,11 @@
       "quality_status": "TRUSTED",
       "independent_layers_ready": 1,
       "stablecoin_supply": {
-        "latest_usd": 148290175889.55,
-        "change_7d_pct": -0.17669117719624206,
-        "change_30d_pct": -0.458253464592806,
+        "latest_usd": 148582496206.44,
+        "change_7d_pct": 0.2455455130502049,
+        "change_30d_pct": -0.12397291817104472,
         "trend": "FLAT",
-        "rows": 3224
+        "rows": 3225
       },
       "protocol_fees": {
         "latest_daily_usd": null,
@@ -55,11 +55,11 @@
       "quality_status": "TRUSTED",
       "independent_layers_ready": 1,
       "stablecoin_supply": {
-        "latest_usd": 16991000644.85,
-        "change_7d_pct": 7.047715580056235,
-        "change_30d_pct": 5.200211749387917,
+        "latest_usd": 16803603988.83,
+        "change_7d_pct": 6.315117296058137,
+        "change_30d_pct": 3.4359964517322705,
         "trend": "RISING",
-        "rows": 1600
+        "rows": 1601
       },
       "protocol_fees": {
         "latest_daily_usd": null,
@@ -104,13 +104,13 @@
         "rows": 0
       },
       "protocol_fees": {
-        "latest_daily_usd": 4694.0,
-        "sum_7d_usd": 1112758.0,
-        "sum_30d_usd": 4520534.0,
-        "change_7d_vs_prev7_pct": -0.624513842809693,
-        "change_30d_vs_prev30_pct": -23.56783120089665,
+        "latest_daily_usd": 6504.0,
+        "sum_7d_usd": 1112662.0,
+        "sum_30d_usd": 4512184.0,
+        "change_7d_vs_prev7_pct": -0.8610688872929928,
+        "change_30d_vs_prev30_pct": -23.843646174320387,
         "trend": "FALLING",
-        "rows": 1020
+        "rows": 1021
       },
       "protocol_revenue": {
         "latest_daily_usd": 0.0,
@@ -119,7 +119,7 @@
         "change_7d_vs_prev7_pct": 5.177681692049774,
         "change_30d_vs_prev30_pct": -20.72562751222835,
         "trend": "FALLING",
-        "rows": 758
+        "rows": 759
       },
       "long_project_activity_score_0_10": 0,
       "long_project_activity_label": "STRONG_NEGATIVE",
