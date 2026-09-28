@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-26",
+  "date": "2026-09-27",
   "engine": "ALT_ENGINE_READINESS_v1.0",
   "rules": {
     "btc_is_market_regime_not_alt_row": true,
@@ -65,7 +65,7 @@
       "full_zone_missing": "",
       "zones_core_ready": true,
       "zones_full_ready": true,
-      "decision": "SPRAWDŹ",
+      "decision": "CZEKAJ",
       "decision_ready": true,
       "data_quality_score_0_100": 100,
       "readiness_status": "PRODUCTION_DATA_READY"
@@ -81,7 +81,7 @@
       "full_zone_missing": "",
       "zones_core_ready": true,
       "zones_full_ready": true,
-      "decision": "CZEKAJ — FOMO",
+      "decision": "CZEKAJ",
       "decision_ready": true,
       "data_quality_score_0_100": 100,
       "readiness_status": "PRODUCTION_DATA_READY"
