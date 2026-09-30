@@ -1,6 +1,6 @@
 # V8 — HISTORIA ETF BTC / ETH
 
-Czas analizy: 2026-09-30T09:51:09.834371+00:00
+Czas analizy: 2026-09-30T10:50:31.826089+00:00
 
 ## WSPÓLNY OBRAZ: KAPITAŁ NAPŁYWA DO BTC I ETH, ALE TEMPO JEST NIERÓWNE
 Ocena zainteresowania instytucjonalnego: **6.5/10**
