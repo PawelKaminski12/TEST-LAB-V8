@@ -1,43 +1,43 @@
 {
-  "generated_at_utc": "2026-09-30T03:49:32.032934+00:00",
+  "generated_at_utc": "2026-09-30T04:49:50.998941+00:00",
   "engine": "V8_ETF_HISTORY_v1.0",
   "BTC": {
-    "last_date": "2026-09-28",
-    "last_flow_usdm": 31.0,
-    "previous_flow_usdm": 134.5,
-    "change_vs_previous_usdm": -103.5,
-    "sum_5d_usdm": 1417.8,
-    "previous_5d_usdm": 845.2,
-    "acceleration_5d_usdm": 572.5999999999999,
-    "sum_20d_usdm": 2946.9,
-    "sum_30d_usdm": 5789.2,
+    "last_date": "2026-09-29",
+    "last_flow_usdm": 66.2,
+    "previous_flow_usdm": 31.0,
+    "change_vs_previous_usdm": 35.2,
+    "sum_5d_usdm": 769.3,
+    "previous_5d_usdm": 2010.3,
+    "acceleration_5d_usdm": -1241.0,
+    "sum_20d_usdm": 2796.3999999999996,
+    "sum_30d_usdm": 5557.9,
     "positive_days_20": 13,
     "negative_days_20": 7,
     "streak": {
       "direction": "NAPŁYW",
-      "days": 8
+      "days": 9
     }
   },
   "ETH": {
-    "last_date": "2026-09-28",
-    "last_flow_usdm": 17.1,
-    "previous_flow_usdm": 87.0,
-    "change_vs_previous_usdm": -69.9,
-    "sum_5d_usdm": 436.9,
-    "previous_5d_usdm": 8.299999999999955,
-    "acceleration_5d_usdm": 428.6,
-    "sum_20d_usdm": 981.3000000000001,
-    "sum_30d_usdm": 2502.5,
-    "positive_days_20": 14,
-    "negative_days_20": 6,
+    "last_date": "2026-09-29",
+    "last_flow_usdm": -2.8,
+    "previous_flow_usdm": 17.1,
+    "change_vs_previous_usdm": -19.900000000000002,
+    "sum_5d_usdm": 271.90000000000003,
+    "previous_5d_usdm": 312.5,
+    "acceleration_5d_usdm": -40.599999999999966,
+    "sum_20d_usdm": 890.9000000000001,
+    "sum_30d_usdm": 2468.7999999999997,
+    "positive_days_20": 13,
+    "negative_days_20": 7,
     "streak": {
-      "direction": "NAPŁYW",
-      "days": 7
+      "direction": "ODPŁYW",
+      "days": 1
     }
   },
   "global_institutional_interest": {
-    "score_0_10": 9.5,
-    "label_pl": "SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE ROŚNIE"
+    "score_0_10": 6.5,
+    "label_pl": "KAPITAŁ NAPŁYWA DO BTC I ETH, ALE TEMPO JEST NIERÓWNE"
   },
   "rules": {
     "closed_days_only": true,

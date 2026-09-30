@@ -1,31 +1,31 @@
 # V8 — HISTORIA ETF BTC / ETH
 
-Czas analizy: 2026-09-30T03:49:32.032934+00:00
+Czas analizy: 2026-09-30T04:49:50.998941+00:00
 
-## WSPÓLNY OBRAZ: SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE ROŚNIE
-Ocena zainteresowania instytucjonalnego: **9.5/10**
+## WSPÓLNY OBRAZ: KAPITAŁ NAPŁYWA DO BTC I ETH, ALE TEMPO JEST NIERÓWNE
+Ocena zainteresowania instytucjonalnego: **6.5/10**
 
 ## BTC
-- Ostatni zakończony dzień: **2026-09-28** — 31.0 mln USD.
-- Poprzedni zakończony dzień: 134.5 mln USD.
-- Zmiana względem poprzedniego dnia: -103.5 mln USD.
-- 5 zakończonych dni: 1 417.8 mln USD.
-- Zmiana tempa 5-dniowego: 572.6 mln USD.
-- 20 zakończonych dni: 2 946.9 mln USD.
-- 30 zakończonych dni: 5 789.2 mln USD.
-- Seria: **NAPŁYW przez 8 kolejnych zakończonych dni**.
+- Ostatni zakończony dzień: **2026-09-29** — 66.2 mln USD.
+- Poprzedni zakończony dzień: 31.0 mln USD.
+- Zmiana względem poprzedniego dnia: 35.2 mln USD.
+- 5 zakończonych dni: 769.3 mln USD.
+- Zmiana tempa 5-dniowego: -1 241.0 mln USD.
+- 20 zakończonych dni: 2 796.4 mln USD.
+- 30 zakończonych dni: 5 557.9 mln USD.
+- Seria: **NAPŁYW przez 9 kolejnych zakończonych dni**.
 - W ostatnich 20 dniach: 13 dni napływu i 7 dni odpływu.
 
 ## ETH
-- Ostatni zakończony dzień: **2026-09-28** — 17.1 mln USD.
-- Poprzedni zakończony dzień: 87.0 mln USD.
-- Zmiana względem poprzedniego dnia: -69.9 mln USD.
-- 5 zakończonych dni: 436.9 mln USD.
-- Zmiana tempa 5-dniowego: 428.6 mln USD.
-- 20 zakończonych dni: 981.3 mln USD.
-- 30 zakończonych dni: 2 502.5 mln USD.
-- Seria: **NAPŁYW przez 7 kolejnych zakończonych dni**.
-- W ostatnich 20 dniach: 14 dni napływu i 6 dni odpływu.
+- Ostatni zakończony dzień: **2026-09-29** — -2.8 mln USD.
+- Poprzedni zakończony dzień: 17.1 mln USD.
+- Zmiana względem poprzedniego dnia: -19.9 mln USD.
+- 5 zakończonych dni: 271.9 mln USD.
+- Zmiana tempa 5-dniowego: -40.6 mln USD.
+- 20 zakończonych dni: 890.9 mln USD.
+- 30 zakończonych dni: 2 468.8 mln USD.
+- Seria: **ODPŁYW przez 1 kolejnych zakończonych dni**.
+- W ostatnich 20 dniach: 13 dni napływu i 7 dni odpływu.
 
 Historia obejmuje wyłącznie zakończone dni ETF. Dzisiejsze dane wstępne nie zmieniają tej oceny.
 Warstwa jest badawcza i nie wykonuje transakcji.
