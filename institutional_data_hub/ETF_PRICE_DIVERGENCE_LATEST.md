@@ -2,14 +2,14 @@
 
 ## BTC
 - Cena 5 dni: 4.49%
-- ETF 5 zakończonych dni: 769.3 mln USD
+- ETF 5 zakończonych dni: 273.7 mln USD
 - Ocena: **CENA ROŚNIE, ETF NADAL NAPŁYWA**
 - Jakość potwierdzenia: **POTWIERDZENIE**
 - Znaczenie: Cena rośnie razem z dodatnimi przepływami ETF, ale tempo napływu nie przyspiesza.
 
 ## ETH
 - Cena 5 dni: 2.53%
-- ETF 5 zakończonych dni: 271.9 mln USD
+- ETF 5 zakończonych dni: 107.8 mln USD
 - Ocena: **CENA ROŚNIE, ETF NADAL NAPŁYWA**
 - Jakość potwierdzenia: **POTWIERDZENIE**
 - Znaczenie: Cena rośnie razem z dodatnimi przepływami ETF, ale tempo napływu nie przyspiesza.
