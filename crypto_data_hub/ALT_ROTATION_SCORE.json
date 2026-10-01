@@ -1,8 +1,8 @@
 {
-  "date": "2026-09-29",
+  "date": "2026-09-30",
   "engine": "ALT_ROTATION_SCORE_v0.3",
-  "source_snapshot_generated_at_utc": "2026-09-30T05:31:10.628721+00:00",
-  "score_0_10": 6,
+  "source_snapshot_generated_at_utc": "2026-10-01T05:30:19.871500+00:00",
+  "score_0_10": 7,
   "status": "CONFIRMED",
   "confidence": "MEDIUM",
   "confidence_pct": 60,
@@ -11,30 +11,30 @@
     "ETH_BTC": 2,
     "ETF_FLOW": 1,
     "STABLECOIN_LIQUIDITY": 1,
-    "ALT_RS_BREADTH": 1,
+    "ALT_RS_BREADTH": 2,
     "BROAD_ROTATION_TREND": 0
   },
   "flow_context": {
     "eth_btc": {
-      "change_5d_pct": 0.5143947900807522,
-      "change_20d_pct": 1.554661675463076,
+      "change_5d_pct": 0.3604445129285816,
+      "change_20d_pct": 0.8668264714593921,
       "above_sma50": true,
       "sma50_rising_20d": true
     },
     "etf": {
-      "btc_5d_usdm": 769.3,
-      "eth_5d_usdm": 271.90000000000003,
-      "eth_20d_usdm": 890.9000000000001,
-      "eth_acceleration_5d_usdm": -40.599999999999966,
-      "sol_5d_usdm": 146.29999999999998,
+      "btc_5d_usdm": 273.7,
+      "eth_5d_usdm": 107.79999999999998,
+      "eth_20d_usdm": 820.4,
+      "eth_acceleration_5d_usdm": -533.3,
+      "sol_5d_usdm": 120.1,
       "btc_trend": "INFLOW_POSITIVE",
       "eth_trend": "INFLOW_POSITIVE",
       "sol_trend": "INFLOW_ACCELERATING"
     },
     "stablecoin": {
-      "change_7d_pct": 0.12442732963056091,
-      "change_14d_pct": 0.6312763456833403,
-      "change_30d_pct": 1.1448790336592518
+      "change_7d_pct": 0.8789839486961215,
+      "change_14d_pct": 0.845697070766116,
+      "change_30d_pct": 1.0697239554678273
     },
     "broad_rotation": {}
   },
@@ -43,48 +43,49 @@
   "selected_alt_breadth_strong": [
     "SOL_BTC",
     "LINK_BTC",
-    "AAVE_BTC"
+    "AAVE_BTC",
+    "HBAR_BTC"
   ],
   "alt_readiness": {
     "SOL": {
       "individual_rs_0_4": 4,
       "label": "LEADER",
-      "vs_btc_5d_pct": 2.711248687662504,
-      "vs_btc_20d_pct": 9.796667688556004,
-      "vs_eth_5d_pct": 2.185611227297124,
-      "vs_eth_20d_pct": 8.115832279006362
+      "vs_btc_5d_pct": -2.7483337206441028,
+      "vs_btc_20d_pct": 9.612690313948558,
+      "vs_eth_5d_pct": -3.097613057275961,
+      "vs_eth_20d_pct": 8.670703885943954
     },
     "LINK": {
       "individual_rs_0_4": 4,
       "label": "LEADER",
-      "vs_btc_5d_pct": 11.469229591234487,
-      "vs_btc_20d_pct": 15.822355697549195,
-      "vs_eth_5d_pct": 10.89877208536385,
-      "vs_eth_20d_pct": 14.049275322959787
+      "vs_btc_5d_pct": 3.717449800105377,
+      "vs_btc_20d_pct": 14.842122465909902,
+      "vs_eth_5d_pct": 3.344948603475295,
+      "vs_eth_20d_pct": 13.855195492251227
     },
     "AAVE": {
       "individual_rs_0_4": 4,
       "label": "LEADER",
-      "vs_btc_5d_pct": 13.49274522603212,
-      "vs_btc_20d_pct": 22.96052453363069,
-      "vs_eth_5d_pct": 12.911932129777037,
-      "vs_eth_20d_pct": 21.078168648302984
+      "vs_btc_5d_pct": 4.412568999963984,
+      "vs_btc_20d_pct": 21.049961752005263,
+      "vs_eth_5d_pct": 4.03757128289064,
+      "vs_eth_20d_pct": 20.009686025223306
     },
     "HBAR": {
-      "individual_rs_0_4": 2,
-      "label": "WATCH",
-      "vs_btc_5d_pct": 10.993516604796882,
-      "vs_btc_20d_pct": 25.199042270981884,
-      "vs_eth_5d_pct": 10.425493618701331,
-      "vs_eth_20d_pct": 23.282417769337727
+      "individual_rs_0_4": 3,
+      "label": "WATCH_STRONG",
+      "vs_btc_5d_pct": 10.102205685941446,
+      "vs_btc_20d_pct": 28.28935928373486,
+      "vs_eth_5d_pct": 9.70677364004493,
+      "vs_eth_20d_pct": 27.186869827846483
     },
     "ONDO": {
       "individual_rs_0_4": 2,
       "label": "WATCH",
-      "vs_btc_5d_pct": -2.9732488541148405,
-      "vs_btc_20d_pct": 30.62426045198454,
-      "vs_eth_5d_pct": -3.469795198468195,
-      "vs_eth_20d_pct": 28.624583349426945
+      "vs_btc_5d_pct": -8.476460484029214,
+      "vs_btc_20d_pct": 33.57691841891906,
+      "vs_eth_5d_pct": -8.805167254733915,
+      "vs_eth_20d_pct": 32.428988887357434
     }
   },
   "hard_rules": {
