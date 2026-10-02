@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-01T05:31:30.399882+00:00",
+  "generated_at_utc": "2026-10-02T05:31:07.907498+00:00",
   "engine": "ONCHAIN_ACTIVITY_v0.6",
   "assets": [
     {
@@ -38,28 +38,28 @@
         }
       },
       "chain_tvl": {
-        "latest_usd": 53285726588.0,
-        "change_7d_pct": -0.5746481408487991,
-        "change_30d_pct": 7.699142849457918,
+        "latest_usd": 53876108402.0,
+        "change_7d_pct": 0.5273571043797443,
+        "change_30d_pct": 11.35347815191694,
         "trend": "RISING"
       },
       "dex_volume": {
-        "latest_daily_usd": 1374745879.81,
-        "change_7d_vs_prev7_pct": -15.48119634638665,
-        "change_30d_vs_prev30_pct": 23.27184302214711,
+        "latest_daily_usd": 1249503626.15,
+        "change_7d_vs_prev7_pct": -13.60938610064868,
+        "change_30d_vs_prev30_pct": 20.400254970930497,
         "trend": "RISING"
       },
       "stablecoin_liquidity": {
-        "latest_usd": 147050013823.39,
-        "change_7d_pct": 0.6464074548769627,
-        "change_30d_pct": -0.711910659206838,
+        "latest_usd": 147056407030.31,
+        "change_7d_pct": 0.7177531973450169,
+        "change_30d_pct": -0.7178536488751774,
         "trend": "FLAT"
       },
       "chain_fees": {
-        "latest_daily_usd": 11522455.439999998,
-        "change_7d_vs_prev7_pct": -4.304366639853052,
-        "change_30d_vs_prev30_pct": 18.10571044896543,
-        "trend": "RISING"
+        "latest_daily_usd": 15987207.81,
+        "change_7d_vs_prev7_pct": 5.869458251253712,
+        "change_30d_vs_prev30_pct": 21.251408844982024,
+        "trend": "STRONG_RISING"
       },
       "protocol_tvl": {
         "latest_usd": null,
@@ -78,8 +78,8 @@
       },
       "long_onchain_score_0_10": 9,
       "long_onchain_label": "STRONG_POSITIVE",
-      "tactical_onchain_score_0_10": 2,
-      "tactical_onchain_label": "NEGATIVE",
+      "tactical_onchain_score_0_10": 5,
+      "tactical_onchain_label": "NEUTRAL",
       "role": "context only; never standalone trade signal"
     },
     {
@@ -118,27 +118,27 @@
         }
       },
       "chain_tvl": {
-        "latest_usd": 6547081772.0,
-        "change_7d_pct": 2.3945138766318763,
-        "change_30d_pct": 9.16693086001208,
+        "latest_usd": 6620620514.0,
+        "change_7d_pct": 2.1421821493483595,
+        "change_30d_pct": 16.962986685890048,
         "trend": "RISING"
       },
       "dex_volume": {
-        "latest_daily_usd": 1402296913.79,
-        "change_7d_vs_prev7_pct": -29.216379550794656,
-        "change_30d_vs_prev30_pct": 17.817211029460367,
+        "latest_daily_usd": 1482719276.78,
+        "change_7d_vs_prev7_pct": -25.693704431851295,
+        "change_30d_vs_prev30_pct": 17.236607450259676,
         "trend": "FALLING"
       },
       "stablecoin_liquidity": {
-        "latest_usd": 16336048446.94,
-        "change_7d_pct": 0.9388656151199326,
-        "change_30d_pct": 2.962888556085974,
+        "latest_usd": 16519838077.59,
+        "change_7d_pct": -5.318206962634175,
+        "change_30d_pct": 4.6537295991955,
         "trend": "FLAT"
       },
       "chain_fees": {
-        "latest_daily_usd": 15036426.809999999,
-        "change_7d_vs_prev7_pct": 0.9672536288479305,
-        "change_30d_vs_prev30_pct": 34.988694258331286,
+        "latest_daily_usd": 16418122.879999999,
+        "change_7d_vs_prev7_pct": 5.875163229800995,
+        "change_30d_vs_prev30_pct": 37.07271350552681,
         "trend": "STRONG_RISING"
       },
       "protocol_tvl": {
@@ -309,12 +309,12 @@
         "quality": "NO_DATA"
       },
       "protocol_fees": {
-        "fees_24h_usd": 245362.0,
-        "fees_7d_usd": 794272.0,
-        "fees_30d_usd": 6437625.0,
-        "change_7d_vs_prev7_pct": -12.697834992020784,
-        "change_30d_vs_prev30_pct": 6.915389023198326,
-        "trend": "FALLING"
+        "fees_24h_usd": 255033.0,
+        "fees_7d_usd": 1049305.0,
+        "fees_30d_usd": 6447916.0,
+        "change_7d_vs_prev7_pct": -15.429904762803837,
+        "change_30d_vs_prev30_pct": 15.484421739841704,
+        "trend": "FLAT"
       },
       "long_onchain_score_0_10": null,
       "long_onchain_label": "INSUFFICIENT_QUALITY",
