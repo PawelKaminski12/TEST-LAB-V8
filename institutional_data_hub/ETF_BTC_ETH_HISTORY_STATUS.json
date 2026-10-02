@@ -1,43 +1,43 @@
 {
-  "generated_at_utc": "2026-10-02T03:50:01.698027+00:00",
+  "generated_at_utc": "2026-10-02T04:50:01.942950+00:00",
   "engine": "V8_ETF_HISTORY_v1.0",
   "BTC": {
-    "last_date": "2026-09-30",
-    "last_flow_usdm": -148.7,
-    "previous_flow_usdm": 66.2,
-    "change_vs_previous_usdm": -214.89999999999998,
-    "sum_5d_usdm": 273.7,
-    "previous_5d_usdm": 2653.1,
-    "acceleration_5d_usdm": -2379.4,
-    "sum_20d_usdm": 2884.2,
-    "sum_30d_usdm": 5219.9,
+    "last_date": "2026-10-01",
+    "last_flow_usdm": 102.7,
+    "previous_flow_usdm": -148.7,
+    "change_vs_previous_usdm": 251.39999999999998,
+    "sum_5d_usdm": 185.7,
+    "previous_5d_usdm": 2684.2999999999997,
+    "acceleration_5d_usdm": -2498.6,
+    "sum_20d_usdm": 2885.7999999999997,
+    "sum_30d_usdm": 4805.4,
     "positive_days_20": 13,
     "negative_days_20": 7,
     "streak": {
-      "direction": "ODPŁYW",
+      "direction": "NAPŁYW",
       "days": 1
     }
   },
   "ETH": {
-    "last_date": "2026-09-30",
-    "last_flow_usdm": -59.6,
-    "previous_flow_usdm": -2.8,
-    "change_vs_previous_usdm": -56.800000000000004,
-    "sum_5d_usdm": 107.79999999999998,
-    "previous_5d_usdm": 641.0999999999999,
-    "acceleration_5d_usdm": -533.3,
-    "sum_20d_usdm": 820.4,
-    "sum_30d_usdm": 2337.7999999999997,
+    "last_date": "2026-10-01",
+    "last_flow_usdm": -55.4,
+    "previous_flow_usdm": -59.6,
+    "change_vs_previous_usdm": 4.200000000000003,
+    "sum_5d_usdm": -13.700000000000003,
+    "previous_5d_usdm": 746.5,
+    "acceleration_5d_usdm": -760.2,
+    "sum_20d_usdm": 813.1999999999999,
+    "sum_30d_usdm": 2093.2999999999997,
     "positive_days_20": 12,
     "negative_days_20": 8,
     "streak": {
       "direction": "ODPŁYW",
-      "days": 2
+      "days": 3
     }
   },
   "global_institutional_interest": {
-    "score_0_10": 6.5,
-    "label_pl": "KAPITAŁ NAPŁYWA DO BTC I ETH, ALE TEMPO JEST NIERÓWNE"
+    "score_0_10": 3.5,
+    "label_pl": "PRZEPŁYWY BTC I ETH SĄ ROZBIEŻNE"
   },
   "rules": {
     "closed_days_only": true,

@@ -1,30 +1,30 @@
 # V8 — HISTORIA ETF BTC / ETH
 
-Czas analizy: 2026-10-02T03:50:01.698027+00:00
+Czas analizy: 2026-10-02T04:50:01.942950+00:00
 
-## WSPÓLNY OBRAZ: KAPITAŁ NAPŁYWA DO BTC I ETH, ALE TEMPO JEST NIERÓWNE
-Ocena zainteresowania instytucjonalnego: **6.5/10**
+## WSPÓLNY OBRAZ: PRZEPŁYWY BTC I ETH SĄ ROZBIEŻNE
+Ocena zainteresowania instytucjonalnego: **3.5/10**
 
 ## BTC
-- Ostatni zakończony dzień: **2026-09-30** — -148.7 mln USD.
-- Poprzedni zakończony dzień: 66.2 mln USD.
-- Zmiana względem poprzedniego dnia: -214.9 mln USD.
-- 5 zakończonych dni: 273.7 mln USD.
-- Zmiana tempa 5-dniowego: -2 379.4 mln USD.
-- 20 zakończonych dni: 2 884.2 mln USD.
-- 30 zakończonych dni: 5 219.9 mln USD.
-- Seria: **ODPŁYW przez 1 kolejnych zakończonych dni**.
+- Ostatni zakończony dzień: **2026-10-01** — 102.7 mln USD.
+- Poprzedni zakończony dzień: -148.7 mln USD.
+- Zmiana względem poprzedniego dnia: 251.4 mln USD.
+- 5 zakończonych dni: 185.7 mln USD.
+- Zmiana tempa 5-dniowego: -2 498.6 mln USD.
+- 20 zakończonych dni: 2 885.8 mln USD.
+- 30 zakończonych dni: 4 805.4 mln USD.
+- Seria: **NAPŁYW przez 1 kolejnych zakończonych dni**.
 - W ostatnich 20 dniach: 13 dni napływu i 7 dni odpływu.
 
 ## ETH
-- Ostatni zakończony dzień: **2026-09-30** — -59.6 mln USD.
-- Poprzedni zakończony dzień: -2.8 mln USD.
-- Zmiana względem poprzedniego dnia: -56.8 mln USD.
-- 5 zakończonych dni: 107.8 mln USD.
-- Zmiana tempa 5-dniowego: -533.3 mln USD.
-- 20 zakończonych dni: 820.4 mln USD.
-- 30 zakończonych dni: 2 337.8 mln USD.
-- Seria: **ODPŁYW przez 2 kolejnych zakończonych dni**.
+- Ostatni zakończony dzień: **2026-10-01** — -55.4 mln USD.
+- Poprzedni zakończony dzień: -59.6 mln USD.
+- Zmiana względem poprzedniego dnia: 4.2 mln USD.
+- 5 zakończonych dni: -13.7 mln USD.
+- Zmiana tempa 5-dniowego: -760.2 mln USD.
+- 20 zakończonych dni: 813.2 mln USD.
+- 30 zakończonych dni: 2 093.3 mln USD.
+- Seria: **ODPŁYW przez 3 kolejnych zakończonych dni**.
 - W ostatnich 20 dniach: 12 dni napływu i 8 dni odpływu.
 
 Historia obejmuje wyłącznie zakończone dni ETF. Dzisiejsze dane wstępne nie zmieniają tej oceny.
