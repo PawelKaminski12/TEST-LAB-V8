@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-10-06T08:33:37.357500+00:00",
-  "generated_at_new_york": "2026-10-06T04:33:37.357500-04:00",
+  "generated_at_utc": "2026-10-06T09:33:31.198906+00:00",
+  "generated_at_new_york": "2026-10-06T05:33:31.198906-04:00",
   "engine": "V8_ETF_BTC_ETH_MONITOR_v1.0",
   "assets": {
     "BTC": {
@@ -41,16 +41,16 @@
       "transport": "haturatu/crypto-etf-flow mirror",
       "last_source_date": "2026-10-05",
       "last_closed_date": "2026-10-05",
-      "last_closed_flow_usdm": -18.9,
-      "closed_5d_usdm": -174.1,
-      "closed_20d_usdm": 589.1,
-      "closed_30d_usdm": 1631.4999999999998,
+      "last_closed_flow_usdm": -50.8,
+      "closed_5d_usdm": -206.0,
+      "closed_20d_usdm": 557.2,
+      "closed_30d_usdm": 1599.6,
       "closed_trend": {
         "label_pl": "ODPŁYW PRZYSPIESZA",
         "score_adjustment": -1.0,
-        "closed_5d_usdm": -174.1,
+        "closed_5d_usdm": -206.0,
         "previous_5d_usdm": 436.9,
-        "acceleration_5d_usdm": -611.0
+        "acceleration_5d_usdm": -642.9
       },
       "today_date": "2026-10-06",
       "today_status_pl": "DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE",
@@ -70,9 +70,9 @@
     "score_0_10": 3.5,
     "label_pl": "KAPITAŁ INSTYTUCJONALNY JEST PODZIELONY MIĘDZY BTC I ETH",
     "btc_closed_5d_usdm": 120.30000000000003,
-    "eth_closed_5d_usdm": -174.1,
+    "eth_closed_5d_usdm": -206.0,
     "btc_acceleration_5d_usdm": -1297.5,
-    "eth_acceleration_5d_usdm": -611.0,
+    "eth_acceleration_5d_usdm": -642.9,
     "role": "kontekst instytucjonalny, nie samodzielny sygnał kupna lub sprzedaży"
   },
   "safety": {
