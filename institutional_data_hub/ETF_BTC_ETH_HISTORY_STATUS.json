@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-06T08:51:55.723456+00:00",
+  "generated_at_utc": "2026-10-06T09:51:21.596646+00:00",
   "engine": "V8_ETF_HISTORY_v1.0",
   "BTC": {
     "last_date": "2026-10-05",
@@ -20,14 +20,14 @@
   },
   "ETH": {
     "last_date": "2026-10-05",
-    "last_flow_usdm": -18.9,
+    "last_flow_usdm": -50.8,
     "previous_flow_usdm": -37.4,
-    "change_vs_previous_usdm": 18.5,
-    "sum_5d_usdm": -174.1,
+    "change_vs_previous_usdm": -13.399999999999999,
+    "sum_5d_usdm": -206.0,
     "previous_5d_usdm": 436.9,
-    "acceleration_5d_usdm": -611.0,
-    "sum_20d_usdm": 589.1,
-    "sum_30d_usdm": 1631.4999999999998,
+    "acceleration_5d_usdm": -642.9,
+    "sum_20d_usdm": 557.2,
+    "sum_30d_usdm": 1599.6,
     "positive_days_20": 10,
     "negative_days_20": 10,
     "streak": {

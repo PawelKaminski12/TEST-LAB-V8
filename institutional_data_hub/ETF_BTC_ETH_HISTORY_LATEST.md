@@ -1,6 +1,6 @@
 # V8 — HISTORIA ETF BTC / ETH
 
-Czas analizy: 2026-10-06T08:51:55.723456+00:00
+Czas analizy: 2026-10-06T09:51:21.596646+00:00
 
 ## WSPÓLNY OBRAZ: PRZEPŁYWY BTC I ETH SĄ ROZBIEŻNE
 Ocena zainteresowania instytucjonalnego: **3.5/10**
@@ -17,13 +17,13 @@ Ocena zainteresowania instytucjonalnego: **3.5/10**
 - W ostatnich 20 dniach: 12 dni napływu i 8 dni odpływu.
 
 ## ETH
-- Ostatni zakończony dzień: **2026-10-05** — -18.9 mln USD.
+- Ostatni zakończony dzień: **2026-10-05** — -50.8 mln USD.
 - Poprzedni zakończony dzień: -37.4 mln USD.
-- Zmiana względem poprzedniego dnia: 18.5 mln USD.
-- 5 zakończonych dni: -174.1 mln USD.
-- Zmiana tempa 5-dniowego: -611.0 mln USD.
-- 20 zakończonych dni: 589.1 mln USD.
-- 30 zakończonych dni: 1 631.5 mln USD.
+- Zmiana względem poprzedniego dnia: -13.4 mln USD.
+- 5 zakończonych dni: -206.0 mln USD.
+- Zmiana tempa 5-dniowego: -642.9 mln USD.
+- 20 zakończonych dni: 557.2 mln USD.
+- 30 zakończonych dni: 1 599.6 mln USD.
 - Seria: **ODPŁYW przez 5 kolejnych zakończonych dni**.
 - W ostatnich 20 dniach: 10 dni napływu i 10 dni odpływu.
 
