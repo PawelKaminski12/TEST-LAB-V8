@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-04",
+  "date": "2026-10-05",
   "engine": "ALT_ENGINE_READINESS_v1.0",
   "rules": {
     "btc_is_market_regime_not_alt_row": true,
@@ -113,7 +113,7 @@
       "full_zone_missing": "",
       "zones_core_ready": true,
       "zones_full_ready": true,
-      "decision": "KUP DCA",
+      "decision": "SPRAWDŹ",
       "decision_ready": true,
       "data_quality_score_0_100": 100,
       "readiness_status": "PRODUCTION_DATA_READY"
