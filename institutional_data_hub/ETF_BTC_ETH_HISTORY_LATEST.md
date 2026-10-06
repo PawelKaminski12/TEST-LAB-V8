@@ -1,31 +1,31 @@
 # V8 — HISTORIA ETF BTC / ETH
 
-Czas analizy: 2026-10-06T03:50:58.811056+00:00
+Czas analizy: 2026-10-06T04:50:40.721012+00:00
 
 ## WSPÓLNY OBRAZ: PRZEPŁYWY BTC I ETH SĄ ROZBIEŻNE
 Ocena zainteresowania instytucjonalnego: **3.5/10**
 
 ## BTC
-- Ostatni zakończony dzień: **2026-10-02** — 189.9 mln USD.
-- Poprzedni zakończony dzień: 102.7 mln USD.
-- Zmiana względem poprzedniego dnia: 87.2 mln USD.
-- 5 zakończonych dni: 241.1 mln USD.
-- Zmiana tempa 5-dniowego: -2 144.7 mln USD.
-- 20 zakończonych dni: 2 344.9 mln USD.
-- 30 zakończonych dni: 4 389.0 mln USD.
-- Seria: **NAPŁYW przez 2 kolejnych zakończonych dni**.
-- W ostatnich 20 dniach: 13 dni napływu i 7 dni odpływu.
+- Ostatni zakończony dzień: **2026-10-05** — -89.8 mln USD.
+- Poprzedni zakończony dzień: 189.9 mln USD.
+- Zmiana względem poprzedniego dnia: -279.7 mln USD.
+- 5 zakończonych dni: 120.3 mln USD.
+- Zmiana tempa 5-dniowego: -1 297.5 mln USD.
+- 20 zakończonych dni: 2 080.5 mln USD.
+- 30 zakończonych dni: 3 991.7 mln USD.
+- Seria: **ODPŁYW przez 1 kolejnych zakończonych dni**.
+- W ostatnich 20 dniach: 12 dni napływu i 8 dni odpływu.
 
 ## ETH
-- Ostatni zakończony dzień: **2026-10-02** — -37.4 mln USD.
-- Poprzedni zakończony dzień: -55.4 mln USD.
-- Zmiana względem poprzedniego dnia: 18.0 mln USD.
-- 5 zakończonych dni: -138.1 mln USD.
-- Zmiana tempa 5-dniowego: -827.9 mln USD.
-- 20 zakończonych dni: 634.4 mln USD.
-- 30 zakończonych dni: 1 835.2 mln USD.
-- Seria: **ODPŁYW przez 4 kolejnych zakończonych dni**.
-- W ostatnich 20 dniach: 11 dni napływu i 9 dni odpływu.
+- Ostatni zakończony dzień: **2026-10-05** — -19 923.7 mln USD.
+- Poprzedni zakończony dzień: -37.4 mln USD.
+- Zmiana względem poprzedniego dnia: -19 886.3 mln USD.
+- 5 zakończonych dni: -20 078.9 mln USD.
+- Zmiana tempa 5-dniowego: -20 515.8 mln USD.
+- 20 zakończonych dni: -19 315.7 mln USD.
+- 30 zakończonych dni: -18 273.3 mln USD.
+- Seria: **ODPŁYW przez 5 kolejnych zakończonych dni**.
+- W ostatnich 20 dniach: 10 dni napływu i 10 dni odpływu.
 
 Historia obejmuje wyłącznie zakończone dni ETF. Dzisiejsze dane wstępne nie zmieniają tej oceny.
 Warstwa jest badawcza i nie wykonuje transakcji.
