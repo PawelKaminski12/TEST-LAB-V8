@@ -9,7 +9,7 @@ Ocena zainteresowania instytucjonalnego: **3.5/10**
 - 5D cena vs ETF: CENA I ETF POTWIERDZAJĄ SIĘ — NAPŁYW WSPIERA WZROST
 - 20D cena vs ETF: CENA I ETF POTWIERDZAJĄ SIĘ — NAPŁYW WSPIERA WZROST
 - Wniosek: **CENA I ETF DAJĄ ZGODNE DODATNIE POTWIERDZENIE**.
-- Dzisiaj: **DZISIAJ — DANE WSTĘPNE**; podgląd -3.2 mln USD; kompletność 33.3%.
+- Dzisiaj: **DZISIAJ — DANE WSTĘPNE**; podgląd -3.2 mln USD; kompletność 41.7%.
 
 ## ETH
 - Jakość danych: **ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE — 97/100**.
@@ -17,6 +17,6 @@ Ocena zainteresowania instytucjonalnego: **3.5/10**
 - 5D cena vs ETF: ROZBIEŻNOŚĆ: CENA ROŚNIE MIMO ODPŁYWU ETF — RUCH MA SŁABSZE POTWIERDZENIE
 - 20D cena vs ETF: CENA I ETF POTWIERDZAJĄ SIĘ — NAPŁYW WSPIERA WZROST
 - Wniosek: **UWAGA — CENA ROŚNIE BEZ PEŁNEGO POTWIERDZENIA ETF**.
-- Dzisiaj: **DZISIAJ — DANE WSTĘPNE**; podgląd 0.0 mln USD; kompletność 36.4%.
+- Dzisiaj: **DZISIAJ — DANE WSTĘPNE**; podgląd 0.0 mln USD; kompletność 45.5%.
 
 Dzisiejszy podgląd nie jest używany jako finalny przepływ. Filtr ETF nie nadpisuje twardych blokad silnika i nie wykonuje transakcji.
