@@ -1,6 +1,6 @@
 # V8 — ETF BTC / ETH
 
-Czas odczytu: 2026-10-07T02:32:37.805042+00:00
+Czas odczytu: 2026-10-07T03:32:52.181633+00:00
 
 ## WSPÓLNY OBRAZ: KAPITAŁ INSTYTUCJONALNY JEST PODZIELONY MIĘDZY BTC I ETH
 Ocena zainteresowania instytucjonalnego: **3.5/10**
