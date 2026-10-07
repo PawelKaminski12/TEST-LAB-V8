@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-05",
+  "date": "2026-10-06",
   "engine": "ALT_ENGINE_READINESS_v1.0",
   "rules": {
     "btc_is_market_regime_not_alt_row": true,
