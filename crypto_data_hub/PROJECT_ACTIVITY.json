@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-07T05:45:08.830985+00:00",
+  "generated_at_utc": "2026-10-08T05:45:07.672427+00:00",
   "engine": "PROJECT_ACTIVITY_v0.1",
   "assets": [
     {
@@ -13,11 +13,11 @@
       "quality_status": "TRUSTED",
       "independent_layers_ready": 1,
       "stablecoin_supply": {
-        "latest_usd": 148459737355.58,
-        "change_7d_pct": 0.3176782935652822,
-        "change_30d_pct": -0.013679309536029916,
+        "latest_usd": 148487344045.5,
+        "change_7d_pct": 0.38465389963182606,
+        "change_30d_pct": 0.09882656548951818,
         "trend": "FLAT",
-        "rows": 3235
+        "rows": 3236
       },
       "protocol_fees": {
         "latest_daily_usd": null,
@@ -55,11 +55,11 @@
       "quality_status": "TRUSTED",
       "independent_layers_ready": 1,
       "stablecoin_supply": {
-        "latest_usd": 16916648409.57,
-        "change_7d_pct": 2.6272908305395415,
-        "change_30d_pct": 1.0457205744376363,
+        "latest_usd": 16609529650.070002,
+        "change_7d_pct": 1.2790195491301226,
+        "change_30d_pct": -0.5218569087435565,
         "trend": "FLAT",
-        "rows": 1611
+        "rows": 1612
       },
       "protocol_fees": {
         "latest_daily_usd": null,
@@ -104,27 +104,27 @@
         "rows": 0
       },
       "protocol_fees": {
-        "latest_daily_usd": 4790.0,
-        "sum_7d_usd": 1106345.0,
-        "sum_30d_usd": 4452934.0,
-        "change_7d_vs_prev7_pct": -0.8835278761018306,
-        "change_30d_vs_prev30_pct": -6.559267336576491,
-        "trend": "FALLING",
-        "rows": 1031
+        "latest_daily_usd": 4052.0,
+        "sum_7d_usd": 34795.0,
+        "sum_30d_usd": 4453016.0,
+        "change_7d_vs_prev7_pct": -96.85188335094603,
+        "change_30d_vs_prev30_pct": -6.438649250408812,
+        "trend": "STRONG_FALLING",
+        "rows": 1032
       },
       "protocol_revenue": {
         "latest_daily_usd": 0.0,
-        "sum_7d_usd": 1069287.0,
+        "sum_7d_usd": 0.0,
         "sum_30d_usd": 4394742.0,
-        "change_7d_vs_prev7_pct": -8.017531333602868,
+        "change_7d_vs_prev7_pct": -100.0,
         "change_30d_vs_prev30_pct": -1.6433133221490315,
-        "trend": "FALLING",
-        "rows": 769
+        "trend": "STRONG_FALLING",
+        "rows": 770
       },
       "long_project_activity_score_0_10": 2,
       "long_project_activity_label": "NEGATIVE",
-      "tactical_project_activity_score_0_10": 2,
-      "tactical_project_activity_label": "NEGATIVE",
+      "tactical_project_activity_score_0_10": 0,
+      "tactical_project_activity_label": "STRONG_NEGATIVE",
       "trusted": true,
       "role": "project/liquidity context only; never standalone buy/sell signal"
     },
@@ -146,13 +146,13 @@
         "rows": 0
       },
       "protocol_fees": {
-        "latest_daily_usd": 254554.0,
-        "sum_7d_usd": 1584199.0,
-        "sum_30d_usd": 7291180.0,
-        "change_7d_vs_prev7_pct": -2.419074674524724,
-        "change_30d_vs_prev30_pct": 1.747172542254516,
-        "trend": "FLAT",
-        "rows": 539
+        "latest_daily_usd": 255957.0,
+        "sum_7d_usd": 1586184.0,
+        "sum_30d_usd": 7084345.0,
+        "change_7d_vs_prev7_pct": -4.769269378046159,
+        "change_30d_vs_prev30_pct": -4.130652568622617,
+        "trend": "FALLING",
+        "rows": 540
       },
       "protocol_revenue": {
         "latest_daily_usd": 0.0,
@@ -161,12 +161,12 @@
         "change_7d_vs_prev7_pct": null,
         "change_30d_vs_prev30_pct": null,
         "trend": "NO_DATA",
-        "rows": 539
+        "rows": 540
       },
-      "long_project_activity_score_0_10": 5,
-      "long_project_activity_label": "NEUTRAL",
-      "tactical_project_activity_score_0_10": 5,
-      "tactical_project_activity_label": "NEUTRAL",
+      "long_project_activity_score_0_10": 0,
+      "long_project_activity_label": "STRONG_NEGATIVE",
+      "tactical_project_activity_score_0_10": 0,
+      "tactical_project_activity_label": "STRONG_NEGATIVE",
       "trusted": true,
       "role": "project/liquidity context only; never standalone buy/sell signal"
     }
