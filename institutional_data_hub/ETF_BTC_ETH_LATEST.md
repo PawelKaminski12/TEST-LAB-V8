@@ -1,6 +1,6 @@
 # V8 — ETF BTC / ETH
 
-Czas odczytu: 2026-10-09T00:45:24.773229+00:00
+Czas odczytu: 2026-10-09T01:33:56.278446+00:00
 
 ## WSPÓLNY OBRAZ: SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE SŁABNIE
 Ocena zainteresowania instytucjonalnego: **0.5/10**
@@ -11,7 +11,7 @@ Ocena zainteresowania instytucjonalnego: **0.5/10**
 - 20 zakończonych dni: 1 881.2 mln USD.
 - 30 zakończonych dni: 2 973.7 mln USD.
 - Trend: **ODPŁYW PRZYSPIESZA**.
-- Dzisiaj: **DZISIAJ — DANE WSTĘPNE** — podgląd -41.5 mln USD; kompletność funduszy 83.3%.
+- Dzisiaj: **DZISIAJ — DANE WSTĘPNE** — podgląd -238.6 mln USD; kompletność funduszy 91.7%.
 - Dzisiejszy wiersz jest tylko podglądem. Do oceny trendu używamy wyłącznie zakończonych dni.
 
 ## ETH
@@ -20,7 +20,7 @@ Ocena zainteresowania instytucjonalnego: **0.5/10**
 - 20 zakończonych dni: 184.0 mln USD.
 - 30 zakończonych dni: 941.4 mln USD.
 - Trend: **ODPŁYW PRZYSPIESZA**.
-- Dzisiaj: **DZISIAJ — DANE WSTĘPNE** — podgląd -6.9 mln USD; kompletność funduszy 72.7%.
+- Dzisiaj: **DZISIAJ — DANE WSTĘPNE** — podgląd -1.4 mln USD; kompletność funduszy 81.8%.
 - Dzisiejszy wiersz jest tylko podglądem. Do oceny trendu używamy wyłącznie zakończonych dni.
 
 Dzisiejszy odczyt nie jest traktowany jako wynik końcowy. Do oceny trendu wchodzą wyłącznie zakończone dni ETF.
