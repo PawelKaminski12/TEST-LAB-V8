@@ -1,6 +1,6 @@
 # V8 — ETF BTC / ETH
 
-Czas odczytu: 2026-10-09T07:34:46.959038+00:00
+Czas odczytu: 2026-10-09T08:35:05.363148+00:00
 
 ## WSPÓLNY OBRAZ: SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE SŁABNIE
 Ocena zainteresowania instytucjonalnego: **0.5/10**
