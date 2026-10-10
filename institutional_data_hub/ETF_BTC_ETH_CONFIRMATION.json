@@ -1,38 +1,36 @@
 {
-  "generated_at_utc": "2026-10-10T03:51:04.853578+00:00",
+  "generated_at_utc": "2026-10-10T04:52:30.116085+00:00",
   "engine": "V8_ETF_BTC_ETH_CONFIRMATION_v1.0",
   "assets": {
     "BTC": {
       "asset": "BTC",
       "quality": {
-        "score_0_100": 90,
+        "score_0_100": 100,
         "label_pl": "ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE",
-        "reasons_pl": [
-          "OSTATNI ZAMKNIĘTY DZIEŃ MA KILKA DNI"
-        ]
+        "reasons_pl": []
       },
-      "last_closed_date": "2026-10-08",
-      "last_closed_flow_usdm": -244.1,
-      "closed_5d_usdm": -510.1,
-      "closed_20d_usdm": 1919.8000000000002,
-      "closed_30d_usdm": 2497.3999999999996,
+      "last_closed_date": "2026-10-09",
+      "last_closed_flow_usdm": 21.1,
+      "closed_5d_usdm": -678.9,
+      "closed_20d_usdm": 1954.1,
+      "closed_30d_usdm": 2276.2000000000003,
       "flow_trend_pl": "ODPŁYW PRZYSPIESZA",
-      "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
-      "today_preview_usdm": -1.3,
-      "today_completeness_pct": 91.7,
+      "today_status_pl": "DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE",
+      "today_preview_usdm": null,
+      "today_completeness_pct": 0.0,
       "price_ret5_pct": 4.492849953362432,
       "price_ret20_pct": 4.016771281300402,
       "price_vs_etf_5d": {
         "horizon": "5D",
         "price_change_pct": 4.492849953362432,
-        "etf_flow_usdm": -510.1,
+        "etf_flow_usdm": -678.9,
         "label_pl": "ROZBIEŻNOŚĆ: CENA ROŚNIE MIMO ODPŁYWU ETF — RUCH MA SŁABSZE POTWIERDZENIE",
         "confirmation_adjustment": -0.5
       },
       "price_vs_etf_20d": {
         "horizon": "20D",
         "price_change_pct": 4.016771281300402,
-        "etf_flow_usdm": 1919.8000000000002,
+        "etf_flow_usdm": 1954.1,
         "label_pl": "CENA I ETF POTWIERDZAJĄ SIĘ — NAPŁYW WSPIERA WZROST",
         "confirmation_adjustment": 0.5
       },
@@ -43,49 +41,47 @@
     "ETH": {
       "asset": "ETH",
       "quality": {
-        "score_0_100": 90,
+        "score_0_100": 100,
         "label_pl": "ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE",
-        "reasons_pl": [
-          "OSTATNI ZAMKNIĘTY DZIEŃ MA KILKA DNI"
-        ]
+        "reasons_pl": []
       },
-      "last_closed_date": "2026-10-08",
-      "last_closed_flow_usdm": -72.5,
-      "closed_5d_usdm": -523.5,
-      "closed_20d_usdm": 141.40000000000006,
-      "closed_30d_usdm": 676.4999999999998,
+      "last_closed_date": "2026-10-09",
+      "last_closed_flow_usdm": -56.1,
+      "closed_5d_usdm": -542.2,
+      "closed_20d_usdm": -131.10000000000005,
+      "closed_30d_usdm": 386.0,
       "flow_trend_pl": "ODPŁYW PRZYSPIESZA",
-      "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
-      "today_preview_usdm": 0.0,
-      "today_completeness_pct": 81.8,
+      "today_status_pl": "DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE",
+      "today_preview_usdm": null,
+      "today_completeness_pct": 0.0,
       "price_ret5_pct": 2.530983786767438,
       "price_ret20_pct": 6.755095200914485,
       "price_vs_etf_5d": {
         "horizon": "5D",
         "price_change_pct": 2.530983786767438,
-        "etf_flow_usdm": -523.5,
+        "etf_flow_usdm": -542.2,
         "label_pl": "ROZBIEŻNOŚĆ: CENA ROŚNIE MIMO ODPŁYWU ETF — RUCH MA SŁABSZE POTWIERDZENIE",
         "confirmation_adjustment": -0.5
       },
       "price_vs_etf_20d": {
         "horizon": "20D",
         "price_change_pct": 6.755095200914485,
-        "etf_flow_usdm": 141.40000000000006,
-        "label_pl": "CENA I ETF POTWIERDZAJĄ SIĘ — NAPŁYW WSPIERA WZROST",
-        "confirmation_adjustment": 0.5
+        "etf_flow_usdm": -131.10000000000005,
+        "label_pl": "ROZBIEŻNOŚĆ: CENA ROŚNIE MIMO ODPŁYWU ETF — RUCH MA SŁABSZE POTWIERDZENIE",
+        "confirmation_adjustment": -0.5
       },
       "overall_confirmation_pl": "UWAGA — CENA ROŚNIE BEZ PEŁNEGO POTWIERDZENIA ETF",
-      "confirmation_adjustment": 0.0,
+      "confirmation_adjustment": -0.5,
       "role": "dodatkowy filtr jakości ruchu; nie nadpisuje blokad LONG ani TACTICAL"
     }
   },
   "global_institutional_interest": {
     "score_0_10": 0.5,
     "label_pl": "SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE SŁABNIE",
-    "btc_closed_5d_usdm": -510.1,
-    "eth_closed_5d_usdm": -523.5,
-    "btc_acceleration_5d_usdm": -695.8,
-    "eth_acceleration_5d_usdm": -509.8,
+    "btc_closed_5d_usdm": -678.9,
+    "eth_closed_5d_usdm": -542.2,
+    "btc_acceleration_5d_usdm": -920.0,
+    "eth_acceleration_5d_usdm": -404.1,
     "role": "kontekst instytucjonalny, nie samodzielny sygnał kupna lub sprzedaży"
   },
   "rules": {
