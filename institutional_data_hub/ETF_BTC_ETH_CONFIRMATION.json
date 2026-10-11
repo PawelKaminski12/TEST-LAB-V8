@@ -1,13 +1,15 @@
 {
-  "generated_at_utc": "2026-10-10T23:48:01.903971+00:00",
+  "generated_at_utc": "2026-10-11T00:58:15.158462+00:00",
   "engine": "V8_ETF_BTC_ETH_CONFIRMATION_v1.0",
   "assets": {
     "BTC": {
       "asset": "BTC",
       "quality": {
-        "score_0_100": 100,
+        "score_0_100": 90,
         "label_pl": "ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE",
-        "reasons_pl": []
+        "reasons_pl": [
+          "OSTATNI ZAMKNIĘTY DZIEŃ MA KILKA DNI"
+        ]
       },
       "last_closed_date": "2026-10-09",
       "last_closed_flow_usdm": 21.1,
@@ -41,9 +43,11 @@
     "ETH": {
       "asset": "ETH",
       "quality": {
-        "score_0_100": 100,
+        "score_0_100": 90,
         "label_pl": "ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE",
-        "reasons_pl": []
+        "reasons_pl": [
+          "OSTATNI ZAMKNIĘTY DZIEŃ MA KILKA DNI"
+        ]
       },
       "last_closed_date": "2026-10-09",
       "last_closed_flow_usdm": -56.1,
