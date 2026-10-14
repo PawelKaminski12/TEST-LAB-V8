@@ -1,18 +1,18 @@
 # V8 — HISTORIA ETF BTC / ETH
 
-Czas analizy: 2026-10-14T06:03:41.558445+00:00
+Czas analizy: 2026-10-14T07:17:58.117637+00:00
 
 ## WSPÓLNY OBRAZ: SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE SŁABNIE
 Ocena zainteresowania instytucjonalnego: **2.0/10**
 
 ## BTC
-- Ostatni zakończony dzień: **2026-10-13** — 109.8 mln USD.
+- Ostatni zakończony dzień: **2026-10-13** — 175.7 mln USD.
 - Poprzedni zakończony dzień: -65.4 mln USD.
-- Zmiana względem poprzedniego dnia: 175.2 mln USD.
-- 5 zakończonych dni: -663.5 mln USD.
-- Zmiana tempa 5-dniowego: -836.4 mln USD.
-- 20 zakończonych dni: 2 289.0 mln USD.
-- 30 zakończonych dni: 2 305.8 mln USD.
+- Zmiana względem poprzedniego dnia: 241.1 mln USD.
+- 5 zakończonych dni: -597.6 mln USD.
+- Zmiana tempa 5-dniowego: -770.5 mln USD.
+- 20 zakończonych dni: 2 354.9 mln USD.
+- 30 zakończonych dni: 2 371.7 mln USD.
 - Seria: **NAPŁYW przez 1 kolejnych zakończonych dni**.
 - W ostatnich 20 dniach: 14 dni napływu i 6 dni odpływu.
 
