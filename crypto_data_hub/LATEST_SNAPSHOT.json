@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-10-13T05:34:43.489240+00:00",
-  "target_date": "2026-10-12",
+  "generated_at_utc": "2026-10-14T05:44:02.492937+00:00",
+  "target_date": "2026-10-13",
   "sources": {
     "prices": "Binance Vision spot 1D archives",
     "market_cap": "CoinGecko /global + /coins/markets",
@@ -8,190 +8,190 @@
     "stablecoin_liquidity": "DefiLlama stablecoins API"
   },
   "btc_regime": {
-    "close": 81850.0,
+    "close": 83169.0,
     "above_sma50": true,
     "above_sma200": true,
     "sma50_rising_20d": true,
-    "drawdown_365d_pct": -28.928676866436277,
-    "return_20d_pct": -5.055832042664898
+    "drawdown_365d_pct": -27.400981499553943,
+    "return_20d_pct": -1.4557285989175162
   },
   "eth_regime": {
-    "close": 2447.17,
+    "close": 2497.95,
     "above_sma50": false,
     "above_sma200": true,
     "sma50_rising_20d": true,
-    "drawdown_365d_pct": -42.29529457537994,
-    "return_20d_pct": -11.129309311708546
+    "drawdown_365d_pct": -39.93088787676208,
+    "return_20d_pct": -6.956431048418644
   },
   "relative_strength": {
     "ETH_BTC": {
-      "value": 0.029898228466707394,
+      "value": 0.030034628286981925,
       "above_sma50": false,
       "sma50_rising_20d": true,
-      "change_5d_pct": -3.2230371448489614,
-      "change_10d_pct": -5.308092568305378,
-      "change_20d_pct": -6.396893458240493,
-      "change_50d_pct": -5.6548081062010365
+      "change_5d_pct": -0.7812947892092637,
+      "change_10d_pct": -5.2726536024672255,
+      "change_20d_pct": -5.581960647020134,
+      "change_50d_pct": -4.422981673663173
     },
     "SOL_BTC": {
-      "value": 0.0012921197312156384,
+      "value": 0.0012844930202359052,
       "above_sma50": false,
       "sma50_rising_20d": true,
-      "change_5d_pct": -7.427553962510336,
-      "change_10d_pct": -7.958374745823327,
-      "change_20d_pct": -6.053992261375352,
-      "change_50d_pct": 5.2516349013061125
+      "change_5d_pct": -4.202681629059213,
+      "change_10d_pct": -8.990673582891661,
+      "change_20d_pct": -5.723864575474524,
+      "change_50d_pct": 2.5216085927450838
     },
     "SOL_ETH": {
-      "value": 0.04321726729242349,
+      "value": 0.042767068996577194,
       "above_sma50": true,
       "sma50_rising_20d": true,
-      "change_5d_pct": -4.344543054067918,
-      "change_10d_pct": -2.7988475989141115,
-      "change_20d_pct": 0.3663352740457926,
-      "change_50d_pct": 11.560147145372458
+      "change_5d_pct": -3.4483284503473377,
+      "change_10d_pct": -3.9249700554488176,
+      "change_20d_pct": -0.15029323784609971,
+      "change_50d_pct": 7.265962454171482
     },
     "LINK_BTC": {
-      "value": 0.0001542455711667685,
+      "value": 0.00015491348940109898,
       "above_sma50": false,
       "sma50_rising_20d": true,
-      "change_5d_pct": -3.5568049369731347,
-      "change_10d_pct": -5.491309798980359,
-      "change_20d_pct": 1.9261733609123866,
-      "change_50d_pct": 3.8735617177300785
+      "change_5d_pct": -0.33157217622038493,
+      "change_10d_pct": -6.988738178199172,
+      "change_20d_pct": 5.822150652190938,
+      "change_50d_pct": 5.228674347653817
     },
     "LINK_ETH": {
-      "value": 0.005159020419504979,
+      "value": 0.005157829420124503,
       "above_sma50": true,
       "sma50_rising_20d": true,
-      "change_5d_pct": -0.3448835159496788,
-      "change_10d_pct": -0.19348773896773475,
-      "change_20d_pct": 8.891870287915804,
-      "change_50d_pct": 10.099475800162526
+      "change_5d_pct": 0.4532639405376626,
+      "change_10d_pct": -1.8116041892804802,
+      "change_20d_pct": 12.078318271974542,
+      "change_50d_pct": 10.098302071280907
     },
     "AAVE_BTC": {
-      "value": 0.0019172877214416616,
+      "value": 0.00192884367973644,
       "above_sma50": true,
       "sma50_rising_20d": true,
-      "change_5d_pct": -8.230765601278122,
-      "change_10d_pct": -9.769284028240133,
-      "change_20d_pct": 11.634886918253917,
-      "change_50d_pct": 5.32007896159008
+      "change_5d_pct": -5.102272267660335,
+      "change_10d_pct": -9.965099663400812,
+      "change_20d_pct": 17.131801226740674,
+      "change_50d_pct": 15.1486295212369
     },
     "AAVE_ETH": {
-      "value": 0.06412713460854784,
+      "value": 0.06422066094197242,
       "above_sma50": true,
       "sma50_rising_20d": true,
-      "change_5d_pct": -5.174504663805546,
-      "change_10d_pct": -4.71127003450934,
-      "change_20d_pct": 19.26408325823017,
-      "change_50d_pct": 11.632693566562669
+      "change_5d_pct": -4.355002889093473,
+      "change_10d_pct": -4.953634023739295,
+      "change_20d_pct": 24.056591335100563,
+      "change_50d_pct": 20.477319273630258
     },
     "HBAR_BTC": {
-      "value": 1.0616982284667074e-06,
+      "value": 1.045942598804843e-06,
       "above_sma50": false,
       "sma50_rising_20d": true,
-      "change_5d_pct": -4.725236327797965,
-      "change_10d_pct": -12.370486825652883,
-      "change_20d_pct": -7.641296235453221,
-      "change_50d_pct": 3.4081569873838147
+      "change_5d_pct": -5.345957608079921,
+      "change_10d_pct": -13.06525565915252,
+      "change_20d_pct": -2.458513727191558,
+      "change_50d_pct": 4.215290390692816
     },
     "HBAR_ETH": {
-      "value": 3.551040589742437e-05,
+      "value": 3.4824556136031545e-05,
       "above_sma50": true,
       "sma50_rising_20d": true,
-      "change_5d_pct": -1.5522280702251257,
-      "change_10d_pct": -7.458287037297174,
-      "change_20d_pct": -1.3294460228812532,
-      "change_50d_pct": 9.606175907498017
+      "change_5d_pct": -4.600607122591461,
+      "change_10d_pct": -8.226348940445183,
+      "change_20d_pct": 3.3081039822820513,
+      "change_50d_pct": 9.038022126680701
     },
     "ONDO_BTC": {
-      "value": 5.7373243738546125e-06,
+      "value": 5.630703747790643e-06,
       "above_sma50": true,
       "sma50_rising_20d": true,
-      "change_5d_pct": 1.6682797504642632,
-      "change_10d_pct": -1.5816442454459567,
-      "change_20d_pct": 12.079418201429348,
-      "change_50d_pct": 16.536496701649984
+      "change_5d_pct": -2.1604488812831613,
+      "change_10d_pct": -4.860010380662072,
+      "change_20d_pct": 15.176413626886953,
+      "change_50d_pct": 16.466293132571174
     },
     "ONDO_ETH": {
-      "value": 0.00019189512784154757,
+      "value": 0.00018747372845733502,
       "above_sma50": true,
       "sma50_rising_20d": true,
-      "change_5d_pct": 5.054216159515357,
-      "change_10d_pct": 3.9353398024508657,
-      "change_20d_pct": 19.7389940807434,
-      "change_50d_pct": 23.52139453257034
+      "change_5d_pct": -1.3900142005924043,
+      "change_10d_pct": 0.4356115076563638,
+      "change_20d_pct": 21.98560192115653,
+      "change_50d_pct": 21.85595990754838
     }
   },
   "market_rotation": {
-    "btc_dominance_pct": 59.30480932208258,
-    "eth_dominance_pct": 10.88679529781941,
-    "eth_btc_ratio": 0.029898228466707394,
-    "eth_btc_change_5d_pct": -3.2230371448489614,
-    "eth_btc_change_20d_pct": -6.396893458240493,
-    "V8_TOTAL3_EQ_usd": 836074505255.5806,
-    "V8_OTHERS_EQ_usd": 252583344775.58057,
-    "V8_OTHERS_BTC_EQ_ratio": 0.15033756345009533,
+    "btc_dominance_pct": 59.28812072179889,
+    "eth_dominance_pct": 10.805578346501784,
+    "eth_btc_ratio": 0.030034628286981925,
+    "eth_btc_change_5d_pct": -0.7812947892092637,
+    "eth_btc_change_20d_pct": -5.581960647020134,
+    "V8_TOTAL3_EQ_usd": 846252998709.2822,
+    "V8_OTHERS_EQ_usd": 263673407685.28223,
+    "V8_OTHERS_BTC_EQ_ratio": 0.15712304261868304,
     "note": "V8_EQ series are CoinGecko equivalents, not yet certified 1:1 with TradingView TOTAL3/OTHERS."
   },
   "etf_flows": {
     "BTC": {
-      "last_date": "2026-10-12",
-      "flow_1d_usdm": -65.4,
-      "flow_5d_usdm": -654.4999999999999,
-      "flow_20d_usdm": 1728.8000000000002,
-      "flow_30d_usdm": 2412.7,
-      "acceleration_5d_vs_prev5_usdm": -774.8,
-      "acceleration_20d_vs_prev20_usdm": -1797.4000000000005,
+      "last_date": "2026-10-13",
+      "flow_1d_usdm": 109.8,
+      "flow_5d_usdm": -663.5,
+      "flow_20d_usdm": 2289.0000000000005,
+      "flow_30d_usdm": 2305.8,
+      "acceleration_5d_vs_prev5_usdm": -836.4000000000001,
+      "acceleration_20d_vs_prev20_usdm": -489.3000000000002,
       "trend_label": "OUTFLOW_ACCELERATING",
-      "rows": 706,
+      "rows": 707,
       "primary_source": "Farside Investors",
       "transport": "haturatu/crypto-etf-flow mirror (30m refresh from Farside via headless Chrome)"
     },
     "ETH": {
-      "last_date": "2026-10-12",
-      "flow_1d_usdm": -85.4,
-      "flow_5d_usdm": -576.8000000000001,
-      "flow_20d_usdm": -337.6,
-      "flow_30d_usdm": 198.50000000000009,
-      "acceleration_5d_vs_prev5_usdm": -370.80000000000007,
-      "acceleration_20d_vs_prev20_usdm": -2394.9,
-      "trend_label": "OUTFLOW_ACCELERATING",
-      "rows": 568,
+      "last_date": "2026-10-13",
+      "flow_1d_usdm": 24.8,
+      "flow_5d_usdm": -350.09999999999997,
+      "flow_20d_usdm": -170.8,
+      "flow_30d_usdm": 135.7,
+      "acceleration_5d_vs_prev5_usdm": 55.00000000000006,
+      "acceleration_20d_vs_prev20_usdm": -2055.2000000000003,
+      "trend_label": "OUTFLOW_NEGATIVE",
+      "rows": 569,
       "primary_source": "Farside Investors",
       "transport": "haturatu/crypto-etf-flow mirror (30m refresh from Farside via headless Chrome)"
     },
     "SOL": {
-      "last_date": "2026-10-12",
-      "flow_1d_usdm": -0.7,
-      "flow_5d_usdm": -16.5,
-      "flow_20d_usdm": 94.6,
-      "flow_30d_usdm": 94.6,
-      "acceleration_5d_vs_prev5_usdm": -0.40000000000000213,
+      "last_date": "2026-10-13",
+      "flow_1d_usdm": -1.0,
+      "flow_5d_usdm": -13.8,
+      "flow_20d_usdm": 60.80000000000001,
+      "flow_30d_usdm": 60.80000000000001,
+      "acceleration_5d_vs_prev5_usdm": 11.399999999999999,
       "acceleration_20d_vs_prev20_usdm": null,
-      "trend_label": "OUTFLOW_ACCELERATING",
+      "trend_label": "OUTFLOW_NEGATIVE",
       "rows": 13,
       "primary_source": "Farside Investors",
       "transport": "haturatu/crypto-etf-flow mirror (30m refresh from Farside via headless Chrome)"
     }
   },
   "stablecoin_liquidity": {
-    "market_cap_usd": 311062279511.89,
-    "change_1d_pct": -0.0043085174683321625,
-    "change_7d_pct": -0.36954851985026016,
-    "change_14d_pct": -0.13091734372452368,
-    "change_30d_pct": 0.7535501312960546
+    "market_cap_usd": 311203777981.95,
+    "change_1d_pct": -0.031336389887881566,
+    "change_7d_pct": -0.46905607952508754,
+    "change_14d_pct": -0.01864431069713568,
+    "change_30d_pct": 0.8066858038564773
   },
   "qa": {
     "binance_all_end_target": true,
-    "binance_min_rows": 499,
-    "btc_etf_rows": 706,
-    "eth_etf_rows": 568,
+    "binance_min_rows": 500,
+    "btc_etf_rows": 707,
+    "eth_etf_rows": 569,
     "sol_etf_rows": 13,
     "coingecko_total_positive": true,
-    "stablecoin_history_rows": 3241,
-    "eth_btc_history_rows": 499,
+    "stablecoin_history_rows": 3242,
+    "eth_btc_history_rows": 500,
     "etf_transport": "Farside mirror because direct Farside returned HTTP 403 on GitHub runner",
     "PASS": true
   }
