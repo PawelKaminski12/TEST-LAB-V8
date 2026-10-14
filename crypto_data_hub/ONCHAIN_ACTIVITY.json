@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-13T05:36:05.546778+00:00",
+  "generated_at_utc": "2026-10-14T05:46:23.466998+00:00",
   "engine": "ONCHAIN_ACTIVITY_v0.6",
   "assets": [
     {
@@ -38,27 +38,27 @@
         }
       },
       "chain_tvl": {
-        "latest_usd": 51205640601.0,
-        "change_7d_pct": -5.560168700242807,
-        "change_30d_pct": 2.2814742038619107,
+        "latest_usd": 51125280573.0,
+        "change_7d_pct": -5.424525658006985,
+        "change_30d_pct": 3.257887009099325,
         "trend": "FLAT"
       },
       "dex_volume": {
-        "latest_daily_usd": 1227569444.1299999,
-        "change_7d_vs_prev7_pct": -15.62484406135125,
-        "change_30d_vs_prev30_pct": 8.296589215334249,
+        "latest_daily_usd": 1302042497.08,
+        "change_7d_vs_prev7_pct": -18.083250038376764,
+        "change_30d_vs_prev30_pct": 6.311735195401003,
         "trend": "FALLING"
       },
       "stablecoin_liquidity": {
-        "latest_usd": 146580126543.64,
-        "change_7d_pct": -0.48462434660957454,
-        "change_30d_pct": -0.704146721639598,
+        "latest_usd": 146814733578.84,
+        "change_7d_pct": -0.5413710078726708,
+        "change_30d_pct": -0.6331853811554766,
         "trend": "FLAT"
       },
       "chain_fees": {
-        "latest_daily_usd": 10204140.170000002,
-        "change_7d_vs_prev7_pct": -1.0568849423613136,
-        "change_30d_vs_prev30_pct": 11.105008360381374,
+        "latest_daily_usd": 10465757.739999998,
+        "change_7d_vs_prev7_pct": -3.073176645731923,
+        "change_30d_vs_prev30_pct": 8.98104085244109,
         "trend": "RISING"
       },
       "protocol_tvl": {
@@ -78,8 +78,8 @@
       },
       "long_onchain_score_0_10": 9,
       "long_onchain_label": "STRONG_POSITIVE",
-      "tactical_onchain_score_0_10": 2,
-      "tactical_onchain_label": "NEGATIVE",
+      "tactical_onchain_score_0_10": 1,
+      "tactical_onchain_label": "STRONG_NEGATIVE",
       "role": "context only; never standalone trade signal"
     },
     {
@@ -118,28 +118,28 @@
         }
       },
       "chain_tvl": {
-        "latest_usd": 6064039627.0,
-        "change_7d_pct": -8.1977730973266,
-        "change_30d_pct": 2.6602211592626768,
+        "latest_usd": 6049463053.0,
+        "change_7d_pct": -8.270767837738436,
+        "change_30d_pct": 4.114715049196738,
         "trend": "FALLING"
       },
       "dex_volume": {
-        "latest_daily_usd": 1301635043.1499999,
-        "change_7d_vs_prev7_pct": -21.439157765570105,
-        "change_30d_vs_prev30_pct": -6.667460411951764,
+        "latest_daily_usd": 1233708066.5900002,
+        "change_7d_vs_prev7_pct": -19.482100628187926,
+        "change_30d_vs_prev30_pct": -8.710456996428473,
         "trend": "STRONG_FALLING"
       },
       "stablecoin_liquidity": {
-        "latest_usd": 16172413425.67,
-        "change_7d_pct": -4.798466669155788,
-        "change_30d_pct": -1.7258093603963243,
-        "trend": "FALLING"
+        "latest_usd": 16431476096.71,
+        "change_7d_pct": -2.4490944605381926,
+        "change_30d_pct": 0.8750632316944618,
+        "trend": "FLAT"
       },
       "chain_fees": {
-        "latest_daily_usd": 12572993.1,
-        "change_7d_vs_prev7_pct": -22.17716186379134,
-        "change_30d_vs_prev30_pct": 27.09284416617519,
-        "trend": "RISING"
+        "latest_daily_usd": 11220375.55,
+        "change_7d_vs_prev7_pct": -23.89605549590277,
+        "change_30d_vs_prev30_pct": 24.578981095231576,
+        "trend": "FLAT"
       },
       "protocol_tvl": {
         "latest_usd": null,
@@ -309,12 +309,12 @@
         "quality": "NO_DATA"
       },
       "protocol_fees": {
-        "fees_24h_usd": 306083.0,
-        "fees_7d_usd": 1549941.0,
-        "fees_30d_usd": 6158203.0,
-        "change_7d_vs_prev7_pct": 1.6993575266649685,
-        "change_30d_vs_prev30_pct": -4.0706167842845975,
-        "trend": "FLAT"
+        "fees_24h_usd": 44028.0,
+        "fees_7d_usd": 1339415.0,
+        "fees_30d_usd": 5986478.0,
+        "change_7d_vs_prev7_pct": -14.58524153766575,
+        "change_30d_vs_prev30_pct": -7.328866461238325,
+        "trend": "STRONG_FALLING"
       },
       "long_onchain_score_0_10": null,
       "long_onchain_label": "INSUFFICIENT_QUALITY",
