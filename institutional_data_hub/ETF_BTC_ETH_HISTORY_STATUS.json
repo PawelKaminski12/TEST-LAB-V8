@@ -1,42 +1,42 @@
 {
-  "generated_at_utc": "2026-10-16T03:03:29.511413+00:00",
+  "generated_at_utc": "2026-10-16T04:06:30.775026+00:00",
   "engine": "V8_ETF_HISTORY_v1.0",
   "BTC": {
-    "last_date": "2026-10-14",
-    "last_flow_usdm": -261.4,
-    "previous_flow_usdm": 175.7,
-    "change_vs_previous_usdm": -437.09999999999997,
-    "sum_5d_usdm": -374.09999999999997,
-    "previous_5d_usdm": -163.29999999999995,
-    "acceleration_5d_usdm": -210.8,
-    "sum_20d_usdm": 2389.3999999999996,
-    "sum_30d_usdm": 2346.7999999999993,
-    "positive_days_20": 14,
-    "negative_days_20": 6,
+    "last_date": "2026-10-15",
+    "last_flow_usdm": -11.7,
+    "previous_flow_usdm": -261.4,
+    "change_vs_previous_usdm": 249.7,
+    "sum_5d_usdm": -141.7,
+    "previous_5d_usdm": -510.1,
+    "acceleration_5d_usdm": 368.40000000000003,
+    "sum_20d_usdm": 2218.2,
+    "sum_30d_usdm": 2234.0,
+    "positive_days_20": 13,
+    "negative_days_20": 7,
     "streak": {
       "direction": "ODPŁYW",
-      "days": 1
+      "days": 2
     }
   },
   "ETH": {
-    "last_date": "2026-10-14",
-    "last_flow_usdm": -129.5,
-    "previous_flow_usdm": 24.8,
-    "change_vs_previous_usdm": -154.3,
-    "sum_5d_usdm": -318.7,
-    "previous_5d_usdm": -506.4,
-    "acceleration_5d_usdm": 187.7,
-    "sum_20d_usdm": -76.20000000000006,
-    "sum_30d_usdm": -4.7000000000001165,
+    "last_date": "2026-10-15",
+    "last_flow_usdm": -15.9,
+    "previous_flow_usdm": -129.5,
+    "change_vs_previous_usdm": 113.6,
+    "sum_5d_usdm": -262.09999999999997,
+    "previous_5d_usdm": -523.5,
+    "acceleration_5d_usdm": 261.40000000000003,
+    "sum_20d_usdm": -52.80000000000002,
+    "sum_30d_usdm": 27.599999999999888,
     "positive_days_20": 8,
     "negative_days_20": 12,
     "streak": {
       "direction": "ODPŁYW",
-      "days": 1
+      "days": 2
     }
   },
   "global_institutional_interest": {
-    "score_0_10": 2.0,
+    "score_0_10": 3.5,
     "label_pl": "SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE SŁABNIE"
   },
   "rules": {
