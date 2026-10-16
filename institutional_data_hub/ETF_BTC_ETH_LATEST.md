@@ -1,27 +1,27 @@
 # V8 — ETF BTC / ETH
 
-Czas odczytu: 2026-10-16T03:46:59.459641+00:00
+Czas odczytu: 2026-10-16T04:47:15.099643+00:00
 
 ## WSPÓLNY OBRAZ: SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE SŁABNIE
-Ocena zainteresowania instytucjonalnego: **2.0/10**
+Ocena zainteresowania instytucjonalnego: **3.5/10**
 
 ## BTC
-- Ostatni zakończony dzień: **2026-10-14** — -261.4 mln USD.
-- 5 zakończonych dni: -374.1 mln USD.
-- 20 zakończonych dni: 2 389.4 mln USD.
-- 30 zakończonych dni: 2 346.8 mln USD.
-- Trend: **ODPŁYW PRZYSPIESZA**.
-- Dzisiaj: **DZISIAJ — DANE WSTĘPNE** — podgląd -11.7 mln USD; kompletność funduszy 91.7%.
-- Dzisiejszy wiersz jest tylko podglądem. Do oceny trendu używamy wyłącznie zakończonych dni.
+- Ostatni zakończony dzień: **2026-10-15** — 5.1 mln USD.
+- 5 zakończonych dni: -124.9 mln USD.
+- 20 zakończonych dni: 2 235.0 mln USD.
+- 30 zakończonych dni: 2 250.8 mln USD.
+- Trend: **ODPŁYW KAPITAŁU, ALE PRESJA SŁABNIE**.
+- Dzisiaj: **DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE** — podgląd brak danych mln USD; kompletność funduszy 0.0%.
+- Nie traktujemy braku dzisiejszego wiersza jako odpływu ani napływu.
 
 ## ETH
-- Ostatni zakończony dzień: **2026-10-14** — -129.5 mln USD.
-- 5 zakończonych dni: -318.7 mln USD.
-- 20 zakończonych dni: -76.2 mln USD.
-- 30 zakończonych dni: -4.7 mln USD.
+- Ostatni zakończony dzień: **2026-10-15** — -60.3 mln USD.
+- 5 zakończonych dni: -306.5 mln USD.
+- 20 zakończonych dni: -97.2 mln USD.
+- 30 zakończonych dni: -16.8 mln USD.
 - Trend: **ODPŁYW KAPITAŁU, ALE PRESJA SŁABNIE**.
-- Dzisiaj: **DZISIAJ — DANE WSTĘPNE** — podgląd -15.9 mln USD; kompletność funduszy 81.8%.
-- Dzisiejszy wiersz jest tylko podglądem. Do oceny trendu używamy wyłącznie zakończonych dni.
+- Dzisiaj: **DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE** — podgląd brak danych mln USD; kompletność funduszy 0.0%.
+- Nie traktujemy braku dzisiejszego wiersza jako odpływu ani napływu.
 
 Dzisiejszy odczyt nie jest traktowany jako wynik końcowy. Do oceny trendu wchodzą wyłącznie zakończone dni ETF.
 Warstwa jest badawcza i nie wykonuje transakcji.
