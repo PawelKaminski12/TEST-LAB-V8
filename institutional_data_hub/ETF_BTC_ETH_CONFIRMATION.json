@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-16T02:04:58.612262+00:00",
+  "generated_at_utc": "2026-10-16T03:03:29.361833+00:00",
   "engine": "V8_ETF_BTC_ETH_CONFIRMATION_v1.0",
   "assets": {
     "BTC": {
@@ -19,7 +19,7 @@
       "flow_trend_pl": "ODPŁYW PRZYSPIESZA",
       "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
       "today_preview_usdm": -7.6,
-      "today_completeness_pct": 75.0,
+      "today_completeness_pct": 83.3,
       "price_ret5_pct": 4.492849953362432,
       "price_ret20_pct": 4.016771281300402,
       "price_vs_etf_5d": {
