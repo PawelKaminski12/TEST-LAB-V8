@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-10-16T00:54:59.306066+00:00",
-  "generated_at_new_york": "2026-10-15T20:54:59.306066-04:00",
+  "generated_at_utc": "2026-10-16T01:43:32.417176+00:00",
+  "generated_at_new_york": "2026-10-15T21:43:32.417176-04:00",
   "engine": "V8_ETF_BTC_ETH_MONITOR_v1.0",
   "assets": {
     "BTC": {
@@ -24,8 +24,8 @@
       "today_date": "2026-10-15",
       "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
       "today_flow_preview_usdm": -7.6,
-      "today_fund_completeness_pct": 58.3,
-      "today_funds_present": 7,
+      "today_fund_completeness_pct": 75.0,
+      "today_funds_present": 9,
       "today_funds_total": 12,
       "today_note_pl": "Dzisiejszy wiersz jest tylko podglądem. Do oceny trendu używamy wyłącznie zakończonych dni.",
       "rules": {
@@ -54,9 +54,9 @@
       },
       "today_date": "2026-10-15",
       "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
-      "today_flow_preview_usdm": -18.3,
-      "today_fund_completeness_pct": 54.5,
-      "today_funds_present": 6,
+      "today_flow_preview_usdm": -15.9,
+      "today_fund_completeness_pct": 72.7,
+      "today_funds_present": 8,
       "today_funds_total": 11,
       "today_note_pl": "Dzisiejszy wiersz jest tylko podglądem. Do oceny trendu używamy wyłącznie zakończonych dni.",
       "rules": {
