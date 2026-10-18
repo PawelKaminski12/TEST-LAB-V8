@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-16",
+  "date": "2026-10-17",
   "engine": "CRYPTO_MARKET_PHASE_v0.2",
   "phase": "BTC_LEAD",
   "phase_score_0_10": 4,
@@ -8,25 +8,25 @@
   "rotation_score_0_10": 4,
   "rotation_status": "EARLY",
   "rotation_confidence": "HIGH",
-  "history_days": 23,
+  "history_days": 24,
   "broad_rotation_history_ready": true,
   "inputs": {
     "btc_trend": true,
     "eth_trend": false,
     "eth_btc_strength": false,
-    "eth_btc_5d_pct": -1.9446496333622831,
-    "eth_btc_20d_pct": -7.014229819644601,
-    "btc_drawdown_365d_pct": -28.756924355399903,
-    "eth_drawdown_365d_pct": -41.72025220875035,
-    "btc_dominance_pct": 59.31057002725767,
-    "eth_dominance_pct": 10.724867333386728,
-    "btc_dom_5d_change_pp": 0.005760705175084979,
-    "btc_dom_20d_change_pp": 1.0262844816373757,
-    "others_btc_eq_5d_change_pct": 1.382693905257515,
-    "others_btc_eq_20d_change_pct": -0.9930872298659521,
-    "stablecoin_7d_pct": -0.5712250297300492,
-    "stablecoin_14d_pct": -0.5792297145721159,
-    "stablecoin_30d_pct": 0.6356632255679839,
+    "eth_btc_5d_pct": -1.3797903172038883,
+    "eth_btc_20d_pct": -7.361847798277954,
+    "btc_drawdown_365d_pct": -28.865688891527018,
+    "eth_drawdown_365d_pct": -42.21851358435574,
+    "btc_dominance_pct": 59.5151031924262,
+    "eth_dominance_pct": 10.667648621863613,
+    "btc_dom_5d_change_pp": 0.2269824706273127,
+    "btc_dom_20d_change_pp": 1.2006135610817594,
+    "others_btc_eq_5d_change_pct": -4.44443129895199,
+    "others_btc_eq_20d_change_pct": -4.349629407943512,
+    "stablecoin_7d_pct": -0.44041642402112835,
+    "stablecoin_14d_pct": -0.7691578189941595,
+    "stablecoin_30d_pct": 0.5464254379183853,
     "btc_etf_1d_usdm": -82.4,
     "btc_etf_5d_usdm": -228.4,
     "btc_etf_20d_usdm": 1719.6,
@@ -39,8 +39,8 @@
     "eth_etf_accel_5d_usdm": 222.10000000000002,
     "sol_etf_1d_usdm": -12.7,
     "sol_etf_5d_usdm": -25.5,
-    "sol_etf_20d_usdm": -49.7,
-    "sol_etf_30d_usdm": -49.7,
+    "sol_etf_20d_usdm": -57.400000000000006,
+    "sol_etf_30d_usdm": -57.400000000000006,
     "sol_etf_accel_5d_usdm": -0.5
   },
   "dual_horizon_flow_context": {
@@ -51,8 +51,8 @@
       "role": "capital-flow confirmation, never standalone buy signal"
     },
     "TACTICAL": {
-      "score_0_5": 2,
-      "label": "NEUTRAL",
+      "score_0_5": 1,
+      "label": "WEAK",
       "horizon": "1D_5D_7D_ACCELERATION",
       "role": "shorter-horizon confirmation, never standalone trade signal"
     }
@@ -91,11 +91,11 @@
         "rows": 572,
         "mature": true
       },
-      "stablecoin_7d_pct": -0.5712250297300492,
-      "stablecoin_14d_pct": -0.5792297145721159,
-      "stablecoin_30d_pct": 0.6356632255679839,
+      "stablecoin_7d_pct": -0.44041642402112835,
+      "stablecoin_14d_pct": -0.7691578189941595,
+      "stablecoin_30d_pct": 0.5464254379183853,
       "long_flow_score_0_10": 2,
-      "tactical_flow_score_0_5": 2
+      "tactical_flow_score_0_5": 1
     },
     {
       "symbol": "SOL",
@@ -105,27 +105,27 @@
       "rotation_status": "EARLY",
       "rotation_label": "WATCH",
       "individual_rs_0_4": 3,
-      "vs_btc_5d_pct": -3.7170201446353412,
-      "vs_btc_20d_pct": -10.999319036517917,
-      "vs_eth_5d_pct": -1.807520451098299,
-      "vs_eth_20d_pct": -4.285697918233977,
+      "vs_btc_5d_pct": -1.7343275787595425,
+      "vs_btc_20d_pct": -12.07889569145908,
+      "vs_eth_5d_pct": -0.35949757427610196,
+      "vs_eth_20d_pct": -5.091906283827474,
       "trend_score_0_4": 2,
       "fomo_score_0_10": 0,
       "direct_etf_context": {
         "flow_1d_usdm": -12.7,
         "flow_5d_usdm": -25.5,
-        "flow_20d_usdm": -49.7,
-        "flow_30d_usdm": -49.7,
+        "flow_20d_usdm": -57.400000000000006,
+        "flow_30d_usdm": -57.400000000000006,
         "acceleration_5d_vs_prev5_usdm": -0.5,
         "trend_label": "OUTFLOW_ACCELERATING",
-        "rows": 15,
+        "rows": 14,
         "mature": false
       },
-      "stablecoin_7d_pct": -0.5712250297300492,
-      "stablecoin_14d_pct": -0.5792297145721159,
-      "stablecoin_30d_pct": 0.6356632255679839,
+      "stablecoin_7d_pct": -0.44041642402112835,
+      "stablecoin_14d_pct": -0.7691578189941595,
+      "stablecoin_30d_pct": 0.5464254379183853,
       "long_flow_score_0_10": 2,
-      "tactical_flow_score_0_5": 2
+      "tactical_flow_score_0_5": 1
     },
     {
       "symbol": "LINK",
@@ -135,18 +135,18 @@
       "rotation_status": "EARLY",
       "rotation_label": "WATCH",
       "individual_rs_0_4": 3,
-      "vs_btc_5d_pct": -5.030957486866338,
-      "vs_btc_20d_pct": -9.682346017979626,
-      "vs_eth_5d_pct": -3.1475160120932544,
-      "vs_eth_20d_pct": -2.8693811893582666,
+      "vs_btc_5d_pct": -4.643190901055416,
+      "vs_btc_20d_pct": -11.405800829042745,
+      "vs_eth_5d_pct": -3.3090586547605105,
+      "vs_eth_20d_pct": -4.365321344017081,
       "trend_score_0_4": 2,
       "fomo_score_0_10": 0,
       "direct_etf_context": null,
-      "stablecoin_7d_pct": -0.5712250297300492,
-      "stablecoin_14d_pct": -0.5792297145721159,
-      "stablecoin_30d_pct": 0.6356632255679839,
+      "stablecoin_7d_pct": -0.44041642402112835,
+      "stablecoin_14d_pct": -0.7691578189941595,
+      "stablecoin_30d_pct": 0.5464254379183853,
       "long_flow_score_0_10": 2,
-      "tactical_flow_score_0_5": 2
+      "tactical_flow_score_0_5": 1
     },
     {
       "symbol": "ONDO",
@@ -156,18 +156,18 @@
       "rotation_status": "EARLY",
       "rotation_label": "WATCH",
       "individual_rs_0_4": 4,
-      "vs_btc_5d_pct": -10.634485126836024,
-      "vs_btc_20d_pct": -12.610091774972442,
-      "vs_eth_5d_pct": -8.862173722271837,
-      "vs_eth_20d_pct": -6.017976669413072,
+      "vs_btc_5d_pct": -6.125785510005233,
+      "vs_btc_20d_pct": -22.587194548956223,
+      "vs_eth_5d_pct": -4.8123961691690305,
+      "vs_eth_20d_pct": -16.43528760971471,
       "trend_score_0_4": 3,
       "fomo_score_0_10": 0,
       "direct_etf_context": null,
-      "stablecoin_7d_pct": -0.5712250297300492,
-      "stablecoin_14d_pct": -0.5792297145721159,
-      "stablecoin_30d_pct": 0.6356632255679839,
+      "stablecoin_7d_pct": -0.44041642402112835,
+      "stablecoin_14d_pct": -0.7691578189941595,
+      "stablecoin_30d_pct": 0.5464254379183853,
       "long_flow_score_0_10": 2,
-      "tactical_flow_score_0_5": 2
+      "tactical_flow_score_0_5": 1
     },
     {
       "symbol": "RENDER",
@@ -184,11 +184,11 @@
       "trend_score_0_4": 4,
       "fomo_score_0_10": 0,
       "direct_etf_context": null,
-      "stablecoin_7d_pct": -0.5712250297300492,
-      "stablecoin_14d_pct": -0.5792297145721159,
-      "stablecoin_30d_pct": 0.6356632255679839,
+      "stablecoin_7d_pct": -0.44041642402112835,
+      "stablecoin_14d_pct": -0.7691578189941595,
+      "stablecoin_30d_pct": 0.5464254379183853,
       "long_flow_score_0_10": 2,
-      "tactical_flow_score_0_5": 2
+      "tactical_flow_score_0_5": 1
     },
     {
       "symbol": "FLOKI",
@@ -205,11 +205,11 @@
       "trend_score_0_4": 1,
       "fomo_score_0_10": 0,
       "direct_etf_context": null,
-      "stablecoin_7d_pct": -0.5712250297300492,
-      "stablecoin_14d_pct": -0.5792297145721159,
-      "stablecoin_30d_pct": 0.6356632255679839,
+      "stablecoin_7d_pct": -0.44041642402112835,
+      "stablecoin_14d_pct": -0.7691578189941595,
+      "stablecoin_30d_pct": 0.5464254379183853,
       "long_flow_score_0_10": 2,
-      "tactical_flow_score_0_5": 2
+      "tactical_flow_score_0_5": 1
     },
     {
       "symbol": "PEPE",
@@ -226,11 +226,11 @@
       "trend_score_0_4": 3,
       "fomo_score_0_10": 0,
       "direct_etf_context": null,
-      "stablecoin_7d_pct": -0.5712250297300492,
-      "stablecoin_14d_pct": -0.5792297145721159,
-      "stablecoin_30d_pct": 0.6356632255679839,
+      "stablecoin_7d_pct": -0.44041642402112835,
+      "stablecoin_14d_pct": -0.7691578189941595,
+      "stablecoin_30d_pct": 0.5464254379183853,
       "long_flow_score_0_10": 2,
-      "tactical_flow_score_0_5": 2
+      "tactical_flow_score_0_5": 1
     },
     {
       "symbol": "SPX6900",
@@ -247,11 +247,11 @@
       "trend_score_0_4": 0,
       "fomo_score_0_10": 0,
       "direct_etf_context": null,
-      "stablecoin_7d_pct": -0.5712250297300492,
-      "stablecoin_14d_pct": -0.5792297145721159,
-      "stablecoin_30d_pct": 0.6356632255679839,
+      "stablecoin_7d_pct": -0.44041642402112835,
+      "stablecoin_14d_pct": -0.7691578189941595,
+      "stablecoin_30d_pct": 0.5464254379183853,
       "long_flow_score_0_10": 2,
-      "tactical_flow_score_0_5": 2
+      "tactical_flow_score_0_5": 1
     },
     {
       "symbol": "XRP",
@@ -268,11 +268,11 @@
       "trend_score_0_4": 1,
       "fomo_score_0_10": 0,
       "direct_etf_context": null,
-      "stablecoin_7d_pct": -0.5712250297300492,
-      "stablecoin_14d_pct": -0.5792297145721159,
-      "stablecoin_30d_pct": 0.6356632255679839,
+      "stablecoin_7d_pct": -0.44041642402112835,
+      "stablecoin_14d_pct": -0.7691578189941595,
+      "stablecoin_30d_pct": 0.5464254379183853,
       "long_flow_score_0_10": 2,
-      "tactical_flow_score_0_5": 2
+      "tactical_flow_score_0_5": 1
     },
     {
       "symbol": "XLM",
@@ -289,11 +289,11 @@
       "trend_score_0_4": 1,
       "fomo_score_0_10": 0,
       "direct_etf_context": null,
-      "stablecoin_7d_pct": -0.5712250297300492,
-      "stablecoin_14d_pct": -0.5792297145721159,
-      "stablecoin_30d_pct": 0.6356632255679839,
+      "stablecoin_7d_pct": -0.44041642402112835,
+      "stablecoin_14d_pct": -0.7691578189941595,
+      "stablecoin_30d_pct": 0.5464254379183853,
       "long_flow_score_0_10": 2,
-      "tactical_flow_score_0_5": 2
+      "tactical_flow_score_0_5": 1
     },
     {
       "symbol": "HBAR",
@@ -303,18 +303,18 @@
       "rotation_status": "EARLY",
       "rotation_label": "WATCH",
       "individual_rs_0_4": 3,
-      "vs_btc_5d_pct": -8.838908062542695,
-      "vs_btc_20d_pct": -7.50164465305625,
-      "vs_eth_5d_pct": -7.030986482024892,
-      "vs_eth_20d_pct": -0.5241821759031207,
+      "vs_btc_5d_pct": -1.385700585219951,
+      "vs_btc_20d_pct": -7.739386406086169,
+      "vs_eth_5d_pct": -0.005992958274037008,
+      "vs_eth_20d_pct": -0.40754116833647824,
       "trend_score_0_4": 1,
       "fomo_score_0_10": 0,
       "direct_etf_context": null,
-      "stablecoin_7d_pct": -0.5712250297300492,
-      "stablecoin_14d_pct": -0.5792297145721159,
-      "stablecoin_30d_pct": 0.6356632255679839,
+      "stablecoin_7d_pct": -0.44041642402112835,
+      "stablecoin_14d_pct": -0.7691578189941595,
+      "stablecoin_30d_pct": 0.5464254379183853,
       "long_flow_score_0_10": 2,
-      "tactical_flow_score_0_5": 2
+      "tactical_flow_score_0_5": 1
     },
     {
       "symbol": "AVAX",
@@ -331,11 +331,11 @@
       "trend_score_0_4": 3,
       "fomo_score_0_10": 0,
       "direct_etf_context": null,
-      "stablecoin_7d_pct": -0.5712250297300492,
-      "stablecoin_14d_pct": -0.5792297145721159,
-      "stablecoin_30d_pct": 0.6356632255679839,
+      "stablecoin_7d_pct": -0.44041642402112835,
+      "stablecoin_14d_pct": -0.7691578189941595,
+      "stablecoin_30d_pct": 0.5464254379183853,
       "long_flow_score_0_10": 2,
-      "tactical_flow_score_0_5": 2
+      "tactical_flow_score_0_5": 1
     },
     {
       "symbol": "AWE",
@@ -352,11 +352,11 @@
       "trend_score_0_4": 2,
       "fomo_score_0_10": 0,
       "direct_etf_context": null,
-      "stablecoin_7d_pct": -0.5712250297300492,
-      "stablecoin_14d_pct": -0.5792297145721159,
-      "stablecoin_30d_pct": 0.6356632255679839,
+      "stablecoin_7d_pct": -0.44041642402112835,
+      "stablecoin_14d_pct": -0.7691578189941595,
+      "stablecoin_30d_pct": 0.5464254379183853,
       "long_flow_score_0_10": 2,
-      "tactical_flow_score_0_5": 2
+      "tactical_flow_score_0_5": 1
     }
   ],
   "limitations": [
