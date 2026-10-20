@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-19T06:01:10.503502+00:00",
+  "generated_at_utc": "2026-10-20T05:59:35.537658+00:00",
   "engine": "PROJECT_ACTIVITY_v0.1",
   "assets": [
     {
@@ -13,11 +13,11 @@
       "quality_status": "TRUSTED",
       "independent_layers_ready": 1,
       "stablecoin_supply": {
-        "latest_usd": 145858594055.42,
-        "change_7d_pct": 0.013302209000554122,
-        "change_30d_pct": -0.6373413324836652,
+        "latest_usd": 145182632570.61002,
+        "change_7d_pct": -0.48365107352588144,
+        "change_30d_pct": -0.8720741148821043,
         "trend": "FLAT",
-        "rows": 3247
+        "rows": 3248
       },
       "protocol_fees": {
         "latest_daily_usd": null,
@@ -55,11 +55,11 @@
       "quality_status": "TRUSTED",
       "independent_layers_ready": 1,
       "stablecoin_supply": {
-        "latest_usd": 15839151286.53,
-        "change_7d_pct": -2.103958140281248,
-        "change_30d_pct": 0.9339362488690606,
+        "latest_usd": 15911797005.86,
+        "change_7d_pct": -0.9386134577537564,
+        "change_30d_pct": 1.8270184871992612,
         "trend": "FLAT",
-        "rows": 1623
+        "rows": 1624
       },
       "protocol_fees": {
         "latest_daily_usd": null,
@@ -104,13 +104,13 @@
         "rows": 0
       },
       "protocol_fees": {
-        "latest_daily_usd": 7417.0,
-        "sum_7d_usd": 1115931.0,
-        "sum_30d_usd": 4459094.0,
-        "change_7d_vs_prev7_pct": 0.3279740857317748,
-        "change_30d_vs_prev30_pct": -3.7751333341245807,
+        "latest_daily_usd": 3303.0,
+        "sum_7d_usd": 1110079.0,
+        "sum_30d_usd": 4450014.0,
+        "change_7d_vs_prev7_pct": -0.22658637425849726,
+        "change_30d_vs_prev30_pct": -3.920568252994272,
         "trend": "FLAT",
-        "rows": 1043
+        "rows": 1044
       },
       "protocol_revenue": {
         "latest_daily_usd": 0.0,
@@ -119,7 +119,7 @@
         "change_7d_vs_prev7_pct": 9.284456807379392,
         "change_30d_vs_prev30_pct": -1.0339799912372993,
         "trend": "RISING",
-        "rows": 781
+        "rows": 782
       },
       "long_project_activity_score_0_10": 2,
       "long_project_activity_label": "NEGATIVE",
@@ -146,13 +146,13 @@
         "rows": 0
       },
       "protocol_fees": {
-        "latest_daily_usd": 227202.0,
-        "sum_7d_usd": 1502915.0,
-        "sum_30d_usd": 6673608.0,
-        "change_7d_vs_prev7_pct": -3.0340509735531818,
-        "change_30d_vs_prev30_pct": -14.408749545341914,
-        "trend": "FALLING",
-        "rows": 551
+        "latest_daily_usd": 321668.0,
+        "sum_7d_usd": 1874984.0,
+        "sum_30d_usd": 6628765.0,
+        "change_7d_vs_prev7_pct": 39.985292086470594,
+        "change_30d_vs_prev30_pct": -16.606447736468542,
+        "trend": "RISING",
+        "rows": 552
       },
       "protocol_revenue": {
         "latest_daily_usd": 0.0,
@@ -161,12 +161,12 @@
         "change_7d_vs_prev7_pct": null,
         "change_30d_vs_prev30_pct": null,
         "trend": "NO_DATA",
-        "rows": 551
+        "rows": 552
       },
       "long_project_activity_score_0_10": 0,
       "long_project_activity_label": "STRONG_NEGATIVE",
-      "tactical_project_activity_score_0_10": 0,
-      "tactical_project_activity_label": "STRONG_NEGATIVE",
+      "tactical_project_activity_score_0_10": 10,
+      "tactical_project_activity_label": "STRONG_POSITIVE",
       "trusted": true,
       "role": "project/liquidity context only; never standalone buy/sell signal"
     }
