@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-20T00:00:04.068862+00:00",
+  "generated_at_utc": "2026-10-20T01:15:12.017587+00:00",
   "engine": "V8_ETF_BTC_ETH_CONFIRMATION_v1.0",
   "assets": {
     "BTC": {
@@ -20,7 +20,7 @@
       "flow_trend_pl": "ODPŁYW KAPITAŁU, ALE PRESJA SŁABNIE",
       "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
       "today_preview_usdm": -54.9,
-      "today_completeness_pct": 50.0,
+      "today_completeness_pct": 66.7,
       "price_ret5_pct": 4.492849953362432,
       "price_ret20_pct": 4.016771281300402,
       "price_vs_etf_5d": {
@@ -59,7 +59,7 @@
       "flow_trend_pl": "ODPŁYW KAPITAŁU, ALE PRESJA SŁABNIE",
       "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
       "today_preview_usdm": -1.9,
-      "today_completeness_pct": 54.5,
+      "today_completeness_pct": 63.6,
       "price_ret5_pct": 2.530983786767438,
       "price_ret20_pct": 6.755095200914485,
       "price_vs_etf_5d": {
