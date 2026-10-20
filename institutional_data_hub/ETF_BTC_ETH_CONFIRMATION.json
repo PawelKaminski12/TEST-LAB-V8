@@ -1,15 +1,14 @@
 {
-  "generated_at_utc": "2026-10-20T01:15:12.017587+00:00",
+  "generated_at_utc": "2026-10-20T02:05:52.021880+00:00",
   "engine": "V8_ETF_BTC_ETH_CONFIRMATION_v1.0",
   "assets": {
     "BTC": {
       "asset": "BTC",
       "quality": {
-        "score_0_100": 67,
+        "score_0_100": 70,
         "label_pl": "DANE WYMAGAJĄ OSTROŻNOŚCI",
         "reasons_pl": [
-          "DANE ZAMKNIĘTE SĄ STARE",
-          "DZISIAJ DANE SĄ CZĘŚCIOWE"
+          "DANE ZAMKNIĘTE SĄ STARE"
         ]
       },
       "last_closed_date": "2026-10-16",
@@ -19,8 +18,8 @@
       "closed_30d_usdm": 1437.6,
       "flow_trend_pl": "ODPŁYW KAPITAŁU, ALE PRESJA SŁABNIE",
       "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
-      "today_preview_usdm": -54.9,
-      "today_completeness_pct": 66.7,
+      "today_preview_usdm": -138.5,
+      "today_completeness_pct": 91.7,
       "price_ret5_pct": 4.492849953362432,
       "price_ret20_pct": 4.016771281300402,
       "price_vs_etf_5d": {
@@ -44,11 +43,10 @@
     "ETH": {
       "asset": "ETH",
       "quality": {
-        "score_0_100": 67,
+        "score_0_100": 70,
         "label_pl": "DANE WYMAGAJĄ OSTROŻNOŚCI",
         "reasons_pl": [
-          "DANE ZAMKNIĘTE SĄ STARE",
-          "DZISIAJ DANE SĄ CZĘŚCIOWE"
+          "DANE ZAMKNIĘTE SĄ STARE"
         ]
       },
       "last_closed_date": "2026-10-16",
@@ -58,8 +56,8 @@
       "closed_30d_usdm": -227.9000000000001,
       "flow_trend_pl": "ODPŁYW KAPITAŁU, ALE PRESJA SŁABNIE",
       "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
-      "today_preview_usdm": -1.9,
-      "today_completeness_pct": 63.6,
+      "today_preview_usdm": -7.9,
+      "today_completeness_pct": 81.8,
       "price_ret5_pct": 2.530983786767438,
       "price_ret20_pct": 6.755095200914485,
       "price_vs_etf_5d": {
