@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-21T23:02:11.517274+00:00",
+  "generated_at_utc": "2026-10-21T23:58:50.201213+00:00",
   "engine": "V8_ETF_BTC_ETH_CONFIRMATION_v1.0",
   "assets": {
     "BTC": {
@@ -18,8 +18,8 @@
       "closed_30d_usdm": 1859.5,
       "flow_trend_pl": "NAPŁYW PRZYSPIESZA",
       "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
-      "today_preview_usdm": 40.8,
-      "today_completeness_pct": 25.0,
+      "today_preview_usdm": 77.1,
+      "today_completeness_pct": 50.0,
       "price_ret5_pct": 4.492849953362432,
       "price_ret20_pct": 4.016771281300402,
       "price_vs_etf_5d": {
@@ -56,8 +56,8 @@
       "closed_30d_usdm": -359.4000000000001,
       "flow_trend_pl": "ODPŁYW PRZYSPIESZA",
       "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
-      "today_preview_usdm": 29.4,
-      "today_completeness_pct": 27.3,
+      "today_preview_usdm": 31.2,
+      "today_completeness_pct": 54.5,
       "price_ret5_pct": 2.530983786767438,
       "price_ret20_pct": 6.755095200914485,
       "price_vs_etf_5d": {
