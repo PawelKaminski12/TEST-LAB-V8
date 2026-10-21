@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-10-21T15:49:39.997618+00:00",
-  "generated_at_new_york": "2026-10-21T11:49:39.997618-04:00",
+  "generated_at_utc": "2026-10-21T16:48:03.630343+00:00",
+  "generated_at_new_york": "2026-10-21T12:48:03.630343-04:00",
   "engine": "V8_ETF_BTC_ETH_MONITOR_v1.0",
   "assets": {
     "BTC": {
@@ -8,7 +8,7 @@
       "source_url": "https://raw.githubusercontent.com/haturatu/crypto-etf-flow/main/etf_btc.csv",
       "primary_source": "Farside Investors",
       "transport": "haturatu/crypto-etf-flow mirror",
-      "last_source_date": "2026-10-20",
+      "last_source_date": "2026-10-21",
       "last_closed_date": "2026-10-20",
       "last_closed_flow_usdm": 23.2,
       "closed_5d_usdm": 211.2000000000001,
@@ -22,12 +22,12 @@
         "acceleration_5d_usdm": 808.8
       },
       "today_date": "2026-10-21",
-      "today_status_pl": "DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE",
-      "today_flow_preview_usdm": null,
+      "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
+      "today_flow_preview_usdm": 0.0,
       "today_fund_completeness_pct": 0.0,
       "today_funds_present": 0,
       "today_funds_total": 12,
-      "today_note_pl": "Nie traktujemy braku dzisiejszego wiersza jako odpływu ani napływu.",
+      "today_note_pl": "Dzisiejszy wiersz jest tylko podglądem. Do oceny trendu używamy wyłącznie zakończonych dni.",
       "rules": {
         "today_never_treated_as_final_same_day": true,
         "closed_trend_excludes_today": true,
@@ -39,7 +39,7 @@
       "source_url": "https://raw.githubusercontent.com/haturatu/crypto-etf-flow/main/etf_eth.csv",
       "primary_source": "Farside Investors",
       "transport": "haturatu/crypto-etf-flow mirror",
-      "last_source_date": "2026-10-20",
+      "last_source_date": "2026-10-21",
       "last_closed_date": "2026-10-20",
       "last_closed_flow_usdm": -26.1,
       "closed_5d_usdm": -388.90000000000003,
@@ -53,12 +53,12 @@
         "acceleration_5d_usdm": -38.80000000000007
       },
       "today_date": "2026-10-21",
-      "today_status_pl": "DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE",
-      "today_flow_preview_usdm": null,
+      "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
+      "today_flow_preview_usdm": 0.0,
       "today_fund_completeness_pct": 0.0,
       "today_funds_present": 0,
       "today_funds_total": 11,
-      "today_note_pl": "Nie traktujemy braku dzisiejszego wiersza jako odpływu ani napływu.",
+      "today_note_pl": "Dzisiejszy wiersz jest tylko podglądem. Do oceny trendu używamy wyłącznie zakończonych dni.",
       "rules": {
         "today_never_treated_as_final_same_day": true,
         "closed_trend_excludes_today": true,
