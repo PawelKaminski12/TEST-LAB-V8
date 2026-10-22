@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-22T07:13:44.479333+00:00",
+  "generated_at_utc": "2026-10-22T13:10:56.401138+00:00",
   "engine": "V8_LAB_DEEP_REPORT_v0.1",
   "source_lab_engine": "V8_ASSET_LAB_v0.5",
   "assets": [
@@ -92,7 +92,7 @@
         "zapisane_punkty": "D0",
         "nastepny_punkt": "D7",
         "cena_biezaca": 201.99000549316406,
-        "zmiana_ceny_od_startu_pct": -1.1102230246251565e-14,
+        "zmiana_ceny_od_startu_pct": 0.0,
         "zmiana_oceny_od_startu": 0.0,
         "zmiana_trendu_od_startu": 0.0,
         "zmiana_rsi_od_startu": 0.0,
@@ -102,10 +102,10 @@
         "onchain_tactical": null,
         "etf_status": null,
         "decyzja_glownego_silnika": null,
-        "opis_zmian": "Cena od punktu startowego: -0.00% | Ocena LAB zmieniła się o +0.00 pkt | Trend: BEZ ZMIANY"
+        "opis_zmian": "Cena od punktu startowego: +0.00% | Ocena LAB zmieniła się o +0.00 pkt | Trend: BEZ ZMIANY"
       },
       "zmiany_od_punktu_startowego": {
-        "price_pct": -1.1102230246251565e-14,
+        "price_pct": 0.0,
         "trend_change": 0.0,
         "rsi_change": 0.0,
         "mfi_change": 0.0,

@@ -1,6 +1,6 @@
 # V8 LAB — GŁĘBOKA OBSERWACJA
 
-Czas raportu: 2026-10-22T07:13:44.479333+00:00
+Czas raportu: 2026-10-22T13:10:56.401138+00:00
 
 ## BTC
 - Stan danych: **DANE WYSTARCZAJĄCE DO ANALIZY**.
@@ -36,11 +36,11 @@ Czas raportu: 2026-10-22T07:13:44.479333+00:00
 - Bieżąca ocena LAB: **SYGNAŁY MIESZANE — 5.15/10**.
 - Zapisane punkty obserwacji: D0.
 - Następny punkt obserwacji: **D7**.
-- Cena od punktu startowego: -0.00%.
+- Cena od punktu startowego: 0.00%.
 - Zmiana oceny LAB od startu: 0.00 pkt.
 - Zmiana trendu od startu: 0.00.
 - Zmiana RSI: 0.00 | zmiana MFI: 0.00 | zmiana FOMO: 0.00.
-- Co się zmieniło: Cena od punktu startowego: -0.00% | Ocena LAB zmieniła się o +0.00 pkt | Trend: BEZ ZMIANY.
+- Co się zmieniło: Cena od punktu startowego: +0.00% | Ocena LAB zmieniła się o +0.00 pkt | Trend: BEZ ZMIANY.
 
 ---
 
