@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-22",
+  "date": "2026-10-23",
   "engine": "ALT_ENGINE_DYNAMIC_v0.1",
   "universe_source": "config/alt_universe.csv",
   "universe_count": 13,
@@ -19,7 +19,7 @@
       "global_confidence": "HIGH",
       "relative_strength_0_4": 0,
       "context_label": "WEAK_RELATIVE",
-      "vs_btc_20d_pct": -7.0608349439162605,
+      "vs_btc_20d_pct": -7.249728843148972,
       "vs_eth_20d_pct": null,
       "own_trend_0_3": 2,
       "missing_layers": [
@@ -38,8 +38,8 @@
       "global_confidence": "HIGH",
       "relative_strength_0_4": 3,
       "context_label": "WATCH",
-      "vs_btc_20d_pct": -9.313929244741292,
-      "vs_eth_20d_pct": -2.424267852487616,
+      "vs_btc_20d_pct": -10.244937230269413,
+      "vs_eth_20d_pct": -3.2293257472586823,
       "own_trend_0_3": null,
       "missing_layers": [
         "GENERIC_PRICE_REGIME",
@@ -56,10 +56,10 @@
       "global_alt_rotation_score": 1,
       "global_alt_rotation_status": "OFF",
       "global_confidence": "HIGH",
-      "relative_strength_0_4": 3,
+      "relative_strength_0_4": 2,
       "context_label": "WATCH",
-      "vs_btc_20d_pct": -9.992234681386968,
-      "vs_eth_20d_pct": -3.1541059527506743,
+      "vs_btc_20d_pct": -12.515411785139053,
+      "vs_eth_20d_pct": -5.6772695931909585,
       "own_trend_0_3": null,
       "missing_layers": [
         "GENERIC_PRICE_REGIME",
@@ -78,8 +78,8 @@
       "global_confidence": "HIGH",
       "relative_strength_0_4": 3,
       "context_label": "WATCH",
-      "vs_btc_20d_pct": -9.674589794124433,
-      "vs_eth_20d_pct": -2.8123287406669806,
+      "vs_btc_20d_pct": -12.82111913908539,
+      "vs_eth_20d_pct": -6.006872245704353,
       "own_trend_0_3": null,
       "missing_layers": [
         "GENERIC_PRICE_REGIME",
@@ -230,8 +230,8 @@
       "global_confidence": "HIGH",
       "relative_strength_0_4": 2,
       "context_label": "WATCH",
-      "vs_btc_20d_pct": -18.939019959268787,
-      "vs_eth_20d_pct": -12.780602244688454,
+      "vs_btc_20d_pct": -20.681288662187626,
+      "vs_eth_20d_pct": -14.481423775381074,
       "own_trend_0_3": null,
       "missing_layers": [
         "GENERIC_PRICE_REGIME",
