@@ -1,43 +1,43 @@
 {
-  "generated_at_utc": "2026-10-27T00:45:49.850642+00:00",
+  "generated_at_utc": "2026-10-27T06:47:32.764142+00:00",
   "engine": "V8_ETF_HISTORY_v1.0",
   "BTC": {
-    "last_date": "2026-10-23",
-    "last_flow_usdm": -137.9,
-    "previous_flow_usdm": -635.6,
-    "change_vs_previous_usdm": 497.70000000000005,
-    "sum_5d_usdm": 301.20000000000005,
-    "previous_5d_usdm": -228.4,
-    "acceleration_5d_usdm": 529.6,
-    "sum_20d_usdm": -365.0,
-    "sum_30d_usdm": 2026.9000000000005,
+    "last_date": "2026-10-26",
+    "last_flow_usdm": 110.3,
+    "previous_flow_usdm": -137.9,
+    "change_vs_previous_usdm": 248.2,
+    "sum_5d_usdm": -115.20000000000003,
+    "previous_5d_usdm": 363.70000000000005,
+    "acceleration_5d_usdm": -478.9000000000001,
+    "sum_20d_usdm": -285.7,
+    "sum_30d_usdm": 1977.3,
     "positive_days_20": 11,
     "negative_days_20": 9,
-    "streak": {
-      "direction": "ODPŁYW",
-      "days": 2
-    }
-  },
-  "ETH": {
-    "last_date": "2026-10-23",
-    "last_flow_usdm": 4.4,
-    "previous_flow_usdm": -110.6,
-    "change_vs_previous_usdm": 115.0,
-    "sum_5d_usdm": -220.7,
-    "previous_5d_usdm": -320.1,
-    "acceleration_5d_usdm": 99.40000000000003,
-    "sum_20d_usdm": -1221.0999999999995,
-    "sum_30d_usdm": -671.9000000000001,
-    "positive_days_20": 4,
-    "negative_days_20": 16,
     "streak": {
       "direction": "NAPŁYW",
       "days": 1
     }
   },
+  "ETH": {
+    "last_date": "2026-10-26",
+    "last_flow_usdm": -88.6,
+    "previous_flow_usdm": 4.4,
+    "change_vs_previous_usdm": -93.0,
+    "sum_5d_usdm": -206.0,
+    "previous_5d_usdm": -338.0,
+    "acceleration_5d_usdm": 132.0,
+    "sum_20d_usdm": -1326.7999999999997,
+    "sum_30d_usdm": -881.6,
+    "positive_days_20": 3,
+    "negative_days_20": 17,
+    "streak": {
+      "direction": "ODPŁYW",
+      "days": 1
+    }
+  },
   "global_institutional_interest": {
-    "score_0_10": 6.5,
-    "label_pl": "PRZEPŁYWY BTC I ETH SĄ ROZBIEŻNE"
+    "score_0_10": 2.0,
+    "label_pl": "SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE SŁABNIE"
   },
   "rules": {
     "closed_days_only": true,
