@@ -1,43 +1,43 @@
 {
-  "generated_at_utc": "2026-10-28T02:33:29.321366+00:00",
+  "generated_at_utc": "2026-10-28T08:58:04.081409+00:00",
   "engine": "V8_ETF_HISTORY_v1.0",
   "BTC": {
-    "last_date": "2026-10-26",
-    "last_flow_usdm": 110.3,
-    "previous_flow_usdm": -137.9,
-    "change_vs_previous_usdm": 248.2,
-    "sum_5d_usdm": -115.20000000000003,
-    "previous_5d_usdm": 363.70000000000005,
-    "acceleration_5d_usdm": -478.9000000000001,
-    "sum_20d_usdm": -285.7,
-    "sum_30d_usdm": 1977.3,
+    "last_date": "2026-10-27",
+    "last_flow_usdm": 176.0,
+    "previous_flow_usdm": 110.3,
+    "change_vs_previous_usdm": 65.7,
+    "sum_5d_usdm": 37.59999999999991,
+    "previous_5d_usdm": 211.2000000000001,
+    "acceleration_5d_usdm": -173.6000000000002,
+    "sum_20d_usdm": -175.89999999999992,
+    "sum_30d_usdm": 2603.7000000000007,
     "positive_days_20": 11,
     "negative_days_20": 9,
     "streak": {
       "direction": "NAPŁYW",
-      "days": 1
+      "days": 2
     }
   },
   "ETH": {
-    "last_date": "2026-10-26",
-    "last_flow_usdm": -88.6,
-    "previous_flow_usdm": 4.4,
-    "change_vs_previous_usdm": -93.0,
-    "sum_5d_usdm": -206.0,
-    "previous_5d_usdm": -338.0,
-    "acceleration_5d_usdm": 132.0,
-    "sum_20d_usdm": -1326.7999999999997,
-    "sum_30d_usdm": -881.6,
+    "last_date": "2026-10-27",
+    "last_flow_usdm": -60.2,
+    "previous_flow_usdm": -88.6,
+    "change_vs_previous_usdm": 28.39999999999999,
+    "sum_5d_usdm": -240.09999999999997,
+    "previous_5d_usdm": -388.90000000000003,
+    "acceleration_5d_usdm": 148.80000000000007,
+    "sum_20d_usdm": -1384.1999999999996,
+    "sum_30d_usdm": -799.8000000000002,
     "positive_days_20": 3,
     "negative_days_20": 17,
     "streak": {
       "direction": "ODPŁYW",
-      "days": 1
+      "days": 2
     }
   },
   "global_institutional_interest": {
-    "score_0_10": 2.0,
-    "label_pl": "SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE SŁABNIE"
+    "score_0_10": 5.0,
+    "label_pl": "PRZEPŁYWY BTC I ETH SĄ ROZBIEŻNE"
   },
   "rules": {
     "closed_days_only": true,
