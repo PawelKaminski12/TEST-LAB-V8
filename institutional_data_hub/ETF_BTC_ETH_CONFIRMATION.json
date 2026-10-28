@@ -1,14 +1,14 @@
 {
-  "generated_at_utc": "2026-10-27T23:07:06.502535+00:00",
+  "generated_at_utc": "2026-10-28T02:33:22.538599+00:00",
   "engine": "V8_ETF_BTC_ETH_CONFIRMATION_v1.0",
   "assets": {
     "BTC": {
       "asset": "BTC",
       "quality": {
-        "score_0_100": 97,
+        "score_0_100": 90,
         "label_pl": "ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE",
         "reasons_pl": [
-          "DZISIAJ DANE SĄ CZĘŚCIOWE"
+          "OSTATNI ZAMKNIĘTY DZIEŃ MA KILKA DNI"
         ]
       },
       "last_closed_date": "2026-10-26",
@@ -18,8 +18,8 @@
       "closed_30d_usdm": 1977.3,
       "flow_trend_pl": "ODPŁYW PRZYSPIESZA",
       "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
-      "today_preview_usdm": 0.0,
-      "today_completeness_pct": 25.0,
+      "today_preview_usdm": 24.5,
+      "today_completeness_pct": 91.7,
       "price_ret5_pct": 4.492849953362432,
       "price_ret20_pct": 4.016771281300402,
       "price_vs_etf_5d": {
@@ -43,10 +43,10 @@
     "ETH": {
       "asset": "ETH",
       "quality": {
-        "score_0_100": 97,
+        "score_0_100": 90,
         "label_pl": "ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE",
         "reasons_pl": [
-          "DZISIAJ DANE SĄ CZĘŚCIOWE"
+          "OSTATNI ZAMKNIĘTY DZIEŃ MA KILKA DNI"
         ]
       },
       "last_closed_date": "2026-10-26",
@@ -56,8 +56,8 @@
       "closed_30d_usdm": -881.6,
       "flow_trend_pl": "ODPŁYW KAPITAŁU, ALE PRESJA SŁABNIE",
       "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
-      "today_preview_usdm": 4.5,
-      "today_completeness_pct": 27.3,
+      "today_preview_usdm": 33.1,
+      "today_completeness_pct": 81.8,
       "price_ret5_pct": 2.530983786767438,
       "price_ret20_pct": 6.755095200914485,
       "price_vs_etf_5d": {
