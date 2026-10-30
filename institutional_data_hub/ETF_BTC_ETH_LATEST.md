@@ -1,27 +1,27 @@
 # V8 — ETF BTC / ETH
 
-Czas odczytu: 2026-10-30T01:03:11.492879+00:00
+Czas odczytu: 2026-10-30T07:10:21.199793+00:00
 
-## WSPÓLNY OBRAZ: SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE SŁABNIE
-Ocena zainteresowania instytucjonalnego: **0.5/10**
+## WSPÓLNY OBRAZ: KAPITAŁ INSTYTUCJONALNY JEST PODZIELONY MIĘDZY BTC I ETH
+Ocena zainteresowania instytucjonalnego: **5.0/10**
 
 ## BTC
-- Ostatni zakończony dzień: **2026-10-28** — 137.3 mln USD.
-- 5 zakończonych dni: -349.9 mln USD.
-- 20 zakończonych dni: 110.1 mln USD.
-- 30 zakończonych dni: 3 036.9 mln USD.
-- Trend: **ODPŁYW PRZYSPIESZA**.
-- Dzisiaj: **DZISIAJ — DANE WSTĘPNE** — podgląd -15.3 mln USD; kompletność funduszy 16.7%.
-- Dzisiejszy wiersz jest tylko podglądem. Do oceny trendu używamy wyłącznie zakończonych dni.
+- Ostatni zakończony dzień: **2026-10-29** — 17.2 mln USD.
+- 5 zakończonych dni: 302.9 mln USD.
+- 20 zakończonych dni: 24.6 mln USD.
+- 30 zakończonych dni: 2 894.6 mln USD.
+- Trend: **NAPŁYW KAPITAŁU, ALE TEMPO SŁABNIE**.
+- Dzisiaj: **DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE** — podgląd brak danych mln USD; kompletność funduszy 0.0%.
+- Nie traktujemy braku dzisiejszego wiersza jako odpływu ani napływu.
 
 ## ETH
-- Ostatni zakończony dzień: **2026-10-28** — -21.4 mln USD.
-- 5 zakończonych dni: -276.4 mln USD.
-- 20 zakończonych dni: -1 346.0 mln USD.
-- 30 zakończonych dni: -597.1 mln USD.
-- Trend: **ODPŁYW PRZYSPIESZA**.
-- Dzisiaj: **DZISIAJ — DANE WSTĘPNE** — podgląd -21.1 mln USD; kompletność funduszy 18.2%.
-- Dzisiejszy wiersz jest tylko podglądem. Do oceny trendu używamy wyłącznie zakończonych dni.
+- Ostatni zakończony dzień: **2026-10-29** — -105.5 mln USD.
+- 5 zakończonych dni: -271.3 mln USD.
+- 20 zakończonych dni: -1 396.1 mln USD.
+- 30 zakończonych dni: -663.3 mln USD.
+- Trend: **ODPŁYW KAPITAŁU, ALE PRESJA SŁABNIE**.
+- Dzisiaj: **DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE** — podgląd brak danych mln USD; kompletność funduszy 0.0%.
+- Nie traktujemy braku dzisiejszego wiersza jako odpływu ani napływu.
 
 Dzisiejszy odczyt nie jest traktowany jako wynik końcowy. Do oceny trendu wchodzą wyłącznie zakończone dni ETF.
 Warstwa jest badawcza i nie wykonuje transakcji.
