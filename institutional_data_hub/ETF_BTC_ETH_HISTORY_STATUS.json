@@ -1,43 +1,43 @@
 {
-  "generated_at_utc": "2026-10-31T02:41:15.340597+00:00",
+  "generated_at_utc": "2026-10-31T09:55:40.977146+00:00",
   "engine": "V8_ETF_HISTORY_v1.0",
   "BTC": {
-    "last_date": "2026-10-29",
-    "last_flow_usdm": 17.2,
-    "previous_flow_usdm": 137.3,
-    "change_vs_previous_usdm": -120.10000000000001,
-    "sum_5d_usdm": 302.9,
-    "previous_5d_usdm": 356.69999999999993,
-    "acceleration_5d_usdm": -53.799999999999955,
-    "sum_20d_usdm": 24.600000000000033,
-    "sum_30d_usdm": 2894.6000000000004,
-    "positive_days_20": 12,
-    "negative_days_20": 8,
+    "last_date": "2026-10-30",
+    "last_flow_usdm": -643.2,
+    "previous_flow_usdm": 17.2,
+    "change_vs_previous_usdm": -660.4000000000001,
+    "sum_5d_usdm": -202.40000000000003,
+    "previous_5d_usdm": 301.20000000000005,
+    "acceleration_5d_usdm": -503.6000000000001,
+    "sum_20d_usdm": -808.5,
+    "sum_30d_usdm": 1818.3999999999999,
+    "positive_days_20": 11,
+    "negative_days_20": 9,
     "streak": {
-      "direction": "NAPŁYW",
-      "days": 4
+      "direction": "ODPŁYW",
+      "days": 1
     }
   },
   "ETH": {
-    "last_date": "2026-10-29",
-    "last_flow_usdm": -105.5,
-    "previous_flow_usdm": -21.4,
-    "change_vs_previous_usdm": -84.1,
-    "sum_5d_usdm": -271.29999999999995,
-    "previous_5d_usdm": -294.79999999999995,
-    "acceleration_5d_usdm": 23.5,
-    "sum_20d_usdm": -1396.1000000000001,
-    "sum_30d_usdm": -663.3000000000001,
+    "last_date": "2026-10-30",
+    "last_flow_usdm": -155.7,
+    "previous_flow_usdm": -105.5,
+    "change_vs_previous_usdm": -50.19999999999999,
+    "sum_5d_usdm": -431.40000000000003,
+    "previous_5d_usdm": -220.7,
+    "acceleration_5d_usdm": -210.70000000000005,
+    "sum_20d_usdm": -1514.4,
+    "sum_30d_usdm": -962.7,
     "positive_days_20": 3,
     "negative_days_20": 17,
     "streak": {
       "direction": "ODPŁYW",
-      "days": 4
+      "days": 5
     }
   },
   "global_institutional_interest": {
-    "score_0_10": 5.0,
-    "label_pl": "PRZEPŁYWY BTC I ETH SĄ ROZBIEŻNE"
+    "score_0_10": 0.5,
+    "label_pl": "SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE SŁABNIE"
   },
   "rules": {
     "closed_days_only": true,
