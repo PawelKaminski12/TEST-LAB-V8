@@ -1,7 +1,7 @@
 {
-  "date": "2026-10-31",
+  "date": "2026-11-01",
   "engine": "ALT_ROTATION_SCORE_v0.3",
-  "source_snapshot_generated_at_utc": "2026-11-01T11:51:19.836117+00:00",
+  "source_snapshot_generated_at_utc": "2026-11-02T13:31:48.795148+00:00",
   "score_0_10": 1,
   "status": "OFF",
   "confidence": "HIGH",
@@ -16,85 +16,85 @@
   },
   "flow_context": {
     "eth_btc": {
-      "change_5d_pct": 0.24904036744064495,
-      "change_20d_pct": -3.992082532499819,
+      "change_5d_pct": -0.03545754952455349,
+      "change_20d_pct": -2.874348033046059,
       "above_sma50": false,
       "sma50_rising_20d": false
     },
     "etf": {
-      "btc_5d_usdm": -202.40000000000003,
-      "eth_5d_usdm": -431.40000000000003,
-      "eth_20d_usdm": -1514.4,
-      "eth_acceleration_5d_usdm": -210.70000000000005,
-      "sol_5d_usdm": -71.6,
+      "btc_5d_usdm": -312.70000000000005,
+      "eth_5d_usdm": -342.79999999999995,
+      "eth_20d_usdm": -1463.6000000000001,
+      "eth_acceleration_5d_usdm": -136.79999999999995,
+      "sol_5d_usdm": -63.39999999999999,
       "btc_trend": "OUTFLOW_ACCELERATING",
       "eth_trend": "OUTFLOW_ACCELERATING",
       "sol_trend": "OUTFLOW_ACCELERATING"
     },
     "stablecoin": {
-      "change_7d_pct": -1.428808995314168,
-      "change_14d_pct": -2.0964546884239876,
-      "change_30d_pct": -2.4026980102483497
+      "change_7d_pct": -1.6013227852935241,
+      "change_14d_pct": -2.2652311265696,
+      "change_30d_pct": -2.892239353463655
     },
     "broad_rotation": {
-      "btc_dom_20d_change_pp": 0.6134673568492346,
-      "total3_eq_20d_change_pct": -8.29132245379518,
-      "others_btc_eq_20d_change_pct": -11.85098429399748,
-      "btc_dom_5d_change_pp": -0.1279887135734441,
-      "total3_eq_5d_change_pct": -3.099386397912196,
-      "others_btc_eq_5d_change_pct": 0.9968102589842598
+      "btc_dom_20d_change_pp": 0.593748147254054,
+      "total3_eq_20d_change_pct": -11.004355076313876,
+      "others_btc_eq_20d_change_pct": -20.107403783684585,
+      "btc_dom_5d_change_pp": -0.12674444832471465,
+      "total3_eq_5d_change_pct": -4.033083745422427,
+      "others_btc_eq_5d_change_pct": -6.144230860632504
     }
   },
   "broad_rotation_history_ready": true,
   "broad_rotation_detail": {
-    "btc_dom_20d_change_pp": 0.6134673568492346,
-    "total3_eq_20d_change_pct": -8.29132245379518,
-    "others_btc_eq_20d_change_pct": -11.85098429399748,
-    "btc_dom_5d_change_pp": -0.1279887135734441,
-    "total3_eq_5d_change_pct": -3.099386397912196,
-    "others_btc_eq_5d_change_pct": 0.9968102589842598
+    "btc_dom_20d_change_pp": 0.593748147254054,
+    "total3_eq_20d_change_pct": -11.004355076313876,
+    "others_btc_eq_20d_change_pct": -20.107403783684585,
+    "btc_dom_5d_change_pp": -0.12674444832471465,
+    "total3_eq_5d_change_pct": -4.033083745422427,
+    "others_btc_eq_5d_change_pct": -6.144230860632504
   },
   "selected_alt_breadth_strong": [],
   "alt_readiness": {
     "SOL": {
       "individual_rs_0_4": 1,
       "label": "WEAK_RELATIVE",
-      "vs_btc_5d_pct": -2.2257728918172015,
-      "vs_btc_20d_pct": -7.351450840115659,
-      "vs_eth_5d_pct": -2.4686652861583114,
-      "vs_eth_20d_pct": -3.499053407499475
+      "vs_btc_5d_pct": -3.6868251232603733,
+      "vs_btc_20d_pct": -6.630350773905336,
+      "vs_eth_5d_pct": -3.652662718428168,
+      "vs_eth_20d_pct": -3.867158330259879
     },
     "LINK": {
-      "individual_rs_0_4": 2,
-      "label": "WATCH",
-      "vs_btc_5d_pct": 5.701942075156374,
-      "vs_btc_20d_pct": -5.59428945387187,
-      "vs_eth_5d_pct": 5.43935551675041,
-      "vs_eth_20d_pct": -1.6688279088174274
+      "individual_rs_0_4": 1,
+      "label": "WEAK_RELATIVE",
+      "vs_btc_5d_pct": 1.559069771098942,
+      "vs_btc_20d_pct": -5.740289627400619,
+      "vs_eth_5d_pct": 1.5950929014789894,
+      "vs_eth_20d_pct": -2.950756608902516
     },
     "AAVE": {
       "individual_rs_0_4": 2,
       "label": "WATCH",
-      "vs_btc_5d_pct": 1.8354167932582932,
-      "vs_btc_20d_pct": -15.770890316229158,
-      "vs_eth_5d_pct": 1.5824355225776854,
-      "vs_eth_20d_pct": -12.268579607214802
+      "vs_btc_5d_pct": 3.910105052715207,
+      "vs_btc_20d_pct": -10.375728267291063,
+      "vs_eth_5d_pct": 3.946962098280471,
+      "vs_eth_20d_pct": -7.723376968215678
     },
     "HBAR": {
-      "individual_rs_0_4": 2,
-      "label": "WATCH",
-      "vs_btc_5d_pct": -4.0218503955949725,
-      "vs_btc_20d_pct": -17.56668568792038,
-      "vs_eth_5d_pct": -4.260280943719364,
-      "vs_eth_20d_pct": -14.139045521965144
+      "individual_rs_0_4": 1,
+      "label": "WEAK_RELATIVE",
+      "vs_btc_5d_pct": -2.6407896092188854,
+      "vs_btc_20d_pct": -13.749893412544234,
+      "vs_eth_5d_pct": -2.6062561742680512,
+      "vs_eth_20d_pct": -11.197397555898492
     },
     "ONDO": {
-      "individual_rs_0_4": 3,
+      "individual_rs_0_4": 2,
       "label": "WATCH",
-      "vs_btc_5d_pct": 1.894845138612422,
-      "vs_btc_20d_pct": -15.114172141509618,
-      "vs_eth_5d_pct": 1.6417162350277126,
-      "vs_eth_20d_pct": -11.58455458923453
+      "vs_btc_5d_pct": -0.7126148935589827,
+      "vs_btc_20d_pct": -9.97510414338908,
+      "vs_eth_5d_pct": -0.6773975326000437,
+      "vs_eth_20d_pct": -7.3108967266021345
     }
   },
   "hard_rules": {
