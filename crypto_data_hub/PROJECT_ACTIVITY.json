@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-11-05T13:25:18.587536+00:00",
+  "generated_at_utc": "2026-11-06T13:08:48.037444+00:00",
   "engine": "PROJECT_ACTIVITY_v0.1",
   "assets": [
     {
@@ -13,11 +13,11 @@
       "quality_status": "TRUSTED",
       "independent_layers_ready": 1,
       "stablecoin_supply": {
-        "latest_usd": 138513986102.44998,
-        "change_7d_pct": -3.3038513307986905,
-        "change_30d_pct": -5.511478387077673,
+        "latest_usd": 138033140326.66,
+        "change_7d_pct": -3.3160290289904193,
+        "change_30d_pct": -6.040262660648632,
         "trend": "FALLING",
-        "rows": 3264
+        "rows": 3265
       },
       "protocol_fees": {
         "latest_daily_usd": null,
@@ -55,11 +55,11 @@
       "quality_status": "TRUSTED",
       "independent_layers_ready": 1,
       "stablecoin_supply": {
-        "latest_usd": 15183394101.73,
-        "change_7d_pct": -3.097669392993785,
-        "change_30d_pct": -9.99319003951451,
+        "latest_usd": 15032729001.06,
+        "change_7d_pct": -2.7188958610299463,
+        "change_30d_pct": -10.153488908006914,
         "trend": "FALLING",
-        "rows": 1640
+        "rows": 1641
       },
       "protocol_fees": {
         "latest_daily_usd": null,
@@ -81,8 +81,8 @@
       },
       "long_project_activity_score_0_10": 0,
       "long_project_activity_label": "STRONG_NEGATIVE",
-      "tactical_project_activity_score_0_10": 0,
-      "tactical_project_activity_label": "STRONG_NEGATIVE",
+      "tactical_project_activity_score_0_10": 5,
+      "tactical_project_activity_label": "NEUTRAL",
       "trusted": true,
       "role": "project/liquidity context only; never standalone buy/sell signal"
     },
@@ -104,27 +104,27 @@
         "rows": 0
       },
       "protocol_fees": {
-        "latest_daily_usd": 4142.0,
-        "sum_7d_usd": 34401.0,
-        "sum_30d_usd": 4447050.0,
-        "change_7d_vs_prev7_pct": -96.90533571183757,
-        "change_30d_vs_prev30_pct": -0.10234508624528127,
-        "trend": "STRONG_FALLING",
-        "rows": 1060
+        "latest_daily_usd": 1092869.0,
+        "sum_7d_usd": 2211891.0,
+        "sum_30d_usd": 6624555.0,
+        "change_7d_vs_prev7_pct": 99.06573092762723,
+        "change_30d_vs_prev30_pct": 48.792509787274184,
+        "trend": "STRONG_RISING",
+        "rows": 1061
       },
       "protocol_revenue": {
-        "latest_daily_usd": 0.0,
-        "sum_7d_usd": 0.0,
-        "sum_30d_usd": 4279831.0,
-        "change_7d_vs_prev7_pct": -100.0,
-        "change_30d_vs_prev30_pct": -2.6147382485706805,
-        "trend": "STRONG_FALLING",
-        "rows": 798
+        "latest_daily_usd": 1013675.0,
+        "sum_7d_usd": 2027350.0,
+        "sum_30d_usd": 6307181.0,
+        "change_7d_vs_prev7_pct": 84.45143587074797,
+        "change_30d_vs_prev30_pct": 43.5165249746174,
+        "trend": "STRONG_RISING",
+        "rows": 799
       },
-      "long_project_activity_score_0_10": 5,
-      "long_project_activity_label": "NEUTRAL",
-      "tactical_project_activity_score_0_10": 0,
-      "tactical_project_activity_label": "STRONG_NEGATIVE",
+      "long_project_activity_score_0_10": 10,
+      "long_project_activity_label": "STRONG_POSITIVE",
+      "tactical_project_activity_score_0_10": 10,
+      "tactical_project_activity_label": "STRONG_POSITIVE",
       "trusted": true,
       "role": "project/liquidity context only; never standalone buy/sell signal"
     },
@@ -146,13 +146,13 @@
         "rows": 0
       },
       "protocol_fees": {
-        "latest_daily_usd": 258809.0,
-        "sum_7d_usd": 1827475.0,
-        "sum_30d_usd": 7559226.0,
-        "change_7d_vs_prev7_pct": -0.401288833128588,
-        "change_30d_vs_prev30_pct": 3.7871070033813847,
+        "latest_daily_usd": 249625.0,
+        "sum_7d_usd": 1770065.0,
+        "sum_30d_usd": 7544245.0,
+        "change_7d_vs_prev7_pct": -5.113853833527571,
+        "change_30d_vs_prev30_pct": 3.4557826599532326,
         "trend": "FLAT",
-        "rows": 568
+        "rows": 569
       },
       "protocol_revenue": {
         "latest_daily_usd": 0.0,
@@ -161,12 +161,12 @@
         "change_7d_vs_prev7_pct": null,
         "change_30d_vs_prev30_pct": null,
         "trend": "NO_DATA",
-        "rows": 568
+        "rows": 569
       },
       "long_project_activity_score_0_10": 10,
       "long_project_activity_label": "STRONG_POSITIVE",
-      "tactical_project_activity_score_0_10": 5,
-      "tactical_project_activity_label": "NEUTRAL",
+      "tactical_project_activity_score_0_10": 0,
+      "tactical_project_activity_label": "STRONG_NEGATIVE",
       "trusted": true,
       "role": "project/liquidity context only; never standalone buy/sell signal"
     }
