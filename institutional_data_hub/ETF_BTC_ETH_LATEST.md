@@ -1,27 +1,27 @@
 # V8 — ETF BTC / ETH
 
-Czas odczytu: 2026-11-06T02:29:02.895737+00:00
+Czas odczytu: 2026-11-06T10:56:58.516237+00:00
 
 ## WSPÓLNY OBRAZ: SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE SŁABNIE
 Ocena zainteresowania instytucjonalnego: **0.5/10**
 
 ## BTC
-- Ostatni zakończony dzień: **2026-11-04** — 74.6 mln USD.
-- 5 zakończonych dni: -1 065.6 mln USD.
-- 20 zakończonych dni: -792.2 mln USD.
-- 30 zakończonych dni: -681.8 mln USD.
+- Ostatni zakończony dzień: **2026-11-05** — -430.2 mln USD.
+- 5 zakończonych dni: -1 513.0 mln USD.
+- 20 zakończonych dni: -978.3 mln USD.
+- 30 zakończonych dni: -1 302.7 mln USD.
 - Trend: **ODPŁYW PRZYSPIESZA**.
-- Dzisiaj: **DZISIAJ — DANE WSTĘPNE** — podgląd -292.3 mln USD; kompletność funduszy 58.3%.
-- Dzisiejszy wiersz jest tylko podglądem. Do oceny trendu używamy wyłącznie zakończonych dni.
+- Dzisiaj: **DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE** — podgląd brak danych mln USD; kompletność funduszy 0.0%.
+- Nie traktujemy braku dzisiejszego wiersza jako odpływu ani napływu.
 
 ## ETH
-- Ostatni zakończony dzień: **2026-11-04** — 53.0 mln USD.
-- 5 zakończonych dni: -433.2 mln USD.
-- 20 zakończonych dni: -1 272.8 mln USD.
-- 30 zakończonych dni: -1 671.4 mln USD.
+- Ostatni zakończony dzień: **2026-11-05** — -99.9 mln USD.
+- 5 zakończonych dni: -427.6 mln USD.
+- 20 zakończonych dni: -1 300.2 mln USD.
+- 30 zakończonych dni: -1 837.4 mln USD.
 - Trend: **ODPŁYW PRZYSPIESZA**.
-- Dzisiaj: **DZISIAJ — DANE WSTĘPNE** — podgląd -2.7 mln USD; kompletność funduszy 63.6%.
-- Dzisiejszy wiersz jest tylko podglądem. Do oceny trendu używamy wyłącznie zakończonych dni.
+- Dzisiaj: **DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE** — podgląd brak danych mln USD; kompletność funduszy 0.0%.
+- Nie traktujemy braku dzisiejszego wiersza jako odpływu ani napływu.
 
 Dzisiejszy odczyt nie jest traktowany jako wynik końcowy. Do oceny trendu wchodzą wyłącznie zakończone dni ETF.
 Warstwa jest badawcza i nie wykonuje transakcji.
