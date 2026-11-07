@@ -1,13 +1,13 @@
 {
-  "generated_at_utc": "2026-11-07T07:44:45.373230+00:00",
+  "generated_at_utc": "2026-11-07T15:06:47.012329+00:00",
   "engine": "V8_ETF_PRICE_DIVERGENCE_v1.0",
   "assets": {
     "BTC": {
       "price_change_5d_pct": 4.492849953362432,
-      "etf_closed_5d_usdm": -1513.0000000000002,
-      "etf_acceleration_5d_usdm": -1815.9,
-      "etf_last_closed_date": "2026-11-05",
-      "etf_last_closed_flow_usdm": -430.2,
+      "etf_closed_5d_usdm": -1281.6999999999998,
+      "etf_acceleration_5d_usdm": -1079.2999999999997,
+      "etf_last_closed_date": "2026-11-06",
+      "etf_last_closed_flow_usdm": -411.9,
       "streak_direction_pl": null,
       "streak_days": null,
       "status_pl": "ROZBIEŻNOŚĆ — CENA ROŚNIE, ETF ODPŁYWA",
@@ -19,10 +19,10 @@
     },
     "ETH": {
       "price_change_5d_pct": 2.530983786767438,
-      "etf_closed_5d_usdm": -427.6,
-      "etf_acceleration_5d_usdm": -156.30000000000007,
-      "etf_last_closed_date": "2026-11-05",
-      "etf_last_closed_flow_usdm": -99.9,
+      "etf_closed_5d_usdm": -365.2,
+      "etf_acceleration_5d_usdm": 66.20000000000005,
+      "etf_last_closed_date": "2026-11-06",
+      "etf_last_closed_flow_usdm": -93.3,
       "streak_direction_pl": null,
       "streak_days": null,
       "status_pl": "ROZBIEŻNOŚĆ — CENA ROŚNIE, ETF ODPŁYWA",
