@@ -1,6 +1,6 @@
 {
-  "generated_at_utc": "2026-11-08T00:39:28.386806+00:00",
-  "generated_at_new_york": "2026-11-07T19:39:28.386806-05:00",
+  "generated_at_utc": "2026-11-08T07:24:27.735098+00:00",
+  "generated_at_new_york": "2026-11-08T02:24:27.735098-05:00",
   "engine": "V8_ETF_BTC_ETH_MONITOR_v1.0",
   "assets": {
     "BTC": {
@@ -21,7 +21,7 @@
         "previous_5d_usdm": -202.40000000000003,
         "acceleration_5d_usdm": -1079.2999999999997
       },
-      "today_date": "2026-11-07",
+      "today_date": "2026-11-08",
       "today_status_pl": "DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE",
       "today_flow_preview_usdm": null,
       "today_fund_completeness_pct": 0.0,
@@ -52,7 +52,7 @@
         "previous_5d_usdm": -431.40000000000003,
         "acceleration_5d_usdm": 66.20000000000005
       },
-      "today_date": "2026-11-07",
+      "today_date": "2026-11-08",
       "today_status_pl": "DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE",
       "today_flow_preview_usdm": null,
       "today_fund_completeness_pct": 0.0,
