@@ -1,39 +1,36 @@
 {
-  "generated_at_utc": "2026-11-10T04:45:57.676414+00:00",
+  "generated_at_utc": "2026-11-10T13:44:03.001780+00:00",
   "engine": "V8_ETF_BTC_ETH_CONFIRMATION_v1.0",
   "assets": {
     "BTC": {
       "asset": "BTC",
       "quality": {
-        "score_0_100": 67,
-        "label_pl": "DANE WYMAGAJĄ OSTROŻNOŚCI",
-        "reasons_pl": [
-          "DANE ZAMKNIĘTE SĄ STARE",
-          "DZISIAJ DANE SĄ CZĘŚCIOWE"
-        ]
+        "score_0_100": 100,
+        "label_pl": "ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE",
+        "reasons_pl": []
       },
-      "last_closed_date": "2026-11-06",
-      "last_closed_flow_usdm": -411.9,
-      "closed_5d_usdm": -1281.6999999999998,
-      "closed_20d_usdm": -1411.3000000000002,
-      "closed_30d_usdm": -1849.1,
+      "last_closed_date": "2026-11-09",
+      "last_closed_flow_usdm": -201.0,
+      "closed_5d_usdm": -1084.1,
+      "closed_20d_usdm": -1546.9,
+      "closed_30d_usdm": -2081.1000000000004,
       "flow_trend_pl": "ODPŁYW PRZYSPIESZA",
-      "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
-      "today_preview_usdm": 12.2,
-      "today_completeness_pct": 58.3,
+      "today_status_pl": "DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE",
+      "today_preview_usdm": null,
+      "today_completeness_pct": 0.0,
       "price_ret5_pct": 4.492849953362432,
       "price_ret20_pct": 4.016771281300402,
       "price_vs_etf_5d": {
         "horizon": "5D",
         "price_change_pct": 4.492849953362432,
-        "etf_flow_usdm": -1281.6999999999998,
+        "etf_flow_usdm": -1084.1,
         "label_pl": "ROZBIEŻNOŚĆ: CENA ROŚNIE MIMO ODPŁYWU ETF — RUCH MA SŁABSZE POTWIERDZENIE",
         "confirmation_adjustment": -0.5
       },
       "price_vs_etf_20d": {
         "horizon": "20D",
         "price_change_pct": 4.016771281300402,
-        "etf_flow_usdm": -1411.3000000000002,
+        "etf_flow_usdm": -1546.9,
         "label_pl": "ROZBIEŻNOŚĆ: CENA ROŚNIE MIMO ODPŁYWU ETF — RUCH MA SŁABSZE POTWIERDZENIE",
         "confirmation_adjustment": -0.5
       },
@@ -44,35 +41,32 @@
     "ETH": {
       "asset": "ETH",
       "quality": {
-        "score_0_100": 67,
-        "label_pl": "DANE WYMAGAJĄ OSTROŻNOŚCI",
-        "reasons_pl": [
-          "DANE ZAMKNIĘTE SĄ STARE",
-          "DZISIAJ DANE SĄ CZĘŚCIOWE"
-        ]
+        "score_0_100": 100,
+        "label_pl": "ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE",
+        "reasons_pl": []
       },
-      "last_closed_date": "2026-11-06",
-      "last_closed_flow_usdm": -93.3,
-      "closed_5d_usdm": -365.2,
-      "closed_20d_usdm": -1337.4,
-      "closed_30d_usdm": -2017.7,
+      "last_closed_date": "2026-11-09",
+      "last_closed_flow_usdm": -184.6,
+      "closed_5d_usdm": -410.1,
+      "closed_20d_usdm": -1436.6,
+      "closed_30d_usdm": -2219.4,
       "flow_trend_pl": "ODPŁYW KAPITAŁU, ALE PRESJA SŁABNIE",
-      "today_status_pl": "DZISIAJ — DANE WSTĘPNE",
-      "today_preview_usdm": -25.4,
-      "today_completeness_pct": 54.5,
+      "today_status_pl": "DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE",
+      "today_preview_usdm": null,
+      "today_completeness_pct": 0.0,
       "price_ret5_pct": 2.530983786767438,
       "price_ret20_pct": 6.755095200914485,
       "price_vs_etf_5d": {
         "horizon": "5D",
         "price_change_pct": 2.530983786767438,
-        "etf_flow_usdm": -365.2,
+        "etf_flow_usdm": -410.1,
         "label_pl": "ROZBIEŻNOŚĆ: CENA ROŚNIE MIMO ODPŁYWU ETF — RUCH MA SŁABSZE POTWIERDZENIE",
         "confirmation_adjustment": -0.5
       },
       "price_vs_etf_20d": {
         "horizon": "20D",
         "price_change_pct": 6.755095200914485,
-        "etf_flow_usdm": -1337.4,
+        "etf_flow_usdm": -1436.6,
         "label_pl": "ROZBIEŻNOŚĆ: CENA ROŚNIE MIMO ODPŁYWU ETF — RUCH MA SŁABSZE POTWIERDZENIE",
         "confirmation_adjustment": -0.5
       },
@@ -84,10 +78,10 @@
   "global_institutional_interest": {
     "score_0_10": 2.0,
     "label_pl": "SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE SŁABNIE",
-    "btc_closed_5d_usdm": -1281.6999999999998,
-    "eth_closed_5d_usdm": -365.2,
-    "btc_acceleration_5d_usdm": -1079.2999999999997,
-    "eth_acceleration_5d_usdm": 66.20000000000005,
+    "btc_closed_5d_usdm": -1084.1,
+    "eth_closed_5d_usdm": -410.1,
+    "btc_acceleration_5d_usdm": -372.79999999999984,
+    "eth_acceleration_5d_usdm": 72.39999999999992,
     "role": "kontekst instytucjonalny, nie samodzielny sygnał kupna lub sprzedaży"
   },
   "rules": {
