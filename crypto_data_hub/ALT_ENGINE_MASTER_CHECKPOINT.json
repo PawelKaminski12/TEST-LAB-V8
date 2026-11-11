@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-09",
+  "date": "2026-11-10",
   "engine": "ALT_ENGINE_MASTER_CHECKPOINT_v0.5",
   "status": "CORE_ALT_ENGINE_INCOMPLETE",
   "production_universe": [
@@ -46,7 +46,7 @@
   },
   "crypto_market_phase": "RISK_OFF_OR_REPAIR",
   "market_phase_confidence": "HIGH",
-  "alt_rotation_score_0_10": 1,
+  "alt_rotation_score_0_10": 0,
   "alt_rotation_status": "OFF",
   "long_flow_context": {
     "score_0_10": 0,
@@ -315,7 +315,7 @@
       "full_zones_ready": true,
       "zone_timeframes": "1D,1T,2D,2T,3D,4D,5D",
       "trend_score_0_4": 0,
-      "fomo_score_0_10": 0,
+      "fomo_score_0_10": 1,
       "rotation_label": "NO_RS_LABEL",
       "market_phase": "RISK_OFF_OR_REPAIR",
       "long_flow_score_0_10": 0,
@@ -401,7 +401,7 @@
       "full_zones_ready": true,
       "zone_timeframes": "1D,1T,2D,2T,3D,4D,5D",
       "trend_score_0_4": 4,
-      "fomo_score_0_10": 0,
+      "fomo_score_0_10": 2,
       "rotation_label": "NO_RS_LABEL",
       "market_phase": "RISK_OFF_OR_REPAIR",
       "long_flow_score_0_10": 0,
@@ -444,7 +444,7 @@
       "full_zones_ready": true,
       "zone_timeframes": "1D,1T,2D,2T,3D,4D,5D",
       "trend_score_0_4": 0,
-      "fomo_score_0_10": 0,
+      "fomo_score_0_10": 1,
       "rotation_label": "NO_RS_LABEL",
       "market_phase": "RISK_OFF_OR_REPAIR",
       "long_flow_score_0_10": 0,
