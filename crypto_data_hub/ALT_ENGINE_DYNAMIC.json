@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-10",
+  "date": "2026-11-11",
   "engine": "ALT_ENGINE_DYNAMIC_v0.1",
   "universe_source": "config/alt_universe.csv",
   "universe_count": 13,
@@ -14,12 +14,12 @@
     {
       "symbol": "ETH",
       "role": "CORE_ALT",
-      "global_alt_rotation_score": 0,
+      "global_alt_rotation_score": 1,
       "global_alt_rotation_status": "OFF",
       "global_confidence": "HIGH",
       "relative_strength_0_4": 0,
       "context_label": "WEAK_RELATIVE",
-      "vs_btc_20d_pct": -5.418837451545288,
+      "vs_btc_20d_pct": -5.3224674001250865,
       "vs_eth_20d_pct": null,
       "own_trend_0_3": 0,
       "missing_layers": [
@@ -33,13 +33,13 @@
     {
       "symbol": "SOL",
       "role": "ALT",
-      "global_alt_rotation_score": 0,
+      "global_alt_rotation_score": 1,
       "global_alt_rotation_status": "OFF",
       "global_confidence": "HIGH",
       "relative_strength_0_4": 1,
       "context_label": "WEAK_RELATIVE",
-      "vs_btc_20d_pct": -11.208284214078168,
-      "vs_eth_20d_pct": -6.121141468912383,
+      "vs_btc_20d_pct": -11.61861696380001,
+      "vs_eth_20d_pct": -6.650098910249003,
       "own_trend_0_3": null,
       "missing_layers": [
         "GENERIC_PRICE_REGIME",
@@ -53,13 +53,13 @@
     {
       "symbol": "LINK",
       "role": "ALT",
-      "global_alt_rotation_score": 0,
+      "global_alt_rotation_score": 1,
       "global_alt_rotation_status": "OFF",
       "global_confidence": "HIGH",
       "relative_strength_0_4": 1,
       "context_label": "WEAK_RELATIVE",
-      "vs_btc_20d_pct": -6.146036328480786,
-      "vs_eth_20d_pct": -0.7688622737777817,
+      "vs_btc_20d_pct": -6.27997675986407,
+      "vs_eth_20d_pct": -1.0113374667098718,
       "own_trend_0_3": null,
       "missing_layers": [
         "GENERIC_PRICE_REGIME",
@@ -73,13 +73,13 @@
     {
       "symbol": "ONDO",
       "role": "ALT",
-      "global_alt_rotation_score": 0,
+      "global_alt_rotation_score": 1,
       "global_alt_rotation_status": "OFF",
       "global_confidence": "HIGH",
       "relative_strength_0_4": 2,
       "context_label": "WATCH",
-      "vs_btc_20d_pct": -9.133902200039856,
-      "vs_eth_20d_pct": -3.927911910145243,
+      "vs_btc_20d_pct": -7.98763681477257,
+      "vs_eth_20d_pct": -2.8149966961126704,
       "own_trend_0_3": null,
       "missing_layers": [
         "GENERIC_PRICE_REGIME",
@@ -93,7 +93,7 @@
     {
       "symbol": "RENDER",
       "role": "ALT",
-      "global_alt_rotation_score": 0,
+      "global_alt_rotation_score": 1,
       "global_alt_rotation_status": "OFF",
       "global_confidence": "HIGH",
       "relative_strength_0_4": 0,
@@ -115,7 +115,7 @@
     {
       "symbol": "FLOKI",
       "role": "ALT",
-      "global_alt_rotation_score": 0,
+      "global_alt_rotation_score": 1,
       "global_alt_rotation_status": "OFF",
       "global_confidence": "HIGH",
       "relative_strength_0_4": 0,
@@ -137,7 +137,7 @@
     {
       "symbol": "PEPE",
       "role": "ALT",
-      "global_alt_rotation_score": 0,
+      "global_alt_rotation_score": 1,
       "global_alt_rotation_status": "OFF",
       "global_confidence": "HIGH",
       "relative_strength_0_4": 0,
@@ -159,7 +159,7 @@
     {
       "symbol": "SPX6900",
       "role": "ALT",
-      "global_alt_rotation_score": 0,
+      "global_alt_rotation_score": 1,
       "global_alt_rotation_status": "OFF",
       "global_confidence": "HIGH",
       "relative_strength_0_4": 0,
@@ -181,7 +181,7 @@
     {
       "symbol": "XRP",
       "role": "ALT",
-      "global_alt_rotation_score": 0,
+      "global_alt_rotation_score": 1,
       "global_alt_rotation_status": "OFF",
       "global_confidence": "HIGH",
       "relative_strength_0_4": 0,
@@ -203,7 +203,7 @@
     {
       "symbol": "XLM",
       "role": "ALT",
-      "global_alt_rotation_score": 0,
+      "global_alt_rotation_score": 1,
       "global_alt_rotation_status": "OFF",
       "global_confidence": "HIGH",
       "relative_strength_0_4": 0,
@@ -225,13 +225,13 @@
     {
       "symbol": "HBAR",
       "role": "ALT",
-      "global_alt_rotation_score": 0,
+      "global_alt_rotation_score": 1,
       "global_alt_rotation_status": "OFF",
       "global_confidence": "HIGH",
-      "relative_strength_0_4": 1,
+      "relative_strength_0_4": 0,
       "context_label": "WEAK_RELATIVE",
-      "vs_btc_20d_pct": -10.957466998451704,
-      "vs_eth_20d_pct": -5.855954185453072,
+      "vs_btc_20d_pct": -9.948158393795037,
+      "vs_eth_20d_pct": -4.8857325139840535,
       "own_trend_0_3": null,
       "missing_layers": [
         "GENERIC_PRICE_REGIME",
@@ -245,7 +245,7 @@
     {
       "symbol": "AVAX",
       "role": "ALT",
-      "global_alt_rotation_score": 0,
+      "global_alt_rotation_score": 1,
       "global_alt_rotation_status": "OFF",
       "global_confidence": "HIGH",
       "relative_strength_0_4": 0,
@@ -267,7 +267,7 @@
     {
       "symbol": "AWE",
       "role": "ALT",
-      "global_alt_rotation_score": 0,
+      "global_alt_rotation_score": 1,
       "global_alt_rotation_status": "OFF",
       "global_confidence": "HIGH",
       "relative_strength_0_4": 0,
