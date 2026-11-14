@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-11-13T13:10:10.793185+00:00",
+  "generated_at_utc": "2026-11-14T12:14:10.068367+00:00",
   "engine": "ONCHAIN_ACTIVITY_v0.6",
   "assets": [
     {
@@ -38,27 +38,27 @@
         }
       },
       "chain_tvl": {
-        "latest_usd": 39605317127.0,
-        "change_7d_pct": -8.46722869749198,
-        "change_30d_pct": -17.531062497474448,
+        "latest_usd": 38759215424.0,
+        "change_7d_pct": -10.405392666738189,
+        "change_30d_pct": -17.694835068440863,
         "trend": "STRONG_FALLING"
       },
       "dex_volume": {
-        "latest_daily_usd": 2454138692.3099995,
-        "change_7d_vs_prev7_pct": -16.64406536345806,
-        "change_30d_vs_prev30_pct": 33.28921866214443,
-        "trend": "RISING"
+        "latest_daily_usd": 1951246615.48,
+        "change_7d_vs_prev7_pct": -1.1327852846438669,
+        "change_30d_vs_prev30_pct": 34.79486293971918,
+        "trend": "STRONG_RISING"
       },
       "stablecoin_liquidity": {
-        "latest_usd": 132340598681.56,
-        "change_7d_pct": -3.335947046996024,
-        "change_30d_pct": -8.559551201404926,
+        "latest_usd": 132250237261.46,
+        "change_7d_pct": -2.562148889660898,
+        "change_30d_pct": -8.50775512549431,
         "trend": "FALLING"
       },
       "chain_fees": {
-        "latest_daily_usd": 17084799.73,
-        "change_7d_vs_prev7_pct": -3.8863370728736024,
-        "change_30d_vs_prev30_pct": 18.418107558304797,
+        "latest_daily_usd": 10794363.519999996,
+        "change_7d_vs_prev7_pct": 3.295757222973994,
+        "change_30d_vs_prev30_pct": 13.552812304044082,
         "trend": "RISING"
       },
       "protocol_tvl": {
@@ -78,8 +78,8 @@
       },
       "long_onchain_score_0_10": 5,
       "long_onchain_label": "NEUTRAL",
-      "tactical_onchain_score_0_10": 0,
-      "tactical_onchain_label": "STRONG_NEGATIVE",
+      "tactical_onchain_score_0_10": 4,
+      "tactical_onchain_label": "NEUTRAL",
       "role": "context only; never standalone trade signal"
     },
     {
@@ -118,27 +118,27 @@
         }
       },
       "chain_tvl": {
-        "latest_usd": 4960707615.0,
-        "change_7d_pct": -5.694576690227837,
-        "change_30d_pct": -17.30810591430847,
+        "latest_usd": 4810743563.0,
+        "change_7d_pct": -7.9419821344781205,
+        "change_30d_pct": -18.727303145716522,
         "trend": "STRONG_FALLING"
       },
       "dex_volume": {
-        "latest_daily_usd": 1560288195.45,
-        "change_7d_vs_prev7_pct": -18.76700135603261,
-        "change_30d_vs_prev30_pct": -28.11919330336844,
+        "latest_daily_usd": 1519424710.66,
+        "change_7d_vs_prev7_pct": -13.331177387199356,
+        "change_30d_vs_prev30_pct": -29.948514902219138,
         "trend": "STRONG_FALLING"
       },
       "stablecoin_liquidity": {
-        "latest_usd": 14294582113.46,
-        "change_7d_pct": -1.4253994959854244,
-        "change_30d_pct": -6.93299316392838,
+        "latest_usd": 14140939169.84,
+        "change_7d_pct": -2.009490257947799,
+        "change_30d_pct": -6.355726994779321,
         "trend": "FALLING"
       },
       "chain_fees": {
-        "latest_daily_usd": 8178518.749999999,
-        "change_7d_vs_prev7_pct": -14.166101493843119,
-        "change_30d_vs_prev30_pct": -36.88458525728577,
+        "latest_daily_usd": 8864969.799999995,
+        "change_7d_vs_prev7_pct": -10.689406654494316,
+        "change_30d_vs_prev30_pct": -37.336909950187525,
         "trend": "STRONG_FALLING"
       },
       "protocol_tvl": {
@@ -158,7 +158,7 @@
       },
       "long_onchain_score_0_10": 0,
       "long_onchain_label": "STRONG_NEGATIVE",
-      "tactical_onchain_score_0_10": 1,
+      "tactical_onchain_score_0_10": 0,
       "tactical_onchain_label": "STRONG_NEGATIVE",
       "role": "context only; never standalone trade signal"
     },
@@ -309,11 +309,11 @@
         "quality": "NO_DATA"
       },
       "protocol_fees": {
-        "fees_24h_usd": 239938.0,
-        "fees_7d_usd": 1722652.0,
-        "fees_30d_usd": 7933472.0,
-        "change_7d_vs_prev7_pct": -3.6725265657023387,
-        "change_30d_vs_prev30_pct": 14.40528610166767,
+        "fees_24h_usd": 241847.0,
+        "fees_7d_usd": 1710847.0,
+        "fees_30d_usd": 7917581.0,
+        "change_7d_vs_prev7_pct": -1.34141974501657,
+        "change_30d_vs_prev30_pct": 14.034751580476401,
         "trend": "RISING"
       },
       "long_onchain_score_0_10": null,
