@@ -1,42 +1,42 @@
 {
-  "generated_at_utc": "2026-11-17T04:45:03.444249+00:00",
+  "generated_at_utc": "2026-11-17T14:50:55.732670+00:00",
   "engine": "V8_ETF_HISTORY_v1.0",
   "BTC": {
-    "last_date": "2026-11-13",
-    "last_flow_usdm": -185.4,
-    "previous_flow_usdm": -284.1,
-    "change_vs_previous_usdm": 98.70000000000002,
-    "sum_5d_usdm": -1065.3,
-    "previous_5d_usdm": -1281.6999999999998,
-    "acceleration_5d_usdm": 216.39999999999986,
-    "sum_20d_usdm": -2248.2000000000003,
-    "sum_30d_usdm": -3155.5,
+    "last_date": "2026-11-16",
+    "last_flow_usdm": 7.9,
+    "previous_flow_usdm": -185.4,
+    "change_vs_previous_usdm": 193.3,
+    "sum_5d_usdm": -856.4000000000001,
+    "previous_5d_usdm": -1084.1,
+    "acceleration_5d_usdm": 227.69999999999982,
+    "sum_20d_usdm": -2767.0,
+    "sum_30d_usdm": -3057.8,
     "positive_days_20": 8,
     "negative_days_20": 12,
-    "streak": {
-      "direction": "ODPŁYW",
-      "days": 7
-    }
-  },
-  "ETH": {
-    "last_date": "2026-11-13",
-    "last_flow_usdm": 2.3,
-    "previous_flow_usdm": -70.5,
-    "change_vs_previous_usdm": 72.8,
-    "sum_5d_usdm": -398.90000000000003,
-    "previous_5d_usdm": -365.2,
-    "acceleration_5d_usdm": -33.700000000000045,
-    "sum_20d_usdm": -1416.2,
-    "sum_30d_usdm": -2278.5,
-    "positive_days_20": 4,
-    "negative_days_20": 16,
     "streak": {
       "direction": "NAPŁYW",
       "days": 1
     }
   },
+  "ETH": {
+    "last_date": "2026-11-16",
+    "last_flow_usdm": -8.4,
+    "previous_flow_usdm": 2.3,
+    "change_vs_previous_usdm": -10.7,
+    "sum_5d_usdm": -222.70000000000002,
+    "previous_5d_usdm": -410.1,
+    "acceleration_5d_usdm": 187.4,
+    "sum_20d_usdm": -1321.3,
+    "sum_30d_usdm": -2236.1,
+    "positive_days_20": 4,
+    "negative_days_20": 16,
+    "streak": {
+      "direction": "ODPŁYW",
+      "days": 1
+    }
+  },
   "global_institutional_interest": {
-    "score_0_10": 2.0,
+    "score_0_10": 3.5,
     "label_pl": "SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE SŁABNIE"
   },
   "rules": {
