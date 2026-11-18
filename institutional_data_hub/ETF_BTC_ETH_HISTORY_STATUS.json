@@ -1,38 +1,38 @@
 {
-  "generated_at_utc": "2026-11-18T04:40:58.717601+00:00",
+  "generated_at_utc": "2026-11-18T14:30:05.489699+00:00",
   "engine": "V8_ETF_HISTORY_v1.0",
   "BTC": {
-    "last_date": "2026-11-16",
-    "last_flow_usdm": 7.9,
-    "previous_flow_usdm": -185.4,
-    "change_vs_previous_usdm": 193.3,
-    "sum_5d_usdm": -856.4000000000001,
-    "previous_5d_usdm": -1084.1,
-    "acceleration_5d_usdm": 227.69999999999982,
-    "sum_20d_usdm": -2767.0,
-    "sum_30d_usdm": -3057.8,
-    "positive_days_20": 8,
-    "negative_days_20": 12,
+    "last_date": "2026-11-17",
+    "last_flow_usdm": -239.9,
+    "previous_flow_usdm": 7.9,
+    "change_vs_previous_usdm": -247.8,
+    "sum_5d_usdm": -1001.3000000000001,
+    "previous_5d_usdm": -1063.5,
+    "acceleration_5d_usdm": 62.19999999999993,
+    "sum_20d_usdm": -3030.1,
+    "sum_30d_usdm": -3416.5,
+    "positive_days_20": 7,
+    "negative_days_20": 13,
     "streak": {
-      "direction": "NAPŁYW",
+      "direction": "ODPŁYW",
       "days": 1
     }
   },
   "ETH": {
-    "last_date": "2026-11-16",
-    "last_flow_usdm": -8.4,
-    "previous_flow_usdm": 2.3,
-    "change_vs_previous_usdm": -10.7,
-    "sum_5d_usdm": -222.70000000000002,
-    "previous_5d_usdm": -410.1,
-    "acceleration_5d_usdm": 187.4,
-    "sum_20d_usdm": -1321.3,
-    "sum_30d_usdm": -2236.1,
+    "last_date": "2026-11-17",
+    "last_flow_usdm": -29.1,
+    "previous_flow_usdm": -8.4,
+    "change_vs_previous_usdm": -20.700000000000003,
+    "sum_5d_usdm": -250.5,
+    "previous_5d_usdm": -326.09999999999997,
+    "acceleration_5d_usdm": 75.59999999999997,
+    "sum_20d_usdm": -1324.3,
+    "sum_30d_usdm": -2063.3,
     "positive_days_20": 4,
     "negative_days_20": 16,
     "streak": {
       "direction": "ODPŁYW",
-      "days": 1
+      "days": 2
     }
   },
   "global_institutional_interest": {
