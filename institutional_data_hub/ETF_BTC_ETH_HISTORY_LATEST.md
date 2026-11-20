@@ -1,30 +1,30 @@
 # V8 — HISTORIA ETF BTC / ETH
 
-Czas analizy: 2026-11-20T03:42:07.183432+00:00
+Czas analizy: 2026-11-20T13:31:45.311190+00:00
 
 ## WSPÓLNY OBRAZ: SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE SŁABNIE
-Ocena zainteresowania instytucjonalnego: **3.5/10**
+Ocena zainteresowania instytucjonalnego: **2.0/10**
 
 ## BTC
-- Ostatni zakończony dzień: **2026-11-18** — -306.5 mln USD.
-- Poprzedni zakończony dzień: -239.9 mln USD.
-- Zmiana względem poprzedniego dnia: -66.6 mln USD.
-- 5 zakończonych dni: -1 008.0 mln USD.
-- Zmiana tempa 5-dniowego: 429.9 mln USD.
-- 20 zakończonych dni: -3 861.4 mln USD.
-- 30 zakończonych dni: -3 238.1 mln USD.
-- Seria: **ODPŁYW przez 2 kolejnych zakończonych dni**.
+- Ostatni zakończony dzień: **2026-11-19** — -582.3 mln USD.
+- Poprzedni zakończony dzień: -306.5 mln USD.
+- Zmiana względem poprzedniego dnia: -275.8 mln USD.
+- 5 zakończonych dni: -1 306.2 mln USD.
+- Zmiana tempa 5-dniowego: -14.4 mln USD.
+- 20 zakończonych dni: -3 808.1 mln USD.
+- 30 zakończonych dni: -3 576.3 mln USD.
+- Seria: **ODPŁYW przez 3 kolejnych zakończonych dni**.
 - W ostatnich 20 dniach: 6 dni napływu i 14 dni odpływu.
 
 ## ETH
-- Ostatni zakończony dzień: **2026-11-18** — -39.8 mln USD.
-- Poprzedni zakończony dzień: -29.1 mln USD.
-- Zmiana względem poprzedniego dnia: -10.7 mln USD.
-- 5 zakończonych dni: -145.5 mln USD.
-- Zmiana tempa 5-dniowego: 378.4 mln USD.
-- 20 zakończonych dni: -1 379.0 mln USD.
-- 30 zakończonych dni: -1 942.2 mln USD.
-- Seria: **ODPŁYW przez 3 kolejnych zakończonych dni**.
+- Ostatni zakończony dzień: **2026-11-19** — -131.2 mln USD.
+- Poprzedni zakończony dzień: -39.8 mln USD.
+- Zmiana względem poprzedniego dnia: -91.4 mln USD.
+- 5 zakończonych dni: -206.2 mln USD.
+- Zmiana tempa 5-dniowego: 288.3 mln USD.
+- 20 zakończonych dni: -1 399.6 mln USD.
+- 30 zakończonych dni: -2 000.9 mln USD.
+- Seria: **ODPŁYW przez 4 kolejnych zakończonych dni**.
 - W ostatnich 20 dniach: 3 dni napływu i 17 dni odpływu.
 
 Historia obejmuje wyłącznie zakończone dni ETF. Dzisiejsze dane wstępne nie zmieniają tej oceny.
