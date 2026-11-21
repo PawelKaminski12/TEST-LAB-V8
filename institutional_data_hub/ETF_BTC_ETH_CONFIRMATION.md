@@ -4,19 +4,19 @@ Wspólny obraz: **SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE SŁABNIE**
 Ocena zainteresowania instytucjonalnego: **2.0/10**
 
 ## BTC
-- Jakość danych: **ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE — 90/100**.
+- Jakość danych: **ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE — 100/100**.
 - Trend ETF: **ODPŁYW PRZYSPIESZA**.
 - 5D cena vs ETF: ROZBIEŻNOŚĆ: CENA ROŚNIE MIMO ODPŁYWU ETF — RUCH MA SŁABSZE POTWIERDZENIE
 - 20D cena vs ETF: ROZBIEŻNOŚĆ: CENA ROŚNIE MIMO ODPŁYWU ETF — RUCH MA SŁABSZE POTWIERDZENIE
 - Wniosek: **UWAGA — CENA ROŚNIE BEZ PEŁNEGO POTWIERDZENIA ETF**.
-- Dzisiaj: **DZISIAJ — DANE WSTĘPNE**; podgląd -124.5 mln USD; kompletność 75.0%.
+- Dzisiaj: **DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE**; podgląd None mln USD; kompletność 0.0%.
 
 ## ETH
-- Jakość danych: **DANE DOBRE, ALE DZISIEJSZY ODCZYT JESZCZE NIEPEŁNY — 87/100**.
+- Jakość danych: **ŹRÓDŁO ŚWIEŻE — DANE ZAMKNIĘTE WIARYGODNE — 100/100**.
 - Trend ETF: **ODPŁYW KAPITAŁU, ALE PRESJA SŁABNIE**.
 - 5D cena vs ETF: ROZBIEŻNOŚĆ: CENA ROŚNIE MIMO ODPŁYWU ETF — RUCH MA SŁABSZE POTWIERDZENIE
 - 20D cena vs ETF: ROZBIEŻNOŚĆ: CENA ROŚNIE MIMO ODPŁYWU ETF — RUCH MA SŁABSZE POTWIERDZENIE
 - Wniosek: **UWAGA — CENA ROŚNIE BEZ PEŁNEGO POTWIERDZENIA ETF**.
-- Dzisiaj: **DZISIAJ — DANE WSTĘPNE**; podgląd -13.2 mln USD; kompletność 54.5%.
+- Dzisiaj: **DZISIAJ BRAK JESZCZE WIERSZA W ŹRÓDLE**; podgląd None mln USD; kompletność 0.0%.
 
 Dzisiejszy podgląd nie jest używany jako finalny przepływ. Filtr ETF nie nadpisuje twardych blokad silnika i nie wykonuje transakcji.
