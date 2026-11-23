@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-11-22T13:31:32.749045+00:00",
+  "generated_at_utc": "2026-11-23T16:21:13.106666+00:00",
   "engine": "PROJECT_ACTIVITY_v0.1",
   "assets": [
     {
@@ -13,11 +13,11 @@
       "quality_status": "TRUSTED",
       "independent_layers_ready": 1,
       "stablecoin_supply": {
-        "latest_usd": 130077548684.64,
-        "change_7d_pct": -2.5740618129834525,
-        "change_30d_pct": -10.101478722334567,
+        "latest_usd": 130119777088.34001,
+        "change_7d_pct": -2.397858514240825,
+        "change_30d_pct": -9.905888452437983,
         "trend": "FALLING",
-        "rows": 3281
+        "rows": 3282
       },
       "protocol_fees": {
         "latest_daily_usd": null,
@@ -55,11 +55,11 @@
       "quality_status": "TRUSTED",
       "independent_layers_ready": 1,
       "stablecoin_supply": {
-        "latest_usd": 13366255308.25,
-        "change_7d_pct": -6.048250182382208,
-        "change_30d_pct": -11.238940198287606,
+        "latest_usd": 13408007454.230001,
+        "change_7d_pct": -6.513192380245836,
+        "change_30d_pct": -10.710465790095059,
         "trend": "FALLING",
-        "rows": 1657
+        "rows": 1658
       },
       "protocol_fees": {
         "latest_daily_usd": null,
@@ -104,25 +104,25 @@
         "rows": 0
       },
       "protocol_fees": {
-        "latest_daily_usd": 6883.0,
-        "sum_7d_usd": 1218023.0,
-        "sum_30d_usd": 4554381.0,
-        "change_7d_vs_prev7_pct": 12.147003715144633,
-        "change_30d_vs_prev30_pct": -17.543229152710783,
-        "trend": "FLAT",
-        "rows": 1077
+        "latest_daily_usd": 4991.0,
+        "sum_7d_usd": 1219629.0,
+        "sum_30d_usd": 4550404.0,
+        "change_7d_vs_prev7_pct": 12.32383048677721,
+        "change_30d_vs_prev30_pct": 2.3576382273410967,
+        "trend": "RISING",
+        "rows": 1078
       },
       "protocol_revenue": {
         "latest_daily_usd": 0.0,
         "sum_7d_usd": 1162497.0,
         "sum_30d_usd": 4337128.0,
         "change_7d_vs_prev7_pct": 9.480313269895802,
-        "change_30d_vs_prev30_pct": -19.86806797027021,
-        "trend": "FALLING",
-        "rows": 815
+        "change_30d_vs_prev30_pct": 2.0502146591265813,
+        "trend": "RISING",
+        "rows": 816
       },
-      "long_project_activity_score_0_10": 0,
-      "long_project_activity_label": "STRONG_NEGATIVE",
+      "long_project_activity_score_0_10": 5,
+      "long_project_activity_label": "NEUTRAL",
       "tactical_project_activity_score_0_10": 10,
       "tactical_project_activity_label": "STRONG_POSITIVE",
       "trusted": true,
@@ -146,13 +146,13 @@
         "rows": 0
       },
       "protocol_fees": {
-        "latest_daily_usd": 239823.0,
-        "sum_7d_usd": 1873734.0,
-        "sum_30d_usd": 7651165.0,
-        "change_7d_vs_prev7_pct": 9.938463271585384,
-        "change_30d_vs_prev30_pct": 7.498682814772151,
+        "latest_daily_usd": 239220.0,
+        "sum_7d_usd": 1807177.0,
+        "sum_30d_usd": 7661546.0,
+        "change_7d_vs_prev7_pct": 6.068807086369232,
+        "change_30d_vs_prev30_pct": 7.403726241370179,
         "trend": "RISING",
-        "rows": 585
+        "rows": 586
       },
       "protocol_revenue": {
         "latest_daily_usd": 0.0,
@@ -161,7 +161,7 @@
         "change_7d_vs_prev7_pct": null,
         "change_30d_vs_prev30_pct": null,
         "trend": "NO_DATA",
-        "rows": 585
+        "rows": 586
       },
       "long_project_activity_score_0_10": 10,
       "long_project_activity_label": "STRONG_POSITIVE",
