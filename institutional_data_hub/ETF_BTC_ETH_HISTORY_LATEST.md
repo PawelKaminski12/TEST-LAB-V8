@@ -1,30 +1,30 @@
 # V8 — HISTORIA ETF BTC / ETH
 
-Czas analizy: 2026-11-26T01:09:26.185831+00:00
+Czas analizy: 2026-11-26T09:59:59.804552+00:00
 
 ## WSPÓLNY OBRAZ: SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE SŁABNIE
 Ocena zainteresowania instytucjonalnego: **0.5/10**
 
 ## BTC
-- Ostatni zakończony dzień: **2026-11-24** — -231.4 mln USD.
-- Poprzedni zakończony dzień: -569.7 mln USD.
-- Zmiana względem poprzedniego dnia: 338.3 mln USD.
-- 5 zakończonych dni: -2 359.1 mln USD.
-- Zmiana tempa 5-dniowego: -1 357.8 mln USD.
-- 20 zakończonych dni: -5 426.8 mln USD.
-- 30 zakończonych dni: -5 178.0 mln USD.
-- Seria: **ODPŁYW przez 6 kolejnych zakończonych dni**.
-- W ostatnich 20 dniach: 4 dni napływu i 16 dni odpływu.
+- Ostatni zakończony dzień: **2026-11-25** — -453.0 mln USD.
+- Poprzedni zakończony dzień: -231.4 mln USD.
+- Zmiana względem poprzedniego dnia: -221.6 mln USD.
+- 5 zakończonych dni: -2 505.6 mln USD.
+- Zmiana tempa 5-dniowego: -1 497.6 mln USD.
+- 20 zakończonych dni: -6 017.1 mln USD.
+- 30 zakończonych dni: -5 369.6 mln USD.
+- Seria: **ODPŁYW przez 7 kolejnych zakończonych dni**.
+- W ostatnich 20 dniach: 3 dni napływu i 17 dni odpływu.
 
 ## ETH
-- Ostatni zakończony dzień: **2026-11-24** — -64.1 mln USD.
-- Poprzedni zakończony dzień: -84.9 mln USD.
-- Zmiana względem poprzedniego dnia: 20.8 mln USD.
-- 5 zakończonych dni: -417.3 mln USD.
-- Zmiana tempa 5-dniowego: -166.8 mln USD.
-- 20 zakończonych dni: -1 501.5 mln USD.
-- 30 zakończonych dni: -2 130.5 mln USD.
-- Seria: **ODPŁYW przez 7 kolejnych zakończonych dni**.
+- Ostatni zakończony dzień: **2026-11-25** — -68.5 mln USD.
+- Poprzedni zakończony dzień: -64.1 mln USD.
+- Zmiana względem poprzedniego dnia: -4.4 mln USD.
+- 5 zakończonych dni: -446.0 mln USD.
+- Zmiana tempa 5-dniowego: -300.5 mln USD.
+- 20 zakończonych dni: -1 548.6 mln USD.
+- 30 zakończonych dni: -2 069.5 mln USD.
+- Seria: **ODPŁYW przez 8 kolejnych zakończonych dni**.
 - W ostatnich 20 dniach: 2 dni napływu i 18 dni odpływu.
 
 Historia obejmuje wyłącznie zakończone dni ETF. Dzisiejsze dane wstępne nie zmieniają tej oceny.
