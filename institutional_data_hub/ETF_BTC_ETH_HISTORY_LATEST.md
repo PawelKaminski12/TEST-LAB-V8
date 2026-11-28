@@ -1,30 +1,30 @@
 # V8 — HISTORIA ETF BTC / ETH
 
-Czas analizy: 2026-11-28T04:11:50.021673+00:00
+Czas analizy: 2026-11-28T13:31:31.283808+00:00
 
 ## WSPÓLNY OBRAZ: SZEROKIE ZAINTERESOWANIE INSTYTUCJONALNE SŁABNIE
 Ocena zainteresowania instytucjonalnego: **0.5/10**
 
 ## BTC
-- Ostatni zakończony dzień: **2026-11-25** — -453.0 mln USD.
-- Poprzedni zakończony dzień: -231.4 mln USD.
-- Zmiana względem poprzedniego dnia: -221.6 mln USD.
-- 5 zakończonych dni: -2 505.6 mln USD.
-- Zmiana tempa 5-dniowego: -1 497.6 mln USD.
-- 20 zakończonych dni: -6 017.1 mln USD.
-- 30 zakończonych dni: -5 369.6 mln USD.
-- Seria: **ODPŁYW przez 7 kolejnych zakończonych dni**.
-- W ostatnich 20 dniach: 3 dni napływu i 17 dni odpływu.
+- Ostatni zakończony dzień: **2026-11-27** — -389.0 mln USD.
+- Poprzedni zakończony dzień: -453.0 mln USD.
+- Zmiana względem poprzedniego dnia: 64.0 mln USD.
+- 5 zakończonych dni: -2 312.3 mln USD.
+- Zmiana tempa 5-dniowego: -1 006.1 mln USD.
+- 20 zakończonych dni: -6 423.3 mln USD.
+- 30 zakończonych dni: -5 763.7 mln USD.
+- Seria: **ODPŁYW przez 8 kolejnych zakończonych dni**.
+- W ostatnich 20 dniach: 2 dni napływu i 18 dni odpływu.
 
 ## ETH
-- Ostatni zakończony dzień: **2026-11-25** — -68.5 mln USD.
-- Poprzedni zakończony dzień: -64.1 mln USD.
-- Zmiana względem poprzedniego dnia: -4.4 mln USD.
-- 5 zakończonych dni: -446.0 mln USD.
-- Zmiana tempa 5-dniowego: -300.5 mln USD.
-- 20 zakończonych dni: -1 548.6 mln USD.
-- 30 zakończonych dni: -2 069.5 mln USD.
-- Seria: **ODPŁYW przez 8 kolejnych zakończonych dni**.
+- Ostatni zakończony dzień: **2026-11-27** — -69.4 mln USD.
+- Poprzedni zakończony dzień: -68.5 mln USD.
+- Zmiana względem poprzedniego dnia: -0.9 mln USD.
+- 5 zakończonych dni: -384.2 mln USD.
+- Zmiana tempa 5-dniowego: -178.0 mln USD.
+- 20 zakończonych dni: -1 512.5 mln USD.
+- 30 zakończonych dni: -2 078.6 mln USD.
+- Seria: **ODPŁYW przez 9 kolejnych zakończonych dni**.
 - W ostatnich 20 dniach: 2 dni napływu i 18 dni odpływu.
 
 Historia obejmuje wyłącznie zakończone dni ETF. Dzisiejsze dane wstępne nie zmieniają tej oceny.
